@@ -1,0 +1,12 @@
+
+prefix=++PREFIX++
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libmevent
+Description: Library for interacting with a mevent server
+URL: http://blitiri.com.ar/p/mevent/
+Version: 0.22
+Libs: -L${libdir} -lmevent
+Cflags: -I${includedir}
+
