@@ -1,0 +1,18 @@
+Mevent {
+	trace_level = 5
+	plugins {
+		0 = skeleton
+		1 = db_community
+	}
+}
+
+Plugin {
+	db_community {
+		logfile = /data/logs/plugin/db_community
+		ip = 192.168.8.84
+		user = root
+		pass = hifly1234
+		name = home
+	}
+}
+

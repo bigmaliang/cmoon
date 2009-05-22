@@ -1,0 +1,22 @@
+部署
+====
+
+系统要求
+	Linux 2.6 以上内核
+	libevent
+	libmysqlclient
+
+
+库文件安装
+	libneo_utl.so
+	libmevent_server.so
+	plugin/*.so
+
+	以上so文件拷贝至 /usr/local/lib
+
+
+执行文件
+	daemon/mevent, dameon/mevent.hdf
+	拷贝这些文件到新部署机器， 修改mevent.hdf配置文件。
+	执行 PATH/mevent -c PATH/mevent.hdf (PATH 为拷贝文件的全路径)。
+	执行 PATH/mevent -h 查看程序启动帮助信息。
