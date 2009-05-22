@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>cds test</title>
+<script type="text/javascript" src="http://js.hunantv.com/sq/public/jquery-1.3.2.min.js"></script>
+<style type="text/css">
+  input {margin: 2px 0;}
+  .hint {color: gray;}
+</style>
+<script language="javascript">
+	$(document).ready(function () {
+		function doQuery(opt) {
+			opt = $.extend({
+				op: "n_blog",
+				query: "get",
+				keys: "1",
+				keye: "1",
+				sucid: "#success",
+				faiid: "#failure",
+				errid: "#error"
+			}, opt||{});
+			var bgn = parseInt(opt.keys);
+			var end = parseInt(opt.keye);
+			$(opt.sucid).empty();
+			$(opt.faiid).empty();
+			$(opt.errid).empty();
+			var timebegin = new Date();
+			var oval = opt.val;
+			var oinc = opt.inc;
+			for (var i = bgn; i <= end; i++) {
+				if (oval == -1) {
+					opt.val = Math.round(Math.random()*10000);
+				}
+				if (oinc == -1) {
+					opt.inc = Math.round(Math.random()*10000);
+				}
+				$.ajax({
+					//type: opt.query,
+					type: "get",
+					url: "/cgi-bin/cds.cgi",
+					data: "query="+opt.query+"&op="+opt.op+"&key="+i+"&val="+opt.val+"&inc="+opt.inc,
+					dataType: "json",
+					cache: false,
+					error: function() {
+						$(opt.errid).append($("<span>error<span>"));
+						$("#doquery").removeAttr("disabled");
+					},
+					success: function(data) {
+						if (data.success == "1") {
+							$(opt.sucid).append($("<span>"+data.key+":"+data.value+" "+"<span>"));
+						} else {
+							$(opt.faiid).append($("<span>"+data.key+":"+data.errmsg+" "+"<span>"));
+							$("#doquery").removeAttr("disabled");
+						}
+						if (data.key == opt.keye) {
+							var timeend = new Date();
+							var times = timeend.getTime() - timebegin.getTime();
+							$("#doquery").removeAttr("disabled");
+							$("#times").text(times);
+						}
+					}
+				});
+			}
+		}
+		$("#doquery").click(function() {
+			var op, query, keys, keye, val, inc;
+			op = $("#op").val();
+			if (op.length == 0) {
+				alert("参数op不能为空");
+				return;
+			}
+			query = $("#query").val();
+			var regd = /^[0-9]+$/;
+			keys = $("#keys").val();
+			keye = $("#keye").val();
+			if (!keys.match(regd) || !keye.match(regd)) {
+				alert("请正确输入起始和结束key id (只能为数字)");
+				return;
+			}
+			if (parseInt(keys) > parseInt(keye)) {
+				alert("起始id 不能大于 结束id");
+				return;
+			}
+			if (query == "post") {
+				val = $("#val").val();
+				if ($("#ckval").attr("checked") == true) {
+					val = -1;
+				} else {
+					if (!val.match(regd)) {
+						alert("val 参数只能为数值");
+						return;
+					}
+				}
+			} else if (query == "put") {
+				inc = $("#inc").val();
+				if ($("#ckinc").attr("checked") == true) {
+					inc = -1;
+				} else {
+					if (!inc.match(regd)) {
+						alert("inc 参数只能为数值");
+						return;
+					}
+				}
+			}
+			var opt = {
+				op: op, query: query, keys: keys, keye: keye,
+				val: val, inc: inc,
+				sucid: "#success", faiid: "#failure", errid: "#error"
+			};
+			$("#doquery").attr("disabled", "disabled");
+			doQuery(opt);
+			//$("#doquery").removeAttr("disabled");
+		});
+		$("#query").change(function() {
+			var query = $("#query").val();
+			if (query == "get") {
+				$("#val").attr("disabled", "disabled");
+				$("#inc").attr("disabled", "disabled");
+			} else if (query == "post" && $("#ckval").attr("checked") == false) {
+				$("#val").removeAttr("disabled");
+				$("#inc").attr("disabled", "disabled");
+			} else if (query == "put") {
+				$("#inc").removeAttr("disabled");
+				$("#val").attr("disabled", "disabled");
+			}
+		});
+		$("#ckval").click(function() {
+			if ($("#query").val() == "post") {
+				if ($("#ckval").attr("checked") == true) {
+					$("#val").attr("disabled", "disabled");
+					$("#val").val("");
+				} else {
+					$("#val").removeAttr("disabled");
+				}
+			}
+		});
+	});
+</script>
+</head>
+
+<body>
+  <div style="width:960px; margin: 100px auto;">
+	操作类型：
+	<select id="query">
+	  <option value="get">获取</option>
+	  <option value="post">赋值</option>
+	  <option value="put">增加</option>
+	</select> <br />
+	参数op(domain) <input type="text" id="op" /> <br />
+	起始参数key(数值) <input type="text" id="keys" /> <br />
+	结束参数key(数值) <input type="text" id="keye" /> <br />
+	参数val(数值) <input type="text" id="val" disabled="disabled" /> <input type="checkbox" id="ckval" /> 使用随机数<br />
+	参数inc(数值) <input type="text" id="inc" disabled="disabled" /> <!--<input type="checkbox" id="ckinc" />--><br />
+
+	<input type="button" id="doquery" value="开始" /> <br />
+	<br />
+	<div class="hint">
+		<p>op参数当前接受 n_user_space, n_photo, n_photo_album, n_video, n_video_d, n_video_album, n_blog</p>
+		<p>由于包含了客户端的请求时间，发送请求过多时，操作时间会不太准确</p>
+	</div>
+  </div>
+
+  <div id="res">
+	操作时间(毫秒)：<br />
+	<div id="times"></div><br />
+	操作成功：<br />
+	<div id="success"></div><br />
+	操作失败：<br />
+	<div id="failure"></div><br />
+	<!--
+	程序错误：<br />
+	-->
+	<div id="error"></div><br />
+  </div>
+</body>
+</html>

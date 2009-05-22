@@ -1,0 +1,57 @@
+storedb.o: storedb.c ../../libs/hifly/fheads.h \
+  ../../libs/fcgi/include/fcgi_stdio.h ../../libs/fcgi/include/fcgiapp.h \
+  ../../libs/jsonc/include/json/json.h \
+  ../../libs/jsonc/include/json/bits.h \
+  ../../libs/jsonc/include/json/debug.h \
+  ../../libs/jsonc/include/json/linkhash.h \
+  ../../libs/jsonc/include/json/arraylist.h \
+  ../../libs/jsonc/include/json/json_util.h \
+  ../../libs/jsonc/include/json/json_object.h \
+  ../../libs/jsonc/include/json/json_tokener.h \
+  ../../libs/cs/include/ClearSilver/ClearSilver.h \
+  ../../libs/cs/include/ClearSilver/cs_config.h \
+  ../../libs/cs/include/ClearSilver/util/neo_misc.h \
+  ../../libs/cs/include/ClearSilver/util/neo_err.h \
+  ../../libs/cs/include/ClearSilver/util/neo_misc.h \
+  ../../libs/cs/include/ClearSilver/util/neo_str.h \
+  ../../libs/cs/include/ClearSilver/util/ulist.h \
+  ../../libs/cs/include/ClearSilver/util/neo_err.h \
+  ../../libs/cs/include/ClearSilver/util/neo_date.h \
+  ../../libs/cs/include/ClearSilver/util/neo_files.h \
+  ../../libs/cs/include/ClearSilver/util/neo_hash.h \
+  ../../libs/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../libs/cs/include/ClearSilver/util/neo_hash.h \
+  ../../libs/cs/include/ClearSilver/util/neo_rand.h \
+  ../../libs/cs/include/ClearSilver/util/neo_net.h \
+  ../../libs/cs/include/ClearSilver/util/neo_server.h \
+  ../../libs/cs/include/ClearSilver/util/neo_str.h \
+  ../../libs/cs/include/ClearSilver/util/ulist.h \
+  ../../libs/cs/include/ClearSilver/util/wildmat.h \
+  ../../libs/cs/include/ClearSilver/util/filter.h \
+  ../../libs/cs/include/ClearSilver/util/ulocks.h \
+  ../../libs/cs/include/ClearSilver/util/rcfs.h \
+  ../../libs/cs/include/ClearSilver/util/skiplist.h \
+  ../../libs/cs/include/ClearSilver/util/dict.h \
+  ../../libs/cs/include/ClearSilver/cs/cs.h \
+  ../../libs/cs/include/ClearSilver/util/neo_misc.h \
+  ../../libs/cs/include/ClearSilver/util/neo_err.h \
+  ../../libs/cs/include/ClearSilver/util/ulist.h \
+  ../../libs/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../libs/cs/include/ClearSilver/util/neo_str.h \
+  ../../libs/cs/include/ClearSilver/cgi/cgi.h \
+  ../../libs/cs/include/ClearSilver/util/neo_err.h \
+  ../../libs/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../libs/cs/include/ClearSilver/cs/cs.h \
+  ../../libs/cs/include/ClearSilver/cgi/cgiwrap.h \
+  ../../libs/cs/include/ClearSilver/cgi/date.h \
+  ../../libs/cs/include/ClearSilver/cgi/html.h \
+  ../../libs/qdbm/include/depot.h /usr/local/mysql/include/mysql/mysql.h \
+  /usr/local/mysql/include/mysql/mysql_com.h \
+  /usr/local/mysql/include/mysql/mysql_time.h \
+  /usr/local/mysql/include/mysql/mysql_version.h \
+  /usr/local/mysql/include/mysql/typelib.h \
+  /usr/local/mysql/include/mysql/my_list.h \
+  /usr/local/mysql/include/mysql/my_alloc.h ../../libs/hifly/fconfig.h \
+  ../../libs/hifly/fjson.h ../../libs/hifly/futil.h \
+  ../../libs/hifly/ftrace.h ../../libs/hifly/fheads.h \
+  ../../libs/hifly/fdb.h ../../libs/db/ocds.h ../../libs/hifly/fheads.h
