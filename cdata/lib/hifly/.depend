@@ -1,0 +1,204 @@
+fdb.o: fdb.c fheads.h ..//fcgi/include/fcgi_stdio.h \
+  ..//fcgi/include/fcgiapp.h ..//jsonc/include/json/json.h \
+  ..//jsonc/include/json/bits.h ..//jsonc/include/json/debug.h \
+  ..//jsonc/include/json/linkhash.h ..//jsonc/include/json/arraylist.h \
+  ..//jsonc/include/json/json_util.h ..//jsonc/include/json/json_object.h \
+  ..//jsonc/include/json/json_tokener.h \
+  ..//cs/include/ClearSilver/ClearSilver.h \
+  ..//cs/include/ClearSilver/cs_config.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_date.h \
+  ..//cs/include/ClearSilver/util/neo_files.h \
+  ..//cs/include/ClearSilver/util/neo_hash.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/util/neo_hash.h \
+  ..//cs/include/ClearSilver/util/neo_rand.h \
+  ..//cs/include/ClearSilver/util/neo_net.h \
+  ..//cs/include/ClearSilver/util/neo_server.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/wildmat.h \
+  ..//cs/include/ClearSilver/util/filter.h \
+  ..//cs/include/ClearSilver/util/ulocks.h \
+  ..//cs/include/ClearSilver/util/rcfs.h \
+  ..//cs/include/ClearSilver/util/skiplist.h \
+  ..//cs/include/ClearSilver/util/dict.h \
+  ..//cs/include/ClearSilver/cs/cs.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/cgi/cgi.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/cs/cs.h \
+  ..//cs/include/ClearSilver/cgi/cgiwrap.h \
+  ..//cs/include/ClearSilver/cgi/date.h \
+  ..//cs/include/ClearSilver/cgi/html.h \
+  /usr/local/mysql/include/mysql/mysql.h \
+  /usr/local/mysql/include/mysql/mysql_com.h \
+  /usr/local/mysql/include/mysql/mysql_time.h \
+  /usr/local/mysql/include/mysql/mysql_version.h \
+  /usr/local/mysql/include/mysql/typelib.h \
+  /usr/local/mysql/include/mysql/my_list.h \
+  /usr/local/mysql/include/mysql/my_alloc.h fconfig.h fjson.h futil.h \
+  ftrace.h fdb.h
+fjson.o: fjson.c fheads.h ..//fcgi/include/fcgi_stdio.h \
+  ..//fcgi/include/fcgiapp.h ..//jsonc/include/json/json.h \
+  ..//jsonc/include/json/bits.h ..//jsonc/include/json/debug.h \
+  ..//jsonc/include/json/linkhash.h ..//jsonc/include/json/arraylist.h \
+  ..//jsonc/include/json/json_util.h ..//jsonc/include/json/json_object.h \
+  ..//jsonc/include/json/json_tokener.h \
+  ..//cs/include/ClearSilver/ClearSilver.h \
+  ..//cs/include/ClearSilver/cs_config.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_date.h \
+  ..//cs/include/ClearSilver/util/neo_files.h \
+  ..//cs/include/ClearSilver/util/neo_hash.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/util/neo_hash.h \
+  ..//cs/include/ClearSilver/util/neo_rand.h \
+  ..//cs/include/ClearSilver/util/neo_net.h \
+  ..//cs/include/ClearSilver/util/neo_server.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/wildmat.h \
+  ..//cs/include/ClearSilver/util/filter.h \
+  ..//cs/include/ClearSilver/util/ulocks.h \
+  ..//cs/include/ClearSilver/util/rcfs.h \
+  ..//cs/include/ClearSilver/util/skiplist.h \
+  ..//cs/include/ClearSilver/util/dict.h \
+  ..//cs/include/ClearSilver/cs/cs.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/cgi/cgi.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/cs/cs.h \
+  ..//cs/include/ClearSilver/cgi/cgiwrap.h \
+  ..//cs/include/ClearSilver/cgi/date.h \
+  ..//cs/include/ClearSilver/cgi/html.h \
+  /usr/local/mysql/include/mysql/mysql.h \
+  /usr/local/mysql/include/mysql/mysql_com.h \
+  /usr/local/mysql/include/mysql/mysql_time.h \
+  /usr/local/mysql/include/mysql/mysql_version.h \
+  /usr/local/mysql/include/mysql/typelib.h \
+  /usr/local/mysql/include/mysql/my_list.h \
+  /usr/local/mysql/include/mysql/my_alloc.h fconfig.h fjson.h futil.h \
+  ftrace.h fdb.h
+ftrace.o: ftrace.c fheads.h ..//fcgi/include/fcgi_stdio.h \
+  ..//fcgi/include/fcgiapp.h ..//jsonc/include/json/json.h \
+  ..//jsonc/include/json/bits.h ..//jsonc/include/json/debug.h \
+  ..//jsonc/include/json/linkhash.h ..//jsonc/include/json/arraylist.h \
+  ..//jsonc/include/json/json_util.h ..//jsonc/include/json/json_object.h \
+  ..//jsonc/include/json/json_tokener.h \
+  ..//cs/include/ClearSilver/ClearSilver.h \
+  ..//cs/include/ClearSilver/cs_config.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_date.h \
+  ..//cs/include/ClearSilver/util/neo_files.h \
+  ..//cs/include/ClearSilver/util/neo_hash.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/util/neo_hash.h \
+  ..//cs/include/ClearSilver/util/neo_rand.h \
+  ..//cs/include/ClearSilver/util/neo_net.h \
+  ..//cs/include/ClearSilver/util/neo_server.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/wildmat.h \
+  ..//cs/include/ClearSilver/util/filter.h \
+  ..//cs/include/ClearSilver/util/ulocks.h \
+  ..//cs/include/ClearSilver/util/rcfs.h \
+  ..//cs/include/ClearSilver/util/skiplist.h \
+  ..//cs/include/ClearSilver/util/dict.h \
+  ..//cs/include/ClearSilver/cs/cs.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/cgi/cgi.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/cs/cs.h \
+  ..//cs/include/ClearSilver/cgi/cgiwrap.h \
+  ..//cs/include/ClearSilver/cgi/date.h \
+  ..//cs/include/ClearSilver/cgi/html.h \
+  /usr/local/mysql/include/mysql/mysql.h \
+  /usr/local/mysql/include/mysql/mysql_com.h \
+  /usr/local/mysql/include/mysql/mysql_time.h \
+  /usr/local/mysql/include/mysql/mysql_version.h \
+  /usr/local/mysql/include/mysql/typelib.h \
+  /usr/local/mysql/include/mysql/my_list.h \
+  /usr/local/mysql/include/mysql/my_alloc.h fconfig.h fjson.h futil.h \
+  ftrace.h fdb.h
+futil.o: futil.c fheads.h ..//fcgi/include/fcgi_stdio.h \
+  ..//fcgi/include/fcgiapp.h ..//jsonc/include/json/json.h \
+  ..//jsonc/include/json/bits.h ..//jsonc/include/json/debug.h \
+  ..//jsonc/include/json/linkhash.h ..//jsonc/include/json/arraylist.h \
+  ..//jsonc/include/json/json_util.h ..//jsonc/include/json/json_object.h \
+  ..//jsonc/include/json/json_tokener.h \
+  ..//cs/include/ClearSilver/ClearSilver.h \
+  ..//cs/include/ClearSilver/cs_config.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_date.h \
+  ..//cs/include/ClearSilver/util/neo_files.h \
+  ..//cs/include/ClearSilver/util/neo_hash.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/util/neo_hash.h \
+  ..//cs/include/ClearSilver/util/neo_rand.h \
+  ..//cs/include/ClearSilver/util/neo_net.h \
+  ..//cs/include/ClearSilver/util/neo_server.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/wildmat.h \
+  ..//cs/include/ClearSilver/util/filter.h \
+  ..//cs/include/ClearSilver/util/ulocks.h \
+  ..//cs/include/ClearSilver/util/rcfs.h \
+  ..//cs/include/ClearSilver/util/skiplist.h \
+  ..//cs/include/ClearSilver/util/dict.h \
+  ..//cs/include/ClearSilver/cs/cs.h \
+  ..//cs/include/ClearSilver/util/neo_misc.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/ulist.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/util/neo_str.h \
+  ..//cs/include/ClearSilver/cgi/cgi.h \
+  ..//cs/include/ClearSilver/util/neo_err.h \
+  ..//cs/include/ClearSilver/util/neo_hdf.h \
+  ..//cs/include/ClearSilver/cs/cs.h \
+  ..//cs/include/ClearSilver/cgi/cgiwrap.h \
+  ..//cs/include/ClearSilver/cgi/date.h \
+  ..//cs/include/ClearSilver/cgi/html.h \
+  /usr/local/mysql/include/mysql/mysql.h \
+  /usr/local/mysql/include/mysql/mysql_com.h \
+  /usr/local/mysql/include/mysql/mysql_time.h \
+  /usr/local/mysql/include/mysql/mysql_version.h \
+  /usr/local/mysql/include/mysql/typelib.h \
+  /usr/local/mysql/include/mysql/my_list.h \
+  /usr/local/mysql/include/mysql/my_alloc.h fconfig.h fjson.h futil.h \
+  ftrace.h fdb.h
