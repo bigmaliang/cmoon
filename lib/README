@@ -1,0 +1,32 @@
+用途
+===
+
+lib 目录存放 moon 依赖的公共库文件, 包含但不限于C, JS文件.
+
+
+
+目录结构
+======
+
+lib/
+|-- cs			第三方库 clearsilver 安装目录
+|-- fcgi		第三方库 fastcgi 安装目录
+|-- jsonc		第三方库 jsonc 安装目录
+:
+|-- js			公用js文件
+|   |-- own		moon 自己编写的'站点无关'的js插件
+|   `-- ref 	moon 引用的第三方js库
+|-- mnl			moon library, moon 自己编写的C库文件
+|
+`-- src			用来存编译第三方库的目录. 编译 moon 之前, 请先下载所有的第三方库源代码到本目录,
+				解压后./configure --prefix=../LIB_NAME进行编译安装(LIB_NAME为cs, fcgi之类的库名).
+
+
+约定
+===
+
+mnl 目录当前仅实现一些 moon 需要用到的基础函数, 例如cgi的日志, 数据库封装等,
+由于 moon 本身可能同时有多个站点在开发, 所以这里的函数都是'站点无关'的.
+对于特定站点的公用代码有其自身的库目录, 请不要放在mnl里.
+
+js 目录功能和编程注意事项同 mnl.
