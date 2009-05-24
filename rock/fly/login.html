@@ -1,0 +1,47 @@
+<div id="login">
+  <div id="titlelg">登录 EOL</div>
+  <form id="formlogin" class="infoform" action="/run/userlogin" method="get">
+	<input type="hidden" name="op" value="login" />
+	<input type="hidden" name="rurl" id="rurllg" value="" />
+	<ul>
+	  <li>
+		<div class="leftitem">用户号码:</div>
+		<input type="text" name="uin" id="uinlg" value="" class="is_required vint" />
+	  </li>
+	  <li>
+		<div class="leftitem">密码:</div>
+		<input type="password" name="usn" id="usnlogin" class="is_required" />
+	  </li>
+	  <li>
+		<div class="leftitem"> &nbsp; </div>
+		<input type="submit" class="submitbtn" value="提交" /> 
+	  </li>
+	</ul>
+  </form>
+</div>
+
+<div id="loggedin" class="hide">
+  欢迎回来, <span id="unamelogin"></span>
+</div>
+
+<div id="tiredlogin" class="hide">
+  <span>Hey man, I need a rest, please retry <span id="periodlogin"></span> minitus later.</span>
+</div>
+
+<div id="failurelogin" class="hide">
+  <span>出错了, 稍后再试吧. <span id="errmsglogin"></span></span>
+</div>
+
+<script language="javascript">
+  var lopt = document.loginopts;
+  if (type(lopt) == "Object") {
+    if (lopt.title != "") {
+    	$("#titlelg").text(lopt.title);
+		lopt.title = "";
+    }
+    if (lopt.rurl != "") {
+    	$("#rurllg").text(lopt.rurl);
+		lopt.rurl = "";
+    }
+  }
+</script>

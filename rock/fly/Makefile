@@ -1,13 +1,10 @@
-BASEDIR = ../
-include ../Make.env
+BASEDIR = ../../
+include $(BASEDIR)Make.env
 
-SUBDIR = daemon api test
+SUBDIR = js css
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
-
-install:
-	@$(MULTIMAKE) -m install $(SUBDIR)
 
 clean:
 	@$(MULTIMAKE) -m clean $(SUBDIR)

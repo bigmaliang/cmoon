@@ -1,13 +1,10 @@
 BASEDIR = ../
 include ../Make.env
 
-SUBDIR = daemon api test
+SUBDIR = pub walk run fly mtls pager
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
-
-install:
-	@$(MULTIMAKE) -m install $(SUBDIR)
 
 clean:
 	@$(MULTIMAKE) -m clean $(SUBDIR)

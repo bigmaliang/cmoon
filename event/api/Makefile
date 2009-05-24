@@ -1,3 +1,5 @@
+BASEDIR = ../../
+include $(BASEDIR)Make.env
 
 # prefix for installing the binaries
 PREFIX=/usr/local
@@ -33,7 +35,7 @@ ALL_CFLAGS += -g -pg -fprofile-arcs -ftest-coverage
 endif
 
 
-ALL_CFLAGS += -I../base -I../daemon -I../../libs/cs/include/ClearSilver
+ALL_CFLAGS += -I../base -I../daemon $(INC_CS)
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)
@@ -73,7 +75,7 @@ libmevent.so: mevent.h $(OBJS)
 
 libmevent.a: mevent.h $(OBJS)
 #	for php use, only linke with libmevent
-	@cp ../../libs/cs/lib/libneo_utl.a libmevent.a
+	@cp $(NEOUTL) libmevent.a
 	$(AR) cr libmevent.a $(OBJS)
 
 

@@ -1,0 +1,111 @@
+#include "mheads.h"
+
+void exiting(void)
+{
+	mcfg_leave();
+}
+
+bool mmisc_getdatetime(char *res, int len, const char *fmt, time_t second)
+{
+	memset(res, 0x0, len);
+	time_t tm = time(NULL) + second;
+	struct tm *stm = localtime(&tm);
+	if (strftime(res, len, fmt, stm) == 0)
+		return false;
+	return true;
+}
+
+int mmisc_compare_int(const void *a, const void *b)
+{
+	int *i = (int*)a;
+	int *j = (int*)b;
+	return *i-*j;
+}
+int mmisc_compare_inta(const void *a, const void *b)
+{
+	int *i = (int*)a;
+	char *j = (char*)b;
+	
+	return *i - atoi(j);
+}
+
+// extract the col NAME request by hdf from SQL statment. e.g. Hash Title Sort1 InsertTime ....
+void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_cnt)
+{
+	char src[LEN_ML], tok[LEN_ST];
+
+	int cnt = 0;
+	char *p;
+	char *b, *e, *bp;
+
+	/*
+	 * prepare src string for strtok. (exactly qrcol string without '(...)')
+	 * in : Direction, Actor, CONCAT(Sort1,';',Sort2,';',Sort3,';',Sort4,';',Sort5) AS Sort1
+	 * out: Direction, Actor, CONCAT AS Sort1
+	 * only support one level '()'
+	 */
+	memset(src, 0x0, sizeof(src));
+	b = qrcol;
+	e = strchr(qrcol, '(');
+	while (e != NULL) {
+		strncat(src, b, e-b);
+		b = strchr(e, ')')+1;
+		e = strchr(b, '(');
+	}
+	strncat(src, b, sizeof(src)-1);
+	
+	p = strtok(src, ",");
+	while (p != NULL) {
+		//mtc_noise("parse %dst token: '%s'", cnt, p);
+		memset(tok,0,sizeof(tok));
+		strncpy(tok, p, sizeof(tok)-1);
+		b = tok;
+		while(*b == '\t' || *b == ' ' || *b == '\r' || *b == '\n') {
+			b++;
+		}
+		e = tok;
+		if (strlen(tok) >= 1)
+			e += strlen(tok)-1;
+		while(*e == '\t' || *e == ' ' || *e == '\r' || *e == '\n') {
+			e--;
+		}
+		strncpy(qr_array[cnt], b, e-b+1);
+		//mtc_noise("get tok '%s'", qr_array[cnt]);
+
+		strcpy(tok, qr_array[cnt]);
+		bp = strcasestr(tok, " as ");
+		if (bp != NULL) {
+			//mtc_noise("token '%s' contain ' as '", qr_array[cnt]);
+			strncpy(qr_array[cnt], bp+4, sizeof(qr_array[cnt])-1);
+			mtc_info("get tok truely '%s'", qr_array[cnt]);
+		}
+		
+		cnt++;
+		p = strtok(NULL, ",");
+	}
+	*qr_cnt = cnt;
+}
+
+int mmisc_get_count(mdb_conn *conn, char *table, char *col)
+{
+	int count = 0;
+	mdb_exec(conn, NULL, "SELECT count(*) FROM %s WHERE %s;",
+			 NULL, table, col);
+	mdb_get(conn, "i", &count);
+	return count;
+}
+void mmisc_set_count(HDF *hdf, mdb_conn *conn, char *table, char *col)
+{
+	PRE_DBOP_NRET(hdf, conn);
+	hdf_set_int_value(hdf, PRE_OUTPUT".ttnum",
+					  mmisc_get_count(conn, table, col));
+}
+void mmisc_get_offset(HDF *hdf, int *count, int *offset)
+{
+	int i, j;
+	i = hdf_get_int_value(hdf, PRE_QUERY".npp", DFT_NUM_PERPAGE);
+	j = hdf_get_int_value(hdf, PRE_QUERY".pg", DFT_PAGE_NUM);
+	hdf_set_copy(hdf, PRE_OUTPUT".pg", PRE_QUERY".pg");
+	*count = i;
+	*offset = (j-1)*i;
+}
