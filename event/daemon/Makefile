@@ -1,3 +1,5 @@
+BASEDIR = ../../
+include $(BASEDIR)Make.env
 
 # prefix for installing the binaries
 PREFIX=/usr/local
@@ -36,8 +38,9 @@ ifdef PROFILE_USE
 ALL_CFLAGS += -fprofile-use
 endif
 
-ALL_CFLAGS += -I../daemon -I../base -I../../libs/cs/include/ClearSilver -I/usr/local/mysql/include/mysql
-LIBS = -levent -lpthread -lrt -ldl -L/usr/local/mysql/lib/mysql -lmysqlclient
+
+ALL_CFLAGS += -I../daemon -I../base $(INC_CS) $(LIB_NEOUTL_DYN) $(INC_MYSQL)
+LIBS = -levent -lpthread -lrt -ldl  $(LIB_MYSQL) $(LIB_NEOUTL_DYN)
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)
@@ -85,40 +88,40 @@ $(LIB_SERVER): $(OBJS)
 	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC -o $@ $(OBJS)
 
 mevent_%.so: ../plugin/mevent_%.c $(LIB_SERVER)
-	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC -o $@ $< -lneo_utl -L./ -lmevent_server
+	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC -o $@ $< -L./ -lmevent_server
 
 mevent: $(OBJS_BIN) $(LIB_SERVER)
-	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_BIN) -o mevent $(LIBS) -lneo_utl -L./ -lmevent_server
+	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_BIN) -o mevent $(LIBS) -L./ -lmevent_server
 
 
 install-bin: mevent
-	install -d $(PREFIX)/bin
-	install -m 0755 mevent $(PREFIX)/bin/
+	sudo install -d $(PREFIX)/bin
+	sudo install -m 0755 mevent $(PREFIX)/bin/
 
 install-man:
-	install -d $(PREFIX)/man/man1
-	install -m 0644 mevent.1 $(PREFIX)/man/man1/
+	sudo install -d $(PREFIX)/man/man1
+	sudo install -m 0644 mevent.1 $(PREFIX)/man/man1/
 
 install-lib:
-	install -d $(PREFIX)/lib
-	install -m 0644 $(LIB_SERVER) $(PREFIX)/lib/
-	install -m 0644 $(LIB_PLUGIN) $(PREFIX)/lib/
+	sudo install -d $(PREFIX)/lib
+	sudo install -m 0644 $(LIB_SERVER) $(PREFIX)/lib/
+	sudo install -m 0644 $(LIB_PLUGIN) $(PREFIX)/lib/
 
 install: install-bin install-man install-lib
 
 uninstall:
-	rm -f $(PREFIX)/bin/mevent
-	rm -f $(PREFIX)/man/man1/mevent.1
-	rm -f $(PREFIX)/lib/$(LIB_SERVER)
-	rm -f $(PREFIX)/lib/$(LIB_PLUGIN)
+	sudo rm -f $(PREFIX)/bin/mevent
+	sudo rm -f $(PREFIX)/man/man1/mevent.1
+	sudo rm -f $(PREFIX)/lib/$(LIB_SERVER)
+	sudo rm -f $(PREFIX)/lib/$(LIB_PLUGIN)
 
 clean: clean-build clean-prof
 
 clean-build:
-	rm -f $(OBJS) $(OBJS_BIN) $(LIB_PLUGIN) $(LIB_SERVER) mevent
+	sudo rm -f $(OBJS) $(OBJS_BIN) $(LIB_PLUGIN) $(LIB_SERVER) mevent
 
 clean-prof:
-	rm -f *.bb *.bbg *.da *.gcov *.gcda *.gcno gmon.out
+	sudo rm -f *.bb *.bbg *.da *.gcov *.gcda *.gcno gmon.out
 
 .PHONY: default all \
 	install-bin install-man install-lib install uninstall \

@@ -1,13 +1,10 @@
-BASEDIR = ../
-include ../Make.env
+BASEDIR = ./
+include ./Make.env
 
-SUBDIR = daemon api test
+SUBDIR = lib event rock
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
-
-install:
-	@$(MULTIMAKE) -m install $(SUBDIR)
 
 clean:
 	@$(MULTIMAKE) -m clean $(SUBDIR)

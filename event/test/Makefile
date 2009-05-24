@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -g
 
 INCS	= -I ../api -I../base
-LIBS	= -L ../api -lmevent -lneo_utl
+LIBS	= -L ../api -lmevent
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))
