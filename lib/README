@@ -9,9 +9,12 @@ lib 目录存放 moon 依赖的公共库文件, 包含但不限于C, JS文件.
 ======
 
 lib/
-|-- cs			第三方库 clearsilver 安装目录
-|-- fcgi		第三方库 fastcgi 安装目录
-|-- jsonc		第三方库 jsonc 安装目录
+|-- cs			http://www.clearsilver.net/ 安装目录
+				--disable-wdb --disable-perl --disable-ruby
+				--disable-java --disable-python
+|-- fcgi		http://www.fastcgi.com/drupal/node/5 Development Kits  安装目录
+|-- jsonc		http://oss.metaparadigm.com/json-c/ 安装目录
+|-- memc		http://tangent.org/552/libmemcached.html 安装目录
 :
 |-- js			公用js文件
 |   |-- own		moon 自己编写的'站点无关'的js插件
@@ -19,7 +22,7 @@ lib/
 |-- mnl			moon library, moon 自己编写的C库文件
 |
 `-- src			用来存编译第三方库的目录. 编译 moon 之前, 请先下载所有的第三方库源代码到本目录,
-				解压后./configure --prefix=../LIB_NAME进行编译安装(LIB_NAME为cs, fcgi之类的库名).
+				解压后./configure --prefix=.../LIB_NAME进行编译安装(LIB_NAME为cs, fcgi之类的库名).
 
 
 约定
