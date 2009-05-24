@@ -1,0 +1,25 @@
+#ifndef __LNUM_H__
+#define __LNUM_H__
+
+#include "mheads.h"
+
+__BEGIN_DECLS
+
+#define MAX_URI_ITEM	100
+#define MAX_GROUP_AUSER	100
+
+#define RET_RBTOP_LOGINUSR	2001
+#define RET_RBTOP_LOGINPSW	2002
+#define RET_RBTOP_RELEASED	2003
+
+#define RET_RBTOP_GETLISTE	2010
+
+#define RET_RBTOP_MMCERR	2020
+
+#define RET_RBTOP_NOTLOGIN	2030
+#define RET_RBTOP_LIMITE	2031
+
+#define RET_RBTOP_EXISTE	2040
+
+__END_DECLS
+#endif	/* __LNUM_H__ */

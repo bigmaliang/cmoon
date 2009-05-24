@@ -1,0 +1,44 @@
+<div id="colone">
+  <div class="title">管理用户菜单</div>
+</div>
+
+<div id="coltwo">
+  <div class="title">管理用户</div>
+  <div id="step1">
+	<form id="formalloc" class="infoform" action="/run/useradmin" method="get">
+	  <input type="hidden" name="op" value="alloc" />
+	  <ul>
+		<li>
+		  <div class="leftitem">号 码:</div>
+		  <input type="text" name="uin" value="" class="is_required vint" />
+		</li>
+		<li>
+		  <div class="leftitem">昵 称:</div>
+		  <input type="text" name="uname" value="" class="is_required" />
+		</li>
+		<li><div class="leftitem">密码:</div> <input type="password" name="usn" id="usnalloc" class="is_required" /></li>
+		<li><div class="leftitem">电子邮件:</div> <input type="text" name="email" class="vemail"/></li>
+		<li>
+		  <div class="leftitem">性 别:</div>
+		  <input type="radio" name="male" value="1" checked="checked" />男
+		  <input type="radio" name="male" value="0" />女
+		</li>
+		<li>
+		  <div class="leftitem"> &nbsp; </div>
+		  <input type="submit" class="submitbtn" value="提交" />
+		</li>
+	  </ul>
+	</form>
+  </div>
+
+  <div id="step2" class="hide">
+	号码 <span id="accountalloc"></span> 分配成功.
+  </div>
+
+  <div id="tiredalloc" class="hide">
+	<span>Hey man, I need a rest, please retry <span id="periodalloc"></span> minitus later.</span>
+  </div>
+  <div id="failurealloc" class="hide">
+	<span>出错了, 稍后再试吧. <span id="errmsgalloc"></span></span>
+  </div>
+</div>

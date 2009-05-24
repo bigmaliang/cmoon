@@ -1,0 +1,2 @@
+psql -U mner -d mn_user
+/usr/local/bin/memcached -d -m 64 -p 11211 -u nobody -l 127.0.0.1
