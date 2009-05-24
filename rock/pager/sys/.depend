@@ -53,7 +53,6 @@ pglimit.o: pglimit.c ../../../lib/mnl/mheads.h \
   ../../../lib/mnl/mtrace.h ../../../lib/mnl/mcs.h \
   ../../../lib/mnl/mmemc.h ../../../lib/mnl/mjson.h \
   ../../../lib/mnl/mutil.h ../../../lib/mnl/mdb.h \
-  ../../../lib/mnl/mmisc.h ../../../rock/pub/lheads.h \
-  ../../../rock/pub/lcfg.h ../../../rock/pub/lnum.h \
-  ../../../rock/pub/ltypes.h ../../../rock/pub/ldb.h \
-  ../../../rock/pub/lcs.h ../../../rock/pub/lutil.h
+  ../../../lib/mnl/mmisc.h ../../pub/lheads.h ../../pub/lcfg.h \
+  ../../pub/lnum.h ../../pub/ltypes.h ../../pub/ldb.h ../../pub/lcs.h \
+  ../../pub/lutil.h
