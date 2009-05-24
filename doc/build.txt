@@ -1,0 +1,26 @@
+编译
+===
+
+moon 依赖于以下库:
+
+1, 比较通用的库(mysql, sqlite, postgresql), 请在 moon/Make.env 中修改这些库的路径
+   (当前可以通过 make NPG=1 去掉 postgresql 依赖)
+2, moon 依赖的特定第三方库, 编译整个目录之前, 请阅读 lib/README 编译好相应的依赖库先:)
+3, moon/event 依赖 clearsilver 的 libneo_utl.so 动态库(因为其动态插件需求),
+   所以请先将 lib/src/clearsilver/utl/libneo_utl.so 编译出来放到 /usr/local/lib下
+
+做好这些依赖库的编译和安装后, moon 目录下可以直接 make
+
+
+
+编译选项
+======
+
+make cflag(o)	显示当前目录编译的 gcc 相关参数
+make clean		清扫当前目录
+make backup		备份当前目录, 备份前会先清扫
+
+make RLS=1		编译去掉调试信息的release版本, 包含js文件用jsmin合成
+make NPG=1(o)	去掉对 lib/mnl 中 数据库后端对postgresql的支持
+
+注: (o) 表示不是所有的目录都有此编译选项
