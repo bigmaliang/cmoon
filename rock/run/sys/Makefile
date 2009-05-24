@@ -1,0 +1,45 @@
+BASEDIR = ../../../
+include $(BASEDIR)Make.env
+LOCALBASE = ../../
+include $(LOCALBASE)Make.env
+
+INCS	= $(INC_PUB) $(INC_ROBOT) $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON)
+LIBS	= $(LIB_ROBOT) $(LIB_PUB) $(LIB_ROBOT) $(LIB_MNL) $(LIB_MEMC) $(LIB_CS) $(LIB_JSON) $(LIB_SYSTEM)
+
+SOURCES = $(wildcard *.c)
+BINARY = $(patsubst %.c, %, $(SOURCES))
+DEPEND = .depend
+
+all: preload $(BINARY)
+
+$(DEPEND): $(SOURCES)
+	@$(CC) $(CFLAGS) -MM $^ $(INCS) > $@
+
+preload:
+	@$(MAKE) -C $(MNLBASE)
+	@$(MAKE) -C $(PUBBASE)
+	@$(MAKE) -C $(ROBOTBASE)
+
+include $(DEPEND)
+%:%.c
+	@if [ "$<" = `ls *.c|awk '{print $1}'|sed -n '1p'` ]; then \
+		echo "=== "$(CFLAGS); \
+		echo "=== "$(INCS); \
+		echo "=== "$(LIBS); fi
+	@echo "$(CC) -o $@"
+	@$(CC) $(CFLAGS) $< -o $@ $(INCS) ${LIBS}
+
+cflag:
+	@echo "=== "$(CFLAGS)
+	@echo "=== "$(INCS)
+
+install:all
+	@mkdir -p -m 775 $(PATH_FRT_CGI)
+	@strip $(BINARY)
+	@cp $(BINARY) $(PATH_FRT_CGI)/
+	@chmod a+x $(PATH_FRT_CGI)/$(BINARY)
+clean:
+	@rm -rf ${BINARY}
+distclean:
+	@rm -rf $(PATH_FRT_CGI)/*
+	@rm -rf ${BINARY}
