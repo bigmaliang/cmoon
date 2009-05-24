@@ -1,7 +1,8 @@
-BASEDIR = ../../
+BASEDIR = ../../../
+include ../../../Make.env
 include ../../Make.env
 
-INCS	= $(INC_HFL) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM)
+INCS	= $(INC_LPUB) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM)
 
 SOURCES = $(wildcard *.c)
 OBJS	= $(patsubst %.c, %.o, $(SOURCES))

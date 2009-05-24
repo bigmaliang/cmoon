@@ -1,30 +1,8 @@
-CC = gcc
-AR = ar
-MAKE = make
-MKDIR = --no-print-directory
-RANLIB = ranlib
+BASEDIR = ../../../
+include ../../../Make.env
+include ../../Make.env
 
-ifeq ($(RLS), 1)
-CFLAGS = -Wall -O3 -DRELEASE
-STRIP = strip
-else
-CFLAGS = -g -Wall -DDEBUG_HDF
-STRIP = touch
-endif
-
-BASEDIR = ../
-HFLBASE = $(BASEDIR)/hifly
-CSBASE = $(BASEDIR)/cs
-JSONBASE = $(BASEDIR)/jsonc
-FCGIBASE = $(BASEDIR)/fcgi
-
-INC_HFL = -I$(HFLBASE)
-INC_CS = -I$(CSBASE)/include/ClearSilver
-INC_JSON = -I$(JSONBASE)/include/json
-INC_FCGI = -I$(FCGIBASE)/include
-INC_SYSTEM = -I/usr/local/mysql/include/mysql
-
-INCS	= $(INC_HFL) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM)
+INCS	= $(INC_LPUB) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM)
 
 SOURCES = $(wildcard *.c)
 OBJS	= $(patsubst %.c, %.o, $(SOURCES))
