@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024px"
+   height="768px"
+   id="svg2426"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="top.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/bigml/web/ksa/src/front/htdocs/images/top.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs2428">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 384 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1024 : 384 : 1"
+       inkscape:persp3d-origin="512 : 256 : 1"
+       id="perspective2434" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="700.18966"
+     inkscape:cy="480.65138"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:window-width="1016"
+     inkscape:window-height="704"
+     inkscape:window-x="0"
+     inkscape:window-y="0" />
+  <metadata
+     id="metadata2431">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <image
+       xlink:href="banner.png"
+       sodipodi:absref="/home/bigml/ksa/src/front/htdocs/images/banner.png"
+       width="960"
+       height="80"
+       id="image2392"
+       x="32"
+       y="264"
+       inkscape:export-filename="/home/bigml/ksa/src/front/htdocs/images/top.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:27.87579727px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:0.26666667;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Charter;-inkscape-font-specification:Bitstream Charter"
+       x="657.49774"
+       y="339.04526"
+       id="text2394"
+       transform="scale(1.0478174,0.9543648)"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2396"
+         x="657.49774"
+         y="339.04526">welcome</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:39.22037888px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#660000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif"
+       x="1063.5895"
+       y="259.20099"
+       id="text2383"
+       sodipodi:linespacing="100%"
+       transform="scale(0.7933174,1.2605295)"><tspan
+         sodipodi:role="line"
+         id="tspan2385"
+         x="1063.5895"
+         y="259.20099">osher</tspan></text>
+    <rect
+       y="307.32617"
+       x="959.53595"
+       height="19.550774"
+       width="7.8394284"
+       id="rect3178"
+       style="opacity:1;fill:#666561;fill-opacity:1;display:inline" />
+    <rect
+       style="opacity:1;fill:#666561;fill-opacity:1;display:inline"
+       id="rect3180"
+       width="7.8394284"
+       height="19.550774"
+       x="971.16058"
+       y="307.32617" />
+    <text
+       xml:space="preserve"
+       style="font-size:26.60495377px;font-style:normal;font-weight:normal;fill:#666561;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="794.16608"
+       y="385.33331"
+       id="text3603"
+       transform="scale(1.1779904,0.8489033)"><tspan
+         sodipodi:role="line"
+         id="tspan3605"
+         x="794.16608"
+         y="385.33331">a</tspan></text>
+    <text
+       transform="scale(0.820844,1.2182583)"
+       sodipodi:linespacing="100%"
+       id="text3607"
+       y="268.76938"
+       x="979.27759"
+       style="font-size:58.61185074px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:#660000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Bitstream Vera Serif;-inkscape-font-specification:Bitstream Vera Serif"
+       xml:space="preserve"><tspan
+         dx="0"
+         y="268.76938"
+         x="979.27759"
+         id="tspan3609"
+         sodipodi:role="line">K</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="854"
+       y="363"
+       id="text3611"><tspan
+         sodipodi:role="line"
+         id="tspan3613" /></text>
+  </g>
+</svg>

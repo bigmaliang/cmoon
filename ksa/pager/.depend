@@ -1,0 +1,324 @@
+about.o: about.c ../../lib/mnl/mheads.h \
+  ../../lib/cs/include/ClearSilver/ClearSilver.h \
+  ../../lib/cs/include/ClearSilver/cs_config.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_date.h \
+  ../../lib/cs/include/ClearSilver/util/neo_files.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_rand.h \
+  ../../lib/cs/include/ClearSilver/util/neo_net.h \
+  ../../lib/cs/include/ClearSilver/util/neo_server.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/wildmat.h \
+  ../../lib/cs/include/ClearSilver/util/filter.h \
+  ../../lib/cs/include/ClearSilver/util/ulocks.h \
+  ../../lib/cs/include/ClearSilver/util/rcfs.h \
+  ../../lib/cs/include/ClearSilver/util/skiplist.h \
+  ../../lib/cs/include/ClearSilver/util/dict.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
+  ../../lib/cs/include/ClearSilver/cgi/date.h \
+  ../../lib/cs/include/ClearSilver/cgi/html.h \
+  ../../lib/memc/include/libmemcached/memcached.h \
+  ../../lib/memc/include/libmemcached/libmemcached_config.h \
+  ../../lib/memc/include/libmemcached/memcached_constants.h \
+  ../../lib/memc/include/libmemcached/memcached_types.h \
+  ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
+  ../../lib/memc/include/libmemcached/memcached_get.h \
+  ../../lib/memc/include/libmemcached/memcached_server.h \
+  ../../lib/memc/include/libmemcached/memcached_string.h \
+  ../../lib/memc/include/libmemcached/memcached_result.h \
+  ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/jsonc/include/json/debug.h \
+  ../../lib/jsonc/include/json/linkhash.h \
+  ../../lib/jsonc/include/json/arraylist.h \
+  ../../lib/jsonc/include/json/json_util.h \
+  ../../lib/jsonc/include/json/json_object.h \
+  ../../lib/jsonc/include/json/json_tokener.h ../../lib/mnl/mnum.h \
+  ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
+  ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
+  ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
+  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
+  ../pub/ldb.h ../pub/lcs.h
+dld.o: dld.c ../../lib/mnl/mheads.h \
+  ../../lib/cs/include/ClearSilver/ClearSilver.h \
+  ../../lib/cs/include/ClearSilver/cs_config.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_date.h \
+  ../../lib/cs/include/ClearSilver/util/neo_files.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_rand.h \
+  ../../lib/cs/include/ClearSilver/util/neo_net.h \
+  ../../lib/cs/include/ClearSilver/util/neo_server.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/wildmat.h \
+  ../../lib/cs/include/ClearSilver/util/filter.h \
+  ../../lib/cs/include/ClearSilver/util/ulocks.h \
+  ../../lib/cs/include/ClearSilver/util/rcfs.h \
+  ../../lib/cs/include/ClearSilver/util/skiplist.h \
+  ../../lib/cs/include/ClearSilver/util/dict.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
+  ../../lib/cs/include/ClearSilver/cgi/date.h \
+  ../../lib/cs/include/ClearSilver/cgi/html.h \
+  ../../lib/memc/include/libmemcached/memcached.h \
+  ../../lib/memc/include/libmemcached/libmemcached_config.h \
+  ../../lib/memc/include/libmemcached/memcached_constants.h \
+  ../../lib/memc/include/libmemcached/memcached_types.h \
+  ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
+  ../../lib/memc/include/libmemcached/memcached_get.h \
+  ../../lib/memc/include/libmemcached/memcached_server.h \
+  ../../lib/memc/include/libmemcached/memcached_string.h \
+  ../../lib/memc/include/libmemcached/memcached_result.h \
+  ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/jsonc/include/json/debug.h \
+  ../../lib/jsonc/include/json/linkhash.h \
+  ../../lib/jsonc/include/json/arraylist.h \
+  ../../lib/jsonc/include/json/json_util.h \
+  ../../lib/jsonc/include/json/json_object.h \
+  ../../lib/jsonc/include/json/json_tokener.h ../../lib/mnl/mnum.h \
+  ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
+  ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
+  ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
+  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
+  ../pub/ldb.h ../pub/lcs.h
+index.o: index.c ../../lib/mnl/mheads.h \
+  ../../lib/cs/include/ClearSilver/ClearSilver.h \
+  ../../lib/cs/include/ClearSilver/cs_config.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_date.h \
+  ../../lib/cs/include/ClearSilver/util/neo_files.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_rand.h \
+  ../../lib/cs/include/ClearSilver/util/neo_net.h \
+  ../../lib/cs/include/ClearSilver/util/neo_server.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/wildmat.h \
+  ../../lib/cs/include/ClearSilver/util/filter.h \
+  ../../lib/cs/include/ClearSilver/util/ulocks.h \
+  ../../lib/cs/include/ClearSilver/util/rcfs.h \
+  ../../lib/cs/include/ClearSilver/util/skiplist.h \
+  ../../lib/cs/include/ClearSilver/util/dict.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
+  ../../lib/cs/include/ClearSilver/cgi/date.h \
+  ../../lib/cs/include/ClearSilver/cgi/html.h \
+  ../../lib/memc/include/libmemcached/memcached.h \
+  ../../lib/memc/include/libmemcached/libmemcached_config.h \
+  ../../lib/memc/include/libmemcached/memcached_constants.h \
+  ../../lib/memc/include/libmemcached/memcached_types.h \
+  ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
+  ../../lib/memc/include/libmemcached/memcached_get.h \
+  ../../lib/memc/include/libmemcached/memcached_server.h \
+  ../../lib/memc/include/libmemcached/memcached_string.h \
+  ../../lib/memc/include/libmemcached/memcached_result.h \
+  ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/jsonc/include/json/debug.h \
+  ../../lib/jsonc/include/json/linkhash.h \
+  ../../lib/jsonc/include/json/arraylist.h \
+  ../../lib/jsonc/include/json/json_util.h \
+  ../../lib/jsonc/include/json/json_object.h \
+  ../../lib/jsonc/include/json/json_tokener.h ../../lib/mnl/mnum.h \
+  ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
+  ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
+  ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
+  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
+  ../pub/ldb.h ../pub/lcs.h
+kosher.o: kosher.c ../../lib/mnl/mheads.h \
+  ../../lib/cs/include/ClearSilver/ClearSilver.h \
+  ../../lib/cs/include/ClearSilver/cs_config.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_date.h \
+  ../../lib/cs/include/ClearSilver/util/neo_files.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_rand.h \
+  ../../lib/cs/include/ClearSilver/util/neo_net.h \
+  ../../lib/cs/include/ClearSilver/util/neo_server.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/wildmat.h \
+  ../../lib/cs/include/ClearSilver/util/filter.h \
+  ../../lib/cs/include/ClearSilver/util/ulocks.h \
+  ../../lib/cs/include/ClearSilver/util/rcfs.h \
+  ../../lib/cs/include/ClearSilver/util/skiplist.h \
+  ../../lib/cs/include/ClearSilver/util/dict.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
+  ../../lib/cs/include/ClearSilver/cgi/date.h \
+  ../../lib/cs/include/ClearSilver/cgi/html.h \
+  ../../lib/memc/include/libmemcached/memcached.h \
+  ../../lib/memc/include/libmemcached/libmemcached_config.h \
+  ../../lib/memc/include/libmemcached/memcached_constants.h \
+  ../../lib/memc/include/libmemcached/memcached_types.h \
+  ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
+  ../../lib/memc/include/libmemcached/memcached_get.h \
+  ../../lib/memc/include/libmemcached/memcached_server.h \
+  ../../lib/memc/include/libmemcached/memcached_string.h \
+  ../../lib/memc/include/libmemcached/memcached_result.h \
+  ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/jsonc/include/json/debug.h \
+  ../../lib/jsonc/include/json/linkhash.h \
+  ../../lib/jsonc/include/json/arraylist.h \
+  ../../lib/jsonc/include/json/json_util.h \
+  ../../lib/jsonc/include/json/json_object.h \
+  ../../lib/jsonc/include/json/json_tokener.h ../../lib/mnl/mnum.h \
+  ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
+  ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
+  ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
+  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
+  ../pub/ldb.h ../pub/lcs.h
+process.o: process.c ../../lib/mnl/mheads.h \
+  ../../lib/cs/include/ClearSilver/ClearSilver.h \
+  ../../lib/cs/include/ClearSilver/cs_config.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_date.h \
+  ../../lib/cs/include/ClearSilver/util/neo_files.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_rand.h \
+  ../../lib/cs/include/ClearSilver/util/neo_net.h \
+  ../../lib/cs/include/ClearSilver/util/neo_server.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/wildmat.h \
+  ../../lib/cs/include/ClearSilver/util/filter.h \
+  ../../lib/cs/include/ClearSilver/util/ulocks.h \
+  ../../lib/cs/include/ClearSilver/util/rcfs.h \
+  ../../lib/cs/include/ClearSilver/util/skiplist.h \
+  ../../lib/cs/include/ClearSilver/util/dict.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
+  ../../lib/cs/include/ClearSilver/cgi/date.h \
+  ../../lib/cs/include/ClearSilver/cgi/html.h \
+  ../../lib/memc/include/libmemcached/memcached.h \
+  ../../lib/memc/include/libmemcached/libmemcached_config.h \
+  ../../lib/memc/include/libmemcached/memcached_constants.h \
+  ../../lib/memc/include/libmemcached/memcached_types.h \
+  ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
+  ../../lib/memc/include/libmemcached/memcached_get.h \
+  ../../lib/memc/include/libmemcached/memcached_server.h \
+  ../../lib/memc/include/libmemcached/memcached_string.h \
+  ../../lib/memc/include/libmemcached/memcached_result.h \
+  ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/jsonc/include/json/debug.h \
+  ../../lib/jsonc/include/json/linkhash.h \
+  ../../lib/jsonc/include/json/arraylist.h \
+  ../../lib/jsonc/include/json/json_util.h \
+  ../../lib/jsonc/include/json/json_object.h \
+  ../../lib/jsonc/include/json/json_tokener.h ../../lib/mnl/mnum.h \
+  ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
+  ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
+  ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
+  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
+  ../pub/ldb.h ../pub/lcs.h
+query.o: query.c ../../lib/mnl/mheads.h \
+  ../../lib/cs/include/ClearSilver/ClearSilver.h \
+  ../../lib/cs/include/ClearSilver/cs_config.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_date.h \
+  ../../lib/cs/include/ClearSilver/util/neo_files.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hash.h \
+  ../../lib/cs/include/ClearSilver/util/neo_rand.h \
+  ../../lib/cs/include/ClearSilver/util/neo_net.h \
+  ../../lib/cs/include/ClearSilver/util/neo_server.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
+  ../../lib/cs/include/ClearSilver/util/wildmat.h \
+  ../../lib/cs/include/ClearSilver/util/filter.h \
+  ../../lib/cs/include/ClearSilver/util/ulocks.h \
+  ../../lib/cs/include/ClearSilver/util/rcfs.h \
+  ../../lib/cs/include/ClearSilver/util/skiplist.h \
+  ../../lib/cs/include/ClearSilver/util/dict.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
+  ../../lib/cs/include/ClearSilver/cgi/date.h \
+  ../../lib/cs/include/ClearSilver/cgi/html.h \
+  ../../lib/memc/include/libmemcached/memcached.h \
+  ../../lib/memc/include/libmemcached/libmemcached_config.h \
+  ../../lib/memc/include/libmemcached/memcached_constants.h \
+  ../../lib/memc/include/libmemcached/memcached_types.h \
+  ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
+  ../../lib/memc/include/libmemcached/memcached_get.h \
+  ../../lib/memc/include/libmemcached/memcached_server.h \
+  ../../lib/memc/include/libmemcached/memcached_string.h \
+  ../../lib/memc/include/libmemcached/memcached_result.h \
+  ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/jsonc/include/json/debug.h \
+  ../../lib/jsonc/include/json/linkhash.h \
+  ../../lib/jsonc/include/json/arraylist.h \
+  ../../lib/jsonc/include/json/json_util.h \
+  ../../lib/jsonc/include/json/json_object.h \
+  ../../lib/jsonc/include/json/json_tokener.h ../../lib/mnl/mnum.h \
+  ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
+  ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
+  ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
+  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
+  ../pub/ldb.h ../pub/lcs.h

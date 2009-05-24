@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="keywords" content="kosher, 犹太, 洁食, 认证" />
+<meta name="description" content="kosher认证" />
+<title>kosher认证 - 首页</title>
+
+<link rel="icon" href="/favicon.ico" type="image/ico" />
+
+<link rel="stylesheet" type="text/css" href="/css/index.css" />
+
+
+
+
+<script type="text/javascript">
+
+</script>
+</head>
+
+<body>
+<div id="top"></div>
+
+<div id="mid">
+  <div id="header">
+    <ul id="global-nav">
+      
+      <li class=""><a href="/index.html">首页</a></li>
+      
+      <li class=""><a href="/kosher.html">kosher知识</a></li>
+      
+      <li class=""><a href="/process.html">申请流程</a></li>
+      
+      <li class=""><a href="/dld.html">获取申请表</a></li>
+      
+      <li class="selected"><a href="/query.html">已认证产品查询</a></li>
+      
+      <li class=""><a href="/about.html">联系我们</a></li>
+      
+    </ul>
+      
+    <ul id="personaltools">
+	  <!--
+      <li>欢迎 <span id="unameLayout"></span> (<span id="uinLayout"></span>)</li>
+      <li><a href="/member">进入个人中心</a></li>
+      <li><a href="/logout">退出登录</a></li>
+      <li>您还没有登录</li>
+      <li><a href="/login">登录</a></li>
+      <li><a href="/regist">注册</a></li>
+      <li><a href="/forget">忘记密码</a></li>
+	  -->
+    </ul>
+
+    <div id="crumbs">
+	  您当前的位置:
+      
+      &raquo;<a href="/query.html">已认证产品查询</a>
+      
+    </div>
+  </div> <!-- header -->
+  
+  <div id="content">
+	<div id="colone">
+  <div class="title">常见问题</div>
+  <div class="listcon">
+	<ul>
+	  <li><a href="/kosher.html#who">什么是Kosher认证？</a></li>
+	  <li><a href="/process.html#how">如何进行kosher认证？</a></li>
+	  <li><a href="/process.html#apply">申请流程</a></li>
+	</ul>
+  </div>
+  <div class="sep"></div>
+  <img src="/pic/query.jpg" />
+</div>
+
+
+<div id="coltwo">
+  <div class="title">Kosher已认证产品查询</div>
+  <div class="sep"></div>
+  <input type="text" id="inp_sc" />
+  <input type="button" value="搜索" onclick="SearchB2B();"></input>
+  <!--<div class="sep"></div>
+	  认证食品搜索结果数: <span id="TI">0</span>-->
+  <div class="sep"></div>
+  <div id="res_sc"></div>
+  <script type="text/javascript">
+	function SearchB2B()
+	{
+	var inpsc = document.getElementById('inp_sc').value;
+	if (inpsc.length < 1) {
+	alert("请输入要查询的内容");
+	return;
+	}
+	document.getElementById("res_sc").innerHTML = "<iframe name='b2bkosher' align='middle' marginwidth='0' marginheight='0' src='http://www.b2bkosher.com/productsearchresult.php?n="+escape(inpsc)+"' frameborder='no' scrolling='auto' width='400' height='200'></iframe>'";
+	}
+  </script>
+
+  <!--<iframe name="b2bkosher" align="middle" marginwidth="0" marginheight="0" vspace="-800" hspace="0" src="http://www.b2bkosher.com/" frameborder="no" scrolling="no" width="776" height="2500"></iframe>-->
+</div>
+
+	
+    <div class="clearer"></div>
+  </div> <!-- content -->
+</div> <!-- mid -->
+
+<div id="bot">
+  <p style="text-indent: 0;">版权所有 &copy; 2008 KosherAll<br />
+  Email: info@kosherall.com.cn<br />
+  QQ: 308768068 &nbsp;&nbsp; Msn:kosherall@hotmail.com <br />
+  <a target="_blank" href="http://www.miibeian.gov.cn/">粤ICP备08103574号</a>
+  <span style="display:none">
+  <script language="javascript" type="text/javascript" src="http://js.users.51.la/2144331.js"></script>
+  </span>
+</p>
+</div>
+
+</body>
+</html>

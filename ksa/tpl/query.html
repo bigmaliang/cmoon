@@ -1,0 +1,37 @@
+<div id="colone">
+  <div class="title">常见问题</div>
+  <div class="listcon">
+	<ul>
+	  <li><a href="/kosher.html#who">什么是Kosher认证？</a></li>
+	  <li><a href="/process.html#how">如何进行kosher认证？</a></li>
+	  <li><a href="/process.html#apply">申请流程</a></li>
+	</ul>
+  </div>
+  <div class="sep"></div>
+  <img src="/pic/query.jpg" />
+</div>
+
+
+<div id="coltwo">
+  <div class="title">Kosher已认证产品查询</div>
+  <div class="sep"></div>
+  <input type="text" id="inp_sc" />
+  <input type="button" value="搜索" onclick="SearchB2B();"></input>
+  <!--<div class="sep"></div>
+	  认证食品搜索结果数: <span id="TI">0</span>-->
+  <div class="sep"></div>
+  <div id="res_sc"></div>
+  <script type="text/javascript">
+	function SearchB2B()
+	{
+	var inpsc = document.getElementById('inp_sc').value;
+	if (inpsc.length < 1) {
+	alert("请输入要查询的内容");
+	return;
+	}
+	document.getElementById("res_sc").innerHTML = "<iframe name='b2bkosher' align='middle' marginwidth='0' marginheight='0' src='http://www.b2bkosher.com/productsearchresult.php?n="+escape(inpsc)+"' frameborder='no' scrolling='auto' width='400' height='200'></iframe>'";
+	}
+  </script>
+
+  <!--<iframe name="b2bkosher" align="middle" marginwidth="0" marginheight="0" vspace="-800" hspace="0" src="http://www.b2bkosher.com/" frameborder="no" scrolling="no" width="776" height="2500"></iframe>-->
+</div>

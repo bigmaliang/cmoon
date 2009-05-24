@@ -1,0 +1,101 @@
+#comments pre {
+                border: 0px none;
+                color: #112222;
+                background-color: #FFFFFF;
+                margin: 0;
+                overflow: auto;
+}
+
+.cmtLevel0 {
+	margin: 0 0 20px 0;
+}
+.cmtChild {
+            margin: 5px 0;
+}
+.cmtContent {
+	border: 1px solid #666666;
+	border-top: none;
+	padding: 10px;
+	clear: both;
+}
+.cmtChild .cmtContent {
+    border-left: 1px dashed #666666;
+    border-right: 1px dashed #666666;
+    -moz-border-radius-bottomleft: 10px;
+    -moz-border-radius-bottomright: 10px;
+}
+.cmtChild .cmtTitle {
+                      background-color: #eeeeee;
+                      border-bottom: 0px;
+}
+
+.cmtTitle {
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    background-color: #b3b2ad;
+    border: 1px solid #666666;
+    padding: 2px 0 2px 10px;
+	font-weight: bold;
+	color: #555555;
+	height: 22px;
+	overflow: hidden;
+}
+
+.cmtSerial {
+	font: Georgia, "Times New Roman", Times, serif;
+    font-size: 135%;
+    font-style: italic;
+	color: #333333;
+/*	display: block;*/
+	width: 30px;
+/*	text-align: center;*/
+	float: left;
+	letter-spacing: -1px;
+	padding-bottom: 2px;
+}
+.cmtUser {
+	padding-top: 3px;
+	float: left;
+}
+.cmtTime {
+           float: left;
+           margin-left: 10px;
+           padding-top: 3px;
+           color: #999999;
+}
+a.cmtReply {
+             float: left;
+             margin-left: 10px;
+             padding-top: 3px;
+/*    font-weight: bold;*/
+}
+a.cmtToggle {
+	padding-top: 3px;
+	float: right;
+	padding-right: 10px;
+	text-decoration:none;
+}
+
+#comment_add {
+	width: 510px;
+    display: none;
+}
+#comment_add ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#comment_add li {
+	padding: 5px 0;
+}
+#comment_add label {
+	font-size: 1.1em;
+	padding: 3px 10px 3px 0;
+	color: #666666;
+}
+#comment_add .doAdd {
+	width: 90px;
+}
+#comment_add textarea {
+	width: 500px;
+}
