@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	}
 
 	lcs_set_layout_infoa(hdf, "Easy Our Life", g_crumbs, g_nav, NAV_NUM);
-	//hdf_set_value(hdf, PRE_INCLUDE".coltwo", PATH_FRT_TPL"index.html");
+	//hdf_set_value(hdf, PRE_INCLUDE".coltwo", PATH_TPL"index.html");
 
 	err = cs_init(&cs, hdf);
 	DIE_NOK_MTL(err);
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	err = cs_render(cs, &str, mcs_strcb);
 	DIE_NOK_MTL(err);
 
-	if(!mcs_str2file(str, PATH_FRT_DOC"index.html")) {
+	if(!mcs_str2file(str, PATH_DOC"index.html")) {
 		mtc_err("write result to out file failure");
 	}
 

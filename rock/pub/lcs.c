@@ -8,7 +8,7 @@ int lcs_set_layout_infoa(HDF *hdf, const char *title, anchor_t *crumbs,
 	NEOERR *err;
 	int i;
 
-	hdf_set_value(hdf, "hdf.loadpaths.0", PATH_FRT_TPL);
+	hdf_set_value(hdf, "hdf.loadpaths.0", PATH_TPL);
 	hdf_set_value(hdf, PRE_LAYOUT".title", title);
 	//ret = mcs_set_login_info(hdf);
 

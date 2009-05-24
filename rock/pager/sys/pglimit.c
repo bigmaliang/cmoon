@@ -22,9 +22,9 @@ int main(int argc, char *argv[])
 	}
 
 	lcs_set_layout_infoa(hdf, "Easy Our Life", g_crumbs, g_nav, NAV_NUM);
-	//hdf_set_value(hdf, PRE_INCLUDE".css", PATH_FRT_TPL"sys/limit.css.html");
-	hdf_set_value(hdf, PRE_INCLUDE".js", PATH_FRT_TPL"sys/limit.js.html");
-	hdf_set_value(hdf, PRE_INCLUDE".content", PATH_FRT_TPL"sys/limit.html");
+	//hdf_set_value(hdf, PRE_INCLUDE".css", PATH_TPL"sys/limit.css.html");
+	hdf_set_value(hdf, PRE_INCLUDE".js", PATH_TPL"sys/limit.js.html");
+	hdf_set_value(hdf, PRE_INCLUDE".content", PATH_TPL"sys/limit.html");
 
 	err = cs_init(&cs, hdf);
 	DIE_NOK_MTL(err);
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	err = cs_render(cs, &str, mcs_strcb);
 	DIE_NOK_MTL(err);
 
-	if(!mcs_str2file(str, PATH_FRT_DOC"sys/limit.html")) {
+	if(!mcs_str2file(str, PATH_DOC"sys/limit.html")) {
 		mtc_err("write result to out file failure");
 	}
 

@@ -28,12 +28,12 @@ cflag:
 	@echo "=== "$(CFLAGS)
 	@echo "=== "$(INCS)
 install:all
-	@mkdir -p -m 775 $(PATH_FRT_MTLS)
+	@mkdir -p -m 775 $(PATH_MTLS)
 	@strip $(BINARY)
-	@cp $(BINARY) $(PATH_FRT_MTLS)/
-	@chmod a+x $(PATH_FRT_MTLS)/$(BINARY)
+	@cp $(BINARY) $(PATH_MTLS)/
+	@chmod a+x $(PATH_MTLS)/$(BINARY)
 clean:
 	@rm -rf ${BINARY}
 distclean:
-	@rm -rf $(PATH_FRT_MTLS)/*
+	@rm -rf $(PATH_MTLS)/*
 	@rm -rf ${BINARY}

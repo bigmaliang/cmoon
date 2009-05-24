@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
 	} else {
 		json = false;
 		lcs_set_layout_infoa(cgi->hdf, "管理用户号码", g_crumbs, g_nav, NAV_NUM);
-		hdf_set_value(cgi->hdf, PRE_LAYOUT".js", PATH_FRT_TPL"alloc.js");
-		hdf_set_value(cgi->hdf, PRE_INCLUDE".content", PATH_FRT_TPL"alloc.html");
+		hdf_set_value(cgi->hdf, PRE_LAYOUT".js", PATH_TPL"alloc.js");
+		hdf_set_value(cgi->hdf, PRE_INCLUDE".content", PATH_TPL"alloc.html");
 
 		err = cgi_display(cgi, F_TPL_LAYOUT);
 		DIE_NOK_CGI(err);

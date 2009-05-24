@@ -23,9 +23,9 @@ int main(int argc, char *argv[])
 	}
 
 	lcs_set_layout_infoa(hdf, "Baby, join me in death", g_crumbs, g_nav, NAV_NUM);
-	hdf_set_value(hdf, PRE_INCLUDE".css", PATH_FRT_TPL"regist.css.html");
-	hdf_set_value(hdf, PRE_INCLUDE".js", PATH_FRT_TPL"regist.js.html");
-	hdf_set_value(hdf, PRE_INCLUDE".content", PATH_FRT_TPL"regist.html");
+	hdf_set_value(hdf, PRE_INCLUDE".css", PATH_TPL"regist.css.html");
+	hdf_set_value(hdf, PRE_INCLUDE".js", PATH_TPL"regist.js.html");
+	hdf_set_value(hdf, PRE_INCLUDE".content", PATH_TPL"regist.html");
 
 	err = cs_init(&cs, hdf);
 	DIE_NOK_MTL(err);
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	err = cs_render(cs, &str, mcs_strcb);
 	DIE_NOK_MTL(err);
 
-	if(!mcs_str2file(str, PATH_FRT_DOC"regist.html")) {
+	if(!mcs_str2file(str, PATH_DOC"regist.html")) {
 		mtc_err("write result to out file failure");
 	}
 

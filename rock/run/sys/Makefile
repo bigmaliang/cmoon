@@ -34,12 +34,12 @@ cflag:
 	@echo "=== "$(INCS)
 
 install:all
-	@mkdir -p -m 775 $(PATH_FRT_CGI)
+	@mkdir -p -m 775 $(PATH_CGI)
 	@strip $(BINARY)
-	@cp $(BINARY) $(PATH_FRT_CGI)/
-	@chmod a+x $(PATH_FRT_CGI)/$(BINARY)
+	@cp $(BINARY) $(PATH_CGI)/
+	@chmod a+x $(PATH_CGI)/$(BINARY)
 clean:
 	@rm -rf ${BINARY}
 distclean:
-	@rm -rf $(PATH_FRT_CGI)/*
+	@rm -rf $(PATH_CGI)/*
 	@rm -rf ${BINARY}

@@ -43,5 +43,5 @@ clean:
 	@rm -rf ${BINARY}
 	@$(MAKE) -C sys clean
 #distclean:
-#	@rm -rf $(PATH_FRT_MTLS)/*
+#	@rm -rf $(PATH_MTLS)/*
 #	@rm -rf ${BINARY}
