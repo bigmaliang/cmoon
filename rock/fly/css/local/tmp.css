@@ -1,0 +1,98 @@
+<style type="text/css">
+
+/*Credits: Dynamic Drive CSS Library */
+/*URL: http://www.dynamicdrive.com/style/ */
+
+a.squarebutton{
+background: transparent url('media/square-gray-left.gif') no-repeat top left;
+display: block;
+float: left;
+font: normal 12px Arial; /* Change 12px as desired */
+line-height: 15px; /* This value + 4px + 4px (top and bottom padding of SPAN) must equal height of button background (default is 23px) */
+height: 23px; /* Height of button background height */
+padding-left: 9px; /* Width of left menu image */
+text-decoration: none;
+}
+
+a:link.squarebutton, a:visited.squarebutton, a:active.squarebutton{
+color: #494949; /*button text color*/
+}
+
+a.squarebutton span{
+background: transparent url('media/square-gray-right.gif') no-repeat top right;
+display: block;
+padding: 4px 9px 4px 0; /*Set 9px below to match value of 'padding-left' value above*/
+}
+
+a.squarebutton:hover{ /* Hover state CSS */
+background-position: bottom left;
+}
+
+a.squarebutton:hover span{ /* Hover state CSS */
+background-position: bottom right;
+color: black;
+}
+
+.buttonwrapper{ /* Container you can use to surround a CSS button to clear float */
+overflow: hidden; /*See: http://www.quirksmode.org/css/clearing.html */
+width: 100%;
+}
+
+</style>
+
+
+
+
+.registform .submitbtn {
+	background: transparent url('/images/square-orange-left.gif') no-repeat top left;
+	display: block;
+	float: left;
+	font: normal 12px Arial; /* Change 12px as desired */
+	line-height: 15px; /* This value + 4px + 4px (top and bottom padding of SPAN) must equal height of button background (default is 23px) */
+	height: 23px; /* Height of button background height */
+	padding-left: 9px; /* Width of left menu image */
+	text-decoration: none;	
+}
+
+.registform .submitbtn:hover {
+	background-position: bottom right;
+}
+
+body {
+	/*  background: #315065 url(/images/bgb.jpg) no-repeat center top;*/
+	/*background: #315065;*/
+    /*color: #fcfcfc;*/
+	/*color: #999999;*/
+
+	/*  width: 100%;*/
+	/*  display: table;*/
+	/*  padding: 1ex;*/
+}
+
+#mid {
+/*    border-left: 1px solid #666666;
+    border-right: 1px solid #666666;
+    background-color: white;*/
+	
+}
+.indentmenu ul {
+    /*background: black url(/images/upd2.jpg) center center repeat-x;*/
+	background-color: #2f4f4f;
+}
+.indentmenu ul li a:hover, .indentmenu ul li .selected {
+    padding-top: 6px; /*shift text down 1px for selected and active item*/
+    padding-bottom: 4px; /*shift text down 1px for selected and active item*/
+    background: black url(/images/updownl.jpg) center center repeat-x;
+	/*background-color: #FBE5C6;*/
+}
+#colone .title {
+    /*background-color: #b3b2ad;*/
+    background: black url(/images/upl2.jpg) center center repeat-x;
+    border: 1px solid #101010;
+    border-bottom: 0 none;
+    padding: 2px 0;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+	margin: 15px 0;
+}

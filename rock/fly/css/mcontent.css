@@ -1,0 +1,153 @@
+/* member part */
+.member ul {
+    float: right;
+    margin: 68px 25px 0 0;
+}
+.member ul li{
+	display: inline;
+    float: left;
+    margin: 5px 0;
+	padding: 0 8px;
+    border-right: 1px solid #101010;
+}
+.member ul li.last{
+	border-right: 0 none;
+}
+
+/* global nav part */
+.navbanner{
+    width: 100%;
+	height: 27px;
+	background-color: #2f4f4f;
+    border: 1px solid #101010;
+    border-width: 1px 0;
+}
+ul.indentmenu li, ul.crumbs li {
+	display: inline;
+}
+ul.indentmenu, ul.crumbs {
+    float: left;
+    margin: 0;
+    padding: 0;
+	
+}
+.indentmenu {
+    font: bold 13px Georgia;
+}
+ul.indentmenu li a {
+    float: left;
+    padding: 5px 11px;
+    border-right: 1px solid #101010;
+}
+ul.indentmenu li a:hover, ul.indentmenu li .selected {
+    padding-top: 6px; /*shift text down 1px for selected and active item*/
+    padding-bottom: 4px; /*shift text down 1px for selected and active item*/
+    background: black url(/images/updownl.jpg) center center repeat-x;
+}
+.crumbs {
+	margin-top: 10px;
+	line-height: 26px;
+}
+ul.crumbs li {
+	margin-right:5px;
+}
+ul.crumbs li.first {
+	margin-left:11px;
+}
+ul.uc-menu {
+	display: none;
+	float: right;
+	margin-right: 1em;
+}
+
+/* content */
+#content {
+	margin: 2ex 0 0 0;
+    border: 1px solid #101010;
+    border-width: 1px 0;
+	background: #2f4f4f;
+}
+#colone {
+    float: left;
+    width: 190px;
+    margin: 0 15px;
+}
+#colone .title {
+	margin: 15px 0;
+    padding: 2px 0;
+	
+    background: black url(/images/upl2.jpg) center center repeat-x;
+    border: 1px solid #101010;
+    border-bottom: 0 none;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+}
+#colone .listcon {
+    margin-bottom: 2ex;
+    border: 1px solid #101010;
+}
+#colone .listcon ul {
+    list-style: decimal-leading-zero;
+    line-height: 20px;
+}
+
+#coltwo {
+    float: left;
+    width: 710px;			/* 960 = 190+15*4+x 15px~~15px -30px for ie6, ri */
+    margin: 0 15px 15px 15px;
+    padding: 0;
+}
+#coltwo .title {
+	margin: 15px 0;
+    border-bottom: 1px solid #101010;
+	
+    font-weight: bold;
+    font-size: 12px;
+}
+#coltwo p {
+    line-height: 18px;
+}
+#coltwo pre {
+    width: 90%;
+    padding: 0.5em;
+    border: solid 1px #aaaaee;
+    color: #112222;
+    background-color: #eeeeee;
+}
+.infoform {
+	padding: 10px 0;
+}
+
+.infoform input {
+	width: 180px;
+	border: 1px solid #101010;
+}
+.infoform ul {
+	margin: 0;
+	padding: 0;
+
+    list-style: none;
+    line-height: 20px;
+}
+.infoform ul li {
+	margin: 5px 0;
+}
+.infoform .leftitem {
+	float: left;
+	width: 100px;
+	margin: 0 18px 0 0;
+    text-align: right;
+}
+.infoform .submitbtn {
+	width: auto;
+	height: auto;
+	margin-top: 10px;
+	padding: 2px 40px;
+	
+	background-color: #653a08;
+}
+.infoform .submitbtn:hover {
+	background-color: #ba7729;
+	cursor: pointer;
+}
