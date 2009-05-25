@@ -21,6 +21,8 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name)
 
 	my_bool reconnect = 1;
 	mysql_options(ldb->conn, MYSQL_OPT_RECONNECT, &reconnect);
+	mysql_options(ldb->conn, MYSQL_SET_CHARSET_NAME, "utf8");
+	mysql_options(ldb->conn, MYSQL_INIT_COMMAND, "SET NAMES 'utf8'");
 
 	if (ip == NULL) ip = DB_IP;
 	if (name == NULL) name = "home";
@@ -41,12 +43,6 @@ int fdb_exec(fdb_t *fdb)
 		mysql_free_result(fdb->res);
 		fdb->res = NULL;
 	}
-#if 0
-	char execsql[LEN_SQL*2];
-	memset(execsql, 0x0, sizeof(execsql));
-	mysql_real_escape_string(fdb->conn, execsql, fdb->sql, strlen(fdb->sql));
-	ret = mysql_real_query(fdb->conn, execsql, strlen(execsql));
-#endif
 	ret = mysql_real_query(fdb->conn, fdb->sql, strlen(fdb->sql));
 	if (ret != 0)
 		return RET_DBOP_ERROR;
