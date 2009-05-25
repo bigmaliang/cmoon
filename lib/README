@@ -15,6 +15,9 @@ lib/
 |-- fcgi		http://www.fastcgi.com/drupal/node/5 Development Kits  安装目录
 |-- jsonc		http://oss.metaparadigm.com/json-c/ 安装目录
 |-- memc		http://tangent.org/552/libmemcached.html 安装目录
+|-- nmdb		http://blitiri.com.ar/p/nmdb/ 安装目录
+    			cd libnmdb/ && 修改 prefix && make install ENABLE_TIPS=0 ENABLE_SCTP=0
+|-- qdbm		http://qdbm.sourceforge.net/ 安装目录
 :
 |-- js			公用js文件
 |   |-- own		moon 自己编写的'站点无关'的js插件

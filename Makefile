@@ -1,7 +1,7 @@
 BASEDIR = ./
 include ./Make.env
 
-SUBDIR = lib event rock
+SUBDIR = lib event cdata rock ksa
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
