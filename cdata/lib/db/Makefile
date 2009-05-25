@@ -1,6 +1,7 @@
 BASEDIR = ../../../
-include ../../../Make.env
-include ../../Make.env
+include $(BASEDIR)Make.env
+LOCALBASE = ../../
+include $(LOCALBASE)Make.env
 
 INCS	= $(INC_LPUB) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM)
 

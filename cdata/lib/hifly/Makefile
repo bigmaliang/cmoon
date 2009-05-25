@@ -1,6 +1,7 @@
 BASEDIR = ../../../
-include ../../../Make.env
-include ../../Make.env
+include $(BASEDIR)Make.env
+LOCALBASE = ../../
+include $(LOCALBASE)Make.env
 
 INCS	= $(INC_LPUB) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM)
 
@@ -31,7 +32,7 @@ libhifly.so:$(OBJS)
 	@echo "$(CC) -c $<"
 	@$(CC) $(CFLAGS) -c -fPIC $< -o $@ $(INCS)
 
-flag:
+cflag:
 	@echo "=== "$(CFLAGS)
 	@echo "=== "$(INCS)
 
