@@ -20,7 +20,8 @@
  *    如果超过一个月，将该key, key_increment, key_timestamp从nmdb中删除，以保持nmdb的高效率。
  *    有increment且没有写入mysql的key不会删除。
  */
-#include "fheads.h"
+#include "mheads.h"
+#include "lheads.h"
 #include "ocds.h"
 
 void useage(char *prg)
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
 	size_t r;
 	int ret;
 
-	ftc_init(HF_LOG_PATH"mtools.storedb");
+	mtc_init(HF_LOG_PATH"mtools.storedb");
 
 	dboffered = dmoffered = false;
 	if (argc > 1) {
@@ -78,20 +79,20 @@ int main(int argc, char *argv[])
 		useage(argv[0]);
 	}
 
-	ret = fdb_init(&fdb, NULL, NULL);
+	ret = ldb_init(&fdb, NULL, NULL);
 	if (ret != RET_DBOP_OK) {
-		ftc_err("init db error");
+		mtc_err("init db error");
 		return 1;
 	}
 	
 	nmdb = nmdb_init();
 	if (nmdb == NULL) {
-		ftc_err("init nmdb error");
+		mtc_err("init nmdb error");
 		return 1;
 	}
 	ret = cds_add_udp_server(nmdb, g_domain);
 	if (ret != RET_DBOP_OK) {
-		ftc_err("add nmdb server for %s failure", g_domain);
+		mtc_err("add nmdb server for %s failure", g_domain);
 		return 1;
 	}
 
@@ -99,12 +100,12 @@ int main(int argc, char *argv[])
  reopen:
 	if(!(qdb = dpopen(g_dbfn, DP_OREADER|DP_OWRITER, -1))) {
 		if (!repaired) {
-			ftc_warn("try to reapir %s", g_dbfn);
+			mtc_warn("try to reapir %s", g_dbfn);
 			dprepair(g_dbfn);
 			repaired = true;
 			goto reopen;
 		}
-		ftc_err("open %s failure %s", g_dbfn, dperrmsg(dpecode));
+		mtc_err("open %s failure %s", g_dbfn, dperrmsg(dpecode));
 		return 1;
 	}
 	dpiterinit(qdb);
@@ -116,7 +117,7 @@ int main(int argc, char *argv[])
 			snprintf(tkey, sizeof(tkey), "%s_"POST_INCREMENT, key);
 			r = nmdb_get(nmdb, (unsigned char*)tkey, strlen(tkey), (unsigned char*)val, LEN_NMDB_VAL);
 			if ((int)r <= 0) {
-				ftc_warn("get %s failure", tkey);
+				mtc_warn("get %s failure", tkey);
 				goto doclean;
 			}
 			*(val+r) = '\0';
@@ -126,14 +127,14 @@ int main(int argc, char *argv[])
 			if (increment > 10) {
 				r = nmdb_get(nmdb, (unsigned char*)key, strlen(key), (unsigned char*)val, LEN_NMDB_VAL);
 				if ((int)r <= 0) {
-					ftc_err("%s increment found, but data not found, cleanup...", key);
+					mtc_err("%s increment found, but data not found, cleanup...", key);
 					goto doclean;
 				}
 				*(val+r) = '\0';
 				v = neos_strip(val);
 				ret = cds_store_increment(fdb, key, v);
 				if (ret != RET_DBOP_OK) {
-					ftc_err("store %s for %s to db failure", v, key);
+					mtc_err("store %s for %s to db failure", v, key);
 					free(key);
 					continue;
 				}
@@ -153,7 +154,7 @@ int main(int argc, char *argv[])
 			snprintf(tkey, sizeof(tkey), "%s_"POST_TIMESTAMP, key);
 			r = nmdb_get(nmdb, (unsigned char*)tkey, strlen(tkey), (unsigned char*)val, LEN_NMDB_VAL);
 			if ((int)r <= 0) {
-				ftc_warn("get %s failure", tkey);
+				mtc_warn("get %s failure", tkey);
 				free(key);
 				continue;
 			}
