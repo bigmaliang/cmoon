@@ -15,6 +15,10 @@ static void trace_shift_file()
 
 	int i;
 	char ofn[LEN_FN], nfn[LEN_FN];
+
+	if (g_fp != NULL)
+		FCLOSE(g_fp);
+
 	for (i = TC_MAX_NUM-1; i > 1; i--) {
 		sprintf(ofn, "%s.%d", g_fn, i-1);
 		sprintf(nfn, "%s.%d", g_fn, i);
@@ -25,57 +29,55 @@ static void trace_shift_file()
 		sprintf(nfn, "%s.1", g_fn);
 		rename(ofn, nfn);
 	}
+
+	g_fp = FOPEN(g_fn, "a+");
 }
 
 void mtc_init(const char *fn)
 {
 	strncpy(g_fn, fn, sizeof(g_fn)-4);
 	strcat(g_fn, ".log");
-	if (g_fp != NULL) {
-		fclose(g_fp);
-		g_fp = NULL;
-	}
-	g_fp = fopen(g_fn, "a+");
+	if (g_fp != NULL)
+		FCLOSE(g_fp);
+	g_fp = FOPEN(g_fn, "a+");
 	atexit(mtc_leave);
 }
 void mtc_leave()
 {
-	if (g_fp != NULL) {
-		fclose(g_fp);
-		g_fp = NULL;
-	}
+	if (g_fp != NULL)
+		FCLOSE(g_fp);
+	g_fp = NULL;
+	memset(g_fn, 0x0, sizeof(g_fn));
 }
 
 bool mtc_msg(const char *func, const char *file, long line,
 			 int level, const char *format, ...)
 {
-	int dftlv = mcfg_getintvalue(TC_CFGSTR);
+	//int dftlv = fcfg_getintvalue(TC_CFGSTR);
+	int dftlv = TC_DEFAULT_LEVEL;
 	if (dftlv < 0 || dftlv > TC_LEVELS)
 		dftlv = TC_WARNING;
 	if (level > dftlv)
 		return true;
 	
-	if (!strcmp(g_fn, ""))
-		return false;
-
 	va_list ap;
 	char tm[LEN_TM];
 	if (!mmisc_getdatetime(tm, sizeof(tm), "%F %T", 0))
 		return false;
 
 	//FILE *fp;
-	//fp = fopen(g_fn, "a+");
+	//g_fp = fopen(g_fn, "a+");
 	if (g_fp == NULL)
 		return false;
-	fprintf(g_fp, "[%s]", tm);
-	fprintf(g_fp, "[%s]", g_trace_level[level]);
-	fprintf(g_fp, "[%s:%li %s] ", file, line, func);
+	FPRINTF(g_fp, "[%s]", tm);
+	FPRINTF(g_fp, "[%s]", g_trace_level[level]);
+	FPRINTF(g_fp, "[%s:%li %s] ", file, line, func);
 
 	va_start(ap, (void*)format);
-	vfprintf(g_fp, format, ap);
+	VFPRINTF(g_fp, format, ap);
 	va_end(ap);
 
-	fprintf(g_fp, "\n");
+	FPRINTF(g_fp, "\n");
 	//fclose(fp);
 
 	trace_shift_file();

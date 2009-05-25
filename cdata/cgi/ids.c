@@ -1,4 +1,5 @@
-#include "fheads.h"
+#include "mheads.h"
+#include "lheads.h"
 #include "oids.h"
 
 int main()
@@ -9,12 +10,12 @@ int main()
 	int ret;
 
 	//sleep(20);
-	ftc_init(HF_LOG_PATH"ids");
+	mtc_init(HF_LOG_PATH"ids");
 	
 	cgi_init(&cgi, NULL);
 	err = cgi_parse(cgi);
 	if (err != STATUS_OK) {
-		ftc_err("init cgi error");
+		mtc_err("init cgi error");
 		cgi_neo_error(cgi, err);
 		return 1;
 	}
@@ -25,7 +26,7 @@ int main()
 	ret = ids_get_data(cgi->hdf, fdb);
 	fdb_opfinish_json(ret, cgi->hdf, fdb);
 
-	fjson_output_hdf(cgi->hdf);
+	mjson_output_hdf(cgi->hdf);
 
 	cgi_destroy(&cgi);
 	fdb_free(&fdb);

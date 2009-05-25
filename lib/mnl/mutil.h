@@ -46,5 +46,10 @@ bool mutil_client_attack(HDF *hdf, char *action, int limit, time_t exp);
 
 void mutil_redirect(const char *msg, const char *target, const char *url, bool header);
 
+char* mutil_hdf_attr(HDF *hdf, char *name, char*key);
+char* mutil_obj_attr(HDF *hdf, char*key);
+bool mutil_isdigit(char *s);
+void mutil_wrap_fcgi(int argc, char **argv, char **envp);
+
 __END_DECLS
 #endif	/* __MUTIL_H__ */

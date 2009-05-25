@@ -1,16 +1,4 @@
-#include <stdlib.h>		/* malloc() */
-#include <stdint.h>		/* uint32_t and friends */
-#include <stdbool.h>		/* bool */
-#include <string.h>		/* memcpy() */
-#include <arpa/inet.h>		/* htonl() and friends */
-
-#include "fdb.h"
-#include "ClearSilver.h"
-
-int fdb_init(fdb_t **fdb, char *ip, char *name)
-{
-	return fdb_init_long(fdb, ip, DB_USER, DB_PASS, name);
-}
+#include "mheads.h"
 
 int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name)
 {
@@ -31,13 +19,9 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name)
 	mysql_options(ldb->conn, MYSQL_SET_CHARSET_NAME, "utf8");
 	mysql_options(ldb->conn, MYSQL_INIT_COMMAND, "SET NAMES 'utf8'");
 
-	if (ip == NULL) ip = DB_IP;
-	if (name == NULL) name = "home";
-	
 	ldb->conn = mysql_real_connect(ldb->conn, ip, user, pass, name, 0, NULL, 0);
 	if (ldb->conn == NULL)
 		return RET_DBOP_CONNECTE;
-	//mysql_real_query(ldb->conn, "SET names 'utf8';", strlen("SET names 'utf8';"));
 	return RET_DBOP_OK;
 }
 
@@ -102,7 +86,6 @@ void fdb_free(fdb_t **fdb)
 	*fdb = NULL;
 }
 
-#if 0
 static void get_errmsg(int ret, char *res)
 {
 	switch (ret) {
@@ -140,4 +123,43 @@ static void get_errmsg(int ret, char *res)
 		break;
 	}
 }
-#endif
+
+void fdb_opfinish(int ret, HDF *hdf, fdb_t *fdb,
+				  char *target, char *url, bool header)
+{
+	char msg[LEN_SM];
+	
+	if (ret == RET_DBOP_OK) {
+		return;
+	}
+
+	get_errmsg(ret, msg);
+	mutil_redirect(msg, target, url, header);
+	
+	if (fdb != NULL) {
+		fdb_free(&fdb);
+	}
+	/* TODO system resource need free*/
+	exit(ret);
+}
+
+void fdb_opfinish_json(int ret, HDF *hdf, fdb_t *fdb)
+{
+	char msg[LEN_SM];
+	
+	if (ret == RET_DBOP_OK) {
+		hdf_set_value(hdf, PRE_SUCCESS, "1");
+		return;
+	}
+
+	hdf_remove_tree(hdf, PRE_SUCCESS);
+	get_errmsg(ret, msg);
+	hdf_set_value(hdf, PRE_ERRMSG, msg);
+	mjson_output_hdf(hdf);
+	
+	if (fdb != NULL) {
+		fdb_free(&fdb);
+	}
+	/* TODO system resource need free*/
+	exit(ret);
+}

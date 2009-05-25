@@ -8,7 +8,7 @@ endif
 
 CFLAGS += -fPIC
 
-INCS	= $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_PSQL)
+INCS	= $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_NMDB) $(INC_QDBM) $(INC_SYSTEM) 
 
 SOURCES = $(wildcard *.c)
 OBJS	= $(patsubst %.c, %.o, $(SOURCES))

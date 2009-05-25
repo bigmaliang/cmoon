@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	mevent_add_str(evt, NULL, "uname", "u_maliang");
 #endif
 	mevent_add_array(evt, NULL, "sqls");
-	mevent_add_str(evt, "sqls", "1", "UPDATE myvideo.album SET title='黑色' WHERE aid=11;");
+	mevent_add_str(evt, "sqls", "1", "UPDATE myvideo.album SET title='没有杀毒' WHERE aid=11;");
 	mevent_add_str(evt, "sqls", "0", "UPDATE myvideo.album SET view_num = view_num+2 WHERE aid=11;");
 	
 	int i;

@@ -1,4 +1,5 @@
-#include "fheads.h"
+#include "mheads.h"
+#include "lheads.h"
 #include "ocds.h"
 
 static char cds_keys[CDS_DOMAIN_NUM][LEN_ST] =	{
@@ -54,13 +55,13 @@ int cds_parse_key(char *key, ULIST **list)
 	}
 
 	if (!reg_search("^([0-9]+,?)+$", key)) {
-		ftc_err("key %s illegal", key);
+		mtc_err("key %s illegal", key);
 		return RET_DBOP_ERROR;
 	}
 
 	NEOERR *err = string_array_split(list, key, ",", 100);
 	if (err != STATUS_OK) {
-		ftc_err("split string error");
+		mtc_err("split string error");
 		return RET_DBOP_ERROR;
 	}
 
@@ -75,7 +76,7 @@ int cds_parse_domain(char *domain, ULIST **list)
 
 	NEOERR *err = string_array_split(list, domain, ",", 100);
 	if (err != STATUS_OK) {
-		ftc_err("split string error");
+		mtc_err("split string error");
 		return RET_DBOP_ERROR;
 	}
 
@@ -85,7 +86,7 @@ int cds_parse_domain(char *domain, ULIST **list)
 int cds_add_udp_server(nmdb_t *db, char *domain)
 {
 	if(domain == NULL) {
-		ftc_warn("domain null");
+		mtc_warn("domain null");
 		return RET_DBOP_INPUTE;
 	}
 	if (!strncmp(domain, "n_user", strlen("n_user"))) {
@@ -97,7 +98,7 @@ int cds_add_udp_server(nmdb_t *db, char *domain)
 	} else if (!strncmp(domain, "n_blog", strlen("n_blog"))) {
 		nmdb_add_udp_server(db, NMDB_SERVER_BLOG, NMDB_PORT_BLOG);
 	} else {
-		ftc_warn("unknown domain %s", domain);
+		mtc_warn("unknown domain %s", domain);
 		return RET_DBOP_ERROR;
 	}
 	return RET_DBOP_OK;
@@ -108,7 +109,7 @@ int cds_get_data(HDF *hdf, char *key, char *domain, char *hdfkey, fdb_t *fdb)
 	int ret;
 	
 	if (fdb->conn == NULL) {
-		ftc_err("connect error");
+		mtc_err("connect error");
 		return RET_DBOP_CONNECTE;
 	}
 
@@ -116,7 +117,7 @@ int cds_get_data(HDF *hdf, char *key, char *domain, char *hdfkey, fdb_t *fdb)
 		return RET_DBOP_INPUTE;
 	ret = cds_get_keyid(domain);
 	if (ret < 0 || ret >= CDS_DOMAIN_NUM) {
-		ftc_warn("domain %s invalid", domain);
+		mtc_warn("domain %s invalid", domain);
 		return RET_DBOP_INPUTE;
 	}
 
@@ -124,14 +125,14 @@ int cds_get_data(HDF *hdf, char *key, char *domain, char *hdfkey, fdb_t *fdb)
 			 cds_cols_v[ret], cds_tables[ret], cds_cols_k[ret], key);
 	ret = fdb_exec(fdb);
 	if (ret != RET_DBOP_OK) {
-		ftc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
+		mtc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
 		return RET_DBOP_ERROR;
 	}
 	if (fdb_fetch_row(fdb) != RET_DBOP_OK) {
-		ftc_err("fetch %s error: %s", fdb->sql, fdb_error(fdb));
+		mtc_err("fetch %s error: %s", fdb->sql, fdb_error(fdb));
 		return RET_DBOP_ERROR;
 	}
-	ftc_dbg("set value %s ...", fdb->row[0]);
+	mtc_dbg("set value %s ...", fdb->row[0]);
 	hdf_set_valuef(hdf, "%s.value=%s", hdfkey, fdb->row[0]);
 	char thdfkey[LEN_ST];
 	snprintf(thdfkey, sizeof(thdfkey), "%s.value", hdfkey);
@@ -147,21 +148,21 @@ int cds_store_increment(fdb_t *fdb, char *key, char *val)
 	int ret;
 	
 	if (fdb->conn == NULL) {
-		ftc_err("connect error");
+		mtc_err("connect error");
 		return RET_DBOP_CONNECTE;
 	}
-	if (!futil_isdigit(val)) {
-		ftc_warn("%s not digit", val);
+	if (!mutil_isdigit(val)) {
+		mtc_warn("%s not digit", val);
 		return RET_DBOP_INPUTE;
 	}
 	ret = cds_nmkey2sqlkey(key, domain, sizeof(domain), &id);
 	if (ret != RET_DBOP_OK) {
-		ftc_warn("%s not hifly instant data key", key);
+		mtc_warn("%s not hifly instant data key", key);
 		return RET_DBOP_INPUTE;
 	}
 	ret = cds_get_keyid(domain);
 	if (ret < 0 || ret >= CDS_DOMAIN_NUM) {
-		ftc_warn("domain %s invalid", domain);
+		mtc_warn("domain %s invalid", domain);
 		return RET_DBOP_INPUTE;
 	}
 	
@@ -169,11 +170,11 @@ int cds_store_increment(fdb_t *fdb, char *key, char *val)
 			 cds_tables[ret], cds_cols_v[ret], val, cds_cols_k[ret], id);
 	ret = fdb_exec(fdb);
 	if (ret != RET_DBOP_OK) {
-		ftc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
+		mtc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
 		return RET_DBOP_ERROR;
 	}
 	if (fdb_affect_rows(fdb) <= 0) {
-		ftc_err("exec %s, key not exist", fdb->sql);
+		mtc_err("exec %s, key not exist", fdb->sql);
 		return RET_DBOP_ERROR;
 	}
 

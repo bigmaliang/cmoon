@@ -8,8 +8,10 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <ctype.h>				/* isdigit() */
 #include <inttypes.h>
 #include <stdint.h>
+#include <sys/types.h>
 
 #include <stdarg.h>
 #include <sys/stat.h>
@@ -18,6 +20,10 @@
 /* includes for cs, memc */
 #include "ClearSilver.h"
 #include "libmemcached/memcached.h"
+#include "fcgi_stdio.h"
+#include "depot.h"
+#include "nmdb.h"
+#include "mysql.h"
 
 /* Fix Up for systems that don't define these standard things */
 #ifndef __BEGIN_DECLS
@@ -87,6 +93,7 @@
 #include "mjson.h"
 #include "mutil.h"
 #include "mdb.h"
+#include "fdb.h"
 #include "mmisc.h"
 
 #endif	/* __MHEADS_H__ */

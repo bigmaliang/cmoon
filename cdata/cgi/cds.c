@@ -51,7 +51,8 @@
  *  key为传入的key参数。value为key当前最新的值。
  * 	失败时会设置{"errmsg": "XXX", key: XXX}，并指定失败原因。key为传入参数。
  */
-#include "fheads.h"
+#include "mheads.h"
+#include "lheads.h"
 #include "ocds.h"
 
 int main(int argc, char **argv, char **envp)
@@ -72,12 +73,12 @@ int main(int argc, char **argv, char **envp)
 	time_t tm;
 
 	//sleep(20);
-	ftc_init(HF_LOG_PATH"cds");
-	futil_wrap_fcgi(argc, argv, envp);
+	mtc_init(HF_LOG_PATH"cds");
+	mutil_wrap_fcgi(argc, argv, envp);
 	
-	ret = fdb_init(&fdb, NULL, NULL);
+	ret = ldb_init(&fdb, NULL, NULL);
 	if (ret != RET_DBOP_OK) {
-		ftc_err("init db error");
+		mtc_err("init db error");
 		printf("Content-Type: text/html; charset=UTF-8\r\n\r\n");
 		printf("{errmsg: \"初始数据库化失败\"}");
 		return 1;
@@ -89,21 +90,21 @@ int main(int argc, char **argv, char **envp)
 		 */
 		err = cgi_init(&cgi, NULL);
 		if (err != STATUS_OK) {
-			ftc_err("init cgi error");
+			mtc_err("init cgi error");
 			printf("Content-Type: text/html; charset=UTF-8\r\n\r\n");
 			printf("{errmsg: \"初始化失败\"}");
 			goto opfinish;
 		}
 		err = cgi_parse(cgi);
 		if (err != STATUS_OK) {
-			ftc_err("parse cgi error");
+			mtc_err("parse cgi error");
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "初始化错误");
 			goto opfinish;
 		}
 		char *domain = hdf_get_value(cgi->hdf, PRE_QUERY".op", NULL);
 		k = hdf_get_value(cgi->hdf, PRE_QUERY".key", NULL);
 		if (k == NULL) {
-			ftc_warn("no parameter: key");
+			mtc_warn("no parameter: key");
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "缺少 key 参数");
 			goto opfinish;
 		}
@@ -115,7 +116,7 @@ int main(int argc, char **argv, char **envp)
 		keylist = domainlist = NULL;
 		ret = cds_parse_key(k, &keylist);
 		if (ret != RET_DBOP_OK || uListLength(keylist) < 1) {
-			ftc_err("key %s illegal", k);
+			mtc_err("key %s illegal", k);
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "key 格式不正确");
 			goto opfinish;
 		}
@@ -124,20 +125,20 @@ int main(int argc, char **argv, char **envp)
 		/* 解析 domain */
 		ret = cds_parse_domain(domain, &domainlist);
 		if (ret != RET_DBOP_OK || uListLength(domainlist) != uListLength(keylist)) {
-			ftc_err("domain %s and key %s illegal", domain, k);
+			mtc_err("domain %s and key %s illegal", domain, k);
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "op 格式不正确");
 			goto opfinish;
 		}
 		db = nmdb_init();
 		if (db == NULL) {
-			ftc_err("init nmdb error");
+			mtc_err("init nmdb error");
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "初始化失败");
 			goto opfinish;
 		}
 		uListGet(domainlist, 0, (void**)&p);
 		ret = cds_add_udp_server(db, p);
 		if (ret != RET_DBOP_OK) {
-			ftc_err("add nmdb server for %s failure", p);
+			mtc_err("add nmdb server for %s failure", p);
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "op 参数无效");
 			db = NULL;			/* nmdb_free 该db会造成fastcgi core 掉。。。 */
 			goto opfinish;
@@ -146,11 +147,11 @@ int main(int argc, char **argv, char **envp)
 		/*
 		 * 开始干活
 		 */
-		int op = cgi_query_method(cgi);
-		if (!strcmp(hdf_get_value(cgi->hdf, PRE_QUERY".query", "unknown"), "post")) op = QUERY_POST;
-		else if (!strcmp(hdf_get_value(cgi->hdf, PRE_QUERY".query", "unknown"), "put")) op = QUERY_PUT;
+		int op = CGI_REQ_METHOD(cgi);
+		if (!strcmp(hdf_get_value(cgi->hdf, PRE_QUERY".query", "unknown"), "post")) op = CGI_REQ_POST;
+		else if (!strcmp(hdf_get_value(cgi->hdf, PRE_QUERY".query", "unknown"), "put")) op = CGI_REQ_PUT;
 		switch (op) {
-		case QUERY_GET:
+		case CGI_REQ_GET:
 			for (i = 0; i < uListLength(keylist); i++) {
 				uListGet(domainlist, i, (void**)&domain);
 				uListGet(keylist, i, (void**)&p);
@@ -165,7 +166,7 @@ int main(int argc, char **argv, char **envp)
 				db = nmdb_init();
 				ret = cds_add_udp_server(db, domain);
 				if (ret != RET_DBOP_OK) {
-					ftc_warn("add domain %s failure", domain);
+					mtc_warn("add domain %s failure", domain);
 					hdf_set_valuef(cgi->hdf, "%s.errmsg=不支持op", hdfkey);
 					db = NULL;			/* nmdb_free 该db会造成fastcgi core 掉。。。 */
 					continue;
@@ -176,7 +177,7 @@ int main(int argc, char **argv, char **envp)
 				snprintf(timenow, sizeof(timenow), "%lu", tm);
 				r = nmdb_get(db, (unsigned char*)key, strlen(key), (unsigned char*)val, LEN_NMDB_VAL);
 				if ((int)r <= 0) {
-					ftc_dbg("%s not in nmdb, get from db...", key);
+					mtc_dbg("%s not in nmdb, get from db...", key);
 					ret = cds_get_data(cgi->hdf, p, domain, hdfkey, fdb);
 					if (ret == RET_DBOP_OK) {
 						v = hdf_get_valuef(cgi->hdf, "%s.value", hdfkey);
@@ -188,7 +189,7 @@ int main(int argc, char **argv, char **envp)
 							break;
 						}
 					}
-					ftc_warn("%s get from db failure!", key);
+					mtc_warn("%s get from db failure!", key);
 				}
 				if ((int)r == -2) {
 					hdf_set_valuef(cgi->hdf, "%s.errmsg=查询失败", hdfkey);
@@ -200,7 +201,7 @@ int main(int argc, char **argv, char **envp)
 					*(val+r) = '\0';
 					/* nmdb_incr() 会自作聪明的把val按23个字符右对齐 */
 					v = neos_strip(val);
-					ftc_dbg("%s get from nmdb ok %s", key, v);
+					mtc_dbg("%s get from nmdb ok %s", key, v);
 					hdf_set_valuef(cgi->hdf, "%s.value=%s", hdfkey, v);
 					snprintf(thdfkey, sizeof(thdfkey), "%s.value", hdfkey);
 					hdf_set_attr(cgi->hdf, thdfkey, "type", "int");
@@ -209,10 +210,10 @@ int main(int argc, char **argv, char **envp)
 				}
 			}
 			break;
-		case QUERY_POST:
+		case CGI_REQ_POST:
 			v = hdf_get_value(cgi->hdf, PRE_QUERY".val", NULL);
 			if (v == NULL) {
-				ftc_warn("no parameter: val");
+				mtc_warn("no parameter: val");
 				hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "缺少 val 参数");
 				goto opfinish;
 			}
@@ -221,16 +222,16 @@ int main(int argc, char **argv, char **envp)
 			hdf_set_attr(cgi->hdf, PRE_OUTPUT".value", "type", "int");
 			r =  nmdb_set(db, (unsigned char*)key, strlen(key), (unsigned char*)v, strlen(v)+1);
 			if (r < 0) {
-				ftc_err("set into nmdb failure!");
+				mtc_err("set into nmdb failure!");
 				hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "设置操作失败");
 				ret = -1; goto opfinish;
 			}
 			/* 更新该key的increment记录 */
 			snprintf(tkey, sizeof(tkey), "%s_"POST_INCREMENT, key);
 			nmdb_set(db, (unsigned char*)tkey, strlen(tkey), (unsigned char*)v, strlen(v)+1);
-			ftc_dbg("set into nmdb ok");
+			mtc_dbg("set into nmdb ok");
 			break;
-		case QUERY_PUT:
+		case CGI_REQ_PUT:
 			/*
 			 * 增加操作，同时设置key_POST_INCREMENT
 			 * 当nmdb中没有相关key时，设值为inc，后续同步时能写入mysql
@@ -241,21 +242,21 @@ int main(int argc, char **argv, char **envp)
 			
 			r = nmdb_incr(db, (unsigned char*)key, strlen(key), inc, &incr);
 			if (r == 0) {
-				ftc_warn("%s not match", key);
+				mtc_warn("%s not match", key);
 				//hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "无匹配资源");
 				//goto opfinish;
 				r = nmdb_set(db, (unsigned char*)key, strlen(key), (unsigned char*)v, strlen(v)+1);
 				if (r < 0) {
-					ftc_err("set into nmdb failure!");
+					mtc_err("set into nmdb failure!");
 					hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "设置失败");
 					ret = -1; goto opfinish;
 				}
 			} else if (r == 1) {
-				ftc_warn("%s unincrementable", key);
+				mtc_warn("%s unincrementable", key);
 				hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "值不可加");
 				goto opfinish;
 			} else if (r != 2) {
-				ftc_warn("%s inc %d failure", key, inc);
+				mtc_warn("%s inc %d failure", key, inc);
 				hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "增加操作失败");
 				ret = -1; goto opfinish;
 			}
@@ -267,12 +268,12 @@ int main(int argc, char **argv, char **envp)
 			snprintf(tkey, sizeof(tkey), "%s_"POST_INCREMENT, key);
 			r = nmdb_incr(db, (unsigned char*)tkey, strlen(tkey), inc, &incr);
 			if (r == 0) {
-				ftc_warn("%s not match", tkey);
+				mtc_warn("%s not match", tkey);
 				nmdb_set(db, (unsigned char*)tkey, strlen(tkey), (unsigned char*)v, strlen(v)+1);
 			}
 			break;
 		default:
-			ftc_warn("unsupport operation");
+			mtc_warn("unsupport operation");
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "操作类型不支持");
 			goto opfinish;
 		}
@@ -286,9 +287,9 @@ int main(int argc, char **argv, char **envp)
 		if (cgi != NULL) {
 			char *cb = hdf_get_value(cgi->hdf, PRE_QUERY".jsoncallback", NULL);
 			if (cb != NULL) {
-				fjson_execute_hdf(cgi->hdf, cb);
+				mjson_execute_hdf(cgi->hdf, cb);
 			} else {
-				fjson_output_hdf(cgi->hdf);
+				mjson_output_hdf(cgi->hdf);
 			}
 			cgi_destroy(&cgi);
 		}

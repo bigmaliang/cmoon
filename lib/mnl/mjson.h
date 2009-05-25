@@ -5,6 +5,7 @@
 
 __BEGIN_DECLS
 
+void mjson_execute_hdf(HDF *hdf, char *cb);
 void mjson_output_hdf(HDF *hdf);
 
 __END_DECLS

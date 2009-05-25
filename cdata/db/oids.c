@@ -1,4 +1,5 @@
-#include "fheads.h"
+#include "mheads.h"
+#include "lheads.h"
 #include "oids.h"
 
 #define IDS_SLAVE_DB_NUM	3
@@ -22,7 +23,7 @@ static int ids_get_keyid(char *domain)
 int ids_fdb_init(fdb_t **fdb)
 {
 	int i = neo_rand(IDS_SLAVE_DB_NUM);
-	return fdb_init(fdb, g_dbip_slave[i], NULL);
+	return ldb_init(fdb, g_dbip_slave[i], NULL);
 }
 
 int ids_get_data(HDF *hdf, fdb_t *fdb)
@@ -30,20 +31,20 @@ int ids_get_data(HDF *hdf, fdb_t *fdb)
 	int ret;
 	
 	if (fdb->conn == NULL) {
-		ftc_err("connect error");
+		mtc_err("connect error");
 		return RET_DBOP_CONNECTE;
 	}
 
 	char *op = hdf_get_value(hdf, PRE_QUERY".op", NULL);
 	char *key = hdf_get_value(hdf, PRE_QUERY".key", NULL);
-	if (op == NULL || !futil_isdigit(key)) {
-		ftc_err("input error %s %s", op, key);
+	if (op == NULL || !mutil_isdigit(key)) {
+		mtc_err("input error %s %s", op, key);
 		return RET_DBOP_INPUTE;
 	}
 
 	ret = ids_get_keyid(op);
 	if (ret < 0 || ret >= IDS_DOMAIN_NUM) {
-		ftc_warn("op %s invalid", op);
+		mtc_warn("op %s invalid", op);
 		return RET_DBOP_INPUTE;
 	}
 
@@ -51,11 +52,11 @@ int ids_get_data(HDF *hdf, fdb_t *fdb)
 			 ids_cols_v[ret], ids_tables[ret], ids_cols_k[ret], key);
 	ret = fdb_exec(fdb);
 	if (ret != RET_DBOP_OK) {
-		ftc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
+		mtc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
 		return RET_DBOP_SELECTE;
 	}
 	if (fdb_fetch_row(fdb) != RET_DBOP_OK) {
-		ftc_err("fetch %s error: %s", fdb->sql, fdb_error(fdb));
+		mtc_err("fetch %s error: %s", fdb->sql, fdb_error(fdb));
 		return RET_DBOP_EXIST;
 	}
 	
