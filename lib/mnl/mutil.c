@@ -70,3 +70,53 @@ void mutil_redirect(const char *msg, const char *target, const char *url, bool h
 
 	printf(outstr);
 }
+
+char* mutil_hdf_attr(HDF *hdf, char *name, char*key)
+{
+	if (hdf == NULL || name == NULL || key == NULL)
+		return NULL;
+	
+	HDF_ATTR *attr = hdf_get_attr(hdf, name);
+	while (attr != NULL) {
+		if (!strcmp(attr->key, key)) {
+			return attr->value;
+		}
+	}
+	return NULL;
+}
+char* mutil_obj_attr(HDF *hdf, char*key)
+{
+	if (hdf == NULL || key == NULL)
+		return NULL;
+	
+	HDF_ATTR *attr = hdf_obj_attr(hdf);
+	while (attr != NULL) {
+		if (!strcmp(attr->key, key)) {
+			return attr->value;
+		}
+	}
+	return NULL;
+}
+
+bool mutil_isdigit(char *s)
+{
+	if (s == NULL)
+		return false;
+	
+	char *p = s;
+	while (*p != '\0') {
+		if (!isdigit((int)*p))
+			return false;
+		p++;
+	}
+	return true;
+}
+
+int read_cb(void *ptr, char *data, int size) {return FCGI_fread(data, sizeof(char), size, FCGI_stdin);}
+int writef_cb(void *ptr, const char *format, va_list ap) {return FCGI_vprintf(format, ap);}
+int write_cb(void *ptr, const char *data, int size) {return FCGI_fwrite((void *)data, sizeof(char), size, FCGI_stdout);}
+void mutil_wrap_fcgi(int argc, char **argv, char **envp)
+{
+	cgiwrap_init_std(argc, argv, envp);
+	cgiwrap_init_emu(NULL, &read_cb, &writef_cb, &write_cb, NULL, NULL, NULL);
+}
