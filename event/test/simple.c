@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 	mevent_add_str(evt, NULL, "uname", "u_maliang");
 #endif
 	mevent_add_array(evt, NULL, "sqls");
-	mevent_add_str(evt, "sqls", "1", "UPDATE myblog.blog SET title='fuck' WHERE bid=84;");
+	mevent_add_str(evt, "sqls", "1", "UPDATE myblog.blog SET title='我日' WHERE bid=84;");
 	mevent_add_str(evt, "sqls", "0", "UPDATE myblog.blog SET votevalidity = votevalidity+2 WHERE bid=84;");
 	
 	int i;

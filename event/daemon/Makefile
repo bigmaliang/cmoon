@@ -39,7 +39,7 @@ ALL_CFLAGS += -fprofile-use
 endif
 
 
-ALL_CFLAGS += -I../daemon -I../base $(INC_CS) $(LIB_NEOUTL_DYN) $(INC_MYSQL)
+ALL_CFLAGS += -I../daemon -I../base $(INC_CS) $(INC_MYSQL)
 LIBS = -levent -lpthread -lrt -ldl  $(LIB_MYSQL) $(LIB_NEOUTL_DYN)
 
 
