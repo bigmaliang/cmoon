@@ -1,5 +1,5 @@
-BASEDIR = ../../
-include ../../Make.env
+LOCALBASE = ../../
+include $(LOCALBASE)Make.env
 
 HTMLS = $(wildcard *.html)
 

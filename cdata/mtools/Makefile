@@ -1,25 +1,26 @@
 BASEDIR = ../../
-include ../../Make.env
+include $(BASEDIR)Make.env
+LOCALBASE = ../
+include $(LOCALBASE)Make.env
 
-INCS	= $(INC_HFL) $(INC_DB) $(INC_CS) $(INC_JSON) $(INC_QDBM) $(INC_FCGI) $(INC_SYSTEM)
-LIBS	= $(LIB_HFL) $(LIB_DB) $(LIB_CS) $(LIB_JSON) $(LIB_QDBM) $(LIB_FCGI) $(LIB_SYSTEM)
+INCS	= $(INC_LPUB) $(INC_DB) $(INC_CS) $(INC_JSON) $(INC_QDBM) $(INC_FCGI) $(INC_QDBM) $(INC_SYSTEM)
+LIBS	= $(LIB_LPUB) $(LIB_DB) $(LIB_CS) $(LIB_JSON) $(LIB_QDBM) $(LIB_FCGI) $(LIB_NMDB) $(LIB_QDBM) $(LIB_SYSTEM)
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))
 SCRIPTS = keeprunning.sh
 DEPEND = .depend
 
-all:$(DEPEND) preload $(BINARY)
+all:preload $(BINARY)
 
 $(DEPEND): $(SOURCES)
-	@touch $@
-	@$(CC) $(CFLAGS) -MM $^ $(INCS) > $(DEPEND)
-include $(DEPEND)
+	@$(CC) $(CFLAGS) -MM $^ $(INCS) > $@
 
 preload:
-	@$(MAKE) -C $(HFLBASE)
+	@$(MAKE) -C $(LPUBBASE)
 	@$(MAKE) -C $(DBBASE)
 
+include $(DEPEND)
 %:%.c
 	@if [ "$<" = `ls *.c|awk '{print $1}'|sed -n '1p'` ]; then \
 		echo "=== "$(CFLAGS); \
@@ -28,7 +29,7 @@ preload:
 	@echo "$(CC) -o $@"
 	@$(CC) $(CFLAGS) $< -o $@ $(INCS) ${LIBS}
 
-flag:
+cflag:
 	@echo "=== "$(CFLAGS)
 	@echo "=== "$(INCS)
 install:all

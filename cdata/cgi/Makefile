@@ -1,9 +1,10 @@
 BASEDIR = ../../
-include ../../Make.env
-include ../Make.env
+include $(BASEDIR)Make.env
+LOCALBASE = ../
+include $(LOCALBASE)Make.env
 
 INCS	= $(INC_LPUB) $(INC_DB) $(INC_CS) $(INC_JSON) $(INC_QDBM) $(INC_FCGI) $(INC_SYSTEM)
-LIBS	= $(LIB_LPUB) $(LIB_DB) $(LIB_CS) $(LIB_JSON) $(LIB_QDBM) $(LIB_FCGI) $(LIB_SYSTEM)
+LIBS	= $(LIB_LPUB) $(LIB_DB) $(LIB_CS) $(LIB_JSON) $(LIB_QDBM) $(LIB_FCGI) $(LIB_NMDB) $(LIB_SYSTEM)
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %.cgi, $(SOURCES))
@@ -30,6 +31,7 @@ include $(DEPEND)
 cflag:
 	@echo "=== "$(CFLAGS)
 	@echo "=== "$(INCS)
+	@echo "=== "$(LIBS)
 
 clean:
 	@rm -rf ${BINARY}
