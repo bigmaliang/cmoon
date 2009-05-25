@@ -35,6 +35,7 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name)
 	ldb->conn = mysql_real_connect(ldb->conn, ip, user, pass, name, 0, NULL, 0);
 	if (ldb->conn == NULL)
 		return RET_DBOP_CONNECTE;
+	mysql_real_query(ldb->conn, "SET names 'utf8';", strlen("SET names 'utf8';"));
 	return RET_DBOP_OK;
 }
 
