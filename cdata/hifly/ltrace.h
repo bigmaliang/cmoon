@@ -1,7 +1,7 @@
 #ifndef __FTRACE_H__
 #define __FTRACE_H__
 
-#include "fheads.h"
+#include "lheads.h"
 
 #define	TC_DIE		0
 #define	TC_ERROR	1

@@ -1,4 +1,4 @@
-#include "fheads.h"
+#include "lheads.h"
 
 /* global file name for trace info write to */
 static char g_fn[LEN_FN] = "";
@@ -44,7 +44,6 @@ void ftc_init(const char *fn)
 }
 void ftc_leave()
 {
-	//ftc_info("close file %s", g_fn);
 	if (g_fp != NULL)
 		FCLOSE(g_fp);
 	g_fp = NULL;
