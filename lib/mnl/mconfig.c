@@ -168,3 +168,23 @@ void mcfg_leave()
 		g_cfgs = NULL;
 	}
 }
+
+
+bool mconfig_parse_file(const char *file, HDF **cfg)
+{
+	NEOERR *err;
+
+	err = hdf_init(cfg);
+	RETURN_V_NOK(err, false);
+	
+	err = hdf_read_file(*cfg, file);
+	RETURN_V_NOK(err, false);
+
+	return true;
+}
+
+void mconfig_cleanup(HDF **config)
+{
+	if (*config == NULL) return;
+	hdf_destroy(config);
+}

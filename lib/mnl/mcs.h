@@ -39,6 +39,7 @@ __BEGIN_DECLS
 		nerr_error_traceback(err, zstra);		\
 		mtc_err("%s", zstra->buf);				\
 		string_clear(zstra);					\
+		nerr_ignore(&err);						\
 		return v;								\
 	}
 
