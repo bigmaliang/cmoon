@@ -2,36 +2,6 @@
 #include "lheads.h"
 #include "ocds.h"
 
-static char cds_keys[CDS_DOMAIN_NUM][LEN_ST] =	{
-	"n_user_space",
-	"n_photo", "n_photo_album",
-	"n_video", "n_video_d", "n_video_album",
-	"n_blog"};
-static char cds_tables[CDS_DOMAIN_NUM][LEN_ST] = {
-	"home.home",
-	"myphoto.photo_info", "myphoto.album_info",
-	"myvideo.video", "myvideo.video", "myvideo.album",
-	"myblog.blog"};
-static char cds_cols_k[CDS_DOMAIN_NUM][LEN_ST] =	{
-	"uid",
-	"pid", "aid",
-	"vid", "vid", "aid",
-	"bid"};
-static char cds_cols_v[CDS_DOMAIN_NUM][LEN_ST] =	{
-	"view_num",
-	"view_num", "view_num",
-	"view_num", "up_num", "view_num",
-	"view_num"};
-
-static int cds_get_keyid(char *domain)
-{
-	int i;
-	for (i = 0; i < CDS_DOMAIN_NUM; i++) {
-		if (!strcmp(domain, cds_keys[i]))
-			return i;
-	}
-	return -1;
-}
 static int cds_nmkey2sqlkey(char *key, char *val, int len, int *id)
 {
 	int slen;
@@ -89,18 +59,22 @@ int cds_add_udp_server(nmdb_t *db, char *domain)
 		mtc_warn("domain null");
 		return RET_DBOP_INPUTE;
 	}
-	if (!strncmp(domain, "n_user", strlen("n_user"))) {
-		nmdb_add_udp_server(db, NMDB_SERVER_USER, NMDB_PORT_USER);
-	} else if (!strncmp(domain, "n_photo", strlen("n_photo"))) {
-		nmdb_add_udp_server(db, NMDB_SERVER_PHOTO, NMDB_PORT_PHOTO);
-	} else if (!strncmp(domain, "n_video", strlen("n_video"))) {
-		nmdb_add_udp_server(db, NMDB_SERVER_VIDEO, NMDB_PORT_VIDEO);
-	} else if (!strncmp(domain, "n_blog", strlen("n_blog"))) {
-		nmdb_add_udp_server(db, NMDB_SERVER_BLOG, NMDB_PORT_BLOG);
+
+	char key[64];
+	strcpy(key, CFG_NMDB);
+	strcat(key, ".");
+	/* strlen("n_user") = 6 */
+	strncat(key, domain, 6);
+	HDF *node = hdf_get_obj(g_cfg, key);
+	if (node != NULL) {
+		char *ip = hdf_get_value(node, "ip", "127.0.0.1");
+		int port = hdf_get_int_value(node, "port", 26010);
+		nmdb_add_udp_server(db, ip, port);
 	} else {
 		mtc_warn("unknown domain %s", domain);
 		return RET_DBOP_ERROR;
 	}
+	
 	return RET_DBOP_OK;
 }
 
@@ -115,14 +89,21 @@ int cds_get_data(HDF *hdf, char *key, char *domain, char *hdfkey, fdb_t *fdb)
 
 	if (key == NULL || domain == NULL || hdfkey == NULL)
 		return RET_DBOP_INPUTE;
-	ret = cds_get_keyid(domain);
-	if (ret < 0 || ret >= CDS_DOMAIN_NUM) {
+
+	char cfgkey[256];
+	snprintf(cfgkey, sizeof(cfgkey), "%s.%s", CFG_TABLE, domain);
+	HDF *node = hdf_get_obj(g_cfg, cfgkey);
+	if (node == NULL) {
 		mtc_warn("domain %s invalid", domain);
 		return RET_DBOP_INPUTE;
 	}
+	char *table, *keyc, *valc;
+	table = hdf_get_value(node, "table", "null.blog");
+	keyc = hdf_get_value(node, "keycol", "bid");
+	valc = hdf_get_value(node, "valcol", "view_num");
 
 	snprintf(fdb->sql, sizeof(fdb->sql), "SELECT %s FROM %s WHERE %s=%s;",
-			 cds_cols_v[ret], cds_tables[ret], cds_cols_k[ret], key);
+			 valc, table, keyc, key);
 	ret = fdb_exec(fdb);
 	if (ret != RET_DBOP_OK) {
 		mtc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
@@ -160,14 +141,21 @@ int cds_store_increment(fdb_t *fdb, char *key, char *val)
 		mtc_warn("%s not hifly instant data key", key);
 		return RET_DBOP_INPUTE;
 	}
-	ret = cds_get_keyid(domain);
-	if (ret < 0 || ret >= CDS_DOMAIN_NUM) {
+	
+	char cfgkey[256];
+	snprintf(cfgkey, sizeof(cfgkey), "%s.%s", CFG_TABLE, domain);
+	HDF *node = hdf_get_obj(g_cfg, cfgkey);
+	if (node == NULL) {
 		mtc_warn("domain %s invalid", domain);
 		return RET_DBOP_INPUTE;
 	}
-	
+	char *table, *keyc, *valc;
+	table = hdf_get_value(node, "table", "null.blog");
+	keyc = hdf_get_value(node, "keycol", "bid");
+	valc = hdf_get_value(node, "valcol", "view_num");
+
 	snprintf(fdb->sql, sizeof(fdb->sql), "UPDATE %s SET %s=%s WHERE %s=%d;",
-			 cds_tables[ret], cds_cols_v[ret], val, cds_cols_k[ret], id);
+			 table, valc, val, keyc, id);
 	ret = fdb_exec(fdb);
 	if (ret != RET_DBOP_OK) {
 		mtc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));

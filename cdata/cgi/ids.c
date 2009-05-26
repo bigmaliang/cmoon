@@ -2,6 +2,8 @@
 #include "lheads.h"
 #include "oids.h"
 
+HDF *g_cfg = NULL;
+
 int main()
 {
 	CGI *cgi = NULL;
@@ -11,6 +13,12 @@ int main()
 
 	//sleep(20);
 	mtc_init(HF_LOG_PATH"ids");
+	if (!mconfig_parse_file(CONFIG_FILE, &g_cfg)) {
+		mtc_err("init config %s error", CONFIG_FILE);
+		printf("Content-Type: text/html; charset=UTF-8\r\n\r\n");
+		printf("{errmsg: \"初始化配置失败\"}");
+		return 1;
+	}
 	
 	cgi_init(&cgi, NULL);
 	err = cgi_parse(cgi);
@@ -30,5 +38,6 @@ int main()
 
 	cgi_destroy(&cgi);
 	fdb_free(&fdb);
+	mconfig_cleanup(&g_cfg);
 	return 0;
 }

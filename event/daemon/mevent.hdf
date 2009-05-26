@@ -9,10 +9,10 @@ Mevent {
 Plugin {
 	db_community {
 		logfile = /data/logs/plugin/db_community
-		ip = 127.0.0.1
-		user = test
-		pass = test
-		name = test
+		ip = 192.168.8.84
+		user = root
+		pass = hifly1234
+		name = home
 	}
 }
 

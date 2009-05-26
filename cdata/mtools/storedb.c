@@ -38,6 +38,8 @@ void useage(char *prg)
 char g_dbfn[LEN_FN];
 char g_domain[LEN_FN];
 
+HDF *g_cfg = NULL;
+
 int main(int argc, char *argv[])
 {
 	DEPOT *qdb = NULL;
@@ -54,6 +56,10 @@ int main(int argc, char *argv[])
 	int ret;
 
 	mtc_init(HF_LOG_PATH"mtools.storedb");
+	if (!mconfig_parse_file(CONFIG_FILE, &g_cfg)) {
+		mtc_err("init config %s error", CONFIG_FILE);
+		return 1;
+	}
 
 	dboffered = dmoffered = false;
 	if (argc > 1) {

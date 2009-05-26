@@ -62,5 +62,5 @@ storedb.o: storedb.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
   ../../lib/mnl/mdb.h ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h \
   ../hifly/lheads.h ../hifly/lcfg.h ../hifly/lutil.h \
-  ../../lib/mnl/mheads.h ../hifly/ldb.h ../db/ocds.h \
+  ../../lib/mnl/mheads.h ../hifly/ldb.h ../hifly/lglobal.h ../db/ocds.h \
   ../../lib/mnl/mheads.h

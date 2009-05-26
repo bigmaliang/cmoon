@@ -55,6 +55,8 @@
 #include "lheads.h"
 #include "ocds.h"
 
+HDF *g_cfg = NULL;
+
 int main(int argc, char **argv, char **envp)
 {
 	char key[LEN_NMDB_KEY], val[LEN_NMDB_VAL], tkey[LEN_NMDB_KEY], hdfkey[LEN_ST], thdfkey[LEN_ST];
@@ -75,12 +77,18 @@ int main(int argc, char **argv, char **envp)
 	//sleep(20);
 	mtc_init(HF_LOG_PATH"cds");
 	mutil_wrap_fcgi(argc, argv, envp);
+	if (!mconfig_parse_file(CONFIG_FILE, &g_cfg)) {
+		mtc_err("init config %s error", CONFIG_FILE);
+		printf("Content-Type: text/html; charset=UTF-8\r\n\r\n");
+		printf("{errmsg: \"初始化配置失败\"}");
+		return 1;
+	}
 	
 	ret = ldb_init(&fdb, NULL, NULL);
 	if (ret != RET_DBOP_OK) {
 		mtc_err("init db error");
 		printf("Content-Type: text/html; charset=UTF-8\r\n\r\n");
-		printf("{errmsg: \"初始数据库化失败\"}");
+		printf("{errmsg: \"初始化数据库失败\"}");
 		return 1;
 	}
 	
@@ -296,5 +304,6 @@ int main(int argc, char **argv, char **envp)
  	}
  
 	fdb_free(&fdb);
+	mconfig_cleanup(&g_cfg);
 	return 0;
 }

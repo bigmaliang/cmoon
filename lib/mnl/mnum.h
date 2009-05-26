@@ -39,6 +39,8 @@ enum user_status
 #define LEN_FN		1024		/* LEN_FILENAME */
 #define LEN_LINE	(1024*100)
 #define LEN_SQL		1024
+#define LEN_NMDB_KEY 256
+#define LEN_NMDB_VAL (1024*64)
 
 #define RET_USER_LOGIN	0
 #define RET_USER_NLOGIN	1
