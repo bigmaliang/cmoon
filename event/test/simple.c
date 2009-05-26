@@ -33,22 +33,25 @@ int main(int argc, char *argv[])
 	}
 
 	mevent_add_udp_server(evt, host, 26010);
-	mevent_chose_plugin(evt, "db_community", REQ_CMD_SET, FLAGS_SYNC);
-
 #if 0
-	mevent_add_array(evt, NULL, "cols");
-	mevent_add_str(evt, NULL, "table", "friends");
-	mevent_add_u32(evt, "cols", "uid", 1022);
-	mevent_add_str(evt, NULL, "uname", "u_maliang");
-#endif
+	mevent_chose_plugin(evt, "db_community", REQ_CMD_SET, FLAGS_SYNC);
 	mevent_add_array(evt, NULL, "sqls");
 	mevent_add_str(evt, "sqls", "1", "UPDATE myvideo.album SET title='没有杀毒' WHERE aid=11;");
 	mevent_add_str(evt, "sqls", "0", "UPDATE myvideo.album SET view_num = view_num+2 WHERE aid=11;");
+#endif
 	
 	int i;
 	suc = fai = err = busy = 0;
 	timer_start();
+	char sql[1024];
 	for (i = 0; i < times; i++) {
+#if 1
+		mevent_chose_plugin(evt, "db_community", REQ_CMD_SET, FLAGS_NONE);
+		mevent_add_array(evt, NULL, "sqls");
+		sprintf(sql, "INSERT INTO eventcenter.events_3day(etype, fromuid, msg, eventtime) "
+				" VALUES (1, 39, '%d', '%lu');", i, time(NULL));
+		mevent_add_str(evt, "sqls", "0", sql);
+#endif
 		ret = mevent_trigger(evt, &errcode);
 		if (ret == REP_OK) {
 			data_cell_dump(evt->rcvdata);

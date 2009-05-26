@@ -304,6 +304,8 @@ int mevent_chose_plugin(mevent_t *evt, const char *key,
 
 	evt->psize = moff + 12 +ksize;
 	evt->packed = 0;
+	data_cell_free(evt->dataset);
+	evt->dataset = data_cell_alloc_array("root");
 	
 	return 1;
 }
