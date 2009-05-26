@@ -17,20 +17,20 @@ __BEGIN_DECLS
 #define SITE_DFT_CONFIG	"/home/bigml/web/moon/site.conf"
 #endif
 #define CFG_SHMEM_KEY	0x00054110
-#define SHM_MODE	IPC_EXCL|0666
-#define SHM_ADDR	0x00000000
+#define SHM_MODE		IPC_EXCL|0666
+#define SHM_ADDR		0x00000000
 
 #define CFG_ITEM_NUM	512
 #define CFG_ITEM_LEN	512
-#define CFG_DIVIDER	"'"
+#define CFG_DIVIDER		"'"
 
-void 	mcfg_init(const char *fn);
-char*	mcfg_getvalue(const char *key, const char *def);
+void mcfg_init(const char *fn);
+char* mcfg_getvalue(const char *key, const char *def);
 int	mcfg_getintvalue(const char *key);
 int	mcfg_getpos(const char *key);
-bool	mcfg_additem(const char *key, const char *value);
-bool	mcfg_setitem(const char *key, const char *value);
-void	mcfg_leave(void);
+bool mcfg_additem(const char *key, const char *value);
+bool mcfg_setitem(const char *key, const char *value);
+void mcfg_leave(void);
 
 __END_DECLS
 #endif	/* __MCONFIG_H__ */

@@ -5,10 +5,10 @@
 #define PLUGIN_NAME	"db_community"
 #define CONFIG_PATH	PRE_PLUGIN"."PLUGIN_NAME
 
-#define DBCM_IP		"192.168.8.84"
-#define DBCM_USER	"root"
-#define DBCM_PASS	"hifly1234"
-#define DBCM_NAME 	"home"
+#define DBCM_IP		"127.0.0.1"
+#define DBCM_USER	"test"
+#define DBCM_PASS	"test"
+#define DBCM_NAME 	"test"
 
 #define MASTER_EVT_NAME	"0"
 
