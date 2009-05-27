@@ -68,12 +68,13 @@ struct _mdb_driver
   int (*query_get_last_id)(mdb_query* query, const char* seq_name);
 };
 
+extern mdb_driver mysql_driver;
 extern mdb_driver sqlite_driver;
 #ifndef DROP_PG
 extern mdb_driver pgsql_driver;
-#define MDB_DV_NUM	2
+#define MDB_DV_NUM	3
 #else
-#define MDB_DV_NUM	1
+#define MDB_DV_NUM	2
 #endif
 
 mdb_conn* mdb_connect(const char* dsn);

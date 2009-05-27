@@ -4,10 +4,12 @@
 static mdb_driver* drivers[MDB_DV_NUM] = {
 	&sqlite_driver,
 	&pgsql_driver,
+	&mysql_driver,
 };
 #else
 static mdb_driver* drivers[MDB_DV_NUM] = {
 	&sqlite_driver,
+	&mysql_driver,
 };
 #endif
 
