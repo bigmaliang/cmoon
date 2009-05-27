@@ -40,6 +40,7 @@ void mtc_init(const char *fn)
 	if (g_fp != NULL)
 		FCLOSE(g_fp);
 	g_fp = FOPEN(g_fn, "a+");
+	if (g_fp != NULL) setvbuf(g_fp, (char *)NULL, _IOLBF, 0);
 	atexit(mtc_leave);
 }
 void mtc_leave()

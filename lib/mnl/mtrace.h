@@ -34,14 +34,14 @@ __BEGIN_DECLS
 #if defined(USE_C99_VARARG_MACROS)
 #define mtc_die(f,...)													\
 	do {																\
-		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DIE,f,__VA_ARGS__); \
+		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DIE,f,##__VA_ARGS__); \
 		exit(-1);														\
 	} while(0)
-#define mtc_err(f,...)		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_ERROR,f,__VA_ARGS__)
-#define mtc_warn(f,...)		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_WARNING,f,__VA_ARGS__)
-#define mtc_dbg(f,...)		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DEBUG,f,__VA_ARGS__)
-#define mtc_info(f,...)		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_INFO,f,__VA_ARGS__)
-#define mtc_noise(f,...)	mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,__VA_ARGS__)
+#define mtc_err(f,...)		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_ERROR,f,##__VA_ARGS__)
+#define mtc_warn(f,...)		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_WARNING,f,##__VA_ARGS__)
+#define mtc_dbg(f,...)		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DEBUG,f,##__VA_ARGS__)
+#define mtc_info(f,...)		mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_INFO,f,##__VA_ARGS__)
+#define mtc_noise(f,...)	mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,##__VA_ARGS__)
 	
 #elif defined(USE_GNUC_VARARG_MACROS)
 #define mtc_die(f,a...)													\
