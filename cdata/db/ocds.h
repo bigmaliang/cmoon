@@ -5,8 +5,6 @@
 
 __BEGIN_DECLS
 
-#define CDS_DOMAIN_NUM	7
-
 int cds_parse_key(char *key, ULIST **list);
 int cds_parse_domain(char *domain, ULIST **list);
 int cds_add_udp_server(nmdb_t *db, char *domain);

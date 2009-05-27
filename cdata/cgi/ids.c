@@ -8,7 +8,7 @@ int main()
 {
 	CGI *cgi = NULL;
 	NEOERR *err;
-	fdb_t *fdb = NULL;
+	ids_db_t *dbt = NULL;
 	int ret;
 
 	//sleep(20);
@@ -28,16 +28,16 @@ int main()
 		return 1;
 	}
 
-	ret = ids_fdb_init(&fdb);
-	fdb_opfinish_json(ret, cgi->hdf, fdb);
+	ret = ids_dbt_init(&dbt);
+	fdb_opfinish_json(ret, cgi->hdf, NULL);
 
-	ret = ids_get_data(cgi->hdf, fdb);
-	fdb_opfinish_json(ret, cgi->hdf, fdb);
+	ret = ids_get_data(cgi->hdf, dbt);
+	fdb_opfinish_json(ret, cgi->hdf, NULL);
 
 	mjson_output_hdf(cgi->hdf);
 
 	cgi_destroy(&cgi);
-	fdb_free(&fdb);
+	dbt_free(dbt);
 	mconfig_cleanup(&g_cfg);
 	return 0;
 }

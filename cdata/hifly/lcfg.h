@@ -6,7 +6,9 @@
 
 #define CFG_DB			"Db"
 #define CFG_NMDB		"Nmdb"
-#define CFG_TABLE		"Tables"
+#define CFG_CDS_TABLE	"CdsTable"
+#define CFG_IDS_TABLE	"IdsTable"
+#define CFG_IDS_DB		"IdsDb"
 
 #ifdef RELEASE
 #define PATH_SITE	"/data/www/rtds/"

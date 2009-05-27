@@ -5,10 +5,14 @@
 
 __BEGIN_DECLS
 
-#define IDS_DOMAIN_NUM		1
+typedef struct {
+	int num;
+	fdb_t **dbs;
+} ids_db_t;
 
-int ids_fdb_init(fdb_t **fdb);
-int ids_get_data(HDF *hdf, fdb_t *fdb);
+int ids_dbt_init(ids_db_t **dbt);
+void dbt_free(ids_db_t *dbt);
+int ids_get_data(HDF *hdf, ids_db_t *dbt);
 
 __END_DECLS
 #endif	/* __OIDS_H__ */

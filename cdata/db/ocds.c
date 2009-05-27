@@ -91,7 +91,7 @@ int cds_get_data(HDF *hdf, char *key, char *domain, char *hdfkey, fdb_t *fdb)
 		return RET_DBOP_INPUTE;
 
 	char cfgkey[256];
-	snprintf(cfgkey, sizeof(cfgkey), "%s.%s", CFG_TABLE, domain);
+	snprintf(cfgkey, sizeof(cfgkey), "%s.%s", CFG_CDS_TABLE, domain);
 	HDF *node = hdf_get_obj(g_cfg, cfgkey);
 	if (node == NULL) {
 		mtc_warn("domain %s invalid", domain);
@@ -143,7 +143,7 @@ int cds_store_increment(fdb_t *fdb, char *key, char *val)
 	}
 	
 	char cfgkey[256];
-	snprintf(cfgkey, sizeof(cfgkey), "%s.%s", CFG_TABLE, domain);
+	snprintf(cfgkey, sizeof(cfgkey), "%s.%s", CFG_CDS_TABLE, domain);
 	HDF *node = hdf_get_obj(g_cfg, cfgkey);
 	if (node == NULL) {
 		mtc_warn("domain %s invalid", domain);

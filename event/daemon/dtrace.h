@@ -28,10 +28,10 @@
 #define FSYNC	fsync
 
 #if defined(USE_C99_VARARG_MACROS)
-#define dtc_die(p,f,...)						\
-	do {								\
+#define dtc_die(p,f,...)												\
+	do {																\
 		dtc_msg(p,__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DIE,f,##__VA_ARGS__); \
-		exit(-1);						\
+		exit(-1);														\
 	} while(0)
 #define dtc_err(p,f,...)	dtc_msg(p,__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_ERROR,f,##__VA_ARGS__)
 #define dtc_warn(p,f,...)	dtc_msg(p,__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_WARNING,f,##__VA_ARGS__)
@@ -40,10 +40,10 @@
 #define dtc_noise(p,f,...)	dtc_msg(p,__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,##__VA_ARGS__)
 	
 #elif defined(USE_GNUC_VARARG_MACROS)
-#define dtc_die(p,f,a...)						\
-	do {								\
-		dtc_msg(p,__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DIE,f,##a); \
-		exit(-1);						\
+#define dtc_die(p,f,a...)												\
+	do {																\
+		dtc_msg(p,__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DIE,f,##a);	\
+		exit(-1);														\
 	} while(0)
 #define dtc_err(p,f,a...)	dtc_msg(p,__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_ERROR,f,##a)
 #define dtc_warn(p,f,a...)	dtc_msg(p,__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_WARNING,f,##a)
@@ -55,6 +55,6 @@
 FILE* dtc_init(const char *fn);
 void dtc_leave(FILE *fp);
 bool dtc_msg(FILE *fp, const char *func, const char *file, long line,
-	     int level, const char *format, ...);
+			 int level, const char *format, ...);
 
 #endif	/* __DTRACE_H__ */

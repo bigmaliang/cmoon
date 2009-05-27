@@ -2,33 +2,50 @@
 #include "lheads.h"
 #include "oids.h"
 
-#define IDS_SLAVE_DB_NUM	3
-char g_dbip_slave[IDS_SLAVE_DB_NUM][LEN_ST] = {"192.168.8.84", "192.168.8.84", "192.168.8.84"};
-
-static char ids_keys[IDS_DOMAIN_NUM][LEN_ST] = {"n_user_message"};
-static char ids_tables[IDS_DOMAIN_NUM][LEN_ST] = {"home.home"};
-static char ids_cols_k[IDS_DOMAIN_NUM][LEN_ST] = {"uid"};
-static char ids_cols_v[IDS_DOMAIN_NUM][LEN_ST] = {"view_num"};
-
-static int ids_get_keyid(char *domain)
+int ids_dbt_init(ids_db_t **dbt)
 {
-	int i;
-	for (i = 0; i < IDS_DOMAIN_NUM; i++) {
-		if (!strcmp(domain, ids_keys[i]))
-			return i;
+	HDF *node = hdf_get_obj(g_cfg, CFG_IDS_DB);
+	if (node == NULL) {
+		mtc_err("no %s configed", CFG_IDS_DB);
+		return RET_DBOP_INPUTE;
 	}
-	return -1;
+	
+	ids_db_t *ldb = calloc(1, sizeof(ids_db_t));
+	if (ldb == NULL) return RET_DBOP_MEMALLOCE;
+
+	fdb_t *sdb;
+	node = hdf_obj_child(node);
+	while (node != NULL) {
+		sdb = NULL;
+		if (ldb_init(&sdb, hdf_obj_value(node), NULL) != RET_DBOP_OK) {
+			mtc_err("connect %d error", hdf_obj_value(node));
+		} else {
+			ldb->dbs[ldb->num] = sdb;
+			ldb->num++;
+		}
+		node = hdf_obj_next(node);
+	}
+
+	*dbt = ldb;
+
+	return RET_DBOP_OK;
 }
 
-int ids_fdb_init(fdb_t **fdb)
+void dbt_free(ids_db_t *dbt)
 {
-	int i = neo_rand(IDS_SLAVE_DB_NUM);
-	return ldb_init(fdb, g_dbip_slave[i], NULL);
+	if (dbt == NULL) return;
+	for (int i = 0; i < dbt->num; i++) {
+		fdb_free(&dbt->dbs[i]);
+	}
+	free(dbt);
 }
 
-int ids_get_data(HDF *hdf, fdb_t *fdb)
+int ids_get_data(HDF *hdf, ids_db_t *dbt)
 {
 	int ret;
+
+	int i = neo_rand(dbt->num);
+	fdb_t *fdb = dbt->dbs[i];
 	
 	if (fdb->conn == NULL) {
 		mtc_err("connect error");
@@ -42,14 +59,20 @@ int ids_get_data(HDF *hdf, fdb_t *fdb)
 		return RET_DBOP_INPUTE;
 	}
 
-	ret = ids_get_keyid(op);
-	if (ret < 0 || ret >= IDS_DOMAIN_NUM) {
+	char cfgkey[256];
+	snprintf(cfgkey, sizeof(cfgkey), "%s.%s", CFG_IDS_TABLE, op);
+	HDF *node = hdf_get_obj(g_cfg, cfgkey);
+	if (node == NULL) {
 		mtc_warn("op %s invalid", op);
 		return RET_DBOP_INPUTE;
 	}
-
+	char *table, *keyc, *valc;
+	table = hdf_get_value(node, "table", "null.blog");
+	keyc = hdf_get_value(node, "keycol", "bid");
+	valc = hdf_get_value(node, "valcol", "view_num");
+	
 	snprintf(fdb->sql, sizeof(fdb->sql), "SELECT %s FROM %s WHERE %s=%s;",
-			 ids_cols_v[ret], ids_tables[ret], ids_cols_k[ret], key);
+			 valc, table, keyc, key);
 	ret = fdb_exec(fdb);
 	if (ret != RET_DBOP_OK) {
 		mtc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
