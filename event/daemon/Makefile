@@ -17,7 +17,7 @@ ENABLE_TCP = 1
 ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
-CFLAGS += -std=c99 -pedantic -Wall -fno-strict-aliasing
+CFLAGS += -Wall -fno-strict-aliasing
 ALL_CFLAGS = -D_XOPEN_SOURCE=600 $(CFLAGS)
 ALL_CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 		-DENABLE_TCP=$(ENABLE_TCP) \
