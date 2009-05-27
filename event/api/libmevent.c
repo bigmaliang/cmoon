@@ -1,10 +1,10 @@
 
-#include <sys/types.h>		/* socket defines */
-#include <sys/socket.h>		/* socket functions */
+#include <sys/types.h>	/* socket defines */
+#include <sys/socket.h>	/* socket functions */
 #include <stdlib.h>		/* malloc() */
 #include <stdint.h>		/* uint32_t and friends */
-#include <stdbool.h>		/* bool, true, false */
-#include <arpa/inet.h>		/* htonls() and friends */
+#include <stdbool.h>	/* bool, true, false */
+#include <arpa/inet.h>	/* htonls() and friends */
 #include <string.h>		/* memcpy() */
 #include <unistd.h>		/* close() */
 
@@ -179,7 +179,7 @@ int mevent_free(mevent_t *evt)
 
 /* Sends a buffer to the given server. */
 static int srv_send(struct mevent_srv *srv,
-		    unsigned char *buf, size_t bsize)
+					unsigned char *buf, size_t bsize)
 {
 	if (srv == NULL)
 		return 0;
@@ -200,8 +200,8 @@ static int srv_send(struct mevent_srv *srv,
 
 /* Gets a reply from the given server. */
 static uint32_t get_rep(struct mevent_srv *srv,
-			unsigned char *buf, size_t bsize,
-			unsigned char **payload, size_t *psize)
+						unsigned char *buf, size_t bsize,
+						unsigned char **payload, size_t *psize)
 {
 	if (srv == NULL)
 		return -1;
@@ -264,7 +264,7 @@ static uint32_t checksum(const unsigned char *buf, size_t bsize)
 
 /* Selects which server to use for the given key. */
 static struct mevent_srv *select_srv(mevent_t *evt,
-				     const char *key, size_t ksize)
+									 const char *key, size_t ksize)
 {
 	uint32_t n;
 	
@@ -280,7 +280,7 @@ static struct mevent_srv *select_srv(mevent_t *evt,
  * seted formerly. so, call it first
  */
 int mevent_chose_plugin(mevent_t *evt, const char *key,
-			unsigned short cmd, unsigned short flags)
+						unsigned short cmd, unsigned short flags)
 {
 	struct mevent_srv *srv;
 	unsigned char *p;
@@ -349,7 +349,7 @@ int mevent_trigger(mevent_t *evt, uint32_t *errcode)
 
 	if (!evt->packed) {
 		vsize = pack_data_array(NULL, evt->dataset, evt->payload + evt->psize,
-					MAX_PACKET_LEN - evt->psize - 4);
+								MAX_PACKET_LEN - evt->psize - 4);
 		if (vsize == 0 && data_cell_length(evt->dataset) != 0) return 0;
 		evt->psize += vsize;
 		evt->packed = 1;

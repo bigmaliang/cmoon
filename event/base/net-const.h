@@ -50,13 +50,13 @@ enum {
 
 /* Possible request flags (which can be applied to the documented requests) */
 #define FLAGS_NONE		0
-#define FLAGS_CACHE_ONLY	1	/* get, set, del, cas, incr */
+#define FLAGS_CACHE_ONLY 1	/* get, set, del, cas, incr */
 #define FLAGS_SYNC		2	/* set, del */
 
 /* Network replies (different namespace from requests) */
 #define REP_ERR			0x800
-#define REP_CACHE_HIT		0x801
-#define REP_CACHE_MISS		0x802
+#define REP_CACHE_HIT	0x801
+#define REP_CACHE_MISS	0x802
 #define REP_OK			0x803
 #define REP_NOTIN		0x804
 #define REP_NOMATCH		0x805
