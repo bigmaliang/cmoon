@@ -5,12 +5,12 @@
 #include "mysql.h"
 #include "ClearSilver.h"
 
-#define DB_IP		"192.168.8.84"
-#define DB_USER		"root"
-#define DB_PASS		"hifly1234"
+#define DB_IP		"127.0.0.1"
+#define DB_USER		"test"
+#define DB_PASS		"test"
 #define LEN_SQL		1024
 
-#define RET_DBOP_OK		0
+#define RET_DBOP_OK			0
 #define RET_DBOP_INITE		11
 #define RET_DBOP_CONNECTE	12
 #define RET_DBOP_INPUTE		13
