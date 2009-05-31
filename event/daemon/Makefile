@@ -17,18 +17,11 @@ ENABLE_TCP = 1
 ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
-CFLAGS += -Wall -fno-strict-aliasing
-ALL_CFLAGS = -D_XOPEN_SOURCE=600 $(CFLAGS)
+ALL_CFLAGS = $(CFLAGS)
 ALL_CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 		-DENABLE_TCP=$(ENABLE_TCP) \
 		-DENABLE_UDP=$(ENABLE_UDP) \
 		-DENABLE_SCTP=$(ENABLE_SCTP)
-
-ifdef DEBUG
-ALL_CFLAGS += -g
-else
-ALL_CFLAGS += -O3
-endif
 
 ifdef PROFILE
 ALL_CFLAGS += -g -pg -ftest-coverage -fprofile-generate
@@ -97,6 +90,7 @@ mevent: $(OBJS_BIN) $(LIB_SERVER)
 install-bin: mevent
 	sudo install -d $(PREFIX)/bin
 	sudo install -m 0755 mevent $(PREFIX)/bin/
+	sudo install -m 0644 mevent.hdf $(PREFIX)/bin/
 
 install-man:
 	sudo install -d $(PREFIX)/man/man1
