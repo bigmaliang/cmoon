@@ -5,9 +5,6 @@
 #include "mysql.h"
 #include "ClearSilver.h"
 
-#define DB_IP		"127.0.0.1"
-#define DB_USER		"test"
-#define DB_PASS		"test"
 #define LEN_SQL		1024
 
 #define RET_DBOP_OK			0
@@ -37,7 +34,6 @@ typedef struct {
 	char sql[LEN_SQL];
 }fdb_t;
 
-int fdb_init(fdb_t **fdb, char *ip, char *name);
 int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name);
 void fdb_free(fdb_t **fdb);
 int fdb_exec(fdb_t *fdb);

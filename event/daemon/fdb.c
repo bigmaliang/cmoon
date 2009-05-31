@@ -1,16 +1,12 @@
 #include <stdlib.h>		/* malloc() */
 #include <stdint.h>		/* uint32_t and friends */
-#include <stdbool.h>		/* bool */
+#include <stdbool.h>	/* bool */
 #include <string.h>		/* memcpy() */
-#include <arpa/inet.h>		/* htonl() and friends */
+#include <strings.h>	/* strcasecmp() */
+#include <arpa/inet.h>	/* htonl() and friends */
 
 #include "fdb.h"
 #include "ClearSilver.h"
-
-int fdb_init(fdb_t **fdb, char *ip, char *name)
-{
-	return fdb_init_long(fdb, ip, DB_USER, DB_PASS, name);
-}
 
 int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name)
 {
@@ -26,18 +22,22 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name)
 	}
 	*fdb = ldb;
 
+	if (!strcasecmp(ip, "null")) ip = NULL;
+	if (!strcasecmp(user, "null")) user = NULL;
+	if (!strcasecmp(pass, "null")) pass = NULL;
+	if (!strcasecmp(name, "null")) name = NULL;
+
 	my_bool reconnect = 1;
 	mysql_options(ldb->conn, MYSQL_OPT_RECONNECT, &reconnect);
 	mysql_options(ldb->conn, MYSQL_SET_CHARSET_NAME, "utf8");
 	mysql_options(ldb->conn, MYSQL_INIT_COMMAND, "SET NAMES 'utf8'");
 
-	if (ip == NULL) ip = DB_IP;
-	if (name == NULL) name = "home";
-	
-	ldb->conn = mysql_real_connect(ldb->conn, ip, user, pass, name, 0, NULL, 0);
-	if (ldb->conn == NULL)
+	MYSQL *lcon = NULL;
+	lcon = mysql_real_connect(ldb->conn, ip, user, pass, name, 0, NULL, 0);
+	if (lcon == NULL)
 		return RET_DBOP_CONNECTE;
-	//mysql_real_query(ldb->conn, "SET names 'utf8';", strlen("SET names 'utf8';"));
+	else
+		ldb->conn = lcon;
 	return RET_DBOP_OK;
 }
 
@@ -54,6 +54,7 @@ int fdb_exec(fdb_t *fdb)
 	ret = mysql_real_query(fdb->conn, fdb->sql, strlen(fdb->sql));
 	if (ret != 0)
 		return RET_DBOP_ERROR;
+	fdb->res = mysql_store_result(fdb->conn);
 	return RET_DBOP_OK;
 }
 int fdb_fetch_row(fdb_t *fdb)
@@ -79,8 +80,7 @@ int fdb_affect_rows(fdb_t *fdb)
 char* fdb_error(fdb_t *fdb)
 {
 	if (fdb == NULL) return "init error";
-	if (fdb->conn == NULL)
-		return "connect error";
+	if (fdb->conn == NULL) return "connect error";
 	return (char*)mysql_error(fdb->conn);
 }
 

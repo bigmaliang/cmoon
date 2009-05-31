@@ -6,9 +6,9 @@
 #define CONFIG_PATH	PRE_PLUGIN"."PLUGIN_NAME
 
 #define DBCM_IP		"127.0.0.1"
-#define DBCM_USER	"test"
-#define DBCM_PASS	"test"
-#define DBCM_NAME 	"test"
+#define DBCM_USER	"root"
+#define DBCM_PASS	NULL
+#define DBCM_NAME 	"mysql"
 
 #define MASTER_EVT_NAME	"0"
 

@@ -14,9 +14,14 @@
 
 	以上so文件拷贝至 /usr/local/lib
 
-
 执行文件
 	daemon/mevent, dameon/mevent.hdf
 	拷贝这些文件到新部署机器， 修改mevent.hdf配置文件。
 	执行 PATH/mevent -c PATH/mevent.hdf (PATH 为拷贝文件的全路径)。
 	执行 PATH/mevent -h 查看程序启动帮助信息。
+
+
+以安装到/usr/local为例
+	cd /usr/local
+	tar zcvf mevent.tar.gz bin/mevent bin/mevent.hdf lib/libmevent_server.so lib/mevent_db_community.so lib/mevent_skeleton.so \
+	lib/libneo_utl.so  mysql/lib/mysql/libmysqlclient* lib/libevent*

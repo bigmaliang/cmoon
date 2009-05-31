@@ -86,7 +86,7 @@ int main(int argc, char **argv, char **envp)
 	
 	ret = ldb_init(&fdb, NULL, NULL);
 	if (ret != RET_DBOP_OK) {
-		mtc_err("init db error");
+		mtc_err("init db error %s", fdb_error(fdb));
 		printf("Content-Type: text/html; charset=UTF-8\r\n\r\n");
 		printf("{errmsg: \"初始化数据库失败\"}");
 		return 1;

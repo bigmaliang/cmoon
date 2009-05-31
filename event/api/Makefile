@@ -17,18 +17,12 @@ ENABLE_TCP = 1
 ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
-CFLAGS += -pedantic -Wall -fno-strict-aliasing
+CFLAGS += -pedantic
 ALL_CFLAGS = -fPIC $(CFLAGS)
 ALL_CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 		-DENABLE_TCP=$(ENABLE_TCP) \
 		-DENABLE_UDP=$(ENABLE_UDP) \
 		-DENABLE_SCTP=$(ENABLE_SCTP)
-
-ifdef DEBUG
-ALL_CFLAGS += -g
-else
-ALL_CFLAGS += -O3
-endif
 
 ifdef PROFILE
 ALL_CFLAGS += -g -pg -fprofile-arcs -ftest-coverage

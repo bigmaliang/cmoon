@@ -6,6 +6,7 @@
 #include <unistd.h>
 #define __USE_GNU
 #include <string.h>
+#include <strings.h>			/* strcasecmp() */
 #include <stdbool.h>
 #include <time.h>
 #include <ctype.h>				/* isdigit() */
