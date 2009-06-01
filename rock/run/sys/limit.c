@@ -2,17 +2,18 @@
 #include "lheads.h"
 #include "olimit.h"
 
+HDF *g_cfg = NULL;
+
 int main(int argc, char *argv[])
 {
 	CGI *cgi;
 	NEOERR *err;
 	int ret;
 	mdb_conn *conn = NULL;
-	char *opt;
 
 	//sleep(20);
 	mtc_init(TC_ROOT"sys.limit");
-	mcfg_init(SITE_CONFIG);
+	mconfig_parse_file(SITE_CONFIG, &g_cfg);
 
 	err = cgi_init(&cgi, NULL);
 	DIE_NOK_CGI(err);
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
 	free(musn_esc);
 #endif
 
-	ret = mdb_init(&conn, DB_DSN_SYS);
+	ret = mdb_init(&conn, DB_SYS);
 	ldb_opfinish_json(ret, cgi->hdf, conn);
 	
 	lutil_file_access_json(cgi, conn);
@@ -41,15 +42,13 @@ int main(int argc, char *argv[])
 		limit_translate_mode(cgi->hdf);
 		break;
 	case CGI_REQ_POST:
-		/* TODO boa not support put, del method... */
-		opt = hdf_get_value(cgi->hdf, PRE_QUERY".op", "unknown");
-		if (!strcmp(opt, "add")) {
-			ret = limit_add(cgi->hdf, conn);
-		} else if (!strcmp(opt, "del")) {
-			ret = limit_delete(cgi->hdf, conn);
-		} else {
-			ret = limit_modify(cgi->hdf, conn);
-		}
+		ret = limit_modify(cgi->hdf, conn);
+		break;
+	case CGI_REQ_PUT:
+		ret = limit_add(cgi->hdf, conn);
+		break;
+	case CGI_REQ_DEL:
+		ret = limit_delete(cgi->hdf, conn);
 		break;
 	default:
 		ret = RET_RBTOP_INPUTE;
@@ -60,5 +59,6 @@ int main(int argc, char *argv[])
 	mdb_destroy(conn);
 	mjson_output_hdf(cgi->hdf);
 	cgi_destroy(&cgi);
+	mconfig_cleanup(&g_cfg);
 	return 0;
 }
