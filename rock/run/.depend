@@ -24,14 +24,19 @@ useradmin.o: useradmin.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/util/skiplist.h \
   ../../lib/cs/include/ClearSilver/util/dict.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
   ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
   ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
   ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
   ../../lib/cs/include/ClearSilver/cgi/date.h \
   ../../lib/cs/include/ClearSilver/cgi/html.h \
   ../../lib/memc/include/libmemcached/memcached.h \
-  ../../lib/memc/include/libmemcached/libmemcached_config.h \
   ../../lib/memc/include/libmemcached/memcached_constants.h \
   ../../lib/memc/include/libmemcached/memcached_types.h \
   ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
@@ -40,6 +45,11 @@ useradmin.o: useradmin.c ../../lib/mnl/mheads.h \
   ../../lib/memc/include/libmemcached/memcached_string.h \
   ../../lib/memc/include/libmemcached/memcached_result.h \
   ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/fcgi/include/fcgi_stdio.h ../../lib/fcgi/include/fcgiapp.h \
+  ../../lib/qdbm/include/depot.h /usr/include/mysql/mysql.h \
+  /usr/include/mysql/mysql_com.h /usr/include/mysql/mysql_time.h \
+  /usr/include/mysql/mysql_version.h /usr/include/mysql/typelib.h \
+  /usr/include/mysql/my_list.h /usr/include/mysql/my_alloc.h \
   ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
   ../../lib/jsonc/include/json/debug.h \
   ../../lib/jsonc/include/json/linkhash.h \
@@ -50,9 +60,10 @@ useradmin.o: useradmin.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
   ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
-  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
-  ../pub/lnum.h ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h \
-  ../walk/member.h
+  ../../lib/mnl/mdb.h ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h \
+  ../pub/lheads.h ../pub/lcfg.h ../../lib/mnl/mheads.h ../pub/lnum.h \
+  ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h \
+  ../walk/member.h ../../lib/mnl/mheads.h
 userlogin.o: userlogin.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/ClearSilver.h \
   ../../lib/cs/include/ClearSilver/cs_config.h \
@@ -79,14 +90,19 @@ userlogin.o: userlogin.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/util/skiplist.h \
   ../../lib/cs/include/ClearSilver/util/dict.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
   ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
   ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
   ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
   ../../lib/cs/include/ClearSilver/cgi/date.h \
   ../../lib/cs/include/ClearSilver/cgi/html.h \
   ../../lib/memc/include/libmemcached/memcached.h \
-  ../../lib/memc/include/libmemcached/libmemcached_config.h \
   ../../lib/memc/include/libmemcached/memcached_constants.h \
   ../../lib/memc/include/libmemcached/memcached_types.h \
   ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
@@ -95,6 +111,11 @@ userlogin.o: userlogin.c ../../lib/mnl/mheads.h \
   ../../lib/memc/include/libmemcached/memcached_string.h \
   ../../lib/memc/include/libmemcached/memcached_result.h \
   ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/fcgi/include/fcgi_stdio.h ../../lib/fcgi/include/fcgiapp.h \
+  ../../lib/qdbm/include/depot.h /usr/include/mysql/mysql.h \
+  /usr/include/mysql/mysql_com.h /usr/include/mysql/mysql_time.h \
+  /usr/include/mysql/mysql_version.h /usr/include/mysql/typelib.h \
+  /usr/include/mysql/my_list.h /usr/include/mysql/my_alloc.h \
   ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
   ../../lib/jsonc/include/json/debug.h \
   ../../lib/jsonc/include/json/linkhash.h \
@@ -105,9 +126,10 @@ userlogin.o: userlogin.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
   ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
-  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
-  ../pub/lnum.h ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h \
-  ../walk/member.h
+  ../../lib/mnl/mdb.h ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h \
+  ../pub/lheads.h ../pub/lcfg.h ../../lib/mnl/mheads.h ../pub/lnum.h \
+  ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h \
+  ../walk/member.h ../../lib/mnl/mheads.h
 userlogout.o: userlogout.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/ClearSilver.h \
   ../../lib/cs/include/ClearSilver/cs_config.h \
@@ -134,14 +156,19 @@ userlogout.o: userlogout.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/util/skiplist.h \
   ../../lib/cs/include/ClearSilver/util/dict.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
   ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
   ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
   ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
   ../../lib/cs/include/ClearSilver/cgi/date.h \
   ../../lib/cs/include/ClearSilver/cgi/html.h \
   ../../lib/memc/include/libmemcached/memcached.h \
-  ../../lib/memc/include/libmemcached/libmemcached_config.h \
   ../../lib/memc/include/libmemcached/memcached_constants.h \
   ../../lib/memc/include/libmemcached/memcached_types.h \
   ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
@@ -150,6 +177,11 @@ userlogout.o: userlogout.c ../../lib/mnl/mheads.h \
   ../../lib/memc/include/libmemcached/memcached_string.h \
   ../../lib/memc/include/libmemcached/memcached_result.h \
   ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/fcgi/include/fcgi_stdio.h ../../lib/fcgi/include/fcgiapp.h \
+  ../../lib/qdbm/include/depot.h /usr/include/mysql/mysql.h \
+  /usr/include/mysql/mysql_com.h /usr/include/mysql/mysql_time.h \
+  /usr/include/mysql/mysql_version.h /usr/include/mysql/typelib.h \
+  /usr/include/mysql/my_list.h /usr/include/mysql/my_alloc.h \
   ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
   ../../lib/jsonc/include/json/debug.h \
   ../../lib/jsonc/include/json/linkhash.h \
@@ -160,9 +192,10 @@ userlogout.o: userlogout.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
   ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
-  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
-  ../pub/lnum.h ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h \
-  ../walk/member.h
+  ../../lib/mnl/mdb.h ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h \
+  ../pub/lheads.h ../pub/lcfg.h ../../lib/mnl/mheads.h ../pub/lnum.h \
+  ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h \
+  ../walk/member.h ../../lib/mnl/mheads.h
 usermenu.o: usermenu.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/ClearSilver.h \
   ../../lib/cs/include/ClearSilver/cs_config.h \
@@ -189,14 +222,19 @@ usermenu.o: usermenu.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/util/skiplist.h \
   ../../lib/cs/include/ClearSilver/util/dict.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
   ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
   ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
   ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
   ../../lib/cs/include/ClearSilver/cgi/date.h \
   ../../lib/cs/include/ClearSilver/cgi/html.h \
   ../../lib/memc/include/libmemcached/memcached.h \
-  ../../lib/memc/include/libmemcached/libmemcached_config.h \
   ../../lib/memc/include/libmemcached/memcached_constants.h \
   ../../lib/memc/include/libmemcached/memcached_types.h \
   ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
@@ -205,6 +243,11 @@ usermenu.o: usermenu.c ../../lib/mnl/mheads.h \
   ../../lib/memc/include/libmemcached/memcached_string.h \
   ../../lib/memc/include/libmemcached/memcached_result.h \
   ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/fcgi/include/fcgi_stdio.h ../../lib/fcgi/include/fcgiapp.h \
+  ../../lib/qdbm/include/depot.h /usr/include/mysql/mysql.h \
+  /usr/include/mysql/mysql_com.h /usr/include/mysql/mysql_time.h \
+  /usr/include/mysql/mysql_version.h /usr/include/mysql/typelib.h \
+  /usr/include/mysql/my_list.h /usr/include/mysql/my_alloc.h \
   ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
   ../../lib/jsonc/include/json/debug.h \
   ../../lib/jsonc/include/json/linkhash.h \
@@ -215,8 +258,9 @@ usermenu.o: usermenu.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
   ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
-  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
-  ../pub/lnum.h ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h
+  ../../lib/mnl/mdb.h ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h \
+  ../pub/lheads.h ../pub/lcfg.h ../../lib/mnl/mheads.h ../pub/lnum.h \
+  ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h
 userregist.o: userregist.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/ClearSilver.h \
   ../../lib/cs/include/ClearSilver/cs_config.h \
@@ -243,14 +287,19 @@ userregist.o: userregist.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/util/skiplist.h \
   ../../lib/cs/include/ClearSilver/util/dict.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
+  ../../lib/cs/include/ClearSilver/util/neo_misc.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/ulist.h \
   ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
+  ../../lib/cs/include/ClearSilver/util/neo_str.h \
   ../../lib/cs/include/ClearSilver/cgi/cgi.h \
+  ../../lib/cs/include/ClearSilver/util/neo_err.h \
+  ../../lib/cs/include/ClearSilver/util/neo_hdf.h \
   ../../lib/cs/include/ClearSilver/cs/cs.h \
   ../../lib/cs/include/ClearSilver/cgi/cgiwrap.h \
   ../../lib/cs/include/ClearSilver/cgi/date.h \
   ../../lib/cs/include/ClearSilver/cgi/html.h \
   ../../lib/memc/include/libmemcached/memcached.h \
-  ../../lib/memc/include/libmemcached/libmemcached_config.h \
   ../../lib/memc/include/libmemcached/memcached_constants.h \
   ../../lib/memc/include/libmemcached/memcached_types.h \
   ../../lib/memc/include/libmemcached/memcached_watchpoint.h \
@@ -259,6 +308,11 @@ userregist.o: userregist.c ../../lib/mnl/mheads.h \
   ../../lib/memc/include/libmemcached/memcached_string.h \
   ../../lib/memc/include/libmemcached/memcached_result.h \
   ../../lib/memc/include/libmemcached/memcached_storage.h \
+  ../../lib/fcgi/include/fcgi_stdio.h ../../lib/fcgi/include/fcgiapp.h \
+  ../../lib/qdbm/include/depot.h /usr/include/mysql/mysql.h \
+  /usr/include/mysql/mysql_com.h /usr/include/mysql/mysql_time.h \
+  /usr/include/mysql/mysql_version.h /usr/include/mysql/typelib.h \
+  /usr/include/mysql/my_list.h /usr/include/mysql/my_alloc.h \
   ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
   ../../lib/jsonc/include/json/debug.h \
   ../../lib/jsonc/include/json/linkhash.h \
@@ -269,6 +323,7 @@ userregist.o: userregist.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
   ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
-  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h ../pub/lheads.h ../pub/lcfg.h \
-  ../pub/lnum.h ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h \
-  ../walk/member.h
+  ../../lib/mnl/mdb.h ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h \
+  ../pub/lheads.h ../pub/lcfg.h ../../lib/mnl/mheads.h ../pub/lnum.h \
+  ../pub/ltypes.h ../pub/ldb.h ../pub/lcs.h ../pub/lutil.h \
+  ../walk/member.h ../../lib/mnl/mheads.h
