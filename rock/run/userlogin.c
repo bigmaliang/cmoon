@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	err = cgi_parse(cgi);
 	DIE_NOK_CGI(err);
 
-	if (mutil_client_attack(cgi->hdf, "userlogin", LMT_CLI_LOGIN, ONE_HOUR)) {
+	if (mutil_client_attack(cgi->hdf, "userlogin", LMT_CLI_LOGIN, PERIOD_CLI_LOGIN)) {
 		mtc_warn("%s %s seems to be a blood attack",
 				 hdf_get_value(cgi->hdf, "CGI.RemoteAddress", ""),
 				 hdf_get_value(cgi->hdf, "Cookie.ClientName", ""));
