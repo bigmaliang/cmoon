@@ -21,7 +21,9 @@
 /* includes for cs, memc */
 #include "ClearSilver.h"
 #include "libmemcached/memcached.h"
+#ifndef NFCGI
 #include "fcgi_stdio.h"
+#endif
 #include "depot.h"
 #include "nmdb.h"
 #include "mysql.h"
