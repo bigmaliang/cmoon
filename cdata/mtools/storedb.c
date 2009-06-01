@@ -20,6 +20,7 @@
  *    如果超过一个月，将该key, key_increment, key_timestamp从nmdb中删除，以保持nmdb的高效率。
  *    有increment且没有写入mysql的key不会删除。
  */
+#define NFCGI
 #include "mheads.h"
 #include "lheads.h"
 #include "ocds.h"
