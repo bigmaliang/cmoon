@@ -5,6 +5,23 @@
 
 __BEGIN_DECLS
 
+enum user_status
+{
+	USER_FRESH = 0,
+	USER_RLSED,
+	USER_CFMED
+};
+
+#define MIN_USER_NUM	998
+
+#define LMT_CLI_REGIST	400
+#define LMT_CLI_LOGIN	400
+
+#define PERIOD_CLI_REGIST	ONE_HOUR
+#define PERIOD_CLI_LOGIN	ONE_HOUR
+
+#define DIV_USER_TB		100
+
 #define MAX_URI_ITEM	100
 #define MAX_GROUP_AUSER	100
 

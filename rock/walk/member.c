@@ -3,7 +3,7 @@
 
 #include "member.h"
 
-void member_refresh_info(uin)
+void member_refresh_info(int uin)
 {
 	char mmckey[LEN_MMC_KEY];
 	sprintf(mmckey, "%s.%d", PRE_MMC_MEMBER, uin);
@@ -64,7 +64,7 @@ int member_release_uin(HDF *hdf, mdb_conn *conn)
 	 * get a fresh number 
 	 */
 	mdb_exec(conn, NULL, "SELECT uin FROM %s WHERE status=%d ORDER BY RANDOM() LIMIT 1;",
-			 NULL, TABLE_RLS_USER, MNUM_USER_FRESH);
+			 NULL, TABLE_RLS_USER, USER_FRESH);
 	ret = mdb_get(conn, "i", &uin);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("get rls number failuer %s", mdb_get_errmsg(conn));
@@ -77,7 +77,7 @@ int member_release_uin(HDF *hdf, mdb_conn *conn)
 	 * mark released 
 	 */
 	ret = mdb_exec(conn, &rows, "UPDATE %s SET status=%d, uname=$1, male=$2 WHERE uin=%d AND status=%d;",
-				   "si", TABLE_RLS_USER, MNUM_USER_RLSED, uin, MNUM_USER_FRESH,
+				   "si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
 				   hdf_get_value(hdf, PRE_QUERY".uname", ""),
 				   hdf_get_int_value(hdf, PRE_QUERY".male", 1));
 	if (ret != MDB_ERR_NONE || rows == 0) {
@@ -105,7 +105,7 @@ int member_alloc_uin(HDF *hdf, mdb_conn *conn)
 	 * mark released 
 	 */
 	ret = mdb_exec(conn, &rows, "UPDATE %s SET status=%d, uname=$1, male=$2 WHERE uin=%d AND status=%d;",
-				   "si", TABLE_RLS_USER, MNUM_USER_RLSED, uin, MNUM_USER_FRESH,
+				   "si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
 				   hdf_get_value(hdf, PRE_QUERY".uname", ""),
 				   hdf_get_int_value(hdf, PRE_QUERY".male", 1));
 	if (ret != MDB_ERR_NONE) {
@@ -137,7 +137,7 @@ int member_confirm_uin(HDF *hdf, mdb_conn *conn)
 	sprintf(usertable, "user_%d", uin%DIV_USER_TB);
 	mdb_begin(conn);
 	mdb_exec(conn, NULL, "UPDATE %s SET status=%d, usn=$1, email=$2 WHERE uin=%d AND status=%d;", "ss",
-			 TABLE_RLS_USER, MNUM_USER_CFMED, uin, MNUM_USER_RLSED,
+			 TABLE_RLS_USER, USER_CFMED, uin, USER_RLSED,
 			 hdf_get_value(hdf, PRE_QUERY".usn", ""),
 			 hdf_get_value(hdf, PRE_QUERY".email", ""));
 	mdb_exec(conn, &rows, "INSERT INTO %s SELECT * FROM %s WHERE uin=%d;", NULL,

@@ -9,21 +9,17 @@ __BEGIN_DECLS
 #define TC_ROOT		"/var/log/moon/rock/"
 
 #ifdef RELEASE
-#define PATH_SITE	"/usr/local/moon/www/"
+#define PATH_SITE	"/usr/local/moon/www/rock/"
 #else
-#define PATH_SITE	"/home/bigml/web/moon/"
+#define PATH_SITE	"/home/bigml/web/moon/rock/"
 #endif
-#define SITE_CONFIG		PATH_SITE"site.conf"
-#define PATH_DOC	PATH_SITE"rock/fly/"
-#define PATH_JS		PATH_SITE"rock/fly/js/"
-#define PATH_CGI	PATH_SITE"rock/run/"
-#define PATH_TPL	PATH_SITE"rock/tpl/"
-#define PATH_MTLS	PATH_SITE"rock/mtls/"
-#define PATH_ADM_DOC	PATH_SITE"admin/htdocs/"
-#define PATH_ADM_CGI	PATH_SITE"admin/cgi-bin/"
-#define PATH_ADM_TPL	PATH_SITE"admin/tpl/"
-#define PATH_ADM_MTLS	PATH_SITE"admin/mtls/"
-#define F_TPL_LAYOUT	PATH_SITE"rock/tpl/layout.html"
+#define SITE_CONFIG		PATH_SITE"config.hdf"
+#define PATH_DOC	PATH_SITE"fly/"
+#define PATH_JS		PATH_SITE"fly/js/"
+#define PATH_CGI	PATH_SITE"run/"
+#define PATH_TPL	PATH_SITE"tpl/"
+#define PATH_MTLS	PATH_SITE"mtls/"
+#define F_TPL_LAYOUT	PATH_SITE"tpl/layout.html"
 
 #define CGI_RUN_DIR		"run"
 #define URI_SPLITER		"/"
