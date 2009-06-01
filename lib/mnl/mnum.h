@@ -5,19 +5,6 @@
 
 __BEGIN_DECLS
 
-enum user_status
-{
-	MNUM_USER_FRESH = 0,
-	MNUM_USER_RLSED,
-	MNUM_USER_CFMED
-};
-
-#define MIN_USER_NUM	998
-
-#define LMT_CLI_REGIST	400
-#define LMT_CLI_LOGIN	400
-#define DIV_USER_TB	100
-
 #define DFT_NUM_PERPAGE	15
 #define DFT_PAGE_NUM	1
 
