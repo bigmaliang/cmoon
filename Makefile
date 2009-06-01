@@ -1,5 +1,5 @@
 BASEDIR = ./
-include ./Make.env
+include $(BASEDIR)Make.env
 
 SUBDIR = lib event cdata rock ksa
 
