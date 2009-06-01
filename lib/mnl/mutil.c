@@ -3,32 +3,31 @@
 int CGI_REQ_METHOD(CGI *cgi)
 {
 	char *op = hdf_get_value(cgi->hdf, PRE_CGI".RequestMethod", REQ_GET);
+	/* TODO boa not support put, del method... */
+	char *opt = hdf_get_value(cgi->hdf, PRE_QUERY".op", REQ_GET);
 	if (REQ_IS_GET(op)) {
 		return CGI_REQ_GET;
-	} else if (REQ_IS_PUT(op)) {
+	} else if (REQ_IS_PUT(op) || !strcmp(opt, "add")) {
 		return CGI_REQ_PUT;
 	} else if (REQ_IS_POST(op)) {
 		return CGI_REQ_POST;
-	} else if (REQ_IS_DEL(op)) {
+	} else if (REQ_IS_DEL(op) || !strcmp(opt, "del")) {
 		return CGI_REQ_DEL;
 	}
 	return CGI_REQ_UNKNOWN;
 }
 
-bool mutil_client_attack(HDF *hdf, char *action, int limit, time_t exp)
+bool mutil_client_attack(HDF *hdf, char *action, uint64_t limit, time_t exp)
 {
-	char key[LEN_MMC_KEY];
+	uint64_t cntcn, cntip; cntcn = cntip = 0;
 	char *cn = hdf_get_value(hdf, "Cookie.ClientName", "");
 	char *ip = hdf_get_value(hdf, "CGI.RemoteAddress", "unknown host");
-	int cntcn, cntip; cntcn = cntip = 0;
-	snprintf(key, sizeof(key), "%s.%s.%s", PRE_MMC_CLIENT, action, cn);
-	mmc_count(MMC_OP_INC, key, 1, (uint64_t*)&cntcn, exp, 0);
-	snprintf(key, sizeof(key), "%s.%s.%s", PRE_MMC_CLIENT, action, ip);
-	mmc_count(MMC_OP_INC, key, 1, (uint64_t*)&cntip, exp, 0);
+	mmc_countf(MMC_OP_INC, 1, &cntcn, exp, 0, "%s.%s.%s", PRE_MMC_CLIENT, action, cn);
+	mmc_countf(MMC_OP_INC, 1, &cntip, exp, 0, "%s.%s.%s", PRE_MMC_CLIENT, action, ip);
 	if (cntcn >= limit || cntip >= limit) {
 		hdf_set_int_value(hdf, PRE_OUTPUT".tired", cntcn);
 		hdf_set_int_value(hdf, PRE_OUTPUT".limit", limit);
-		hdf_set_int_value(hdf, PRE_OUTPUT".during", exp/60);
+		hdf_set_int_value(hdf, PRE_OUTPUT".during", exp);
 		return true;
 	}
 	return false;
