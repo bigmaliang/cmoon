@@ -30,4 +30,10 @@ for dir in $DIRS
 do
 	echo "######### $ACTION $dir #########"
 	make -C $dir $ACTION
+	if [ $? != 0 ]; then
+		echo "#########!!!! MAKE $dir FAILURE !!!!#########"
+		exit $?
+	fi
 done
+
+echo "ALL DONE"
