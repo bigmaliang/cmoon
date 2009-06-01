@@ -35,5 +35,3 @@ do
 		exit $?
 	fi
 done
-
-echo "ALL DONE"
