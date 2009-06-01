@@ -42,57 +42,54 @@ void lutil_file_access_json(CGI *cgi, mdb_conn *conn)
 		hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
 		goto notpass;
 	}
-	listlen = uListLength(files);
 
 	reqmethod = CGI_REQ_METHOD(cgi);
-	for (i = 0; i < listlen; i++) {
-		uListGet(files, i, (void**)&file);
-		//RETURN_NOK(err);
-		if (reqmethod == CGI_REQ_GET) {
-			ret = file_check_user_power(cgi, conn, file, LMT_GET);
-			if(ret != RET_RBTOP_OK) {
-				if (ret == RET_RBTOP_NOTLOGIN)
-					strcpy(errmsg, "敏感操作, 请先登录");
-				else
-					snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权读取 %s", file->remark);
-				hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
-				goto notpass;
-			}
-		} else if (reqmethod == CGI_REQ_POST) {
-			ret = file_check_user_power(cgi, conn, file, LMT_MOD);
-			if(ret != RET_RBTOP_OK) {
-				if (ret == RET_RBTOP_NOTLOGIN)
-					strcpy(errmsg, "敏感操作, 请先登录");
-				else
-					snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权修改 %s", file->remark);
-				hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
-				goto notpass;
-			}
-		} else if (reqmethod == CGI_REQ_PUT) {
-			ret = file_check_user_power(cgi, conn, file, LMT_APPEND);
-			if(ret != RET_RBTOP_OK) {
-				if (ret == RET_RBTOP_NOTLOGIN)
-					strcpy(errmsg, "敏感操作, 请先登录");
-				else
-					snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权增加 %s", file->remark);
-				hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
-				goto notpass;
-			}
-		} else if (reqmethod == CGI_REQ_DEL) {
-			ret = file_check_user_power(cgi, conn, file, LMT_DEL);
-			if(ret != RET_RBTOP_OK) {
-				if (ret == RET_RBTOP_NOTLOGIN)
-					strcpy(errmsg, "敏感操作, 请先登录");
-				else
-					snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权删除 %s", file->remark);
-					
-				hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
-				goto notpass;
-			}
-		} else {
-			hdf_set_value(cgi->hdf, PRE_ERRMSG, "请求类型非法");
+	uListGet(files, uListLength(files)-1, (void**)&file);
+	//RETURN_NOK(err);
+	if (reqmethod == CGI_REQ_GET) {
+		ret = file_check_user_power(cgi, conn, file, LMT_GET);
+		if(ret != RET_RBTOP_OK) {
+			if (ret == RET_RBTOP_NOTLOGIN)
+				strcpy(errmsg, "敏感操作, 请先登录");
+			else
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权读取 %s", file->remark);
+			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
 			goto notpass;
 		}
+	} else if (reqmethod == CGI_REQ_POST) {
+		ret = file_check_user_power(cgi, conn, file, LMT_MOD);
+		if(ret != RET_RBTOP_OK) {
+			if (ret == RET_RBTOP_NOTLOGIN)
+				strcpy(errmsg, "敏感操作, 请先登录");
+			else
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权修改 %s", file->remark);
+			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
+			goto notpass;
+		}
+	} else if (reqmethod == CGI_REQ_PUT) {
+		ret = file_check_user_power(cgi, conn, file, LMT_APPEND);
+		if(ret != RET_RBTOP_OK) {
+			if (ret == RET_RBTOP_NOTLOGIN)
+				strcpy(errmsg, "敏感操作, 请先登录");
+			else
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权增加 %s", file->remark);
+			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
+			goto notpass;
+		}
+	} else if (reqmethod == CGI_REQ_DEL) {
+		ret = file_check_user_power(cgi, conn, file, LMT_DEL);
+		if(ret != RET_RBTOP_OK) {
+			if (ret == RET_RBTOP_NOTLOGIN)
+				strcpy(errmsg, "敏感操作, 请先登录");
+			else
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权删除 %s", file->remark);
+					
+			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
+			goto notpass;
+		}
+	} else {
+		hdf_set_value(cgi->hdf, PRE_ERRMSG, "请求类型非法");
+		goto notpass;
 	}
 
 	if (urls != NULL)
