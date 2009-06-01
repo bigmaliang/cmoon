@@ -13,6 +13,12 @@ int ids_dbt_init(ids_db_t **dbt)
 	ids_db_t *ldb = calloc(1, sizeof(ids_db_t));
 	if (ldb == NULL) return RET_DBOP_MEMALLOCE;
 
+	ldb->dbs = (fdb_t**)calloc(IDS_MAX_DBS, sizeof(fdb_t*));
+	if (ldb->dbs == NULL) {
+		free(ldb);
+		return RET_DBOP_MEMALLOCE;
+	}
+
 	fdb_t *sdb;
 	node = hdf_obj_child(node);
 	while (node != NULL) {
@@ -24,6 +30,7 @@ int ids_dbt_init(ids_db_t **dbt)
 			ldb->num++;
 		}
 		node = hdf_obj_next(node);
+		if (ldb->num >= IDS_MAX_DBS) break;
 	}
 
 	*dbt = ldb;
@@ -47,7 +54,7 @@ int ids_get_data(HDF *hdf, ids_db_t *dbt)
 	int i = neo_rand(dbt->num);
 	fdb_t *fdb = dbt->dbs[i];
 	
-	if (fdb->conn == NULL) {
+	if (fdb == NULL || fdb->conn == NULL) {
 		mtc_err("connect error");
 		return RET_DBOP_CONNECTE;
 	}

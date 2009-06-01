@@ -5,6 +5,8 @@
 
 __BEGIN_DECLS
 
+#define IDS_MAX_DBS		16
+
 typedef struct {
 	int num;
 	fdb_t **dbs;
