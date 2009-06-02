@@ -12,7 +12,19 @@ __BEGIN_DECLS
 		mtc_err("%s", zstra.buf);				\
 		string_clear(&zstra);					\
 		cgi_neo_error(cgi, err);				\
+		nerr_ignore(&err);						\
 		exit(-1);								\
+	}
+
+#define JUMP_NOK_CGI(err, label)				\
+	if (err != STATUS_OK) {						\
+		STRING zstra;	string_init(&zstra);	\
+		nerr_error_traceback(err, &zstra);		\
+		mtc_err("%s", zstra.buf);				\
+		string_clear(&zstra);					\
+		cgi_neo_error(cgi, err);				\
+		nerr_ignore(&err);						\
+		goto label;								\
 	}
 
 #define DIE_NOK_MTL(err)						\
@@ -21,6 +33,7 @@ __BEGIN_DECLS
 		nerr_error_traceback(err, &zstra);		\
 		mtc_err("%s", zstra.buf);				\
 		string_clear(&zstra);					\
+		nerr_ignore(&err);						\
 		exit(-1);								\
 	}
 
@@ -30,6 +43,7 @@ __BEGIN_DECLS
 		nerr_error_traceback(err, &zstra);		\
 		mtc_err("%s", zstra.buf);				\
 		string_clear(&zstra);					\
+		nerr_ignore(&err);						\
 		return;									\
 	}
 

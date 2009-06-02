@@ -61,7 +61,7 @@ int main(int argc, char **argv, char **envp)
 {
 	char key[LEN_NMDB_KEY], val[LEN_NMDB_VAL], tkey[LEN_NMDB_KEY], hdfkey[LEN_ST], thdfkey[LEN_ST];
 	ULIST *keylist, *domainlist;
-	char *k, *v, *p;
+	char *k, *v, *p, *user, *pass;
 	char timenow[LEN_LONG];
 	int64_t inc, incr;
 	
@@ -219,12 +219,20 @@ int main(int argc, char **argv, char **envp)
 			}
 			break;
 		case CGI_REQ_POST:
+			user = hdf_get_value(cgi->hdf, PRE_QUERY".user", NULL);
+			pass = hdf_get_value(cgi->hdf, PRE_QUERY".pass", NULL);
+			if (!lutil_user_has_power(user, pass)) {
+				mtc_err("%s %s not authered", user, pass);
+				hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "设置操作错误");
+				ret = -1; goto opfinish;
+			}
 			v = hdf_get_value(cgi->hdf, PRE_QUERY".val", NULL);
 			if (v == NULL) {
 				mtc_warn("no parameter: val");
 				hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "缺少 val 参数");
 				goto opfinish;
 			}
+			mtc_foo("welcome %s for set %s to %s", user, key, v);
 			hdf_set_copy(cgi->hdf, PRE_OUTPUT".value", PRE_QUERY".val");
 			hdf_set_attr(cgi->hdf, PRE_OUTPUT".key", "type", "int");
 			hdf_set_attr(cgi->hdf, PRE_OUTPUT".value", "type", "int");
@@ -271,7 +279,7 @@ int main(int argc, char **argv, char **envp)
 			hdf_set_int_value(cgi->hdf, PRE_OUTPUT".value", (int)incr);
 			hdf_set_attr(cgi->hdf, PRE_OUTPUT".key", "type", "int");
 			hdf_set_attr(cgi->hdf, PRE_OUTPUT".value", "type", "int");
-		
+
 			/* 更新该key的increment记录 */
 			snprintf(tkey, sizeof(tkey), "%s_"POST_INCREMENT, key);
 			r = nmdb_incr(db, (unsigned char*)tkey, strlen(tkey), inc, &incr);

@@ -10,6 +10,8 @@
 #define CFG_IDS_TABLE	"IdsTable"
 #define CFG_IDS_DB		"IdsDb"
 
+#define CFG_SET_CALLER	"SetCaller"
+
 #ifdef RELEASE
 #define PATH_SITE	"/data/www/rtds/"
 #else
