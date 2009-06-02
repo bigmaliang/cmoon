@@ -29,10 +29,10 @@ enum cgi_req_method {
 
 int CGI_REQ_METHOD(CGI *cgi);
 
-#define TGT_PARENT	"parent"
-#define TGT_OPENNER	"opener"
-#define TGT_TOP		"top"
-#define TGT_SELF	"self"
+#define TGT_PARENT	"parent."
+#define TGT_OPENNER	"opener."
+#define TGT_TOP		"top."
+#define TGT_SELF	"self."
 
 #define URL_BLANK	"location.href='/blank.html'"
 #define URL_RELOAD	"location.reload()"
