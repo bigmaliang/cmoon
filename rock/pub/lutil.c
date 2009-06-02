@@ -126,6 +126,7 @@ int lutil_file_access(CGI *cgi, HASH *dbh)
 	}
 
 	char *uri = hdf_get_value(cgi->hdf, PRE_QUERY".ScriptName", NULL);
+	mtc_foo("uri %s", uri);
 	return lutil_file_check_power(cgi, conn, uri);
 }
 
@@ -163,6 +164,7 @@ int lutil_init_db(HASH **dbh)
 		mtc_err("no valid db connection");
 		return RET_RBTOP_INITE;
 	}
+	*dbh = ldbh;
 	return RET_RBTOP_OK;
 }
 
