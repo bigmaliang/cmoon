@@ -1,3 +1,4 @@
 Db {
 	Sys = pgsql:dbname=mn_sys host=localhost user=mner password=loveu
+	Music = mysql:dbname
 }

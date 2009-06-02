@@ -7,5 +7,6 @@
 #include "ldb.h"
 #include "lcs.h"
 #include "lutil.h"
+#include "lglobal.h"
 
 #endif	/* __LHEADS_H__ */

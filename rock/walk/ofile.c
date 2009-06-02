@@ -133,8 +133,7 @@ int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn)
 
 	int pid = 0;
 	int i;
-	/* skip CGI_RUN_DIR */
-	for (i = 1; i < listlen; i++) {
+	for (i = 0; i < listlen; i++) {
 		err = uListGet(urls, i, (void**)&url);
 		RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
 		ret = file_get_info(conn, 0, url, pid, &file);
