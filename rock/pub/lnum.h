@@ -36,7 +36,8 @@ enum user_status
 #define RET_RBTOP_NOTLOGIN	2030
 #define RET_RBTOP_LIMITE	2031
 
-#define RET_RBTOP_EXISTE	2040
+#define RET_RBTOP_NEXIST	2040
+#define RET_RBTOP_EXISTE	2041
 
 __END_DECLS
 #endif	/* __LNUM_H__ */

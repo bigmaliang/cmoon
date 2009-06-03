@@ -76,24 +76,26 @@ int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
 		if (id <= 0) {
-			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, "
+			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, uri "
 					 " substring(intime from '[^.]*') as intime, "
 					 " substring(uptime from '[^.]*') as uptime "
 					 " FROM fileinfo WHERE pid=%d AND name=$1;",
 					 "s", pid, url);
 		} else {
-			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, "
+			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, uri "
 					 " substring(intime from '[^.]*') as intime, "
 					 " substring(uptime from '[^.]*') as uptime "
 					 " FROM fileinfo WHERE id=%d;",
 					 NULL, id);
 		}
-		ret = mdb_get(conn, "iiiiiSSSS", &(fl->id), &(fl->pid), &(fl->uid),
-					  &(fl->gid), &(fl->mode), &(fl->name), &(fl->remark),
+		ret = mdb_get(conn, "iiiiiSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
+					  &(fl->gid), &(fl->mode), &(fl->name), &(fl->remark), &(fl->uri),
 					  &(fl->intime), &(fl->uptime));
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("get %d %d.%s info failure from db %s",
 					id, pid, url, mdb_get_errmsg(conn));
+			if (ret == MDB_ERR_NORESULT)
+				return RET_RBTOP_NEXIST;
 			return RET_RBTOP_SELECTE;
 		} else {
 			file_pack(fl, &buf, &datalen);
@@ -147,6 +149,55 @@ int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn)
 		}
 	}
 	*noksn = -1;
+	return RET_RBTOP_OK;
+}
+
+int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
+{
+	file_t *fl;
+	size_t datalen;
+	char *buf;
+	int ret;
+	
+	if (uri == NULL) return RET_RBTOP_INPUTE;
+
+	buf = mmc_getf(&datalen, 0, PRE_MMC_FILE".%s", uri);
+	if (buf == NULL || datalen < sizeof(file_t)) {
+		if (buf != NULL && datalen < sizeof(file_t)) {
+			mtc_warn("get %s info error from mmc %d", uri, datalen);
+		}
+		if (mdb_get_errcode(conn) != MDB_ERR_NONE) {
+			mtc_err("conn err %s", mdb_get_errmsg(conn));
+			return RET_RBTOP_INPUTE;
+		}
+		fl = file_new();
+		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
+		mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, uri, "
+				 " substring(intime from '[^.]*') as intime, "
+				 " substring(uptime from '[^.]*') as uptime "
+				 " FROM fileinfo WHERE uri=%s;",
+				 NULL, uri);
+		ret = mdb_get(conn, "iiiiiSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
+					  &(fl->gid), &(fl->mode), &(fl->name), &(fl->remark), &(fl->uri),
+					  &(fl->intime), &(fl->uptime));
+		if (ret != MDB_ERR_NONE) {
+			mtc_err("get %s info failure from db %s", uri, mdb_get_errmsg(conn));
+			if (ret == MDB_ERR_NORESULT)
+				return RET_RBTOP_NEXIST;
+			return RET_RBTOP_SELECTE;
+		} else {
+			file_pack(fl, &buf, &datalen);
+			mmc_storef(MMC_OP_SET, (void*)buf, datalen, ONE_HOUR, 0, PRE_MMC_FILE".%s", uri);
+		}
+	} else {
+		ret = file_unpack(buf, datalen, &fl);
+		if (ret != 0) {
+			mtc_err("assembly file from mmc error");
+			return RET_RBTOP_MMCERR;
+		}
+	}
+	free(buf);
+	*file = fl;
 	return RET_RBTOP_OK;
 }
 

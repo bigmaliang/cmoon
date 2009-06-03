@@ -13,6 +13,7 @@ typedef struct _file {
 	int mode;
 	char *name;
 	char *remark;
+	char *uri;
 	char *intime;
 	char *uptime;
 } file_t;

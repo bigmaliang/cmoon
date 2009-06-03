@@ -13,16 +13,18 @@ __BEGIN_DECLS
 #else
 #define PATH_SITE	"/home/bigml/web/moon/rock/"
 #endif
-#define SITE_CONFIG		PATH_SITE"config.hdf"
+#define SITE_CONFIG	PATH_SITE"config.hdf"
 #define PATH_DOC	PATH_SITE"fly/"
 #define PATH_JS		PATH_SITE"fly/js/"
 #define PATH_CGI	PATH_SITE"run/"
 #define PATH_TPL	PATH_SITE"tpl/"
 #define PATH_MTLS	PATH_SITE"mtls/"
-#define F_TPL_LAYOUT	PATH_SITE"tpl/layout.html"
+#define F_TPL_LAYOUT PATH_SITE"tpl/layout.html"
 
 #define CGI_RUN_DIR		"run"
 #define URI_SPLITER		"/"
+
+#define PRE_REQFILE	PRE_RESERVE".REQFile"
 
 #define PRE_MMC_FILE	"File"
 #define PRE_MMC_MEMBER	"Member"

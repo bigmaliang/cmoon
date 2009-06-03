@@ -34,7 +34,12 @@ int main(int argc, char *argv[])
 	ret = mdb_init(&conn, DB_SYS);
 	ldb_opfinish_json(ret, cgi->hdf, conn);
 	
-	lutil_file_access_json(cgi, conn);
+	ret = lutil_file_access(cgi, conn);
+	if (ret != RET_RBTOP_OK) {
+		mjson_output_hdf(cgi->hdf);
+		/* TODO system resource need free*/
+		return 1;
+	}
 
 	switch(CGI_REQ_METHOD(cgi)) {
 	case CGI_REQ_GET:

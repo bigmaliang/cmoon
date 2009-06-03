@@ -12,7 +12,10 @@ int main(int argc, char **argv, char **envp)
 	CGI *cgi;
 	NEOERR *err;
 	HASH *dbh;
+	char *file;
 	int ret;
+
+	int (*req_handler)(CGI *cgi, HASH *dbh);
 
 	mtc_init(TC_ROOT"viki");
 	mutil_wrap_fcgi(argc, argv, envp);
@@ -33,8 +36,9 @@ int main(int argc, char **argv, char **envp)
 		err = cgi_parse(cgi);
 		JUMP_NOK_CGI(err, opfinish);
 
-		ret = lutil_file_access(cgi, dbh);
-		if (ret != RET_RBTOP_OK) {
+		ret = lutil_file_access_rewrited(cgi, dbh);
+		file = hdf_get_value(cgi->hdf, PRE_REQFILE, NULL);
+		if (ret != RET_RBTOP_OK || file == NULL) {
 			goto opfinish;
 		}
 

@@ -3,7 +3,7 @@
 
 #include "ofile.h"
 
-int lutil_file_check_power(CGI *cgi, mdb_conn *conn, char *uri)
+int lutil_file_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
 {
 	ULIST *urls, *files;
 	file_t *file;
@@ -20,28 +20,47 @@ int lutil_file_check_power(CGI *cgi, mdb_conn *conn, char *uri)
 		mtc_err("input uri null");
 		return RET_RBTOP_INPUTE;
 	}
-	err = string_array_split(&urls, uri, URI_SPLITER, MAX_URI_ITEM);
-	RETURN_V_NOK(err, RET_RBTOP_INPUTE);
+	if (split) {
+		err = string_array_split(&urls, uri, URI_SPLITER, MAX_URI_ITEM);
+		RETURN_V_NOK(err, RET_RBTOP_INPUTE);
+		listlen = uListLength(urls);
+		if (listlen < 1) {
+			mtc_warn("%s not a valid request", uri);
+			hdf_set_value(cgi->hdf, PRE_ERRMSG, "非法请求");
+			goto notpass;
+		}
 
-	listlen = uListLength(urls);
-	if (listlen < 1) {
-		mtc_warn("%s not a valid request", uri);
-		hdf_set_value(cgi->hdf, PRE_ERRMSG, "非法请求");
-		goto notpass;
+		/* get splited url's file info */
+		ret = file_get_infos(conn, urls, &files, &i);
+		if (ret != RET_RBTOP_OK) {
+			uListGet(urls, i, (void**)&url);
+			mtc_warn("get file for %s failure", url);
+			if (ret == RET_RBTOP_NEXIST)
+				snprintf(errmsg, sizeof(errmsg)-1, " %s 不存在", url);
+			else
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, %s 权限验证失败", url);
+			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
+			goto notpass;
+		}
+		uListGet(files, uListLength(files)-1, (void**)&file);
+	} else {
+		ret = file_get_info_uri(conn, uri, &file);
+		if (ret != RET_RBTOP_OK) {
+			mtc_warn("get file for %s failure", uri);
+			if (ret == RET_RBTOP_NEXIST)
+				hdf_set_valuef(cgi->hdf, PRE_ERRMSG"= %s 不存在", uri);
+			else
+				hdf_set_valuef(cgi->hdf, PRE_ERRMSG"=对不起, %s 权限验证失败", uri);
+			goto notpass;
+		}
 	}
 
-	/* get splited url's file info */
-	ret = file_get_infos(conn, urls, &files, &i);
-	if (ret != RET_RBTOP_OK) {
-		uListGet(urls, i, (void**)&url);
-		mtc_info("get file for %s failure", url);
-		snprintf(errmsg, sizeof(errmsg)-1, "对不起, %s 权限验证失败", url);
-		hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
-		goto notpass;
-	}
-
+	/*
+	 * set file name for later use 
+	 */
+	hdf_set_value(cgi->hdf, PRE_REQFILE, file->name);
+	
 	reqmethod = CGI_REQ_METHOD(cgi);
-	uListGet(files, uListLength(files)-1, (void**)&file);
 	if (reqmethod == CGI_REQ_GET) {
 		ret = file_check_user_power(cgi, conn, file, LMT_GET);
 		if(ret != RET_RBTOP_OK) {
@@ -100,24 +119,22 @@ notpass:
 		uListDestroy(&urls, ULIST_FREE);
 	if (files != NULL)
 		uListDestroyFunc(&files, file_del);
-	return RET_RBTOP_ERROR;
+	return ret;
 }
 
-void lutil_file_access_json(CGI *cgi, mdb_conn *conn)
+int lutil_file_access(CGI *cgi, mdb_conn *conn)
 {
-	int ret;
 	char *uri = hdf_get_value(cgi->hdf, PRE_CGI".ScriptName", NULL);
+	if (uri == NULL || strlen(uri) < strlen(CGI_RUN_DIR)+1) {
+		mtc_err("uri %s illegal", uri);
+		return RET_RBTOP_INITE;
+	}
 
 	/* ignore /run in uri */
-	ret = lutil_file_check_power(cgi, conn, uri+strlen(CGI_RUN_DIR)+1);
-	if (ret != RET_RBTOP_OK) {
-		mjson_output_hdf(cgi->hdf);
-		/* TODO system resource need free*/
-		exit(1);
-	}
+	return lutil_file_check_power(cgi, conn, uri+strlen(CGI_RUN_DIR)+1, true);
 }
 
-int lutil_file_access(CGI *cgi, HASH *dbh)
+int lutil_file_access_rewrited(CGI *cgi, HASH *dbh)
 {
 	mdb_conn *conn = (mdb_conn*)hash_lookup(dbh, "Sys");
 	if (conn == NULL) {
@@ -126,8 +143,7 @@ int lutil_file_access(CGI *cgi, HASH *dbh)
 	}
 
 	char *uri = hdf_get_value(cgi->hdf, PRE_QUERY".ScriptName", NULL);
-	mtc_foo("uri %s", uri);
-	return lutil_file_check_power(cgi, conn, uri);
+	return lutil_file_check_power(cgi, conn, uri, false);
 }
 
 

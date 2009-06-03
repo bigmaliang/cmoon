@@ -28,6 +28,7 @@ __BEGIN_DECLS
 int file_check_user_power(CGI *cgi, mdb_conn *conn, file_t *file, int access);
 int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file);
 int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn);
+int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file);
 void file_refresh_info(mdb_conn *conn, int id, char *url, int pid);
 
 __END_DECLS
