@@ -8,7 +8,8 @@
 #include "fdb.h"
 #include "ClearSilver.h"
 
-int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name)
+int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass,
+				  char *name, unsigned int port)
 {
 	fdb_t *ldb;
 
@@ -33,7 +34,7 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name)
 	mysql_options(ldb->conn, MYSQL_INIT_COMMAND, "SET NAMES 'utf8'");
 
 	MYSQL *lcon = NULL;
-	lcon = mysql_real_connect(ldb->conn, ip, user, pass, name, 0, NULL, 0);
+	lcon = mysql_real_connect(ldb->conn, ip, user, pass, name, port, NULL, 0);
 	if (lcon == NULL)
 		return RET_DBOP_CONNECTE;
 	else

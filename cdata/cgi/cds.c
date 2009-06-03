@@ -60,7 +60,7 @@ HDF *g_cfg = NULL;
 int main(int argc, char **argv, char **envp)
 {
 	char key[LEN_NMDB_KEY], val[LEN_NMDB_VAL], tkey[LEN_NMDB_KEY], hdfkey[LEN_ST], thdfkey[LEN_ST];
-	ULIST *keylist, *domainlist;
+	ULIST *keylist = NULL, *domainlist = NULL;
 	char *k, *v, *p, *user, *pass;
 	char timenow[LEN_LONG];
 	int64_t inc, incr;
@@ -84,7 +84,11 @@ int main(int argc, char **argv, char **envp)
 		return 1;
 	}
 	
-	ret = ldb_init(&fdb, NULL, NULL);
+	ret = fdb_init_long(&fdb, hdf_get_value(g_cfg, CFG_DB".ip", "127.0.0.1"),
+						hdf_get_value(g_cfg, CFG_DB".user", "test"),
+						hdf_get_value(g_cfg, CFG_DB".pass", "test"),
+						hdf_get_value(g_cfg, CFG_DB".name", "test"),
+						(unsigned int)hdf_get_int_value(g_cfg, CFG_DB".port", 0));
 	if (ret != RET_DBOP_OK) {
 		mtc_err("init db error %s", fdb_error(fdb));
 		printf("Content-Type: text/html; charset=UTF-8\r\n\r\n");

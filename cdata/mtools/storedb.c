@@ -86,7 +86,11 @@ int main(int argc, char *argv[])
 		useage(argv[0]);
 	}
 
-	ret = ldb_init(&fdb, NULL, NULL);
+	ret = fdb_init_long(&fdb, hdf_get_value(g_cfg, CFG_DB".ip", "127.0.0.1"),
+						hdf_get_value(g_cfg, CFG_DB".user", "test"),
+						hdf_get_value(g_cfg, CFG_DB".pass", "test"),
+						hdf_get_value(g_cfg, CFG_DB".name", "test"),
+						(unsigned int)hdf_get_int_value(g_cfg, CFG_DB".port", 0));
 	if (ret != RET_DBOP_OK) {
 		mtc_err("init db error");
 		return 1;

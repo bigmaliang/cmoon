@@ -23,7 +23,11 @@ int ids_dbt_init(ids_db_t **dbt)
 	node = hdf_obj_child(node);
 	while (node != NULL) {
 		sdb = NULL;
-		if (ldb_init(&sdb, hdf_obj_value(node), NULL) != RET_DBOP_OK) {
+		if (fdb_init_long(&sdb, hdf_get_value(node, "ip", "127.0.0.1"),
+						  hdf_get_value(node, "user", "test"),
+						  hdf_get_value(node, "pass", "test"),
+						  hdf_get_value(node, "name", "test"),
+						  (unsigned int)hdf_get_int_value(node, "port", 0)) != RET_DBOP_OK) {
 			mtc_err("connect %d error", hdf_obj_value(node));
 		} else {
 			ldb->dbs[ldb->num] = sdb;

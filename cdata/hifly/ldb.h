@@ -4,7 +4,7 @@
 
 __BEGIN_DECLS
 
-int ldb_init(fdb_t **fdb, char *ip, char *name);
+int ldb_init(fdb_t **fdb, char *ip, char *name, unsigned int port);
 
 void ldb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 				  char *target, char *url, bool header);
