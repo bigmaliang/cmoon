@@ -141,15 +141,16 @@ static struct event_entry* dbcm_init_driver(void)
 	}
 	
 	if (fdb_init_long(&e->db, hdf_get_value(g_cfg, CONFIG_PATH".ip", DBCM_IP),
-			  hdf_get_value(g_cfg, CONFIG_PATH".user", DBCM_USER),
-			  hdf_get_value(g_cfg, CONFIG_PATH".pass", DBCM_PASS),
-			  hdf_get_value(g_cfg, CONFIG_PATH".name", DBCM_NAME)) != RET_DBOP_OK) {
+					  hdf_get_value(g_cfg, CONFIG_PATH".user", DBCM_USER),
+					  hdf_get_value(g_cfg, CONFIG_PATH".pass", DBCM_PASS),
+					  hdf_get_value(g_cfg, CONFIG_PATH".name", DBCM_NAME),
+					  (unsigned int)hdf_get_int_value(g_cfg, CONFIG_PATH".port", 0)) != RET_DBOP_OK) {
 		wlog("init %s failure %s\n", PLUGIN_NAME, fdb_error(e->db));
 		goto error;
 	}
 	
 	return (struct event_entry*)e;
-
+	
  error:
 	if (e->base.name) free(e->base.name);
 	if (e->logf) dtc_leave(e->logf);
