@@ -31,7 +31,8 @@ typedef struct {
 	char sql[LEN_SQL];
 }fdb_t;
 
-int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass, char *name);
+int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass,
+				  char *name, unsigned int port);
 void fdb_free(fdb_t **fdb);
 int fdb_exec(fdb_t *fdb);
 int fdb_fetch_row(fdb_t *fdb);

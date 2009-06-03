@@ -11,6 +11,7 @@ __BEGIN_DECLS
 #define PRE_LAYOUT	"Layout"
 #define PRE_OUTPUT	"Output"
 #define PRE_INCLUDE	"Include"
+#define PRE_RESERVE	"Reserve"
 #define PRE_ERRMSG	PRE_OUTPUT".errmsg"
 #define PRE_SUCCESS	PRE_OUTPUT".success"
 
