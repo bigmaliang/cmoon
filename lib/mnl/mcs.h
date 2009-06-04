@@ -27,6 +27,16 @@ __BEGIN_DECLS
 		goto label;								\
 	}
 
+#define JUMP_NOK(err, label)					\
+	if (err != STATUS_OK) {						\
+		STRING zstra;	string_init(&zstra);	\
+		nerr_error_traceback(err, &zstra);		\
+		mtc_err("%s", zstra.buf);				\
+		string_clear(&zstra);					\
+		nerr_ignore(&err);						\
+		goto label;								\
+	}
+
 #define DIE_NOK_MTL(err)						\
 	if (err != STATUS_OK) {						\
 		STRING zstra;	string_init(&zstra);	\

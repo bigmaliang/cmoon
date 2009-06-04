@@ -1,6 +1,6 @@
 #include "mheads.h"
 
-NEOERR* mcs_outputcb (void *ctx, char *s)
+NEOERR* mcs_outputcb(void *ctx, char *s)
 {
 	printf ("%s", s);
 	return STATUS_OK;
