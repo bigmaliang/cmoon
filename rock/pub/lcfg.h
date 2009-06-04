@@ -24,7 +24,11 @@ __BEGIN_DECLS
 #define CGI_RUN_DIR		"run"
 #define URI_SPLITER		"/"
 
-#define PRE_REQFILE	PRE_RESERVE".REQFile"
+#define PRE_REQ_URI		PRE_CGI".ScriptName" 		/* lutil_file_access() */
+#define PRE_REQ_URI_RW	PRE_QUERY".ScriptName"		/* lutil_file_access_rewrited() */
+#define PRE_REQ_FILE	PRE_RESERVE".RequestFile"	/* lutil_get_data_handler() */
+#define PRE_REQ_TYPE	PRE_QUERY".RequestType"
+#define PRE_REQ_AJAX_FN	PRE_QUERY".JsonCallback"
 
 #define PRE_MMC_FILE	"File"
 #define PRE_MMC_MEMBER	"Member"

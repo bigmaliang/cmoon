@@ -3,6 +3,17 @@
 
 #include "ofile.h"
 
+int CGI_REQ_TYPE(CGI *cgi)
+{
+	char *tp = hdf_get_value(cgi->hdf, PRE_REQ_TYPE, "html");
+	if (!strcmp(tp, "html"))
+		return CGI_REQ_HTML;
+	else if (!strcmp(tp, "ajax"))
+		return CGI_REQ_AJAX;
+	else
+		return CGI_REQ_UNSUPPORT;
+}
+
 int lutil_file_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
 {
 	ULIST *urls, *files;
@@ -58,7 +69,7 @@ int lutil_file_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
 	/*
 	 * set file name for later use 
 	 */
-	hdf_set_value(cgi->hdf, PRE_REQFILE, file->name);
+	hdf_set_value(cgi->hdf, PRE_REQ_FILE, file->name);
 	
 	reqmethod = CGI_REQ_METHOD(cgi);
 	if (reqmethod == CGI_REQ_GET) {
@@ -124,7 +135,7 @@ notpass:
 
 int lutil_file_access(CGI *cgi, mdb_conn *conn)
 {
-	char *uri = hdf_get_value(cgi->hdf, PRE_CGI".ScriptName", NULL);
+	char *uri = hdf_get_value(cgi->hdf, PRE_REQ_URI, NULL);
 	if (uri == NULL || strlen(uri) < strlen(CGI_RUN_DIR)+1) {
 		mtc_err("uri %s illegal", uri);
 		return RET_RBTOP_INITE;
@@ -142,10 +153,90 @@ int lutil_file_access_rewrited(CGI *cgi, HASH *dbh)
 		return RET_RBTOP_INITE;
 	}
 
-	char *uri = hdf_get_value(cgi->hdf, PRE_QUERY".ScriptName", NULL);
+	char *uri = hdf_get_value(cgi->hdf, PRE_REQ_URI_RW, NULL);
 	return lutil_file_check_power(cgi, conn, uri, false);
 }
 
+void* lutil_get_data_handler(void *lib, CGI *cgi)
+{
+	char *file, *tp;
+	char hname[256];
+	void *res;
+	
+	file = hdf_get_value(cgi->hdf, PRE_REQ_FILE, NULL);
+	if (file == NULL) {
+		mtc_err("%s not found", PRE_REQ_FILE);
+		return NULL;
+	}
+	
+	switch (CGI_REQ_METHOD(cgi)) {
+		case CGI_REQ_GET:
+			snprintf(hname, sizeof(hname), "%s_data_get", file);
+			break;
+		case CGI_REQ_POST:
+			snprintf(hname, sizeof(hname), "%s_data_mod", file);
+			break;
+		case CGI_REQ_PUT:
+			snprintf(hname, sizeof(hname), "%s_data_add", file);
+			break;
+		case CGI_REQ_DEL:
+			snprintf(hname, sizeof(hname), "%s_data_del", file);
+			break;
+		default:
+			mtc_err("op not support");
+			return NULL;
+	}
+
+	res = dlsym(lib, hname);
+	if ((tp = dlerror()) != NULL) {
+		mtc_err("%s not found %s", hname, tp);
+		return NULL;
+	}
+	return res;
+}
+
+int lutil_render(CGI *cgi, HASH *tplh)
+{
+	CSPARSE *cs;
+	STRING str;
+	NEOERR *err;
+
+	char *file, *buf;
+	
+	file = hdf_get_value(cgi->hdf, PRE_REQ_FILE, NULL);
+	if (file == NULL) {
+		mtc_err("%s not found", PRE_REQ_FILE);
+		return RET_RBTOP_NEXIST;
+	}
+
+	buf = (char*)hash_lookup(tplh, file);
+	if (buf == NULL) {
+		mtc_err("file not found");
+		return RET_RBTOP_NEXIST;
+	}
+
+	err = cs_init(&cs, cgi->hdf);
+	RETURN_V_NOK(err, RET_RBTOP_INITE);
+
+	err = cgi_register_strfuncs(cs);
+	/* TODO memory leak */
+	RETURN_V_NOK(err, RET_RBTOP_ERROR);
+
+	err = cs_parse_string(cs, buf, strlen(buf));
+	RETURN_V_NOK(err, RET_RBTOP_ERROR);
+
+	string_init(&str);
+	err = cs_render(cs, &str, mcs_strcb);
+	RETURN_V_NOK(err, RET_RBTOP_ERROR);
+
+	err = cgi_output(cgi, &str);
+	RETURN_V_NOK(err, RET_RBTOP_ERROR);
+	
+	cs_destroy(&cs);
+	string_clear(&str);
+
+	return RET_RBTOP_OK;
+}
 
 int lutil_init_db(HASH **dbh)
 {
@@ -197,3 +288,73 @@ void lutil_cleanup_db(HASH *dbh)
 
 	hash_destroy(&dbh);
 }
+
+int lutil_init_tpl(HASH **tplh)
+{
+	HDF *node;
+	HASH *ltplh;
+	NEOERR *err;
+	STRING str;
+	char *buf;
+
+	/*
+	 * TODO read every .hdf config file in config directory 
+	 */
+	node = hdf_get_obj(g_cfg, "Tpl");
+	if (node == NULL) {
+		mtc_err("Tpl config not found");
+		return RET_RBTOP_INITE;
+	}
+	
+	err = hash_init(&ltplh, hash_str_hash, hash_str_comp);
+	RETURN_V_NOK(err, RET_RBTOP_INITE);
+
+	node = hdf_obj_child(node);
+	while (node != NULL) {
+		err = cs_init(&cs, node);
+		JUMP_NOK(err, next);
+
+		/* TODO memory leak */
+		err = cgi_register_strfuncs(cs);
+		JUMP_NOK(err, next);
+		err = cs_parse_file(cs, F_TPL_LAYOUT);
+		JUMP_NOK(err, next);
+
+		string_init(&str);
+		err = cs_render(cs, &str, mcs_strcb);
+		JUMP_NOK(err, next);
+
+		buf = calloc(1, str.len);
+		if (buf == NULL) {
+			mtc_err("oops, memery error");
+			goto next;
+		}
+		memcpy(buf, str.buf);
+		cs_destroy(&cs);
+		hdf_destroy(&node);
+		string_clear(&str);
+		
+		hash_insert(ltplh, (void*)hdf_obj_name(node), (void*)buf);
+
+	next:
+		node = hdf_obj_next(node);
+	}
+
+	*tplh = ltplh;
+	return RET_RBTOP_OK;
+}
+
+void lutil_cleanup_tpl(HASH *tplh)
+{
+	char *key = NULL;
+	
+	char *buf = (char*)hash_next(tplh, (void**)&key);
+
+	while (buf != NULL) {
+		free(buf);
+		buf = hash_next(tplh, (void**)&key);
+	}
+
+	hash_destroy(&tplh);
+}
+

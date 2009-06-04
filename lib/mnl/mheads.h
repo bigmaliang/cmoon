@@ -13,6 +13,7 @@
 #include <inttypes.h>
 #include <stdint.h>
 #include <sys/types.h>
+#include <dlfcn.h>				/* dlope()... */
 
 #include <stdarg.h>
 #include <sys/stat.h>
