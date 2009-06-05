@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#define __USE_GNU
 #include <string.h>
 #include <strings.h>			/* strcasecmp() */
 #include <stdbool.h>
@@ -14,6 +13,7 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <dlfcn.h>				/* dlope()... */
+#include <dirent.h>				/* scandir()... */
 
 #include <stdarg.h>
 #include <sys/stat.h>
