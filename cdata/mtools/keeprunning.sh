@@ -16,6 +16,7 @@ PROGNAME=$(basename "$FILENAME")
 RUNCOUNT=$[$(ps fax | grep $PROGNAME | wc -l)-2]
 
 if [ $RUNCOUNT -lt $NEEDCOUNT ]; then
+	killall $PROGNAME
 	$EXECCMD
 	ret=$?
 	if [ $ret = "0" ]; then
