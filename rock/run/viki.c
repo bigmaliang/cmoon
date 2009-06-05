@@ -24,17 +24,17 @@ int main(int argc, char **argv, char **envp)
 	mutil_wrap_fcgi(argc, argv, envp);
 	mconfig_parse_file(SITE_CONFIG, &g_cfg);
 
-	ret = lutil_init_db(&dbh);
-	if (ret != RET_RBTOP_OK) {
-		mtc_err("init db error");
-		mutil_redirect("初始化数据库失败", TGT_SELF, URL_CLOSE, true);
-		return ret;
-	}
-
 	ret = lutil_init_tpl(&tplh);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("init templates error");
 		mutil_redirect("初始化模板失败", TGT_SELF, URL_CLOSE, true);
+		return ret;
+	}
+
+	ret = lutil_init_db(&dbh);
+	if (ret != RET_RBTOP_OK) {
+		mtc_err("init db error");
+		mutil_redirect("初始化数据库失败", TGT_SELF, URL_CLOSE, true);
 		return ret;
 	}
 

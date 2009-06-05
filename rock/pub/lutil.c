@@ -1,3 +1,4 @@
+#include <dirent.h>				/* scandir()... */
 #include "mheads.h"
 #include "lheads.h"
 
@@ -160,9 +161,10 @@ int lutil_file_access_rewrited(CGI *cgi, HASH *dbh)
 void* lutil_get_data_handler(void *lib, CGI *cgi)
 {
 	char *file, *tp;
-	char hname[256];
+	char hname[_POSIX_PATH_MAX];
 	void *res;
-	
+
+	/* TODO how to division /music/zhangwei and /member/zhangwei ? */
 	file = hdf_get_value(cgi->hdf, PRE_REQ_FILE, NULL);
 	if (file == NULL) {
 		mtc_err("%s not found", PRE_REQ_FILE);
@@ -203,6 +205,7 @@ int lutil_render(CGI *cgi, HASH *tplh)
 
 	char *file, *buf;
 	
+	/* TODO how to division /music/zhangwei and /member/zhangwei ? */
 	file = hdf_get_value(cgi->hdf, PRE_REQ_FILE, NULL);
 	if (file == NULL) {
 		mtc_err("%s not found", PRE_REQ_FILE);
@@ -289,57 +292,74 @@ void lutil_cleanup_db(HASH *dbh)
 	hash_destroy(&dbh);
 }
 
+static int tpl_config(const struct dirent *ent)
+{
+	if (reg_search(".*.hdf", ent->d_name))
+		return 1;
+	else
+		return 0;
+}
+
 int lutil_init_tpl(HASH **tplh)
 {
-	HDF *node;
-	HASH *ltplh;
-	NEOERR *err;
+	struct dirent **eps = NULL;
+	HDF *node = NULL, *child = NULL;
+	CSPARSE *cs = NULL;
+	HASH *ltplh = NULL;
+	char *buf = NULL;
+	char fname[_POSIX_PATH_MAX];
 	STRING str;
-	char *buf;
+	NEOERR *err;
+	int n;
 
-	/*
-	 * TODO read every .hdf config file in config directory 
-	 */
-	node = hdf_get_obj(g_cfg, "Tpl");
-	if (node == NULL) {
-		mtc_err("Tpl config not found");
-		return RET_RBTOP_INITE;
-	}
-	
 	err = hash_init(&ltplh, hash_str_hash, hash_str_comp);
 	RETURN_V_NOK(err, RET_RBTOP_INITE);
 
-	node = hdf_obj_child(node);
-	while (node != NULL) {
-		err = cs_init(&cs, node);
+	n = scandir(PATH_TPL, &eps, tpl_config, alphasort);
+	for (int i = 0; i < n; i++) {
+		cs = NULL; node = NULL;
+		memset(fname, 0x0, sizeof(fname));
+		snprintf(fname, sizeof(fname), "%s/%s", PATH_TPL, eps[i]->d_name);
+
+		hdf_init(&node);
+		err = hdf_read_file(node, fname);
 		JUMP_NOK(err, next);
 
-		/* TODO memory leak */
-		err = cgi_register_strfuncs(cs);
-		JUMP_NOK(err, next);
-		err = cs_parse_file(cs, F_TPL_LAYOUT);
-		JUMP_NOK(err, next);
+		child = hdf_obj_child(node);
 
-		string_init(&str);
-		err = cs_render(cs, &str, mcs_strcb);
-		JUMP_NOK(err, next);
+		while (child != NULL) {
+			string_init(&str);
+			err = cs_init(&cs, child);
+			JUMP_NOK(err, wnext);
 
-		buf = calloc(1, str.len);
-		if (buf == NULL) {
-			mtc_err("oops, memery error");
-			goto next;
+			err = cgi_register_strfuncs(cs);
+			JUMP_NOK(err, wnext);
+			err = cs_parse_file(cs, F_TPL_LAYOUT);
+			JUMP_NOK(err, wnext);
+
+			err = cs_render(cs, &str, mcs_strcb);
+			JUMP_NOK(err, wnext);
+
+			buf = calloc(1, str.len);
+			if (buf == NULL) {
+				mtc_err("oops, memery calloc error");
+				goto wnext;
+			}
+			memcpy(buf, str.buf, str.len);
+			hash_insert(ltplh, (void*)hdf_obj_name(child), (void*)buf);
+
+		wnext:
+			if (cs != NULL) cs_destroy(&cs);
+			string_clear(&str);
+			child = hdf_obj_next(child);
 		}
-		memcpy(buf, str.buf);
-		cs_destroy(&cs);
-		hdf_destroy(&node);
-		string_clear(&str);
 		
-		hash_insert(ltplh, (void*)hdf_obj_name(node), (void*)buf);
-
 	next:
-		node = hdf_obj_next(node);
+		if (node != NULL) hdf_destroy(&node);
 	}
-
+	if (n > 0) free(eps);
+	else mtc_warn("not .hdf file found in %s", PATH_TPL);
+	
 	*tplh = ltplh;
 	return RET_RBTOP_OK;
 }
