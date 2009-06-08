@@ -1,4 +1,3 @@
-#include <dirent.h>				/* scandir()... */
 #include "mheads.h"
 #include "lheads.h"
 
@@ -263,7 +262,7 @@ int lutil_init_db(HASH **dbh)
 	while (node != NULL) {
 		ret = mdb_init(&conn, hdf_obj_value(node));
 		if (ret == RET_RBTOP_OK) {
-			hash_insert(ldbh, (void*)hdf_obj_name(node), (void*)conn);
+			hash_insert(ldbh, (void*)strdup(hdf_obj_name(node)), (void*)conn);
 			filled = true;
 		}
 		
@@ -346,7 +345,10 @@ int lutil_init_tpl(HASH **tplh)
 				goto wnext;
 			}
 			memcpy(buf, str.buf, str.len);
-			hash_insert(ltplh, (void*)hdf_obj_name(child), (void*)buf);
+			/*
+			 * strdup the key, baby, because we'll free the hdf later
+			 */
+			hash_insert(ltplh, (void*)strdup(hdf_obj_name(child)), (void*)buf);
 
 		wnext:
 			if (cs != NULL) cs_destroy(&cs);
