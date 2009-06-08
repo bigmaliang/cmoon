@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
 	mdb_conn *conn = NULL;
 
 	//sleep(20);
-	mtc_init(TC_ROOT"sys.limit");
 	mconfig_parse_file(SITE_CONFIG, &g_cfg);
+	mtc_init(TC_ROOT"sys.limit");
 
 	err = cgi_init(&cgi, NULL);
 	DIE_NOK_CGI(err);

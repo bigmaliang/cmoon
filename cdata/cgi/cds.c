@@ -75,14 +75,15 @@ int main(int argc, char **argv, char **envp)
 	time_t tm;
 
 	//sleep(20);
-	mtc_init(HF_LOG_PATH"cds");
 	mutil_wrap_fcgi(argc, argv, envp);
+
 	if (!mconfig_parse_file(CONFIG_FILE, &g_cfg)) {
 		mtc_err("init config %s error", CONFIG_FILE);
 		printf("Content-Type: text/html; charset=UTF-8\r\n\r\n");
 		printf("{errmsg: \"初始化配置失败\"}");
 		return 1;
 	}
+	mtc_init(HF_LOG_PATH"cds");
 	
 	ret = fdb_init_long(&fdb, hdf_get_value(g_cfg, CFG_DB".ip", "127.0.0.1"),
 						hdf_get_value(g_cfg, CFG_DB".user", "test"),

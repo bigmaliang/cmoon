@@ -59,6 +59,10 @@ __BEGIN_DECLS
 #define mtc_noise(f,a...)	mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,##a)
 #endif
 
+/*
+ * mtc_init should be called after mconfig_parse_file()
+ * read mconfig.h for more info
+ */
 void mtc_init(const char *fn);
 void mtc_leave();
 bool mtc_msg(const char *func, const char *file, long line,

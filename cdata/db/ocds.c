@@ -12,8 +12,9 @@ static int cds_nmkey2sqlkey(char *key, char *val, int len, int *id)
 	if (slen > len-1) slen = len-1;
 	
 	*id = atoi(p+1);
+	memset(val, 0x0, len);
 	memcpy(val, key, slen);
-	*(val+slen+1) = '\0';
+	*(val+slen) = '\0';
 	
 	return RET_DBOP_OK;
 }

@@ -20,9 +20,10 @@ int main(int argc, char **argv, char **envp)
 	int (*data_handler)(CGI *cgi, HASH *dbh);
 	void *lib;
 
-	mtc_init(TC_ROOT"viki");
 	mutil_wrap_fcgi(argc, argv, envp);
+
 	mconfig_parse_file(SITE_CONFIG, &g_cfg);
+	mtc_init(TC_ROOT"viki");
 
 	ret = lutil_init_tpl(&tplh);
 	if (ret != RET_RBTOP_OK) {

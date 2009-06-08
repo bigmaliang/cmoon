@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
 	size_t r;
 	int ret;
 
-	mtc_init(HF_LOG_PATH"mtools.storedb");
 	if (!mconfig_parse_file(CONFIG_FILE, &g_cfg)) {
 		mtc_err("init config %s error", CONFIG_FILE);
 		return 1;
 	}
+	mtc_init(HF_LOG_PATH"mtools.storedb");
 
 	dboffered = dmoffered = false;
 	if (argc > 1) {
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 			snprintf(tkey, sizeof(tkey), "%s_"POST_INCREMENT, key);
 			r = nmdb_get(nmdb, (unsigned char*)tkey, strlen(tkey), (unsigned char*)val, LEN_NMDB_VAL);
 			if ((int)r <= 0) {
-				mtc_warn("get %s failure", tkey);
+				mtc_info("get %s failure", tkey);
 				goto doclean;
 			}
 			*(val+r) = '\0';
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 			snprintf(tkey, sizeof(tkey), "%s_"POST_TIMESTAMP, key);
 			r = nmdb_get(nmdb, (unsigned char*)tkey, strlen(tkey), (unsigned char*)val, LEN_NMDB_VAL);
 			if ((int)r <= 0) {
-				mtc_warn("get %s failure", tkey);
+				mtc_info("get %s failure", tkey);
 				free(key);
 				continue;
 			}

@@ -24,6 +24,12 @@ __BEGIN_DECLS
 #define CFG_ITEM_LEN	512
 #define CFG_DIVIDER		"'"
 
+/*
+ * mcfg_xxx serials function is deprecated,
+ * please use mconfig_xxx instead.
+ *
+ * except you need to change config value in runtime
+ */
 void mcfg_init(const char *fn);
 char* mcfg_getvalue(const char *key, const char *def);
 int	mcfg_getintvalue(const char *key);
