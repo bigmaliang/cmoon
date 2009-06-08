@@ -1,6 +1,8 @@
 #include "mheads.h"
 #include "lheads.h"
 
+HDF *g_cfg;
+
 int main(int argc, char *argv[])
 {
 	CGI *cgi;

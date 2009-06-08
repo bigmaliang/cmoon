@@ -8,6 +8,8 @@ anchor_t g_crumbs[3] = {
 	{"", "", "", ""}
 };
 
+HDF *g_cfg;
+
 int main(int argc, char *argv[])
 {
 	CGI *cgi;

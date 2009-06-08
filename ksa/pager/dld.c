@@ -6,6 +6,8 @@ anchor_t g_crumbs[2] = {
 	{"", "", "", ""}
 };
 
+HDF *g_cfg;
+
 int main(int argc, char *argv[])
 {
 	HDF *hdf;

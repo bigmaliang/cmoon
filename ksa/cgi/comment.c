@@ -2,6 +2,8 @@
 #include "lheads.h"
 #include "comment.h"
 
+HDF *g_cfg;
+
 int main()
 {
 	CGI *cgi;

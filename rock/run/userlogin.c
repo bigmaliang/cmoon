@@ -2,6 +2,8 @@
 #include "lheads.h"
 #include "member.h"
 
+HDF *g_cfg;
+
 int main(int argc, char *argv[])
 {
 	CGI *cgi;
