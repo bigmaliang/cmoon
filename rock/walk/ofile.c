@@ -175,7 +175,7 @@ int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
 		mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, uri, "
 				 " substring(intime from '[^.]*') as intime, "
 				 " substring(uptime from '[^.]*') as uptime "
-				 " FROM fileinfo WHERE uri=%s;",
+				 " FROM fileinfo WHERE uri='%s';",
 				 NULL, uri);
 		ret = mdb_get(conn, "iiiiiSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
 					  &(fl->gid), &(fl->mode), &(fl->name), &(fl->remark), &(fl->uri),
