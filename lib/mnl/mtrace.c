@@ -54,22 +54,18 @@ void mtc_leave()
 bool mtc_msg(const char *func, const char *file, long line,
 			 int level, const char *format, ...)
 {
-	//int dftlv = fcfg_getintvalue(TC_CFGSTR);
-	int dftlv = TC_DEFAULT_LEVEL;
-	if (dftlv < 0 || dftlv > TC_LEVELS)
-		dftlv = TC_WARNING;
+	int dftlv = hdf_get_int_value(g_cfg, PRE_CONFIG".trace_level", TC_DEFAULT_LEVEL);
 	if (level > dftlv)
 		return true;
 	
+	if (g_fp == NULL)
+		return false;
+
 	va_list ap;
 	char tm[LEN_TM];
 	if (!mmisc_getdatetime(tm, sizeof(tm), "%F %T", 0))
 		return false;
 
-	//FILE *fp;
-	//g_fp = fopen(g_fn, "a+");
-	if (g_fp == NULL)
-		return false;
 	FPRINTF(g_fp, "[%s]", tm);
 	FPRINTF(g_fp, "[%s]", g_trace_level[level]);
 	FPRINTF(g_fp, "[%s:%li %s] ", file, line, func);
@@ -79,7 +75,6 @@ bool mtc_msg(const char *func, const char *file, long line,
 	va_end(ap);
 
 	FPRINTF(g_fp, "\n");
-	//fclose(fp);
 
 	trace_shift_file();
 	return true;

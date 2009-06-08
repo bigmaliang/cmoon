@@ -99,5 +99,6 @@
 #include "mdb.h"
 #include "fdb.h"
 #include "mmisc.h"
+#include "mglobal.h"
 
 #endif	/* __MHEADS_H__ */
