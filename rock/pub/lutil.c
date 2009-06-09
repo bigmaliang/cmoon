@@ -291,7 +291,7 @@ void lutil_cleanup_db(HASH *dbh)
 	hash_destroy(&dbh);
 }
 
-static int tpl_config(const struct dirent *ent)
+int tpl_config(const struct dirent *ent)
 {
 	if (reg_search(".*.hdf", ent->d_name))
 		return 1;
@@ -302,10 +302,10 @@ static int tpl_config(const struct dirent *ent)
 int lutil_init_tpl(HASH **tplh)
 {
 	struct dirent **eps = NULL;
-	HDF *node = NULL, *child = NULL;
+	HDF *node = NULL, *child = NULL, *tmphdf = NULL;
 	CSPARSE *cs = NULL;
 	HASH *ltplh = NULL;
-	char *buf = NULL;
+	char *buf = NULL, *tpl = NULL;
 	char fname[_POSIX_PATH_MAX];
 	STRING str;
 	NEOERR *err;
@@ -328,14 +328,26 @@ int lutil_init_tpl(HASH **tplh)
 
 		while (child != NULL) {
 			string_init(&str);
-			err = cs_init(&cs, child);
+			err = cs_init(&cs, hdf_get_obj(child, PRE_CFG_DATASET));
 			JUMP_NOK(err, wnext);
 
 			err = cgi_register_strfuncs(cs);
 			JUMP_NOK(err, wnext);
-			err = cs_parse_file(cs, F_TPL_LAYOUT);
+			tpl = hdf_get_value(child, PRE_CFG_LAYOUT, "null.html");
+			snprintf(fname, sizeof(fname), PATH_TPL"%s", tpl);
+			err = cs_parse_file(cs, fname);
 			JUMP_NOK(err, wnext);
 
+			/*
+			 * merge dataset from g_cfg 
+			 */
+			snprintf(fname, sizeof(fname), PRE_CONFIG"."PRE_CFG_DATASET"_%s", tpl);
+			tmphdf = hdf_get_obj(g_cfg, fname);
+			if (tmphdf != NULL) hdf_copy(child, PRE_CFG_DATASET, tmphdf);
+
+			/*
+			 * do rend 
+			 */
 			err = cs_render(cs, &str, mcs_strcb);
 			JUMP_NOK(err, wnext);
 

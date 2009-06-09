@@ -1,5 +1,21 @@
 Config {
 	trace_level = 3
+	Dataset_layout.html {
+		Layout {
+			tabs {
+				0 {
+					name = 市中心
+					href = /
+					class = selected
+				}
+				1 {
+					name = 菜市场
+					href = /xxx
+					class = 
+				}
+			}
+		}
+	}
 }
 
 Db {

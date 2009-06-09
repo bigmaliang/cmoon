@@ -10,8 +10,7 @@ SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))
 DEPEND = .depend
 
-.PHONY: sys
-all: preload $(BINARY) sys
+all: preload $(BINARY)
 
 $(DEPEND): $(SOURCES)
 	@$(CC) $(CFLAGS) -MM $^ $(INCS) > $(DEPEND)
@@ -30,18 +29,14 @@ include $(DEPEND)
 	@echo "$(CC) -o $@"
 	@$(CC) $(CFLAGS) $< -o $@ $(INCS) ${LIBS}
 
-sys:
-	@$(MAKE) -C sys
-
 cflag:
 	@echo "=== "$(CFLAGS)
 	@echo "=== "$(INCS)
 install: $(BINARY)
 	@$(PEREXEC) $^
-	@$(MAKE) -C sys install
+	@find -name '*.js' -exec $(CPWITHDIR) -p $(PATH_DOC)/js/ {} \;
 clean:
 	@rm -rf ${BINARY}
-	@$(MAKE) -C sys clean
 #distclean:
 #	@rm -rf $(PATH_MTLS)/*
 #	@rm -rf ${BINARY}

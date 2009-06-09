@@ -21,6 +21,7 @@ int lutil_render(CGI *cgi, HASH *tplh);
 
 int  lutil_init_db(HASH **dbh);
 void lutil_cleanup_db(HASH *dbh);
+int  tpl_config(const struct dirent *ent);
 int  lutil_init_tpl(HASH **tplh);
 void lutil_cleanup_tpl(HASH *tplh);
 

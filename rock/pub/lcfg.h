@@ -11,7 +11,8 @@ __BEGIN_DECLS
 #ifdef RELEASE
 #define PATH_SITE	"/usr/local/moon/www/rock/"
 #else
-#define PATH_SITE	"/home/bigml/web/moon/rock/"
+//#define PATH_SITE	"/home/bigml/web/moon/rock/"
+#define PATH_SITE	"/usr/local/moon/rock/"
 #endif
 #define SITE_CONFIG	PATH_SITE"config.hdf"
 #define PATH_DOC	PATH_SITE"fly/"
@@ -32,6 +33,10 @@ __BEGIN_DECLS
 
 #define PRE_MMC_FILE	"File"
 #define PRE_MMC_MEMBER	"Member"
+
+#define PRE_CFG_OUTPUT	"Output"
+#define PRE_CFG_LAYOUT	"Layout"
+#define PRE_CFG_DATASET	"Dataset"
 
 #define NAV_NUM 4
 extern anchor_t g_nav[NAV_NUM];

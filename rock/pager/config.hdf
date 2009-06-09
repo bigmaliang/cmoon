@@ -1,0 +1,49 @@
+regist {
+	Output = regist.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = 'Baby, join me in death'
+			crumbs {
+				0 {
+					name = 市中心
+					href = /
+				}
+				1 {
+					name = 注册用户
+					href = /userregist
+				}
+			}
+		}
+		Include {
+			css = regist/regist.css.html
+			js = regist/regist.js.html
+			content = regist/regist.html
+		}
+	}
+}
+
+limit {
+	Output = sys/limit.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = 文件管理
+			crumbs {
+				0 {
+					name = 市中心
+					href = /
+				}
+				1 {
+					name = 文件管理
+					href = /sys/limit.html
+				}
+			}
+		}
+		Include {
+			css = sys/limit.css.html
+			js = sys/limit.js.html
+			content = sys/limit.html
+		}
+	}
+}

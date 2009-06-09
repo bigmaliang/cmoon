@@ -1,0 +1,24 @@
+table {
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = xxx啊啊啊
+			crumbs {
+				0 {
+					name = xxx
+					href = /
+				}
+				1 {
+					name = xxx
+					href = /
+				}
+			}
+		}
+		Include {
+			css = /home/bigml/web/moon/rock/tpl/table/table.css.html
+			js = /home/bigml/web/moon/rock/tpl/table/table.js.html
+			content = /home/bigml/web/moon/rock/tpl/table/table.html
+		}
+	}
+}
+
