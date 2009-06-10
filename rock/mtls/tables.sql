@@ -6,9 +6,12 @@ CREATE TABLE fileinfo (
 	   uid int NOT NULL DEFAULT 0,
 	   gid int NOT NULL DEFAULT 0,
 	   mode int NOT NULL DEFAULT 0,
+	   reqtype int NOT NULL DEFAULT 0,
 	   name varchar(256) NOT NULL DEFAULT '', --file name present in url
 	   remark varchar(256) NOT NULL DEFAULT '', --description remark
 	   uri varchar(1024) NOT NULL DEFAULT '/',	--consider as file's absolute path
+	   dataname varchar(256) NOT NULL DEFAULT '',
+	   rendname varchar(256) NOT NULL DEFAULT '',
 	   intime timestamp DEFAULT now(),
 	   uptime timestamp DEFAULT now(),
 	   PRIMARY KEY (id)

@@ -11,9 +11,12 @@ typedef struct _file {
 	int uid;
 	int gid;
 	int mode;
+	int reqtype;				/* cgi request type */
 	char *name;
 	char *remark;
 	char *uri;
+	char *dataer;				/* data handler plugin name */
+	char *render;				/* html rend plugin name */
 	char *intime;
 	char *uptime;
 } file_t;

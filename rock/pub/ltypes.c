@@ -20,6 +20,8 @@ int file_pack(file_t *file, char **res, size_t *outlen)
 	len += strlen(file->name)+1;
 	len += strlen(file->remark)+1;
 	len += strlen(file->uri)+1;
+	len += strlen(file->dataer)+1;
+	len += strlen(file->render)+1;
 	len += strlen(file->intime)+1;
 	len += strlen(file->uptime)+1;
 
@@ -40,6 +42,12 @@ int file_pack(file_t *file, char **res, size_t *outlen)
 	memcpy(buf+pos, file->uri, strlen(file->uri)+1);
 	
 	pos += strlen(file->uri)+1;
+	memcpy(buf+pos, file->dataer, strlen(file->dataer)+1);
+	
+	pos += strlen(file->dataer)+1;
+	memcpy(buf+pos, file->render, strlen(file->render)+1);
+	
+	pos += strlen(file->render)+1;
 	memcpy(buf+pos, file->intime, strlen(file->intime)+1);
 
 	pos += strlen(file->intime)+1;
@@ -82,6 +90,10 @@ int file_unpack(char *buf, size_t inlen, file_t **file)
 	while (*p != '\0' && p <= buf+inlen) p++; p++;
 	fl->uri = strdup(p);
 	while (*p != '\0' && p <= buf+inlen) p++; p++;
+	fl->dataer = strdup(p);
+	while (*p != '\0' && p <= buf+inlen) p++; p++;
+	fl->render = strdup(p);
+	while (*p != '\0' && p <= buf+inlen) p++; p++;
 	fl->intime = strdup(p);
 	while (*p != '\0' && p <= buf+inlen) p++; p++;
 	fl->uptime = strdup(p);
@@ -118,6 +130,10 @@ void file_store_in_hdf(file_t *fl, char *prefix, HDF *hdf)
 	hdf_set_value(hdf, key, fl->remark);
 	snprintf(key, sizeof(key), "%s.uri", prekey);
 	hdf_set_value(hdf, key, fl->uri);
+	snprintf(key, sizeof(key), "%s.dataer", prekey);
+	hdf_set_value(hdf, key, fl->dataer);
+	snprintf(key, sizeof(key), "%s.render", prekey);
+	hdf_set_value(hdf, key, fl->render);
 	snprintf(key, sizeof(key), "%s.intime", prekey);
 	hdf_set_value(hdf, key, fl->intime);
 	snprintf(key, sizeof(key), "%s.uptime", prekey);
@@ -137,6 +153,10 @@ void file_del(void *fl)
 		free(lfl->remark);
 	if (lfl->uri != NULL)
 		free(lfl->uri);
+	if (lfl->dataer != NULL)
+		free(lfl->dataer);
+	if (lfl->render != NULL)
+		free(lfl->render);
 	if (lfl->intime != NULL)
 		free(lfl->intime);
 	if (lfl->uptime != NULL)
