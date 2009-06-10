@@ -24,6 +24,7 @@ void lutil_cleanup_db(HASH *dbh);
 int  tpl_config(const struct dirent *ent);
 int  lutil_init_tpl(HASH **tplh);
 void lutil_cleanup_tpl(HASH *tplh);
+bool lutil_makesure_dir(char *file);
 
 __END_DECLS
 #endif	/* __LUTIL_H__ */

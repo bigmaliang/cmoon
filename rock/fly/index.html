@@ -5,21 +5,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="keywords" content="eol, 易生活, 生活, 买菜, 送菜, 外卖" />
     <meta name="description" content="eol" />
-    <title>易生活 - <?cs var:Layout.title ?></title>
+    <title>易生活 - Easy Our Life</title>
 
     <link rel="stylesheet" type="text/css" href="/css/mbase.css" />
     <link rel="stylesheet" type="text/css" href="/css/mbox.css" />
     <link rel="stylesheet" type="text/css" href="/css/msuperfish.css" />
-    <?cs include:Include.css ?>
+    
 
     <script type="text/javascript" src="/js/pub/mbase.js"></script>
     <script type="text/javascript" src="/js/pub/mform.js"></script>
     <script type="text/javascript" src="/js/pub/mbox.js"></script>
     <script type="text/javascript" src="/js/pub/msuperfish.js"></script>
     <script type="text/javascript" src="/js/llayout.js"></script>
-    <?cs include:Include.js ?>
+    
     <script type="text/javascript">
-      <?cs include:Layout.js ?>
+      
     </script>
   </head>
 
@@ -41,18 +41,20 @@
     <div id="mid">
       <div class="navbanner">
         <ul class="indentmenu">
-          <?cs each:tab = Layout.tabs ?>
-          <li><a href="<?cs var:tab.href ?>" class="<?cs var:tab.class ?>"><?cs var:tab.name ?></a></li>
-          <?cs /each ?>
+          
+          <li><a href="/" class="selected">市中心</a></li>
+          
+          <li><a href="/xxx" class="">菜市场</a></li>
+          
         </ul>
       </div>
       <div class="sepl"></div>
       <div class="navbanner">
         <ul class="crumbs">
           <li class="first">您当前的位置:</li>
-          <?cs each:crumb = Layout.crumbs ?>
-          <li>&raquo; <a href="<?cs var:crumb.href ?>"><?cs var:crumb.name ?></a></li>
-          <?cs /each ?>
+          
+          <li>&raquo; <a href="/">市中心</a></li>
+          
         </ul>
         <ul id="userActions" class="sf-menu uc-menu">
           <li class="current"><a href="/run/member">个人中心</a></li>
@@ -61,8 +63,8 @@
       
       <div class="clearer"></div>
       <div id="content">
-        <?cs include:Include.content ?>
-        <?cs var:Content.content ?>
+        
+        
         <div class="clearer"></div>
       </div> <!-- content -->
     </div> <!-- mid -->

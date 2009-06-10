@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
 
 	n = scandir("./", &eps, tpl_config, alphasort);
 	for (int i = 0; i < n; i++) {
+		mtc_dbg("rend file %s", eps[i]->d_name);
 		cs = NULL; node = NULL;
 		memset(fname, 0x0, sizeof(fname));
 		
@@ -28,6 +29,7 @@ int main(int argc, char *argv[])
 
 		child = hdf_obj_child(node);
 		while (child != NULL) {
+			mtc_dbg("rend node %s", hdf_obj_name(child));
 			string_init(&str);
 			err = cs_init(&cs, hdf_get_obj(child, PRE_CFG_DATASET));
 			JUMP_NOK(err, wnext);
@@ -35,8 +37,7 @@ int main(int argc, char *argv[])
 			err = cgi_register_strfuncs(cs);
 			JUMP_NOK(err, wnext);
 			tpl = hdf_get_value(child, PRE_CFG_LAYOUT, "null.html");
-			snprintf(fname, sizeof(fname), PATH_TPL"%s", tpl);
-			err = cs_parse_file(cs, fname);
+			err = cs_parse_file(cs, tpl);
 			JUMP_NOK(err, wnext);
 
 			/*
@@ -51,6 +52,7 @@ int main(int argc, char *argv[])
 
 			snprintf(fname, sizeof(fname), PATH_DOC"%s",
 					 hdf_get_value(child, PRE_CFG_OUTPUT, "null.html"));
+			lutil_makesure_dir(fname);
 			if(!mcs_str2file(str, fname)) {
 				mtc_err("write result to %s failure", fname);
 			}

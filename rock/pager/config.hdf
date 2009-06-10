@@ -1,5 +1,26 @@
-regist {
-	Output = regist.html
+index {
+	Output = index.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = Easy Our Life
+			crumbs {
+				0 {
+					name = 市中心
+					href = /
+				}
+			}
+		}
+	}
+}
+
+member_login {
+	Output = member/login.html
+	Layout = member/login.html
+}
+
+member_regist {
+	Output = member/regist.html
 	Layout = layout.html
 	Dataset {
 		Layout {

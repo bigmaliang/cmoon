@@ -5,13 +5,7 @@
 
 int CGI_REQ_TYPE(CGI *cgi)
 {
-	char *tp = hdf_get_value(cgi->hdf, PRE_REQ_TYPE, "html");
-	if (!strcmp(tp, "html"))
-		return CGI_REQ_HTML;
-	else if (!strcmp(tp, "ajax"))
-		return CGI_REQ_AJAX;
-	else
-		return CGI_REQ_UNSUPPORT;
+	return hdf_get_int_value(cgi->hdf, PRE_RSV_TYPE, 0);
 }
 
 int lutil_file_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
@@ -69,7 +63,10 @@ int lutil_file_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
 	/*
 	 * set file name for later use 
 	 */
-	hdf_set_value(cgi->hdf, PRE_REQ_FILE, file->name);
+	hdf_set_value(cgi->hdf, PRE_RSV_FILE, file->name);
+	hdf_set_int_value(cgi->hdf, PRE_RSV_TYPE, file->reqtype);
+	hdf_set_value(cgi->hdf, PRE_RSV_DATAER, file->dataer);
+	hdf_set_value(cgi->hdf, PRE_RSV_RENDER, file->render);
 	
 	reqmethod = CGI_REQ_METHOD(cgi);
 	if (reqmethod == CGI_REQ_GET) {
@@ -163,10 +160,14 @@ void* lutil_get_data_handler(void *lib, CGI *cgi)
 	char hname[_POSIX_PATH_MAX];
 	void *res;
 
-	/* TODO how to division /music/zhangwei and /member/zhangwei ? */
-	file = hdf_get_value(cgi->hdf, PRE_REQ_FILE, NULL);
+	/*
+	 * how to distinguish /music/zhangwei and /member/zhangwei ?
+	 * /music/zhangwei may be use music_data_xxx
+	 * /member/zhangwei may be use member_data_xxx
+	 */
+	file = hdf_get_value(cgi->hdf, PRE_RSV_DATAER, NULL);
 	if (file == NULL) {
-		mtc_err("%s not found", PRE_REQ_FILE);
+		mtc_err("%s not found", PRE_RSV_DATAER);
 		return NULL;
 	}
 	
@@ -204,10 +205,14 @@ int lutil_render(CGI *cgi, HASH *tplh)
 
 	char *file, *buf;
 	
-	/* TODO how to division /music/zhangwei and /member/zhangwei ? */
-	file = hdf_get_value(cgi->hdf, PRE_REQ_FILE, NULL);
+	/*
+	 * how to distinguish /music/zhangwei and /member/zhangwei ?
+	 * /music/zhangwei may be use "music"
+	 * /member/zhangwei may be use "member"
+	 */
+	file = hdf_get_value(cgi->hdf, PRE_RSV_RENDER, NULL);
 	if (file == NULL) {
-		mtc_err("%s not found", PRE_REQ_FILE);
+		mtc_err("%s not found", PRE_RSV_RENDER);
 		return RET_RBTOP_NEXIST;
 	}
 
@@ -392,3 +397,22 @@ void lutil_cleanup_tpl(HASH *tplh)
 	hash_destroy(&tplh);
 }
 
+bool lutil_makesure_dir(char *file)
+{
+	if (file == NULL) return true;
+
+	char tok[_POSIX_PATH_MAX];
+	char *p = strchr(file, '/');
+
+	while (p != NULL) {
+		memset(tok, 0x0, sizeof(tok));
+		strncpy(tok, file, p-file+1);
+		if (mkdir(tok, 0755) != 0 && errno != EEXIST) {
+			mtc_err("mkdir %s failure %s", strerror(errno));
+			return false;
+		}
+		p = strchr(p+1, '/');
+	}
+	mtc_dbg("directory %s ok", tok);
+	return true;
+}
