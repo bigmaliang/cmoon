@@ -32,14 +32,14 @@ member_regist {
 				}
 				1 {
 					name = 注册用户
-					href = /userregist
+					href = /member/regist.html
 				}
 			}
 		}
 		Include {
-			css = regist/regist.css.html
-			js = regist/regist.js.html
-			content = regist/regist.html
+			css = member/regist/regist.css.html
+			js = member/regist/regist.js.html
+			content = member/regist/regist.html
 		}
 	}
 }

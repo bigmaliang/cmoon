@@ -4,6 +4,7 @@
 
 #include "mheads.h"
 #include "lheads.h"
+#include "member.h"
 
 HDF *g_cfg = NULL;
 
@@ -39,7 +40,7 @@ int main(int argc, char **argv, char **envp)
 		return ret;
 	}
 
-	lib = dlopen(NULL, RTLD_NOW);
+	lib = dlopen(NULL, RTLD_NOW|RTLD_GLOBAL);
 	if (lib == NULL) {
 		mtc_err("possible? %s", dlerror());
 		mutil_redirect("初始化库函数失败", TGT_SELF, URL_CLOSE, true);
@@ -66,7 +67,7 @@ int main(int argc, char **argv, char **envp)
 			goto response;
 		}
 
-		(*data_handler)(cgi, dbh);
+		ret = (*data_handler)(cgi, dbh);
 		
 	response:
 		if (cgi != NULL && cgi->hdf != NULL) {
@@ -85,6 +86,7 @@ int main(int argc, char **argv, char **envp)
 				}
 				break;
 			case CGI_REQ_AJAX:
+				ldb_opfinish_json(ret, cgi->hdf, NULL);
 				jsoncb = hdf_get_value(cgi->hdf, PRE_REQ_AJAX_FN, NULL);
 				if (jsoncb != NULL) {
 					mjson_execute_hdf(cgi->hdf, jsoncb);

@@ -22,5 +22,7 @@ bool member_in_group(member_t *mb, int gid);
 bool member_is_owner(member_t *mb, int uid);
 bool member_is_root(int uin);
 
+int  member_login_data_get(CGI *cgi, HASH *dbh);
+
 __END_DECLS
 #endif	/* __MEMBER_H__ */

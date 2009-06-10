@@ -365,3 +365,15 @@ bool member_is_root(int uin)
 	else
 		return false;
 }
+
+int member_login_data_get(CGI *cgi, HASH *dbh)
+{
+	int ret;
+	
+	mdb_conn *conn = (mdb_conn*)hash_lookup(dbh, "Sys");
+	ret = member_check_login(cgi->hdf, conn);
+	if (ret == RET_RBTOP_OK) {
+		member_after_login(cgi, conn);
+	}
+	return ret;
+}

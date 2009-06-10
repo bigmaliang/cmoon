@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="keywords" content="eol, 易生活, 生活, 买菜, 送菜, 外卖" />
+    <meta name="description" content="eol" />
+    <title>易生活 - Baby, join me in death</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/mbase.css" />
+    <link rel="stylesheet" type="text/css" href="/css/mbox.css" />
+    <link rel="stylesheet" type="text/css" href="/css/msuperfish.css" />
+    
+
+    <script type="text/javascript" src="/js/pub/mbase.js"></script>
+    <script type="text/javascript" src="/js/pub/mform.js"></script>
+    <script type="text/javascript" src="/js/pub/mbox.js"></script>
+    <script type="text/javascript" src="/js/pub/msuperfish.js"></script>
+    <script type="text/javascript" src="/js/llayout.js"></script>
+    <script type="text/javascript" src="/js/lregist.js"></script>
+
+    <script type="text/javascript">
+      
+    </script>
+  </head>
+
+  <body>
+    <div id="top">
+      <div class="member">
+        <ul class="hide" id="nav-member">
+          <li>欢迎 <span id="unameLayout"></span><!--(<span id="uinLayout"></span>)--></li>
+          <li class="last"><a href="javascript:void(0);" id="userlogout">退出</a></li>
+        </ul>
+        <ul id="nav-guest">
+          <li><a href="/login.html" rel="facebox">登录</a></li>
+          <li><a href="/regist.html">注册</a></li>
+          <li class="last"><a href="/forget.html">忘记密码</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="mid">
+      <div class="navbanner">
+        <ul class="indentmenu">
+          
+          <li><a href="/index.html" class="selected">市中心</a></li>
+          
+          <li><a href="/emart.html" class="">菜市场</a></li>
+          
+          <li><a href="/cshare.html" class="">百味轩</a></li>
+          
+          <li><a href="/discover.html" class="">小叮当</a></li>
+          
+        </ul>
+      </div>
+      <div class="sepl"></div>
+      <div class="navbanner">
+        <ul class="crumbs">
+          <li class="first">您当前的位置:</li>
+          
+          <li>&raquo; <a href="/index.html">市中心</a></li>
+          
+          <li>&raquo; <a href="/regist.html">上户口</a></li>
+          
+        </ul>
+        <ul id="userActions" class="sf-menu uc-menu">
+          <li class="current"><a href="/run/member">个人中心</a></li>
+        </ul>
+      </div>
+      
+      <div class="clearer"></div>
+      <div id="content">
+        <div id="colone">
+  <div class="title">注册相关</div>
+</div>
+
+<div id="coltwo">
+  <div class="title">注册用户</div>
+  <div id="step1">
+	<form id="formregist" class="infoform" action="/run/userregist" method="get">
+	  <ul>
+		<li>
+		  <div class="leftitem">昵 称:</div>
+		  <input type="text" name="uname" value="" class="is_required" />
+		</li>
+		<li><div class="leftitem">密码:</div> <input type="password" name="usn" id="usnreg" class="is_required" /></li>
+		<li><div class="leftitem">电子邮件:</div> <input type="text" name="email" class="vemail"/></li>
+		<li>
+		  <div class="leftitem">性 别:</div>
+		  <input type="radio" name="male" value="1" checked="checked" />男
+		  <input type="radio" name="male" value="0" />女
+		</li>
+		<li>
+		  <div class="leftitem"> &nbsp; </div>
+		  <input type="submit" class="submitbtn" value="提交" />
+		</li>
+	  </ul>
+	</form>
+  </div>
+
+  <div id="step2" class="hide">
+	注册成功. 您的登录号码为<span id="accountreg"></span>.
+  </div>
+
+  <div id="tiredreg" class="hide">
+	<span>Hey man, I need a rest, please retry <span id="periodreg"></span> minitus later.</span>
+  </div>
+  <div id="failurereg" class="hide">
+	<span>出错了, 稍后再试吧. <span id="errmsgreg"></span></span>
+  </div>
+</div>
+
+        
+        <div class="clearer"></div>
+      </div> <!-- content -->
+    </div> <!-- mid -->
+
+    <div id="bot">
+      <p>版权所有 &copy; 2008 eol</p>
+    </div>
+
+  </body>
+</html>

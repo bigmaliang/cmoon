@@ -8,6 +8,8 @@ time_t g_exp = 10;
 char g_key[LEN_SM];
 char g_val[LEN_SM];
 
+HDF *g_cfg;
+
 void useage(char *prg)
 {
         printf("usage: %s -g[s|a|r][i|d] key[=value][:flags] -e ExpireTime\n"

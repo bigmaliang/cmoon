@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
 		child = hdf_obj_child(node);
 		while (child != NULL) {
-			mtc_dbg("rend node %s", hdf_obj_name(child));
+			mtc_info("rend node %s", hdf_obj_name(child));
 			string_init(&str);
 			err = cs_init(&cs, hdf_get_obj(child, PRE_CFG_DATASET));
 			JUMP_NOK(err, wnext);

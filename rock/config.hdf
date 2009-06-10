@@ -1,5 +1,5 @@
 Config {
-	trace_level = 7
+	trace_level = 5
 	Dataset_layout.html {
 		Layout {
 			tabs {

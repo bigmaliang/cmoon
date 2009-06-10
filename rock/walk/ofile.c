@@ -76,21 +76,21 @@ int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
 		if (id <= 0) {
-			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, uri "
-					 " substring(intime from '[^.]*') as intime, "
+			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, reqtype, name, remark, uri, "
+					 " dataer, render, substring(intime from '[^.]*') as intime, "
 					 " substring(uptime from '[^.]*') as uptime "
 					 " FROM fileinfo WHERE pid=%d AND name=$1;",
 					 "s", pid, url);
 		} else {
-			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, uri "
-					 " substring(intime from '[^.]*') as intime, "
+			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, reqtype, name, remark, uri "
+					 " dataer, render, substring(intime from '[^.]*') as intime, "
 					 " substring(uptime from '[^.]*') as uptime "
 					 " FROM fileinfo WHERE id=%d;",
 					 NULL, id);
 		}
-		ret = mdb_get(conn, "iiiiiSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
-					  &(fl->gid), &(fl->mode), &(fl->name), &(fl->remark), &(fl->uri),
-					  &(fl->intime), &(fl->uptime));
+		ret = mdb_get(conn, "iiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
+					  &(fl->gid), &(fl->mode), &(fl->reqtype), &(fl->name), &(fl->remark), &(fl->uri),
+					  &(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime));
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("get %d %d.%s info failure from db %s",
 					id, pid, url, mdb_get_errmsg(conn));
@@ -172,14 +172,14 @@ int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
 		}
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
-		mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, name, remark, uri, "
-				 " substring(intime from '[^.]*') as intime, "
+		mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, reqtype, name, remark, uri, "
+				 " dataer, render, substring(intime from '[^.]*') as intime, "
 				 " substring(uptime from '[^.]*') as uptime "
 				 " FROM fileinfo WHERE uri='%s';",
 				 NULL, uri);
-		ret = mdb_get(conn, "iiiiiSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
-					  &(fl->gid), &(fl->mode), &(fl->name), &(fl->remark), &(fl->uri),
-					  &(fl->intime), &(fl->uptime));
+		ret = mdb_get(conn, "iiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
+					  &(fl->gid), &(fl->mode), &(fl->reqtype), &(fl->name), &(fl->remark), &(fl->uri),
+					  &(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime));
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("get %s info failure from db %s", uri, mdb_get_errmsg(conn));
 			if (ret == MDB_ERR_NORESULT)

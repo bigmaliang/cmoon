@@ -191,9 +191,10 @@ void* lutil_get_data_handler(void *lib, CGI *cgi)
 
 	res = dlsym(lib, hname);
 	if ((tp = dlerror()) != NULL) {
-		mtc_err("%s not found %s", hname, tp);
+		mtc_err("%s", tp);
 		return NULL;
-	}
+	} else
+		mtc_info("%s found for data handler", hname);
 	return res;
 }
 
@@ -413,6 +414,6 @@ bool lutil_makesure_dir(char *file)
 		}
 		p = strchr(p+1, '/');
 	}
-	mtc_dbg("directory %s ok", tok);
+	mtc_noise("directory %s ok", tok);
 	return true;
 }
