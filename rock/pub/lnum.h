@@ -20,6 +20,9 @@ enum user_status
 #define PERIOD_CLI_REGIST	ONE_HOUR
 #define PERIOD_CLI_LOGIN	ONE_HOUR
 
+#define LMT_CLI_ATTACK		100
+#define PERIOD_CLI_ATTACK	ONE_MINUTE
+
 #define DIV_USER_TB		100
 
 #define MAX_URI_ITEM	100

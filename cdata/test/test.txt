@@ -1,0 +1,40 @@
+﻿实例: http://rtds.dsc.hunantv.com/cgi-bin/cds.cgi?key=6&op=n_video&query=get
+
+
+
+三个参数的取值范围:
+
+key: 1 ~ 10000000
+op : n_user_space, n_photo, n_photo_album, n_video, n_video_d, n_video_album, n_blog
+query: get, put
+
+
+请将这三个参数组合测试, 如果时间太长的话可以把 key 的取值范围缩小
+
+组1(换 key):
+
+key=1&op=n_user_space&query=get
+key=2&op=n_user_space&query=get
+key=3&op=n_user_space&query=get
+...
+key=10000000&op=n_user_space&query=get
+
+
+
+
+组2(换 op):
+key=1&op=n_photo&query=get
+key=2&op=n_photo&query=get
+key=3&op=n_photo&query=get
+...
+key=10000000&op=n_photo&query=get
+
+
+
+
+组3(换 query)
+key=1&op=n_user_space&query=put
+key=2&op=n_user_space&query=put
+key=3&op=n_user_space&query=put
+...
+key=10000000&op=n_user_space&query=put

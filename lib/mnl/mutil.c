@@ -111,6 +111,26 @@ bool mutil_isdigit(char *s)
 	return true;
 }
 
+bool mutil_makesure_dir(char *file)
+{
+	if (file == NULL) return true;
+
+	char tok[_POSIX_PATH_MAX];
+	char *p = strchr(file, '/');
+
+	while (p != NULL) {
+		memset(tok, 0x0, sizeof(tok));
+		strncpy(tok, file, p-file+1);
+		if (mkdir(tok, 0755) != 0 && errno != EEXIST) {
+			mtc_err("mkdir %s failure %s", strerror(errno));
+			return false;
+		}
+		p = strchr(p+1, '/');
+	}
+	mtc_noise("directory %s ok", tok);
+	return true;
+}
+
 #ifdef NFCGI
 int read_cb(void *ptr, char *data, int size) {return 0;}
 int writef_cb(void *ptr, const char *format, va_list ap) {return 0;}

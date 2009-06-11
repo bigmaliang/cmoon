@@ -49,6 +49,7 @@ void mutil_redirect(const char *msg, const char *target, const char *url, bool h
 char* mutil_hdf_attr(HDF *hdf, char *name, char*key);
 char* mutil_obj_attr(HDF *hdf, char*key);
 bool mutil_isdigit(char *s);
+bool mutil_makesure_dir(char *file);
 void mutil_wrap_fcgi(int argc, char **argv, char **envp);
 
 __END_DECLS

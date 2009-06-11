@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
 			snprintf(fname, sizeof(fname), PATH_DOC"%s",
 					 hdf_get_value(child, PRE_CFG_OUTPUT, "null.html"));
-			lutil_makesure_dir(fname);
+			mutil_makesure_dir(fname);
 			if(!mcs_str2file(str, fname)) {
 				mtc_err("write result to %s failure", fname);
 			}
