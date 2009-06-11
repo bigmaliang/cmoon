@@ -4,7 +4,6 @@
 
 #include "mheads.h"
 #include "lheads.h"
-#include "member.h"
 
 HDF *g_cfg = NULL;
 
@@ -16,7 +15,7 @@ int main(int argc, char **argv, char **envp)
 
 	HASH *dbh;
 	HASH *tplh;
-	char *jsoncb;
+	char *requri, *jsoncb;
 
 	int (*data_handler)(CGI *cgi, HASH *dbh);
 	void *lib;
@@ -55,6 +54,12 @@ int main(int argc, char **argv, char **envp)
 		err = cgi_parse(cgi);
 		JUMP_NOK_CGI(err, response);
 
+		requri = hdf_get_value(cgi->hdf, PRE_REQ_URI_RW, "NULL");
+		if (mutil_client_attack(cgi->hdf, requri, LMT_CLI_ATTACK,
+								PERIOD_CLI_ATTACK)) {
+			goto response;
+		}
+		
 		ret = lutil_file_access_rewrited(cgi, dbh);
 		if (ret != RET_RBTOP_OK) {
 			goto response;
