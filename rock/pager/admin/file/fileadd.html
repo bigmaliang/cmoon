@@ -1,0 +1,53 @@
+<!--<div id="fileadd" style="display: none;">-->
+<div id="fileadd">
+  <form id="formfileadd" class="infoform" method="post" enctype="multipart/form-data" action="/admin/file">
+	<input type="hidden" name="op" value="add" />
+	<input type="hidden" id="addmode" name="mode" value="0" id="mode" />
+	<ul>
+	  <li>
+		<div class="leftitem">名称</div>
+		<input type="text" name="remark" id="remark" class="is_required" maxlen="20" />
+	  </li>
+	  <li>
+		<div class="leftitem">url名</div>
+		<input type="text" name="name" class="is_required" maxlen="20" />
+	  </li>
+	  <li>
+		<div class="leftitem">父ID</div>
+		<input type="text" name="pid" class="is_required vint short" value="0" />
+	  </li>
+	  <li>
+		<div class="leftitem">创建人权限</div>
+		读取<input type="checkbox" class="ckmode" checked="checked" />
+		修改<input type="checkbox" class="ckmode" checked="checked" />
+		增加<input type="checkbox" class="ckmode" checked="checked" />
+		删除<input type="checkbox" class="ckmode" checked="checked" />
+	  </li>
+	  <li>
+		<div class="leftitem">组用户权限</div>
+		读取<input type="checkbox" class="ckmode" checked="checked" />
+		修改<input type="checkbox" class="ckmode" />
+		增加<input type="checkbox" class="ckmode" checked="checked" />
+		删除<input type="checkbox" class="ckmode" />
+	  </li>
+	  <li>
+		<div class="leftitem">其它人权限</div>
+		读取<input type="checkbox" class="ckmode" checked="checked" />
+		修改<input type="checkbox" class="ckmode" />
+		增加<input type="checkbox" class="ckmode" />
+		删除<input type="checkbox" class="ckmode" />
+	  </li>
+	  <li>
+		<div class="leftitem">类型</div>
+		<select id="modetype">
+		  <option value="0">普通文件</option>
+		  <option value="1">目录</option>
+		</select>
+	  </li>
+	  <li>
+		<div class="leftitem"> &nbsp; </div>
+		<input type="submit" class="submitbtn" value="提交" />
+	  </li>
+	</ul>
+  </form>
+</div>

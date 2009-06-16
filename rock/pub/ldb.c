@@ -79,3 +79,56 @@ void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
 	}
 	exit(ret);
 }
+
+
+int ldb_init(HASH **dbh)
+{
+	HDF *node;
+	HASH *ldbh;
+	NEOERR *err;
+	int ret;
+
+	node = hdf_get_obj(g_cfg, "Db.Dsn");
+	if (node == NULL) {
+		mtc_err("Db config not found");
+		return RET_RBTOP_INITE;
+	}
+	
+	err = hash_init(&ldbh, hash_str_hash, hash_str_comp);
+	RETURN_V_NOK(err, RET_RBTOP_INITE);
+
+	node = hdf_obj_child(node);
+	mdb_conn *conn;
+	bool filled = false;
+	while (node != NULL) {
+		ret = mdb_init(&conn, hdf_obj_value(node));
+		if (ret == RET_RBTOP_OK) {
+			hash_insert(ldbh, (void*)strdup(hdf_obj_name(node)), (void*)conn);
+			filled = true;
+		}
+		
+		node = hdf_obj_next(node);
+	}
+
+	if (!filled) {
+		mtc_err("no valid db connection");
+		return RET_RBTOP_INITE;
+	}
+	*dbh = ldbh;
+	return RET_RBTOP_OK;
+}
+
+void ldb_destroy(HASH *dbh)
+{
+	char *key = NULL;
+	
+	mdb_conn *conn = (mdb_conn*)hash_next(dbh, (void**)&key);
+
+	while (conn != NULL) {
+		mdb_destroy(conn);
+		conn = hash_next(dbh, (void**)&key);
+	}
+
+	hash_destroy(&dbh);
+}
+

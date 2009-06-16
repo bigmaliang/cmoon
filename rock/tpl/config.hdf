@@ -15,9 +15,9 @@ table {
 			}
 		}
 		Include {
-			css = /home/bigml/web/moon/rock/tpl/table/table.css.html
-			js = /home/bigml/web/moon/rock/tpl/table/table.js.html
-			content = /home/bigml/web/moon/rock/tpl/table/table.html
+			css = table/table.css.html
+			js = table/table.js.html
+			content = table/table.html
 		}
 	}
 }

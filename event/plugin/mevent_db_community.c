@@ -54,7 +54,7 @@ static void dbcm_process_driver(struct event_entry *entry, struct queue_entry *q
 
 	st.msg_total++;
 
-	usleep(300);
+	//usleep(300);
 	if (q->operation != REQ_CMD_STATS) {
 		c = data_cell_search(q->dataset, true, DATA_TYPE_STRING, "sqls");
 		if (c != NULL) {

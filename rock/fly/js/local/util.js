@@ -19,7 +19,7 @@ function loginCheck()
 		$("#uinLayout").text(uin);
 		$("#userActions").mnsuperfish({
 			ajax:true,
-			url:"/run/usermenu",
+			url:"/service/action",
 			data:"uin="+uin,
 			dataType: "json"});
 		$("#nav-member").show();
@@ -37,7 +37,7 @@ function logoutEol()
 	loginCheck();
 	$.ajax({
 		type: "GET",
-		url: "/run/userlogout",
+		url: "/member/logout",
 		cache: false
 	});
 }

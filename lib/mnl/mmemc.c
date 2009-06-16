@@ -1,20 +1,50 @@
 #include "mheads.h"
 
+static memcached_st* mmc_create()
+{
+	memcached_st *mc;
+	memcached_return rc;
+	HDF *node;
+	char *ip;
+	int port;
+	
+	mc = memcached_create(NULL);
+	if (mc == NULL) {
+		mtc_err("create memcached struct failure!");
+		return NULL;
+	}
+
+	node = hdf_get_obj(g_cfg, PRE_CFG_MEMC);
+	if (node != NULL) {
+		node = hdf_obj_child(node);
+	} else {
+		mtc_err("%s not found in config", PRE_CFG_MEMC);
+		memcached_free(mc);
+		return NULL;
+	}
+	
+	while (node != NULL) {
+		ip = hdf_get_value(node, "ip", "127.0.0.1");
+		port = hdf_get_int_value(node, "port", 0);
+		rc = memcached_server_add(mc, ip, port);
+		if (rc != MEMCACHED_SUCCESS) {
+			mtc_err("init %s:%s %s", ip, port, memcached_strerror(mc, rc));
+		}
+		node = hdf_obj_next(node);
+	}
+	
+	return mc;
+}
+
 memcached_return mmc_store(int op, const char *key, char *value, size_t len, time_t exp, uint32_t flags)
 {
 	memcached_st *mc;
 	memcached_return rc;
 
-	mc = memcached_create(NULL);
+	mc = mmc_create();
 	if (mc == NULL) {
-		mtc_err("create memcached struct failure!");
+		mtc_err("memcached create failure!");
 		return MEMCACHED_FAILURE;
-	}
-	rc = memcached_server_add(mc, MEMC_IP, atoi(MEMC_PORT));
-	if (rc != MEMCACHED_SUCCESS) {
-		mtc_err("init %s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
-		memcached_free(mc);
-		return rc;
 	}
 	size_t vallen = len;
 	if (len == 0) {
@@ -71,16 +101,10 @@ memcached_return mmc_count(int op, const char *key, uint32_t offset,
 	memcached_return rc;
 	char *dupkey = strdup(key);
 
-	mc = memcached_create(NULL);
+	mc = mmc_create();
 	if (mc == NULL) {
-		mtc_err("create memcached struct failure!");
+		mtc_err("memcached create failure!");
 		return MEMCACHED_FAILURE;
-	}
-	rc = memcached_server_add(mc, MEMC_IP, atoi(MEMC_PORT));
-	if (rc != MEMCACHED_SUCCESS) {
-		mtc_err("init %s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
-		memcached_free(mc);
-		return rc;
 	}
 	uint64_t *plv, lvalue;
 	plv = &lvalue;
@@ -116,15 +140,9 @@ char* mmc_get(const char *key, size_t *vallen, uint32_t *flags)
 	memcached_return rc;
 	char *value;
 
-	mc = memcached_create(NULL);
+	mc = mmc_create();
 	if (mc == NULL) {
-		mtc_err("create memcached struct failure!");
-		return NULL;
-	}
-	rc = memcached_server_add(mc, MEMC_IP, atoi(MEMC_PORT));
-	if (rc != MEMCACHED_SUCCESS) {
-		mtc_err("init %s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
-		memcached_free(mc);
+		mtc_err("memcached create failure!");
 		return NULL;
 	}
 	size_t lv, *plv;
@@ -165,18 +183,11 @@ memcached_return mmc_mget(char **keys, char *vals[], int num,
 	memcached_return rc;
 	size_t keys_len[num];
 
-	mc = memcached_create(NULL);
+	mc = mmc_create();
 	if (mc == NULL) {
-		mtc_err("create memcached struct failure!");
+		mtc_err("memcached create failure!");
 		return MEMCACHED_FAILURE;
 	}
-	rc = memcached_server_add(mc, MEMC_IP, atoi(MEMC_PORT));
-	if (rc != MEMCACHED_SUCCESS) {
-		mtc_err("%s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
-		memcached_free(mc);
-		return rc;
-	}
-
 	size_t *plen[num], len[num];
 	uint32_t *pflg[num], flg[num];
 	int i;
@@ -216,16 +227,10 @@ memcached_return mmc_delete(const char *key, time_t exp)
 	memcached_st *mc;
 	memcached_return rc;
 
-	mc = memcached_create(NULL);
+	mc = mmc_create();
 	if (mc == NULL) {
-		mtc_err("create memcached struct failure!");
+		mtc_err("memcached create failure!");
 		return MEMCACHED_FAILURE;
-	}
-	rc = memcached_server_add(mc, MEMC_IP, atoi(MEMC_PORT));
-	if (rc != MEMCACHED_SUCCESS) {
-		mtc_err("init %s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
-		memcached_free(mc);
-		return rc;
 	}
 	rc = memcached_delete(mc, key, strlen(key), exp);
 	if (rc != MEMCACHED_SUCCESS) {

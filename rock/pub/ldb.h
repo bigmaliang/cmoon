@@ -4,14 +4,14 @@
 
 __BEGIN_DECLS
 
-#define DB_DSN			(mcfg_getvalue("dbdsn", "pgsql:dbname=mn_user host=localhost user=mner password=loveu"))
-#define DB_DSN_SYS		(mcfg_getvalue("dbdsn_sys", "pgsql:dbname=mn_sys host=localhost user=mner password=loveu"))
-#define DB_SYS			(hdf_get_value(g_cfg, "Db.Sys", "pgsql:dbname=mn_sys host=localhost user=mner password=loveu"))
-#define TABLE_RLS_USER	(mcfg_getvalue("table", "rls_user_4"))
+#define TABLE_RLS_USER	(hdf_get_value(g_cfg, "Db.Table.release_user", "rls_user_4"))
 
 void ldb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 				  char *target, char *url, bool header);
 void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn);
+
+int  ldb_init(HASH **dbh);
+void ldb_destroy(HASH *dbh);
 
 __END_DECLS
 #endif	/* __LDB_H__ */

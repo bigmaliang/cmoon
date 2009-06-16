@@ -5,8 +5,8 @@ CREATE TABLE fileinfo (
 	   pid int NOT NULL DEFAULT 0,
 	   uid int NOT NULL DEFAULT 0,
 	   gid int NOT NULL DEFAULT 0,
-	   mode int NOT NULL DEFAULT 0,
-	   reqtype int NOT NULL DEFAULT 0,
+	   mode int NOT NULL DEFAULT 0,	   -- ofile.h
+	   mark int NOT NULL DEFAULT 0,		  -- bit1: 0 html, 1 ajax; bit2: 0 left nav, 1 action
 	   name varchar(256) NOT NULL DEFAULT '', --file name present in url
 	   remark varchar(256) NOT NULL DEFAULT '', --description remark
 	   uri varchar(1024) NOT NULL DEFAULT '/',	--consider as file's absolute path

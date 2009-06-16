@@ -30,8 +30,8 @@ $(document).ready(function()
 	function displayMode(row, col, mode, tr) {
 		var id = $("[name='id']", tr).text();
 		var optm = {id: id, area: col};
-		function checkB(limit) {
-			if ((mode & limit) != 0)
+		function checkB(file) {
+			if ((mode & file) != 0)
 				return "<input type='checkbox' checked='checked' />";
 			else
 				return "<input type='checkbox' />";
@@ -80,15 +80,15 @@ $(document).ready(function()
 		}
 		$.ajax({
 			type: ptype,
-			url: "/run/sys/limit",
+			url: "/admin/file",
 			cache: false,
 			data: "id="+optm.id+"&area="+optm.area+"&unit="+optm.unit+"&enable="+optm.enable+"&op="+tmpop,
 			dataType: "json",
 			success: function(data) {
 				if (data.success != "1") {
 					if (data.errmsg == "敏感操作, 请先登录") {
-						document.loginopts = {title: data.errmsg, rurl: "/sys/limit.html"};
-						$.facebox({ajax: '/login.html'});
+						document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
+						$.facebox({ajax: '/member/login.html'});
 					} else {
 						alert(data.errmsg || "操作失败!");
 					}
@@ -100,81 +100,81 @@ $(document).ready(function()
 			error: function() {alert("操作失败!");}
 		});
 	}
-	function showLimit(page) {
+	function showFile(page) {
 		$.ajax({
 			type: "GET",
-			url: "/run/sys/limit",
+			url: "/admin/file",
 			cache: false,
 			data: "pg="+page,
 			dataType: "json",
 			success: function(data) {
-				if (type(data.limits) != "Array") {
+				if (type(data.files) != "Array") {
 					if (data.errmsg == "敏感操作, 请先登录") {
-						//$.facebox({ajax: '/login.html'});
-						//({title: data.errmsg, rurl: "/sys/limit.html"});
-						document.loginopts = {title: data.errmsg, rurl: "/sys/limit.html"};
-						$.facebox({ajax: '/login.html'});
+						//$.facebox({ajax: '/member/login.html'});
+						//({title: data.errmsg, rurl: "/admin/file.html"});
+						document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
+						$.facebox({ajax: '/member/login.html'});
 					} else {
-						alert(data.errmsg || "获取权限列表失败!");
+						alert(data.errmsg || "获取文件列表失败!");
 					}
 					return;
 				}
-				if (typeof mylimit == "undefined") {
-					mylimit = $(document).mntable(heads, data.limits, opts_mntable).appendTo($("#limits"));
+				if (typeof myfile == "undefined") {
+					myfile = $(document).mntable(heads, data.files, opts_mntable).appendTo($("#files"));
 				} else {
-					mylimit.remove();
-					mylimit = $(document).mntable(heads, data.limits, opts_mntable).appendTo($("#limits"));
+					myfile.remove();
+					myfile = $(document).mntable(heads, data.files, opts_mntable).appendTo($("#files"));
 				}
 				var opts_mnpagenav = {
 					ttnum: data.ttnum,
-					callback: showLimit
+					callback: showFile
 				};
 				$("#pagenav").mnpagenav(opts_mnpagenav);
 			},
 			error: function() {
-				alert("获取权限失败");
+				alert("获取文件失败");
 			}
 		});
 	}
 
-	showLimit(1);
+	showFile(1);
 
 
-	function sucLimitadd(data) {
+	function sucFileadd(data) {
 		if (data.success != "1") {
 			alert(data.errmsg || "操作失败, 请稍后再试");
 			return;
 		}
-		mylimit.makeRows(data.limits);
-		$("#mntrow"+data.limits[0].id).seekAttention({
+		myfile.makeRows(data.files);
+		$("#mntrow"+data.files[0].id).seekAttention({
 			pulseSpeed: 800
 		});
 		$(document).trigger('close.facebox');
 	}
-	function errLimitadd() {
+	function errFileadd() {
 		alert("操作失败");
 	}
-	function beforeLimitaddSerial() {
+	function beforeFileaddSerial() {
 		var mode = parseInt($("#modetype").val());
-		$(".ckmode", "#formlimitadd").each(function(i, obj) {
+		$(".ckmode", "#formfileadd").each(function(i, obj) {
 			if ($(obj).attr("checked") == true) {
 				mode = mode | 1<<(i+4);
 			}
 		});
 		$("#addmode").val(mode);
 	}
-	var opt_limitadd = {
-		success: sucLimitadd,
+	var opt_fileadd = {
+		success: sucFileadd,
 		dataType: 'json',
-		error: errLimitadd,
+		error: errFileadd,
 		//clearForm: true,
-		beforeSerialize: beforeLimitaddSerial,
+		beforeSerialize: beforeFileaddSerial,
 		validateForm: true,
 		timeout: 5000
 	};
 
 	$(document).bind("reveal.facebox", function() {
-		$("#formlimitadd").FormValidate().ajaxForm(opt_limitadd);
+		$("#formfileadd").FormValidate().ajaxForm(opt_fileadd);
 		$("#remark").focus();
 	});
 });

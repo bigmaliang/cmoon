@@ -18,6 +18,9 @@ libwalk.a:$(OBJS) $(DEPEND)
 	@rm -rf $@
 	$(AR) rcs $@ $(OBJS)
 
+libwalk.so:$(OBJS) $(DEPEND)
+	@$(CC) $(CFLAGS) -shared -o $@ $(OBJS)
+
 include $(DEPEND)
 %.o:%.c
 	@if [ "$<" = `ls *.c|awk '{print $1}'|sed -n '1p'` ]; then \

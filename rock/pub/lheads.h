@@ -4,9 +4,10 @@
 #include "lcfg.h"
 #include "lnum.h"
 #include "ltypes.h"
-#include "ldb.h"
-#include "lcs.h"
 #include "lutil.h"
+#include "ldb.h"
+#include "ltpl.h"
+#include "lfile.h"
 #include "lglobal.h"
 
 #endif	/* __LHEADS_H__ */

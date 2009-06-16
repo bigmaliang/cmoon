@@ -10,8 +10,8 @@ typedef struct _file {
 	int pid;
 	int uid;
 	int gid;
-	int mode;
-	int reqtype;				/* cgi request type */
+	int mode;					/* file mode */
+	int mask;					/* file type mask */
 	char *name;
 	char *remark;
 	char *uri;

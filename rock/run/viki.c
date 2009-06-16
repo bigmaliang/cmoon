@@ -25,14 +25,14 @@ int main(int argc, char **argv, char **envp)
 	mconfig_parse_file(SITE_CONFIG, &g_cfg);
 	mtc_init(TC_ROOT"viki");
 
-	ret = lutil_init_tpl(&tplh);
+	ret = ltpl_init(&tplh);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("init templates error");
 		mutil_redirect("初始化模板失败", TGT_SELF, URL_CLOSE, true);
 		return ret;
 	}
 
-	ret = lutil_init_db(&dbh);
+	ret = ldb_init(&dbh);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("init db error");
 		mutil_redirect("初始化数据库失败", TGT_SELF, URL_CLOSE, true);
@@ -60,7 +60,7 @@ int main(int argc, char **argv, char **envp)
 			goto response;
 		}
 		
-		ret = lutil_file_access_rewrited(cgi, dbh);
+		ret = lfile_access_rewrited(cgi, dbh);
 		if (ret != RET_RBTOP_OK) {
 			goto response;
 		}
@@ -81,7 +81,7 @@ int main(int argc, char **argv, char **envp)
 				if (ret != RET_RBTOP_OK && ret == RET_RBTOP_NEXIST) {
 					cgi_redirect(cgi, "/404.html");
 				} else {
-					ret = lutil_render(cgi, tplh);
+					ret = ltpl_render(cgi, tplh);
 					if (ret != RET_RBTOP_OK) {
 						if (ret == RET_RBTOP_NEXIST)
 							cgi_redirect(cgi, "/404.html");
@@ -109,8 +109,8 @@ int main(int argc, char **argv, char **envp)
 	}
 #endif
 
-	lutil_cleanup_db(dbh);
-	lutil_cleanup_tpl(tplh);
+	ldb_destroy(dbh);
+	ltpl_destroy(tplh);
 	mconfig_cleanup(&g_cfg);
 	return 0;
 }

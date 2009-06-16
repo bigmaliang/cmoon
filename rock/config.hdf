@@ -19,7 +19,12 @@ Config {
 }
 
 Db {
-	Sys = pgsql:dbname=mn_sys host=localhost user=mner password=loveu
-	Music = mysql:dbname
+	Dsn {
+		Sys = pgsql:dbname=mn_sys host=localhost user=mner password=loveu
+		Music = pgsql:dbname=mn_user host=localhost user=mner password=loveu
+	}
+	Table {
+		release_user = rls_user_4
+	}
 }
 
