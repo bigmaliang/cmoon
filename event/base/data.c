@@ -276,13 +276,15 @@ int data_cell_compare(const void *pa, const void *pb)
 struct data_cell* data_cell_search(struct data_cell *dataset, bool recursive,
 				   unsigned int type, const char *key)
 {
+	struct data_cell *res;
 	if (key == NULL) return NULL;
 
 	if (dataset->type != DATA_TYPE_ARRAY ) {
 		if (dataset->type == type &&
 		    strncmp((const char*)dataset->key, key, strlen(key)) == 0)
 			return dataset;
-		return NULL;
+		res = NULL;
+		goto done;
 	}
 	
 	struct data_cell *c = calloc(1, sizeof(struct data_cell));
@@ -292,11 +294,11 @@ struct data_cell* data_cell_search(struct data_cell *dataset, bool recursive,
 	c->key = (unsigned char*)strdup(key);
 	c->ksize = strlen(key);
 
-	struct data_cell *res;
 	res = (struct data_cell*)uListSearch(dataset->v.aval,
 					     (const void*)&c, data_cell_compare);
 	data_cell_free(c);
 
+ done:
 	if (res == NULL) {
 		if (recursive) {
 			struct data_cell *lc;
