@@ -9,8 +9,8 @@ __BEGIN_DECLS
 #define TC_FOO		1
 #define	TC_ERROR	2
 #define	TC_WARNING	3	/* warning's pri is higher than debug. */
-#define	TC_DEBUG	4
-#define	TC_INFO		5
+#define	TC_INFO		4
+#define	TC_DEBUG	5
 #define TC_NOISE	6
 
 #define TC_LEVELS	7
