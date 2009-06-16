@@ -12,6 +12,12 @@ enum user_status
 	USER_CFMED
 };
 
+enum group_mode {
+	GROUP_MODE_JOIN = 0,
+	GROUP_MODE_ADM,
+	GROUP_MODE_OWN
+};
+
 #define MIN_USER_NUM	998
 
 #define LMT_CLI_REGIST	400

@@ -175,21 +175,27 @@ member_t* member_new()
 }
 int member_pack(member_t *member, char **res, size_t *outlen)
 {
-	STRING infos;
-	char *gid;
+	STRING sgid, smode;
+	char *gid, *mode;
 	NEOERR *err;
-	int listlen = uListLength(member->gids);
+	int gidslen = uListLength(member->gids);
+	int modeslen = uListLength(member->mode);
 	int i;
 
 	if (member == NULL || res == NULL) {
 		return 1;
 	}
 
-	string_init(&infos);
-	for (i = 0; i < listlen; i++) {
+	string_init(&sgid); string_init(&smode);
+	for (i = 0; i < gidslen; i++) {
 		err = uListGet(member->gids, i, (void**)&gid);
 		RETURN_V_NOK(err, 1);
-		string_appendf(&infos, "%s:", gid);
+		string_appendf(&sgid, "%s;", gid);
+	}
+	for (i = 0; i < modeslen; i++) {
+		err = uListGet(member->modes, i, (void**)&mode);
+		RETURN_V_NOK(err, 1);
+		string_appendf(&smode, "%s;", mode);
 	}
 	
 	char *buf;
@@ -200,7 +206,8 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	len += strlen(member->email)+1;
 	len += strlen(member->intime)+1;
 	len += strlen(member->uptime)+1;
-	len += infos.len+1;
+	len += sgid.len+1;
+	len += smode.len+1;
 
 	buf = (char*)calloc(1, len);
 	if (buf == NULL) {
@@ -228,19 +235,22 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	memcpy(buf+pos, member->uptime, strlen(member->uptime)+1);
 	
 	pos += strlen(member->uptime)+1;
-	memcpy(buf+pos, infos.buf, infos.len);
+	memcpy(buf+pos, sgid.buf, sgid.len+1);
+
+	pos += sgid.len+1;
+	memcpy(buf+pos, smode.buf, smode.len+1);
 	*(buf+pos+1) = '\0';
 
 	*res = buf;
 	*outlen = len;
 
-	string_clear(&infos);
+	string_clear(&sgid); string_clear(&smode);
 	return 0;
 }
 int member_unpack(char *buf, size_t inlen, member_t **member)
 {
-	STRING infos;
-	string_init(&infos);
+	STRING sgid, smode;
+	string_init(&sgid); string_init(&smode);
 	
 	if (inlen < sizeof(member_t)) {
 		return 1;
@@ -267,12 +277,18 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 	mb->intime = strdup(p);
 	while (*p != '\0' && p <= buf+inlen) p++; p++;
 	mb->uptime = strdup(p);
+
 	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	string_append(&infos, p);
-	err = string_array_split(&(mb->gids), infos.buf, ":", MAX_GROUP_AUSER);
+	string_append(&sgid, p);
+	err = string_array_split(&(mb->gids), sgid.buf, ";", MAX_GROUP_AUSER);
 	RETURN_V_NOK(err, 1);
 
-	string_clear(&infos);
+	while (*p != '\0' && p <= buf+inlen) p++; p++;
+	string_append(&smode, p);
+	err = string_array_split(&(mb->modes), smode.buf, ";", MAX_GROUP_AUSER);
+	RETURN_V_NOK(err, 1);
+
+	string_clear(&sgid); string_clear(&smode);
 	*member = mb;
 	
 	return 0;
@@ -297,6 +313,8 @@ void member_del(void *mb)
 		free(lmb->uptime);
 	if (lmb->gids != NULL)
 		uListDestroy(&(lmb->gids), ULIST_FREE);
+	if (lmb->modes != NULL)
+		uListDestroy(&(lmb->modes), ULIST_FREE);
 	if (lmb != NULL)
 		free(lmb);
 }

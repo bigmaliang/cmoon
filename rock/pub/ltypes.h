@@ -32,6 +32,7 @@ typedef struct _member {
 	char *intime;
 	char *uptime;
 	ULIST *gids;
+	ULIST *modes;
 } member_t;
 
 file_t* file_new();

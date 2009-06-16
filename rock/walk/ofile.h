@@ -31,11 +31,25 @@ int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn);
 int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file);
 void file_refresh_info(mdb_conn *conn, int id, char *url, int pid);
 
+/*
+ * get files user can manage: add, mod, del 
+ */
 int  file_get_files(HDF *hdf, mdb_conn *conn);
 void file_translate_mode(HDF *hdf);
 int  file_modify(HDF *hdf, mdb_conn *conn);
 int  file_add(HDF *hdf, mdb_conn *conn);
 int  file_delete(HDF *hdf, mdb_conn *conn);
+
+/*
+ * get logined user's action
+ */
+int file_get_action(HDF *hdf, mdb_conn *conn);
+
+/*
+ * get second-class nav menu
+ */
+int file_get_nav(HDF *hdf, mdb_conn *conn);
+
 
 __END_DECLS
 #endif /* __OFILE_H__ */

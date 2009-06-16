@@ -228,11 +228,12 @@ int file_get_files(HDF *hdf, mdb_conn *conn)
 
 	int ret;
 	char cols[LEN_SM];
-	int count, offset;
+	int count, offset, uin;
+	member_t *mb;
 
 	mmisc_set_count(hdf, conn, "fileinfo", "1=1");
 	mmisc_get_offset(hdf, &count, &offset);
-	
+
 	sprintf(cols, " id, pid, uid, gid, mode, name, uri, remark, substring(intime from '[^.]*') as intime, "
 			" substring(uptime from '[^.]*') as uptime ");
 	mdb_exec(conn, NULL, "SELECT %s FROM fileinfo ORDER BY id LIMIT %d OFFSET %d;",
@@ -243,8 +244,6 @@ int file_get_files(HDF *hdf, mdb_conn *conn)
 		return RET_RBTOP_SELECTE;
 	}
 	HDF *res = hdf_get_obj(hdf, PRE_OUTPUT".files.0");
-	int uin = 0;
-	member_t *mb;
 	while (res != NULL) {
 		uin = hdf_get_int_value(res, "uid", 0);
 		ret = member_get_info(conn, uin, &mb);
@@ -401,3 +400,30 @@ int file_delete(HDF *hdf, mdb_conn *conn)
 	return RET_RBTOP_OK;
 }
 
+int file_get_action(HDF *hdf, mdb_conn *conn)
+{
+	uin = hdf_get_int_value(cgi->hdf, PRE_COOKIE".uin", -1);
+	char *musn = hdf_get_value(cgi->hdf, PRE_COOKIE".musn", NULL);
+	if (!member_has_login(conn, uin, musn)) {
+		mtc_noise("user %d not login", uin);
+		return RET_RBTOP_NOTLOGIN;
+	}
+	ret = member_get_info(conn, uin, &mb);
+	if (ret != RET_RBTOP_OK) {
+		mtc_err("get %d member info failure", uin);
+		return ret;
+	}
+
+	if (member_has_mode(mb, GROUP_MODE_OWN)) {
+	} else if (member_has_mode(mb, GROUP_MODE_ADM)) {
+	} else if (member_has_mode(mb, GROUP_MODE_JOIN)) {
+	} else {
+	}
+
+	return RET_RBTOP_OK;
+}
+
+int file_get_nav(HDF *hdf, mdb_conn *conn)
+{
+	return RET_RBTOP_OK;
+}

@@ -259,7 +259,7 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 	char mmckey[LEN_MMC_KEY];
 	member_t *mb;
 	char *buf;
-	int gid;
+	int gid, mode;
 	NEOERR *err;
 	size_t datalen;
 	int ret;
@@ -285,19 +285,22 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 			*member = NULL;
 			return RET_RBTOP_SELECTE;
 		}
-		STRING infos;
-		string_init(&infos);
-		mdb_exec(conn, NULL, "SELECT gid FROM groupinfo WHERE uid=%d;", NULL, uin);
+		STRING sgid, smode; string_init(&sgid); string_init(&smode);
+		mdb_exec(conn, NULL, "SELECT gid, mode FROM groupinfo WHERE uid=%d;", NULL, uin);
 		while (mdb_get_errcode(conn) == MDB_ERR_NONE &&
-			   mdb_get(conn, "i", &gid) == MDB_ERR_NONE) {
-			string_appendf(&infos, "%d:", gid);
+			   mdb_get(conn, "ii", &gid, &mode) == MDB_ERR_NONE) {
+			string_appendf(&sgid, "%d;", gid);
+			string_appendf(&smode, "%d;", mode);
 		}
-		if (infos.len == 0) string_append(&infos, "none");
-		err = string_array_split(&mb->gids, infos.buf, ":", MAX_GROUP_AUSER);
-		RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
+		if (sgid.len != 0) {
+			err = string_array_split(&mb->gids, sgid.buf, ";", MAX_GROUP_AUSER);
+			RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
+			err = string_array_split(&mb->modes, smode.buf, ";", MAX_GROUP_AUSER);
+			RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
+		}
 		member_pack(mb, &buf, &datalen);
 		mmc_store(MMC_OP_SET, mmckey, buf, datalen, ONE_DAY, 0);
-		string_clear(&infos);
+		string_clear(&sgid); string_clear(&smode);
 	} else {
 		ret = member_unpack(buf, datalen, &mb);
 		if (ret != 0) {
@@ -354,6 +357,14 @@ bool member_is_owner(member_t *mb, int uid)
 		return true;
 	else
 		return false;
+}
+bool member_has_mode(member_t *mb, int mode)
+{
+	if (mb == NULL)
+		return false;
+	if (uListIn(mb->modes, (void*)&mode, mmisc_compare_inta) != NULL)
+		return true;
+	return false;
 }
 bool member_is_root(int uin)
 {

@@ -20,6 +20,7 @@ int  member_get_info(mdb_conn *conn, int uin, member_t **member);
 bool member_has_login(mdb_conn *conn, int uin, char *ckusn);
 bool member_in_group(member_t *mb, int gid);
 bool member_is_owner(member_t *mb, int uid);
+bool member_has_mode(member_t *mb, int mode);
 bool member_is_root(int uin);
 
 __END_DECLS
