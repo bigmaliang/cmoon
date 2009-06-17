@@ -15,9 +15,10 @@ int main(int argc, char **argv, char **envp)
 
 	HASH *dbh;
 	HASH *tplh;
+	session_t *session = NULL;
 	char *requri, *jsoncb;
 
-	int (*data_handler)(CGI *cgi, HASH *dbh);
+	int (*data_handler)(CGI *cgi, HASH *dbh, session_t *session);
 	void *lib;
 
 	mutil_wrap_fcgi(argc, argv, envp);
@@ -53,6 +54,11 @@ int main(int argc, char **argv, char **envp)
 		JUMP_NOK_CGI(err, response);
 		err = cgi_parse(cgi);
 		JUMP_NOK_CGI(err, response);
+		ret = session_init(cgi->hdf, dbh, &session);
+		if (ret != RET_RBTOP_OK) {
+			mtc_err("init session failure");
+			goto response;
+		}
 
 		requri = hdf_get_value(cgi->hdf, PRE_REQ_URI_RW, "NULL");
 		if (mutil_client_attack(cgi->hdf, requri, LMT_CLI_ATTACK,
@@ -60,7 +66,7 @@ int main(int argc, char **argv, char **envp)
 			goto response;
 		}
 		
-		ret = lfile_access_rewrited(cgi, dbh);
+		ret = lfile_access_rewrited(cgi, dbh, session);
 		if (ret != RET_RBTOP_OK) {
 			goto response;
 		}
@@ -72,7 +78,7 @@ int main(int argc, char **argv, char **envp)
 			goto response;
 		}
 
-		ret = (*data_handler)(cgi, dbh);
+		ret = (*data_handler)(cgi, dbh, session);
 		
 	response:
 		if (cgi != NULL && cgi->hdf != NULL) {
@@ -104,6 +110,7 @@ int main(int argc, char **argv, char **envp)
 				break;
 			}
 			cgi_destroy(&cgi);
+			session_destroy(&session);
 		}
 #ifndef NFCGI
 	}

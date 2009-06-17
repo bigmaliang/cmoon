@@ -3,49 +3,36 @@
 #include "ofile.h"
 #include "omember.h"
 
-int file_check_user_power(CGI *cgi, mdb_conn *conn, file_t *file, int access)
+int file_check_user_power(CGI *cgi, mdb_conn *conn, session_t *ses, file_t *file, int access)
 {
 	int ret;
-	member_t *member;
 	
 	if ((PMS_OTHER(file->mode) & access) == 1) return 0;
-	
-	int uin = hdf_get_int_value(cgi->hdf, PRE_COOKIE".uin", -1);
-	char *musn = hdf_get_value(cgi->hdf, PRE_COOKIE".musn", NULL);
-	if (!member_has_login(conn, uin, musn)) {
-		mtc_noise("user %d not login", uin);
+
+	ret = member_has_login(cgi->hdf, conn, ses);
+	if (ret != RET_RBTOP_OK) {
+		mtc_noise("not login");
 		return RET_RBTOP_NOTLOGIN;
 	}
 
-	ret = member_get_info(conn, uin, &member);
-	if (ret != RET_RBTOP_OK) {
-		mtc_err("get %d member info failure", uin);
-		return ret;
-	}
-
-	if (member_is_owner(member, file->uid) && (PMS_OWNER(file->mode)&access) == 1) {
-		member_del(member);
+	if (member_is_owner(ses->member, file->uid) && (PMS_OWNER(file->mode)&access) == 1) {
 		return RET_RBTOP_OK;
 	}
 
-	if (member_in_group(member, file->gid) && (PMS_GROUP(file->mode)&access) == 1) {
-		member_del(member);
+	if (member_in_group(ses->member, file->gid) && (PMS_GROUP(file->mode)&access) == 1) {
 		return RET_RBTOP_OK;
 	}
 
 #if 0
-	if (member_is_friend(member, file->uid) && (PMS_FRIEND(file->mode)&access) == 1) {
-		member_del(member);
+	if (member_is_friend(ses->member, file->uid) && (PMS_FRIEND(file->mode)&access) == 1) {
 		return RET_RBTOP_OK;
 	}
 #endif
 
-	if (member_is_root(uin)) {
-		member_del(member);
+	if (member_is_root(ses->member)) {
 		return RET_RBTOP_OK;
 	}
 
-	member_del(member);
 	return RET_RBTOP_LIMITE;
 }
 
@@ -222,7 +209,7 @@ void file_refresh_info(mdb_conn *conn, int id, char *url, int pid)
 }
 
 
-int file_get_files(HDF *hdf, mdb_conn *conn)
+int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
 	PRE_DBOP(hdf, conn);
 
@@ -234,9 +221,13 @@ int file_get_files(HDF *hdf, mdb_conn *conn)
 	mmisc_set_count(hdf, conn, "fileinfo", "1=1");
 	mmisc_get_offset(hdf, &count, &offset);
 
+	if (ses->member == NULL) {
+		return RET_RBTOP_NOTLOGIN;
+	}
+
 	sprintf(cols, " id, pid, uid, gid, mode, name, uri, remark, substring(intime from '[^.]*') as intime, "
 			" substring(uptime from '[^.]*') as uptime ");
-	mdb_exec(conn, NULL, "SELECT %s FROM fileinfo ORDER BY id LIMIT %d OFFSET %d;",
+	mdb_exec(conn, NULL, "SELECT %s FROM fileinfo WHERE (PMS_OTHER(mode)&LMT_GET) = 1 ORDER BY id LIMIT %d OFFSET %d;",
 			 NULL, cols, count, offset);
 	ret = mdb_set_rows(hdf, conn, cols, "files");
 	if (ret != MDB_ERR_NONE) {
@@ -402,24 +393,13 @@ int file_delete(HDF *hdf, mdb_conn *conn)
 
 int file_get_action(HDF *hdf, mdb_conn *conn)
 {
-	uin = hdf_get_int_value(cgi->hdf, PRE_COOKIE".uin", -1);
-	char *musn = hdf_get_value(cgi->hdf, PRE_COOKIE".musn", NULL);
-	if (!member_has_login(conn, uin, musn)) {
-		mtc_noise("user %d not login", uin);
-		return RET_RBTOP_NOTLOGIN;
-	}
-	ret = member_get_info(conn, uin, &mb);
-	if (ret != RET_RBTOP_OK) {
-		mtc_err("get %d member info failure", uin);
-		return ret;
-	}
-
+#if 0
 	if (member_has_mode(mb, GROUP_MODE_OWN)) {
 	} else if (member_has_mode(mb, GROUP_MODE_ADM)) {
 	} else if (member_has_mode(mb, GROUP_MODE_JOIN)) {
 	} else {
 	}
-
+#endif
 	return RET_RBTOP_OK;
 }
 

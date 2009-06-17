@@ -4,8 +4,8 @@
 
 __BEGIN_DECLS
 
-int lfile_access(CGI *cgi, mdb_conn *conn);
-int lfile_access_rewrited(CGI *cgi, HASH *dbh);
+int lfile_access(CGI *cgi, mdb_conn *conn, session_t *ses);
+int lfile_access_rewrited(CGI *cgi, HASH *dbh, session_t *ses);
 
 __END_DECLS
 #endif	/* __LFILE_H__ */

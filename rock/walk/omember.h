@@ -17,11 +17,12 @@ void member_after_login(CGI *cgi, mdb_conn *conn);
 
 int  member_get_info(mdb_conn *conn, int uin, member_t **member);
 
-bool member_has_login(mdb_conn *conn, int uin, char *ckusn);
+int  member_has_login(HDF *hdf, mdb_conn *conn, session_t *ses);
 bool member_in_group(member_t *mb, int gid);
 bool member_is_owner(member_t *mb, int uid);
 bool member_has_mode(member_t *mb, int mode);
-bool member_is_root(int uin);
+bool member_uin_is_root(int uin);
+bool member_is_root(member_t *mb);
 
 __END_DECLS
 #endif	/* __OMEMBER_H__ */

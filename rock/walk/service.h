@@ -4,7 +4,7 @@
 
 __BEGIN_DECLS
 
-int service_action_data_get(CGI *cgi, HASH *dbh);
+int service_action_data_get(CGI *cgi, HASH *dbh, session_t *ses);
 
 __END_DECLS
 #endif	/* __SERVICE_H__ */

@@ -6,9 +6,9 @@
 #include "service.h"
 static void lutil_donotcall()
 {
-	member_login_data_get(NULL, NULL);
-	admin_account_data_add(NULL, NULL);
-	service_action_data_get(NULL, NULL);
+	member_login_data_get(NULL, NULL, NULL);
+	admin_account_data_add(NULL, NULL, NULL);
+	service_action_data_get(NULL, NULL, NULL);
 }
 
 int CGI_REQ_TYPE(CGI *cgi)

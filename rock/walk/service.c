@@ -1,7 +1,7 @@
 #include "mheads.h"
 #include "lheads.h"
 
-int service_action_data_get(CGI *cgi, HASH *dbh)
+int service_action_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
 	int uin = hdf_get_int_value(cgi->hdf, PRE_QUERY".uin", 0);
 	if (uin == 1001 || uin == 9999) {

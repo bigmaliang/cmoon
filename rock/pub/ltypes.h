@@ -46,5 +46,12 @@ int  member_pack(member_t *member, char **res, size_t *outlen);
 int  member_unpack(char *buf, size_t inlen, member_t **member);
 void member_del(void *member);
 
+typedef struct _session {
+	member_t *member;
+} session_t;
+
+int session_init(HDF *hdf, HASH *dbh, session_t **ses);
+void session_destroy(session_t **ses);
+
 __END_DECLS
 #endif	/* __LTYPES_H__ */

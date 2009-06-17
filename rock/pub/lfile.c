@@ -2,7 +2,7 @@
 #include "lheads.h"
 #include "ofile.h"
 
-int lfile_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
+int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri, bool split)
 {
 	ULIST *urls, *files;
 	file_t *file;
@@ -64,7 +64,7 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
 	
 	reqmethod = CGI_REQ_METHOD(cgi);
 	if (reqmethod == CGI_REQ_GET) {
-		ret = file_check_user_power(cgi, conn, file, LMT_GET);
+		ret = file_check_user_power(cgi, conn, ses, file, LMT_GET);
 		if(ret != RET_RBTOP_OK) {
 			if (ret == RET_RBTOP_NOTLOGIN)
 				strcpy(errmsg, "敏感操作, 请先登录");
@@ -74,7 +74,7 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
 			goto notpass;
 		}
 	} else if (reqmethod == CGI_REQ_POST) {
-		ret = file_check_user_power(cgi, conn, file, LMT_MOD);
+		ret = file_check_user_power(cgi, conn, ses, file, LMT_MOD);
 		if(ret != RET_RBTOP_OK) {
 			if (ret == RET_RBTOP_NOTLOGIN)
 				strcpy(errmsg, "敏感操作, 请先登录");
@@ -84,7 +84,7 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
 			goto notpass;
 		}
 	} else if (reqmethod == CGI_REQ_PUT) {
-		ret = file_check_user_power(cgi, conn, file, LMT_APPEND);
+		ret = file_check_user_power(cgi, conn, ses, file, LMT_APPEND);
 		if(ret != RET_RBTOP_OK) {
 			if (ret == RET_RBTOP_NOTLOGIN)
 				strcpy(errmsg, "敏感操作, 请先登录");
@@ -94,7 +94,7 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, char *uri, bool split)
 			goto notpass;
 		}
 	} else if (reqmethod == CGI_REQ_DEL) {
-		ret = file_check_user_power(cgi, conn, file, LMT_DEL);
+		ret = file_check_user_power(cgi, conn, ses, file, LMT_DEL);
 		if(ret != RET_RBTOP_OK) {
 			if (ret == RET_RBTOP_NOTLOGIN)
 				strcpy(errmsg, "敏感操作, 请先登录");
@@ -124,7 +124,7 @@ notpass:
 	return ret;
 }
 
-int lfile_access(CGI *cgi, mdb_conn *conn)
+int lfile_access(CGI *cgi, mdb_conn *conn, session_t *ses)
 {
 	char *uri = hdf_get_value(cgi->hdf, PRE_REQ_URI, NULL);
 	if (uri == NULL || strlen(uri) < strlen(CGI_RUN_DIR)+1) {
@@ -133,10 +133,10 @@ int lfile_access(CGI *cgi, mdb_conn *conn)
 	}
 
 	/* ignore /run in uri */
-	return lfile_check_power(cgi, conn, uri+strlen(CGI_RUN_DIR)+1, true);
+	return lfile_check_power(cgi, conn, ses, uri+strlen(CGI_RUN_DIR)+1, true);
 }
 
-int lfile_access_rewrited(CGI *cgi, HASH *dbh)
+int lfile_access_rewrited(CGI *cgi, HASH *dbh, session_t *ses)
 {
 	mdb_conn *conn = (mdb_conn*)hash_lookup(dbh, "Sys");
 	if (conn == NULL) {
@@ -145,6 +145,6 @@ int lfile_access_rewrited(CGI *cgi, HASH *dbh)
 	}
 
 	char *uri = hdf_get_value(cgi->hdf, PRE_REQ_URI_RW, NULL);
-	return lfile_check_power(cgi, conn, uri, false);
+	return lfile_check_power(cgi, conn, ses, uri, false);
 }
 

@@ -2,7 +2,7 @@
 #include "lheads.h"
 #include "omember.h"
 
-int member_login_data_get(CGI *cgi, HASH *dbh)
+int member_login_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
 	int ret;
 	
@@ -14,7 +14,7 @@ int member_login_data_get(CGI *cgi, HASH *dbh)
 	return ret;
 }
 
-int member_logout_data_get(CGI *cgi, HASH *dbh)
+int member_logout_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
 	int uin = hdf_get_int_value(cgi->hdf, PRE_COOKIE".uin", 0);
 	mtc_info("%d logout", uin);
@@ -23,7 +23,7 @@ int member_logout_data_get(CGI *cgi, HASH *dbh)
 	return RET_RBTOP_OK;
 }
 
-int member_regist_data_get(CGI *cgi, HASH *dbh)
+int member_regist_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
 	int ret;
 	

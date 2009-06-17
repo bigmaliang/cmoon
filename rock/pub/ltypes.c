@@ -179,7 +179,7 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	char *gid, *mode;
 	NEOERR *err;
 	int gidslen = uListLength(member->gids);
-	int modeslen = uListLength(member->mode);
+	int modeslen = uListLength(member->modes);
 	int i;
 
 	if (member == NULL || res == NULL) {
@@ -317,4 +317,45 @@ void member_del(void *mb)
 		uListDestroy(&(lmb->modes), ULIST_FREE);
 	if (lmb != NULL)
 		free(lmb);
+}
+
+#include "omember.h"
+
+int session_init(HDF *hdf, HASH *dbh, session_t **ses)
+{
+	int ret;
+	session_t *lses;
+	
+	*ses = NULL;
+	
+	lses = calloc(1, sizeof(session_t));
+	if (lses == NULL) {
+		mtc_err("calloc memory for session_t failure");
+		return RET_RBTOP_MEMALLOCE;
+	}
+
+	*ses = lses;
+
+	int uin = hdf_get_int_value(hdf, PRE_COOKIE".uin", -1);
+	ret = member_get_info((mdb_conn*)hash_lookup(dbh, "Sys"), uin, &(lses->member));
+	if (ret != RET_RBTOP_OK) {
+		mtc_info("get %d member info failure", uin);
+	}
+
+	return RET_RBTOP_OK;
+}
+
+void session_destroy(session_t **ses)
+{
+	session_t *lses;
+	if (ses == NULL) return;
+	lses = *ses;
+
+	if (lses == NULL) return;
+
+	if (lses->member != NULL)
+		member_del(lses->member);
+
+	free(lses);
+	lses = NULL;
 }

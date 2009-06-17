@@ -314,30 +314,19 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 	return RET_RBTOP_OK;
 }
 
-bool member_has_login(mdb_conn *conn, int uin, char *ckusn)
+int member_has_login(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
-	int ret;
-	bool retb;
+	char *ckusn = hdf_get_value(hdf, PRE_COOKIE".ckusn", NULL);
 
-	if (uin < MIN_USER_NUM || ckusn == NULL || !strcmp(ckusn, ""))
-		return false;
-
-	member_t *mb;
-	ret = member_get_info(conn, uin, &mb);
-	if (ret != RET_RBTOP_OK) {
-		mtc_err("get %d member info failure", uin);
-		return false;
-	}
+	if (ses->member == NULL)
+		return RET_RBTOP_NOTLOGIN;
 	
-	if (!strcmp(ckusn, mb->musn))
-		retb = true;
+	if (!strcmp(ckusn, ses->member->musn))
+		return RET_RBTOP_OK;
 	else {
-		mtc_dbg("cookie's %s not eq sys's %s", ckusn, mb->musn);
-		retb = false;
+		mtc_dbg("cookie's %s not eq sys's %s", ckusn, ses->member->musn);
+		return RET_RBTOP_LOGINPSW;
 	}
-
-	member_del(mb);
-	return retb;
 }
 bool member_in_group(member_t *mb, int gid)
 {
@@ -366,10 +355,15 @@ bool member_has_mode(member_t *mb, int mode)
 		return true;
 	return false;
 }
-bool member_is_root(int uin)
+bool member_uin_is_root(int uin)
 {
 	if (uin == 1001)
 		return true;
 	else
 		return false;
+}
+bool member_is_root(member_t *mb)
+{
+	if (mb == NULL) return false;
+	return member_uin_is_root(mb->uin);
 }
