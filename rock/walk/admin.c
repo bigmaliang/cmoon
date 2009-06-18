@@ -19,16 +19,16 @@ int admin_file_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 
 int admin_file_data_mod(CGI *cgi, HASH *dbh, session_t *ses)
 {
-	return file_modify(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"));
+	return file_modify(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"), ses);
 }
 
 int admin_file_data_add(CGI *cgi, HASH *dbh, session_t *ses)
 {
-	return file_add(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"));
+	return file_add(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"), ses);
 }
 
 int admin_file_data_del(CGI *cgi, HASH *dbh, session_t *ses)
 {
-	return file_delete(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"));
+	return file_delete(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"), ses);
 }
 

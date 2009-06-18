@@ -217,8 +217,6 @@ void member_after_login(CGI *cgi, mdb_conn *conn)
 	char *usn = hdf_get_value(cgi->hdf, PRE_QUERY".usn", "");
 	if (uin <= MIN_USER_NUM || !strcmp(usn, "")) return;
 	
-	char mmckey[LEN_MMC_KEY];
-
 	/*
 	 * set user's info intoto cookie
 	 */
@@ -233,14 +231,8 @@ void member_after_login(CGI *cgi, mdb_conn *conn)
 	 */
 	char tm[LEN_TM];
 	mmisc_getdatetime(tm, sizeof(tm), "%F_%H", 0);
-	snprintf(mmckey, sizeof(mmckey), "%s.Count.%s", PRE_MMC_LOGIN, tm);
-	mmc_count(MMC_OP_INC, mmckey, 1, NULL, ONE_WEEK, 0);
-	
-	snprintf(mmckey, sizeof(mmckey), "%s.List.%s", PRE_MMC_LOGIN, tm);
-	char val[LEN_INT];
-	sprintf(val, "%d ", uin);
-	mmc_store(MMC_OP_APP, mmckey, val, 0, ONE_WEEK, 0);
-	mtc_warn("store %d's info into mmc failure", uin);
+	mmc_countf(MMC_OP_INC, 1, NULL, ONE_WEEK, 0, PRE_MMC_LOGIN".Count.%s", tm);
+	mmc_storef_int(MMC_OP_APP, uin, ONE_WEEK, 0, PRE_MMC_LOGIN".List.%s", tm);
 
 	/*
 	 * set user info into hdf
@@ -256,16 +248,14 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 		return RET_RBTOP_INPUTE;
 	}
 
-	char mmckey[LEN_MMC_KEY];
 	member_t *mb;
 	char *buf;
-	int gid, mode;
+	int gid, gmode;
 	NEOERR *err;
 	size_t datalen;
 	int ret;
 
-	sprintf(mmckey, "%s.%d", PRE_MMC_MEMBER, uin);
-	buf = mmc_get(mmckey, &datalen, 0);
+	buf = mmc_getf(&datalen, 0, PRE_MMC_MEMBER".%d", uin);
 	if (buf == NULL || datalen < sizeof(member_t)) {
 		if (mdb_get_errcode(conn) != MDB_ERR_NONE) {
 			mtc_err("db not init");
@@ -285,22 +275,22 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 			*member = NULL;
 			return RET_RBTOP_SELECTE;
 		}
-		STRING sgid, smode; string_init(&sgid); string_init(&smode);
+		STRING sgid, sgmode; string_init(&sgid); string_init(&sgmode);
 		mdb_exec(conn, NULL, "SELECT gid, mode FROM groupinfo WHERE uid=%d;", NULL, uin);
 		while (mdb_get_errcode(conn) == MDB_ERR_NONE &&
-			   mdb_get(conn, "ii", &gid, &mode) == MDB_ERR_NONE) {
+			   mdb_get(conn, "ii", &gid, &gmode) == MDB_ERR_NONE) {
 			string_appendf(&sgid, "%d;", gid);
-			string_appendf(&smode, "%d;", mode);
+			string_appendf(&sgmode, "%d;", gmode);
 		}
 		if (sgid.len != 0) {
 			err = string_array_split(&mb->gids, sgid.buf, ";", MAX_GROUP_AUSER);
 			RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
-			err = string_array_split(&mb->modes, smode.buf, ";", MAX_GROUP_AUSER);
+			err = string_array_split(&mb->gmodes, sgmode.buf, ";", MAX_GROUP_AUSER);
 			RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
 		}
 		member_pack(mb, &buf, &datalen);
-		mmc_store(MMC_OP_SET, mmckey, buf, datalen, ONE_DAY, 0);
-		string_clear(&sgid); string_clear(&smode);
+		mmc_storef(MMC_OP_SET, buf, datalen, ONE_DAY, 0, PRE_MMC_MEMBER".%d", uin);
+		string_clear(&sgid); string_clear(&sgmode);
 	} else {
 		ret = member_unpack(buf, datalen, &mb);
 		if (ret != 0) {
@@ -347,11 +337,11 @@ bool member_is_owner(member_t *mb, int uid)
 	else
 		return false;
 }
-bool member_has_mode(member_t *mb, int mode)
+bool member_has_gmode(member_t *mb, int gmode)
 {
 	if (mb == NULL)
 		return false;
-	if (uListIn(mb->modes, (void*)&mode, mmisc_compare_inta) != NULL)
+	if (uListIn(mb->gmodes, (void*)&gmode, mmisc_compare_inta) != NULL)
 		return true;
 	return false;
 }

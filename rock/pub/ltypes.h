@@ -32,13 +32,14 @@ typedef struct _member {
 	char *intime;
 	char *uptime;
 	ULIST *gids;
-	ULIST *modes;
+	ULIST *gmodes;
 } member_t;
 
 file_t* file_new();
 int  file_pack(file_t *file, char **res, size_t *outlen);
 int  file_unpack(char *buf, size_t inlen, file_t **file);
 void file_store_in_hdf(file_t *fl, char *prefix, HDF *hdf);
+void file_reset(file_t *fl);
 void file_del(void *file);
 
 member_t* member_new();

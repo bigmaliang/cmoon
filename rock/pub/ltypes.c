@@ -140,6 +140,27 @@ void file_store_in_hdf(file_t *fl, char *prefix, HDF *hdf)
 	hdf_set_value(hdf, key, fl->uptime);
 }
 
+void file_reset(file_t *fl)
+{
+	if (fl == NULL)
+		return;
+	
+	if (fl->name != NULL)
+		free(fl->name);
+	if (fl->remark != NULL)
+		free(fl->remark);
+	if (fl->uri != NULL)
+		free(fl->uri);
+	if (fl->dataer != NULL)
+		free(fl->dataer);
+	if (fl->render != NULL)
+		free(fl->render);
+	if (fl->intime != NULL)
+		free(fl->intime);
+	if (fl->uptime != NULL)
+		free(fl->uptime);
+}
+
 void file_del(void *fl)
 {
 	file_t *lfl = (file_t*)fl;
@@ -147,22 +168,8 @@ void file_del(void *fl)
 	if (lfl == NULL)
 		return;
 
-	if (lfl->name != NULL)
-		free(lfl->name);
-	if (lfl->remark != NULL)
-		free(lfl->remark);
-	if (lfl->uri != NULL)
-		free(lfl->uri);
-	if (lfl->dataer != NULL)
-		free(lfl->dataer);
-	if (lfl->render != NULL)
-		free(lfl->render);
-	if (lfl->intime != NULL)
-		free(lfl->intime);
-	if (lfl->uptime != NULL)
-		free(lfl->uptime);
-	if (lfl != NULL)
-		free(fl);
+	file_reset(lfl);
+	free(fl);
 }
 
 member_t* member_new()
@@ -175,27 +182,27 @@ member_t* member_new()
 }
 int member_pack(member_t *member, char **res, size_t *outlen)
 {
-	STRING sgid, smode;
-	char *gid, *mode;
+	STRING sgid, sgmode;
+	char *gid, *gmode;
 	NEOERR *err;
 	int gidslen = uListLength(member->gids);
-	int modeslen = uListLength(member->modes);
+	int gmodeslen = uListLength(member->gmodes);
 	int i;
 
 	if (member == NULL || res == NULL) {
 		return 1;
 	}
 
-	string_init(&sgid); string_init(&smode);
+	string_init(&sgid); string_init(&sgmode);
 	for (i = 0; i < gidslen; i++) {
 		err = uListGet(member->gids, i, (void**)&gid);
 		RETURN_V_NOK(err, 1);
 		string_appendf(&sgid, "%s;", gid);
 	}
-	for (i = 0; i < modeslen; i++) {
-		err = uListGet(member->modes, i, (void**)&mode);
+	for (i = 0; i < gmodeslen; i++) {
+		err = uListGet(member->gmodes, i, (void**)&gmode);
 		RETURN_V_NOK(err, 1);
-		string_appendf(&smode, "%s;", mode);
+		string_appendf(&sgmode, "%s;", gmode);
 	}
 	
 	char *buf;
@@ -207,7 +214,7 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	len += strlen(member->intime)+1;
 	len += strlen(member->uptime)+1;
 	len += sgid.len+1;
-	len += smode.len+1;
+	len += sgmode.len+1;
 
 	buf = (char*)calloc(1, len);
 	if (buf == NULL) {
@@ -238,19 +245,19 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	memcpy(buf+pos, sgid.buf, sgid.len+1);
 
 	pos += sgid.len+1;
-	memcpy(buf+pos, smode.buf, smode.len+1);
+	memcpy(buf+pos, sgmode.buf, sgmode.len+1);
 	*(buf+pos+1) = '\0';
 
 	*res = buf;
 	*outlen = len;
 
-	string_clear(&sgid); string_clear(&smode);
+	string_clear(&sgid); string_clear(&sgmode);
 	return 0;
 }
 int member_unpack(char *buf, size_t inlen, member_t **member)
 {
-	STRING sgid, smode;
-	string_init(&sgid); string_init(&smode);
+	STRING sgid, sgmode;
+	string_init(&sgid); string_init(&sgmode);
 	
 	if (inlen < sizeof(member_t)) {
 		return 1;
@@ -284,11 +291,11 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 	RETURN_V_NOK(err, 1);
 
 	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	string_append(&smode, p);
-	err = string_array_split(&(mb->modes), smode.buf, ";", MAX_GROUP_AUSER);
+	string_append(&sgmode, p);
+	err = string_array_split(&(mb->gmodes), sgmode.buf, ";", MAX_GROUP_AUSER);
 	RETURN_V_NOK(err, 1);
 
-	string_clear(&sgid); string_clear(&smode);
+	string_clear(&sgid); string_clear(&sgmode);
 	*member = mb;
 	
 	return 0;
@@ -313,8 +320,8 @@ void member_del(void *mb)
 		free(lmb->uptime);
 	if (lmb->gids != NULL)
 		uListDestroy(&(lmb->gids), ULIST_FREE);
-	if (lmb->modes != NULL)
-		uListDestroy(&(lmb->modes), ULIST_FREE);
+	if (lmb->gmodes != NULL)
+		uListDestroy(&(lmb->gmodes), ULIST_FREE);
 	if (lmb != NULL)
 		free(lmb);
 }

@@ -23,6 +23,6 @@ CREATE TRIGGER tg_uptime_file BEFORE UPDATE ON fileinfo FOR EACH ROW EXECUTE PRO
 CREATE TABLE groupinfo (
 	   uid int NOT NULL DEFAULT 0,
 	   gid int NOT NULL DEFAULT 0,
-	   mode int NOT NULL DEFAULT 0, -- omember.h
+	   mode int NOT NULL DEFAULT 0, -- lnum.h
 	   PRIMARY KEY (uid, gid)
 );

@@ -25,25 +25,31 @@ __BEGIN_DECLS
 #define LMT_APPEND	0x00000004
 #define LMT_DEL		0x00000008
 
-int file_check_user_power(CGI *cgi, mdb_conn *conn, session_t *ses, file_t *file, int access);
-int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file);
-int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn);
-int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file);
+int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
+						  file_t *file, int access);
+
+/*
+ * low level file operater, by id/ pid+name/ uri
+ */
+int  file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file);
+int  file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn);
+int  file_get_info_uri(mdb_conn *conn, char *uri, file_t **file);
+void file_refresh_me(file_t *fl);
 void file_refresh_info(mdb_conn *conn, int id, char *url, int pid);
 
 /*
- * get files user can manage: add, mod, del 
+ * manage user's file: add, mod, del 
  */
 int  file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses);
 void file_translate_mode(HDF *hdf);
-int  file_modify(HDF *hdf, mdb_conn *conn);
-int  file_add(HDF *hdf, mdb_conn *conn);
-int  file_delete(HDF *hdf, mdb_conn *conn);
+int  file_modify(HDF *hdf, mdb_conn *conn, session_t *ses);
+int  file_add(HDF *hdf, mdb_conn *conn, session_t *ses);
+int  file_delete(HDF *hdf, mdb_conn *conn, session_t *ses);
 
 /*
  * get logined user's action
  */
-int file_get_action(HDF *hdf, mdb_conn *conn);
+int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses);
 
 /*
  * get second-class nav menu

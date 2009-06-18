@@ -3,28 +3,46 @@
 #include "ofile.h"
 #include "omember.h"
 
-int file_check_user_power(CGI *cgi, mdb_conn *conn, session_t *ses, file_t *file, int access)
+#define FILE_QUERY_COL	" id, pid, uid, gid, mode, mask, name, remark, uri, " \
+	" dataer, render, substring(intime from '[^.]*') as intime, "		\
+	" substring(uptime from '[^.]*') as uptime "
+
+#define FILE_QUERY_RAW(conn, condition, sfmt, ...)						\
+	mdb_exec(conn, NULL, "SELECT "FILE_QUERY_COL" FROM fileinfo WHERE %s;", \
+			 sfmt, ##__VA_ARGS__)
+
+#define FILE_GET_RAW(conn, fl)											\
+	mdb_get(conn, "iiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid), &(fl->gid), \
+			&(fl->mode), &(fl->mask), &(fl->name), &(fl->remark), &(fl->uri), \
+			&(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime))
+
+
+int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
+						  file_t *file, int access)
 {
 	int ret;
 	
 	if ((PMS_OTHER(file->mode) & access) == 1) return 0;
 
-	ret = member_has_login(cgi->hdf, conn, ses);
+	ret = member_has_login(hdf, conn, ses);
 	if (ret != RET_RBTOP_OK) {
 		mtc_noise("not login");
 		return RET_RBTOP_NOTLOGIN;
 	}
 
-	if (member_is_owner(ses->member, file->uid) && (PMS_OWNER(file->mode)&access) == 1) {
+	if (member_is_owner(ses->member, file->uid) &&
+		(PMS_OWNER(file->mode)&access) == 1) {
 		return RET_RBTOP_OK;
 	}
 
-	if (member_in_group(ses->member, file->gid) && (PMS_GROUP(file->mode)&access) == 1) {
+	if (member_in_group(ses->member, file->gid) &&
+		(PMS_GROUP(file->mode)&access) == 1) {
 		return RET_RBTOP_OK;
 	}
 
 #if 0
-	if (member_is_friend(ses->member, file->uid) && (PMS_FRIEND(file->mode)&access) == 1) {
+	if (member_is_friend(ses->member, file->uid) &&
+		(PMS_FRIEND(file->mode)&access) == 1) {
 		return RET_RBTOP_OK;
 	}
 #endif
@@ -38,7 +56,7 @@ int file_check_user_power(CGI *cgi, mdb_conn *conn, session_t *ses, file_t *file
 
 int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 {
-	char mmckey[LEN_MMC_KEY];
+	char mmckey[LEN_MMC_KEY], tok[LEN_MD];
 	file_t *fl;
 	size_t datalen;
 	char *buf;
@@ -63,21 +81,13 @@ int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
 		if (id <= 0) {
-			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, mask, name, remark, uri, "
-					 " dataer, render, substring(intime from '[^.]*') as intime, "
-					 " substring(uptime from '[^.]*') as uptime "
-					 " FROM fileinfo WHERE pid=%d AND name=$1;",
-					 "s", pid, url);
+			snprintf(tok, sizeof(tok), "pid=%d AND name=$1", pid);
+			FILE_QUERY_RAW(conn, tok, "s", url);
 		} else {
-			mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, mask, name, remark, uri "
-					 " dataer, render, substring(intime from '[^.]*') as intime, "
-					 " substring(uptime from '[^.]*') as uptime "
-					 " FROM fileinfo WHERE id=%d;",
-					 NULL, id);
+			snprintf(tok, sizeof(tok), "id=%d", id);
+			FILE_QUERY_RAW(conn, tok, NULL);
 		}
-		ret = mdb_get(conn, "iiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
-					  &(fl->gid), &(fl->mode), &(fl->mask), &(fl->name), &(fl->remark), &(fl->uri),
-					  &(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime));
+		ret = FILE_GET_RAW(conn, fl);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("get %d %d.%s info failure from db %s",
 					id, pid, url, mdb_get_errmsg(conn));
@@ -143,7 +153,7 @@ int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
 {
 	file_t *fl;
 	size_t datalen;
-	char *buf;
+	char *buf, tok[LEN_MD];
 	int ret;
 	
 	if (uri == NULL) return RET_RBTOP_INPUTE;
@@ -159,14 +169,9 @@ int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
 		}
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
-		mdb_exec(conn, NULL, "SELECT id, pid, uid, gid, mode, mask, name, remark, uri, "
-				 " dataer, render, substring(intime from '[^.]*') as intime, "
-				 " substring(uptime from '[^.]*') as uptime "
-				 " FROM fileinfo WHERE uri='%s';",
-				 NULL, uri);
-		ret = mdb_get(conn, "iiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid),
-					  &(fl->gid), &(fl->mode), &(fl->mask), &(fl->name), &(fl->remark), &(fl->uri),
-					  &(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime));
+		snprintf(tok, sizeof(tok), "uri='%s'", uri);
+		FILE_QUERY_RAW(conn, tok, NULL);
+		ret = FILE_GET_RAW(conn, fl);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("get %s info failure from db %s", uri, mdb_get_errmsg(conn));
 			if (ret == MDB_ERR_NORESULT)
@@ -174,7 +179,8 @@ int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
 			return RET_RBTOP_SELECTE;
 		} else {
 			file_pack(fl, &buf, &datalen);
-			mmc_storef(MMC_OP_SET, (void*)buf, datalen, ONE_HOUR, 0, PRE_MMC_FILE".%s", uri);
+			mmc_storef(MMC_OP_SET, (void*)buf, datalen, ONE_HOUR, 0,
+					   PRE_MMC_FILE".%s", uri);
 		}
 	} else {
 		ret = file_unpack(buf, datalen, &fl);
@@ -188,6 +194,12 @@ int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
 	return RET_RBTOP_OK;
 }
 
+void file_refresh_me(file_t *fl)
+{
+	mmc_deletef(0, PRE_MMC_FILE".%d.%s", fl->pid, fl->name);
+	mmc_deletef(0, PRE_MMC_FILE".%d", fl->id);
+}
+
 void file_refresh_info(mdb_conn *conn, int id, char *url, int pid)
 {
 	file_t *fl;
@@ -198,13 +210,7 @@ void file_refresh_info(mdb_conn *conn, int id, char *url, int pid)
 		mtc_err("get info failure %d %s %d", id, url, pid);
 		return;
 	}
-
-	char mmckey[LEN_MMC_KEY];
-	snprintf(mmckey, LEN_MMC_KEY, "%s.%d.%s", PRE_MMC_FILE, fl->pid, fl->name);
-	mmc_delete(mmckey, 0);
-	snprintf(mmckey, LEN_MMC_KEY, "%s.%d", PRE_MMC_FILE, fl->id);
-	mmc_delete(mmckey, 0);
-
+	file_refresh_me(fl);
 	file_del(fl);
 }
 
@@ -213,11 +219,15 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
 	PRE_DBOP(hdf, conn);
 
-	int ret;
-	char cols[LEN_SM];
-	int count, offset, uin;
+	int ret, cnt = 0;
+	char tok[LEN_MD];
+	int count, offset, uin, pid, limit;
 	member_t *mb;
+	file_t *fl;
 
+	pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 0);
+	limit = hdf_get_int_value(hdf, PRE_QUERY".limit", 0);
+	
 	mmisc_set_count(hdf, conn, "fileinfo", "1=1");
 	mmisc_get_offset(hdf, &count, &offset);
 
@@ -225,15 +235,27 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return RET_RBTOP_NOTLOGIN;
 	}
 
-	sprintf(cols, " id, pid, uid, gid, mode, name, uri, remark, substring(intime from '[^.]*') as intime, "
-			" substring(uptime from '[^.]*') as uptime ");
-	mdb_exec(conn, NULL, "SELECT %s FROM fileinfo WHERE (PMS_OTHER(mode)&LMT_GET) = 1 ORDER BY id LIMIT %d OFFSET %d;",
-			 NULL, cols, count, offset);
-	ret = mdb_set_rows(hdf, conn, cols, "files");
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("get files error %s", mdb_get_errmsg(conn));
-		return RET_RBTOP_SELECTE;
+	fl = file_new();
+	if (fl == NULL) {
+		mtc_err("file_new failure");
+		return RET_RBTOP_MEMALLOCE;
 	}
+	
+	snprintf(tok, sizeof(tok), "pid=%d ORDER BY id LIMIT %d OFFSET %d",
+			 pid, count, offset);
+	FILE_QUERY_RAW(conn, tok, NULL);
+	while (FILE_GET_RAW(conn, fl) == MDB_ERR_NONE) {
+		ret = file_check_user_power(hdf, conn, ses, fl, limit);
+		if (ret == RET_RBTOP_OK) {
+			sprintf(tok, "files.%d", cnt++);
+			file_store_in_hdf(fl, tok, hdf);
+		} else {
+			mtc_noise("user %d has no %s's %d limit",
+					  ses->member->uin, fl->uri, limit);
+		}
+		file_reset(fl);
+	}
+	
 	HDF *res = hdf_get_obj(hdf, PRE_OUTPUT".files.0");
 	while (res != NULL) {
 		uin = hdf_get_int_value(res, "uid", 0);
@@ -274,10 +296,12 @@ void file_translate_mode(HDF *hdf)
 	}
 }
 
-int file_modify(HDF *hdf, mdb_conn *conn)
+int file_modify(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
 	PRE_DBOP(hdf, conn);
 
+	file_t *fl;
+	
 	int id = hdf_get_int_value(hdf, PRE_QUERY".id", 0);
 	char *area = hdf_get_value(hdf, PRE_QUERY".area", NULL);
 	int unit = hdf_get_int_value(hdf, PRE_QUERY".unit", 0);
@@ -288,16 +312,19 @@ int file_modify(HDF *hdf, mdb_conn *conn)
 	int ret;
 	
 	if (id == 0 || area == NULL || unit <= 0 || unit > 8 || enable == NULL) {
-		mtc_err("input error id: %d area:%s unit:%d enable:%s", id, area, unit, enable);
+		mtc_err("input error id: %d area:%s unit:%d enable:%s",
+				id, area, unit, enable);
 		return RET_RBTOP_INPUTE;
 	}
-	mdb_exec(conn, NULL, "SELECT mode FROM fileinfo WHERE id=%d;", NULL, id);
-	ret = mdb_get(conn, "i", &mode);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("get %d mode failure", id);
-		return RET_RBTOP_SELECTE;
+	ret = file_get_info(conn, id, NULL, -1, &fl);
+	if (ret != RET_RBTOP_OK) return ret;
+	ret = file_check_user_power(hdf, conn, ses, fl, LMT_MOD);
+	if (ret != RET_RBTOP_OK) {
+		mtc_warn("%d attemped modify %s, limited", ses->member->uin, fl->uri);
+		goto done;
 	}
 	
+	mode = fl->mode;
 	if (!strcmp(area, "_ownerp")) {
 		unit = unit << 4;
 	} else if (!strcmp(area, "_groupp")) {
@@ -306,7 +333,8 @@ int file_modify(HDF *hdf, mdb_conn *conn)
 		unit = unit << 12;
 	} else {
 		mtc_err("area %s error");
-		return RET_RBTOP_INPUTE;
+		ret = RET_RBTOP_INPUTE;
+		goto done;
 	}
 
 	if (!strcmp(enable, "true")) {
@@ -314,21 +342,26 @@ int file_modify(HDF *hdf, mdb_conn *conn)
 	} else {
 		mode = mode & ~unit;
 	}
-
-	ret = mdb_exec(conn, &afrow, "UPDATE fileinfo set mode=%d WHERE id=%d;", NULL, mode, id);
+	
+	ret = MDATA_SET(conn, "db_sys", &afrow, FLAGS_NONE,
+					"UPDATE fileinfo set mode=%d WHERE id=%d;",	NULL, mode, id);
 	if (ret != RET_RBTOP_OK || afrow == 0) {
 		mtc_err("update %d mode %d failure %s. affect %d rows.",
 				id, mode, mdb_get_errmsg(conn), afrow);
-		return RET_RBTOP_UPDATEE;
+		goto done;
 	}
-	file_refresh_info(conn, id, NULL, 0);
-	return RET_RBTOP_OK;
+	file_refresh_me(fl);
+
+ done:
+	file_del(fl);
+	return ret;
 }
 
-int file_add(HDF *hdf, mdb_conn *conn)
+int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
 	PRE_DBOP(hdf, conn);
 
+	file_t *fl;
 	char *name = hdf_get_value(hdf, PRE_QUERY".name", NULL);
 	char *remark = hdf_get_value(hdf, PRE_QUERY".remark", NULL);
 	int pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 0);
@@ -342,37 +375,50 @@ int file_add(HDF *hdf, mdb_conn *conn)
 		mtc_err("input err %s %s %d", name, remark, uid);
 		return RET_RBTOP_INPUTE;
 	}
+
+	ret = file_get_info(conn, pid, NULL, -1, &fl);
+	if (ret != RET_RBTOP_OK) return ret;
+	ret = file_check_user_power(hdf, conn, ses, fl, LMT_APPEND);
+	if (ret != RET_RBTOP_OK) {
+		mtc_warn("%d attemped add file to %s, limited", ses->member->uin, fl->uri);
+		goto done;
+	}
+
 	char keycol[LEN_SM];
 	snprintf(keycol, sizeof(keycol), "pid=%d AND name='%s'", pid, name);
 	if (mmisc_get_count(conn, "fileinfo", keycol) > 0) {
 		mtc_err("%d %s already exist", pid, name);
-		return RET_RBTOP_EXISTE;
+		ret = RET_RBTOP_EXISTE;
+		goto done;
 	}
-	ret = mdb_exec(conn, NULL, "INSERT INTO fileinfo (pid, uid, gid, mode, name, remark) "
-				   " VALUES (%d, %d, %d, %d, $1, $2)",
+	ret = mdb_exec(conn, NULL, "INSERT INTO fileinfo (pid, uid, gid, mode, name, "
+				   " remark) VALUES (%d, %d, %d, %d, $1, $2)",
 				   "ss", pid, uid, gid, mode, name, remark);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("add file err %s", mdb_get_errmsg(conn));
-		return RET_RBTOP_INSERTE;
+		goto done;
 	}
-	
-	file_t *fl;
+
+	file_del(fl);
 	ret = file_get_info(conn, 0, name, pid, &fl);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("get file %d %s failure", pid, name);
-		return RET_RBTOP_SELECTE;
+		goto done;
 	}
 	file_store_in_hdf(fl, "files.0", hdf);
 	file_translate_mode(hdf);
 	hdf_set_copy(hdf, PRE_OUTPUT".files.0.uname", PRE_COOKIE".uname");
+
+ done:
 	file_del(fl);
-	
-	return RET_RBTOP_OK;
+	return ret;
 }
 
-int file_delete(HDF *hdf, mdb_conn *conn)
+int file_delete(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
 	PRE_DBOP(hdf, conn);
+
+	file_t *fl;
 
 	int id = hdf_get_int_value(hdf, PRE_QUERY".id", 0);
 
@@ -382,24 +428,37 @@ int file_delete(HDF *hdf, mdb_conn *conn)
 		mtc_err("input error %d", id);
 		return RET_RBTOP_INPUTE;
 	}
+	ret = file_get_info(conn, id, NULL, -1, &fl);
+	if (ret != RET_RBTOP_OK) return ret;
+	ret = file_check_user_power(hdf, conn, ses, fl, LMT_DEL);
+	if (ret != RET_RBTOP_OK) {
+		mtc_warn("%d attemped del file %s, limited", ses->member->uin, fl->uri);
+		goto done;
+	}
+	
 	ret = mdb_exec(conn, NULL, "DELETE FROM fileinfo WHERE id=%d;", NULL, id);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("delete file failure %s", mdb_get_errmsg(conn));
 		return RET_RBTOP_DELETEE;
 	}
-	file_refresh_info(conn, id, NULL, 0);
-	return RET_RBTOP_OK;
+
+	file_refresh_me(fl);
+	
+ done:
+	file_del(fl);
+	return ret;
 }
 
-int file_get_action(HDF *hdf, mdb_conn *conn)
+int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
-#if 0
-	if (member_has_mode(mb, GROUP_MODE_OWN)) {
-	} else if (member_has_mode(mb, GROUP_MODE_ADM)) {
-	} else if (member_has_mode(mb, GROUP_MODE_JOIN)) {
+	if (ses->member == NULL) {
+		return RET_RBTOP_NOTLOGIN;
+	} else if (member_has_gmode(ses->member, GROUP_MODE_OWN)) {
+	} else if (member_has_gmode(ses->member, GROUP_MODE_ADM)) {
+	} else if (member_has_gmode(ses->member, GROUP_MODE_JOIN)) {
 	} else {
 	}
-#endif
+
 	return RET_RBTOP_OK;
 }
 

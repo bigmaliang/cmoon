@@ -22,6 +22,7 @@ __BEGIN_DECLS
 #define PRE_MMC_UPASS	"Password"
 
 #define PRE_CFG_MEMC	"Memcached"
+#define PRE_CFG_EVT		"Mevent"
 
 __END_DECLS
 #endif	/* __MCFG_H__ */

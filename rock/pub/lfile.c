@@ -64,42 +64,46 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri, bool 
 	
 	reqmethod = CGI_REQ_METHOD(cgi);
 	if (reqmethod == CGI_REQ_GET) {
-		ret = file_check_user_power(cgi, conn, ses, file, LMT_GET);
+		ret = file_check_user_power(cgi->hdf, conn, ses, file, LMT_GET);
 		if(ret != RET_RBTOP_OK) {
 			if (ret == RET_RBTOP_NOTLOGIN)
 				strcpy(errmsg, "敏感操作, 请先登录");
 			else
-				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权读取 %s", file->remark);
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权读取 %s",
+						 file->remark);
 			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
 			goto notpass;
 		}
 	} else if (reqmethod == CGI_REQ_POST) {
-		ret = file_check_user_power(cgi, conn, ses, file, LMT_MOD);
+		ret = file_check_user_power(cgi->hdf, conn, ses, file, LMT_MOD);
 		if(ret != RET_RBTOP_OK) {
 			if (ret == RET_RBTOP_NOTLOGIN)
 				strcpy(errmsg, "敏感操作, 请先登录");
 			else
-				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权修改 %s", file->remark);
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权修改 %s",
+						 file->remark);
 			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
 			goto notpass;
 		}
 	} else if (reqmethod == CGI_REQ_PUT) {
-		ret = file_check_user_power(cgi, conn, ses, file, LMT_APPEND);
+		ret = file_check_user_power(cgi->hdf, conn, ses, file, LMT_APPEND);
 		if(ret != RET_RBTOP_OK) {
 			if (ret == RET_RBTOP_NOTLOGIN)
 				strcpy(errmsg, "敏感操作, 请先登录");
 			else
-				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权增加 %s", file->remark);
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权增加 %s",
+						 file->remark);
 			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
 			goto notpass;
 		}
 	} else if (reqmethod == CGI_REQ_DEL) {
-		ret = file_check_user_power(cgi, conn, ses, file, LMT_DEL);
+		ret = file_check_user_power(cgi->hdf, conn, ses, file, LMT_DEL);
 		if(ret != RET_RBTOP_OK) {
 			if (ret == RET_RBTOP_NOTLOGIN)
 				strcpy(errmsg, "敏感操作, 请先登录");
 			else
-				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权删除 %s", file->remark);
+				snprintf(errmsg, sizeof(errmsg)-1, "对不起, 您无权删除 %s",
+						 file->remark);
 					
 			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
 			goto notpass;
