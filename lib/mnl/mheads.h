@@ -30,6 +30,10 @@
 #include "nmdb.h"
 #include "mysql.h"
 
+#ifdef USE_EVENT
+#include "mevent.h"
+#endif
+
 /* Fix Up for systems that don't define these standard things */
 #ifndef __BEGIN_DECLS
 #ifdef __cplusplus
@@ -98,6 +102,7 @@
 #include "mjson.h"
 #include "mutil.h"
 #include "mdb.h"
+#include "mdata.h"
 #include "fdb.h"
 #include "mmisc.h"
 #include "mglobal.h"
