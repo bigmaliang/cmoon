@@ -41,5 +41,8 @@ __BEGIN_DECLS
 #define PRE_CFG_LAYOUT	"Layout"
 #define PRE_CFG_DATASET	"Dataset"
 
+#define EVT_PLUGIN_SYS	"db_sys"
+#define EVT_PLUGIN_USER	"db_user"
+
 __END_DECLS
 #endif	/* __LCFG_H__ */

@@ -81,7 +81,7 @@ int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
 		if (id <= 0) {
-			snprintf(tok, sizeof(tok), "pid=%d AND name=$1", pid);
+			snprintf(tok, sizeof(tok), "pid=%d AND name='$1'", pid);
 			FILE_QUERY_RAW(conn, tok, "s", url);
 		} else {
 			snprintf(tok, sizeof(tok), "id=%d", id);
@@ -343,7 +343,7 @@ int file_modify(HDF *hdf, mdb_conn *conn, session_t *ses)
 		mode = mode & ~unit;
 	}
 	
-	ret = MDATA_SET(conn, "db_sys", &afrow, FLAGS_NONE,
+	ret = MDATA_SET(conn, EVT_PLUGIN_SYS, &afrow, FLAGS_NONE,
 					"UPDATE fileinfo set mode=%d WHERE id=%d;",	NULL, mode, id);
 	if (ret != RET_RBTOP_OK || afrow == 0) {
 		mtc_err("update %d mode %d failure %s. affect %d rows.",
@@ -391,9 +391,10 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 		ret = RET_RBTOP_EXISTE;
 		goto done;
 	}
-	ret = mdb_exec(conn, NULL, "INSERT INTO fileinfo (pid, uid, gid, mode, name, "
-				   " remark) VALUES (%d, %d, %d, %d, $1, $2)",
-				   "ss", pid, uid, gid, mode, name, remark);
+	ret = MDATA_SET(conn, EVT_PLUGIN_SYS, NULL, FLAGS_NONE, "INSERT INTO fileinfo "
+					" (pid, uid, gid, mode, name, remark) VALUES "
+					" (%d, %d, %d, %d, '$1', '$2')", "ss",
+					pid, uid, gid, mode, name, remark);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("add file err %s", mdb_get_errmsg(conn));
 		goto done;
@@ -435,8 +436,9 @@ int file_delete(HDF *hdf, mdb_conn *conn, session_t *ses)
 		mtc_warn("%d attemped del file %s, limited", ses->member->uin, fl->uri);
 		goto done;
 	}
-	
-	ret = mdb_exec(conn, NULL, "DELETE FROM fileinfo WHERE id=%d;", NULL, id);
+
+	ret = MDATA_SET(conn, EVT_PLUGIN_SYS, NULL, FLAGS_NONE,
+					"DELETE FROM fileinfo WHERE id=%d;", NULL, id);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("delete file failure %s", mdb_get_errmsg(conn));
 		return RET_RBTOP_DELETEE;

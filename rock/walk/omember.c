@@ -34,8 +34,9 @@ void member_remember_login(CGI *cgi, mdb_conn *conn, int uin)
 		neo_rand_string(musn, sizeof(musn));
 		cgi_url_escape(musn, &musn_esc);
 
-		mdb_exec(conn, NULL, "UPDATE %s SET musn=$1 WHERE uin=%d",
-				 "s", usertable, uin, musn_esc);
+		MDATA_SET(conn, EVT_PLUGIN_USER, NULL, FLAGS_NONE,
+				  "UPDATE %s SET musn='$1' WHERE uin=%d",
+				  "s", usertable, uin, musn_esc);
 		hdf_set_value(cgi->hdf, PRE_OUTPUT".musn", musn_esc);
 		member_refresh_info(uin);
 		/*
@@ -73,10 +74,11 @@ int member_release_uin(HDF *hdf, mdb_conn *conn)
 	/*
 	 * mark released 
 	 */
-	ret = mdb_exec(conn, &rows, "UPDATE %s SET status=%d, uname=$1, male=$2 WHERE uin=%d AND status=%d;",
-				   "si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
-				   hdf_get_value(hdf, PRE_QUERY".uname", ""),
-				   hdf_get_int_value(hdf, PRE_QUERY".male", 1));
+	ret = MDATA_SET(conn, EVT_PLUGIN_USER, &rows, FLAGS_SYNC,
+					"UPDATE %s SET status=%d, uname='$1', male=$2 WHERE uin=%d AND status=%d;",
+					"si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
+					hdf_get_value(hdf, PRE_QUERY".uname", ""),
+					hdf_get_int_value(hdf, PRE_QUERY".male", 1));
 	if (ret != MDB_ERR_NONE || rows == 0) {
 		mtc_err("set rls number %d failure %s. affect %d rows.",
 				uin, mdb_get_errmsg(conn), rows);
@@ -101,10 +103,11 @@ int member_alloc_uin(HDF *hdf, mdb_conn *conn)
 	/*
 	 * mark released 
 	 */
-	ret = mdb_exec(conn, &rows, "UPDATE %s SET status=%d, uname=$1, male=$2 WHERE uin=%d AND status=%d;",
-				   "si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
-				   hdf_get_value(hdf, PRE_QUERY".uname", ""),
-				   hdf_get_int_value(hdf, PRE_QUERY".male", 1));
+	ret = MDATA_SET(conn, EVT_PLUGIN_USER, &rows, FLAGS_SYNC,
+					"UPDATE %s SET status=%d, uname='$1', male=$2 WHERE uin=%d AND status=%d;",
+					"si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
+					hdf_get_value(hdf, PRE_QUERY".uname", ""),
+					hdf_get_int_value(hdf, PRE_QUERY".male", 1));
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("set alloc number %d failure %s.", uin, mdb_get_errmsg(conn));
 		return RET_RBTOP_UPDATEE;
@@ -133,8 +136,8 @@ int member_confirm_uin(HDF *hdf, mdb_conn *conn)
 	 */
 	sprintf(usertable, "user_%d", uin%DIV_USER_TB);
 	mdb_begin(conn);
-	mdb_exec(conn, NULL, "UPDATE %s SET status=%d, usn=$1, email=$2 WHERE uin=%d AND status=%d;", "ss",
-			 TABLE_RLS_USER, USER_CFMED, uin, USER_RLSED,
+	mdb_exec(conn, NULL, "UPDATE %s SET status=%d, usn='$1', email='$2' WHERE uin=%d AND status=%d;",
+			 "ss", TABLE_RLS_USER, USER_CFMED, uin, USER_RLSED,
 			 hdf_get_value(hdf, PRE_QUERY".usn", ""),
 			 hdf_get_value(hdf, PRE_QUERY".email", ""));
 	mdb_exec(conn, &rows, "INSERT INTO %s SELECT * FROM %s WHERE uin=%d;", NULL,

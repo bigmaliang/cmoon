@@ -126,7 +126,10 @@ int mdb_exec(mdb_conn* conn, int *affectrow, const char* sql_fmt, const char* fm
 	va_list ap;
 
 	char *sqlstr;
-	va_start(ap, sql_fmt);
+	/*
+	 * BUG sql_fmt? 
+	 */
+	va_start(ap, fmt);
 	sqlstr = vsprintf_alloc(sql_fmt, ap);
 	if (sqlstr == NULL) {
 		mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for ms query new failure.");
@@ -283,7 +286,10 @@ int mdb_exec_apart(mdb_conn* conn, mdb_query **pquery,
 	va_list ap;
 
 	char *sqlstr;
-	va_start(ap, sql_fmt);
+	/*
+	 * BUG sql_fmt? 
+	 */
+	va_start(ap, fmt);
 	sqlstr = vsprintf_alloc(sql_fmt, ap);
 	if (sqlstr == NULL) {
 		mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for ms query new failure.");
