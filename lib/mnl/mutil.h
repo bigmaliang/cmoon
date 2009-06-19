@@ -50,6 +50,26 @@ char* mutil_hdf_attr(HDF *hdf, char *name, char*key);
 char* mutil_obj_attr(HDF *hdf, char*key);
 bool mutil_isdigit(char *s);
 bool mutil_makesure_dir(char *file);
+
+/*
+ * make sure buf big enough please 
+ */
+void mutil_real_escape_string(char *buf, char *val, size_t len);
+int  mutil_replace_dbint(char **sql, int val);
+int  mutil_replace_dbstr(char **sql, char *val);
+int  mutil_expand_strvf_dbfmt(char **str, const char *fmt, va_list ap);
+int  mutil_expand_strvf(char **outstr, const char *sql_fmt, const char *fmt, va_list ap);
+/*
+ * expand
+ * "UPDATE %s SET musn='$1', uin=$2 WHERE uin=%d", "s", &p, table, uin, musn, uinnew
+ * to
+ * "UPDATE tablexxx SET musn='test\'s member', uin=3333 WHERE uin=2323"
+ *
+ * defect: $[:digit:] is reserved by this function,
+ * so, your sql's $[:digit:] will make mistake
+ */
+int  mutil_expand_strf(char **outstr, const char *sql_fmt, const char *fmt, ...);
+
 void mutil_wrap_fcgi(int argc, char **argv, char **envp);
 
 __END_DECLS

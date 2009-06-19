@@ -40,8 +40,20 @@ int mdata_exec(char *plugin, int *afrow, unsigned short flag,
 	ret = mdata_init();
 	if (ret != RET_RBTOP_OK) return ret;
 
+	va_list ap;
+	va_start(ap, sql_fmt);
+	ret = mutil_expand_strvf(&sql, sql_fmt, fmt, ap);
+	va_end(ap);
+	if (ret != RET_RBTOP_OK) {
+		mtc_err("expand ~ %s %s failure", sql_fmt, fmt);
+		return ret;
+	}
+	
 	mevent_chose_plugin(l_evt, plugin, REQ_CMD_SET, flag);
 	mevent_add_str(l_evt, NULL, "sqls", sql);
+	
+	free(sql);
+	
 	ret = mevent_trigger(l_evt, &errcode);
 	if (ret != REP_OK) {
 		mtc_err("trig %s failure %d %d", ret, errcode);
