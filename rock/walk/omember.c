@@ -254,7 +254,6 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 	member_t *mb;
 	char *buf;
 	int gid, gmode;
-	NEOERR *err;
 	size_t datalen;
 	int ret;
 
@@ -286,10 +285,8 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 			string_appendf(&sgmode, "%d;", gmode);
 		}
 		if (sgid.len != 0) {
-			err = string_array_split(&mb->gids, sgid.buf, ";", MAX_GROUP_AUSER);
-			RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
-			err = string_array_split(&mb->gmodes, sgmode.buf, ";", MAX_GROUP_AUSER);
-			RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
+			mb->gids = strdup(sgid.buf);
+			mb->gmodes = strdup(sgmode.buf);
 		}
 		member_pack(mb, &buf, &datalen);
 		mmc_storef(MMC_OP_SET, buf, datalen, ONE_DAY, 0, PRE_MMC_MEMBER".%d", uin);
@@ -323,11 +320,18 @@ int member_has_login(HDF *hdf, mdb_conn *conn, session_t *ses)
 }
 bool member_in_group(member_t *mb, int gid)
 {
-	if (mb == NULL)
+	if (mb == NULL || mb->gids == NULL)
 		return false;
+
+	char tok[64];
+	sprintf(tok, "%d;", gid);
 	
-	if (uListIn(mb->gids, (void *)&gid, mmisc_compare_inta) != NULL)
-		return true;
+	char *p = strstr(mb->gids, tok);
+	while (p != NULL) {
+		if (*(p-1) == ';')
+			return true;
+		p = strstr(p, tok);
+	}
 	
 	return false;
 }
@@ -342,10 +346,19 @@ bool member_is_owner(member_t *mb, int uid)
 }
 bool member_has_gmode(member_t *mb, int gmode)
 {
-	if (mb == NULL)
+	if (mb == NULL || mb->gmodes == NULL)
 		return false;
-	if (uListIn(mb->gmodes, (void*)&gmode, mmisc_compare_inta) != NULL)
-		return true;
+
+	char tok[64];
+	sprintf(tok, "%d;", gmode);
+
+	char *p = strstr(mb->gmodes, tok);
+	while (p != NULL) {
+		if (*(p-1) == ';')
+			return true;
+		p = strstr(p, tok);
+	}
+	
 	return false;
 }
 bool member_uin_is_root(int uin)

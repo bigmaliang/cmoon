@@ -27,7 +27,7 @@ int ltpl_parse_dir(char *dir, HASH *outhash)
 
 	n = scandir(dir, &eps, tpl_config, alphasort);
 	for (int i = 0; i < n; i++) {
-		mtc_dbg("rend file %s", eps[i]->d_name);
+		mtc_dbg("parse file %s", eps[i]->d_name);
 		cs = NULL; node = NULL;
 		memset(fname, 0x0, sizeof(fname));
 		snprintf(fname, sizeof(fname), "%s/%s", dir, eps[i]->d_name);
@@ -38,7 +38,7 @@ int ltpl_parse_dir(char *dir, HASH *outhash)
 
 		child = hdf_obj_child(node);
 		while (child != NULL) {
-			mtc_dbg("rend node %s", hdf_obj_name(child));
+			mtc_dbg("parse node %s", hdf_obj_name(child));
 			string_init(&str);
 			err = cs_init(&cs, hdf_get_obj(child, PRE_CFG_DATASET));
 			JUMP_NOK(err, wnext);

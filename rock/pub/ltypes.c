@@ -1,6 +1,52 @@
 #include "mheads.h"
 #include "lheads.h"
 
+#define STRUCT_ADD_LEN(len, parent, name)		\
+	do {										\
+		if (parent->name != NULL)				\
+			len += strlen(parent->name);		\
+		len += 1;								\
+	} while (0)
+
+#define STRUCT_PACK_STR(parent, namesrc)								\
+	do {																\
+		if (parent->namesrc != NULL) { 									\
+			memcpy(buf+pos, parent->namesrc, strlen(parent->namesrc)+1); \
+			pos += strlen(parent->namesrc)+1;							\
+		} else {														\
+			*(buf+pos) = '\0';											\
+			pos += 1;													\
+		}																\
+	} while (0)
+
+#define STRUCT_UNPACK_STR(psrc, parent, namedest)				\
+	do {														\
+		if (*psrc != '\0') {									\
+			parent->namedest = strdup(psrc);					\
+			while (*psrc != '\0' && psrc <= buf+inlen) psrc++;	\
+		}														\
+		psrc++;													\
+	} while (0)
+
+#define STORE_IN_HDF_INT(parent, dstname)					\
+	do {													\
+		snprintf(key, sizeof(key), "%s.dstname", prekey);	\
+		hdf_set_int_value(hdf, key, parent->dstname);		\
+	} while (0)
+
+#define STORE_IN_HDF_STR(parent, dstname)					\
+	do {													\
+		snprintf(key, sizeof(key), "%s.dstname", prekey);	\
+		hdf_set_value(hdf, key, parent->dstname);			\
+	} while (0)
+
+#define SAFE_FREE(str)							\
+	do {										\
+		if (str != NULL)						\
+			free(str);							\
+	} while (0)
+	
+
 file_t* file_new()
 {
 	file_t *fl = (file_t*)calloc(1, sizeof(file_t));
@@ -17,41 +63,33 @@ int file_pack(file_t *file, char **res, size_t *outlen)
 
 	char *buf;
 	int len = sizeof(file_t);
-	len += strlen(file->name)+1;
-	len += strlen(file->remark)+1;
-	len += strlen(file->uri)+1;
-	len += strlen(file->dataer)+1;
-	len += strlen(file->render)+1;
-	len += strlen(file->intime)+1;
-	len += strlen(file->uptime)+1;
+
+	STRUCT_ADD_LEN(len, file, name);
+	STRUCT_ADD_LEN(len, file, remark);
+	STRUCT_ADD_LEN(len, file, uri);
+	STRUCT_ADD_LEN(len, file, dataer);
+	STRUCT_ADD_LEN(len, file, render);
+	STRUCT_ADD_LEN(len, file, intime);
+	STRUCT_ADD_LEN(len, file, uptime);
+	len += 1;
 
 	buf = (char*)calloc(1, len);
 	if (buf == NULL) {
 		mtc_err("alloc mem for file pack failure");
 		return 1;
 	}
+
 	memcpy(buf, file, sizeof(file_t));
-
 	int pos = sizeof(file_t);
-	memcpy(buf+pos, file->name, strlen(file->name)+1);
 
-	pos += strlen(file->name)+1;
-	memcpy(buf+pos, file->remark, strlen(file->remark)+1);
-
-	pos += strlen(file->remark)+1;
-	memcpy(buf+pos, file->uri, strlen(file->uri)+1);
-	
-	pos += strlen(file->uri)+1;
-	memcpy(buf+pos, file->dataer, strlen(file->dataer)+1);
-	
-	pos += strlen(file->dataer)+1;
-	memcpy(buf+pos, file->render, strlen(file->render)+1);
-	
-	pos += strlen(file->render)+1;
-	memcpy(buf+pos, file->intime, strlen(file->intime)+1);
-
-	pos += strlen(file->intime)+1;
-	memcpy(buf+pos, file->uptime, strlen(file->uptime)+1);
+	STRUCT_PACK_STR(file, name);
+	STRUCT_PACK_STR(file, remark);
+	STRUCT_PACK_STR(file, uri);
+	STRUCT_PACK_STR(file, dataer);
+	STRUCT_PACK_STR(file, render);
+	STRUCT_PACK_STR(file, intime);
+	STRUCT_PACK_STR(file, uptime);
+	*(buf+pos+1) = '\0';
 
 	*res = buf;
 	*outlen = len;
@@ -70,33 +108,17 @@ int file_unpack(char *buf, size_t inlen, file_t **file)
 		mtc_err("alloc mem for file unpack failure");
 		return 1;
 	}
-#if 0
-	fl = (file_t*)buf;
-	fl->name = buf+sizeof(file_t);
-	p = buf+sizeof(file_t);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->remark = p;
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->intime = p;
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->uptime = p;
-#endif
-	
+
 	memcpy(fl, buf, sizeof(file_t));
 	p = buf+sizeof(file_t);
-	fl->name = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->remark = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->uri = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->dataer = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->render = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->intime = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	fl->uptime = strdup(p);
+
+	STRUCT_UNPACK_STR(p, fl, name);
+	STRUCT_UNPACK_STR(p, fl, remark);
+	STRUCT_UNPACK_STR(p, fl, uri);
+	STRUCT_UNPACK_STR(p, fl, dataer);
+	STRUCT_UNPACK_STR(p, fl, render);
+	STRUCT_UNPACK_STR(p, fl, intime);
+	STRUCT_UNPACK_STR(p, fl, uptime);
 	
 	*file = fl;
 	
@@ -110,55 +132,33 @@ void file_store_in_hdf(file_t *fl, char *prefix, HDF *hdf)
 	
 	char prekey[LEN_ST], key[LEN_ST];
 	snprintf(prekey, sizeof(prekey), "%s.%s", PRE_OUTPUT, prefix);
-
-	snprintf(key, sizeof(key), "%s.id", prekey);
-	hdf_set_int_value(hdf, key, fl->id);
 	
-	snprintf(key, sizeof(key), "%s.pid", prekey);
-	hdf_set_int_value(hdf, key, fl->pid);
-	
-	snprintf(key, sizeof(key), "%s.uid", prekey);
-	hdf_set_int_value(hdf, key, fl->uid);
-	snprintf(key, sizeof(key), "%s.gid", prekey);
-	hdf_set_int_value(hdf, key, fl->gid);
-	snprintf(key, sizeof(key), "%s.mode", prekey);
-	hdf_set_int_value(hdf, key, fl->mode);
-
-	snprintf(key, sizeof(key), "%s.name", prekey);
-	hdf_set_value(hdf, key, fl->name);
-	snprintf(key, sizeof(key), "%s.remark", prekey);
-	hdf_set_value(hdf, key, fl->remark);
-	snprintf(key, sizeof(key), "%s.uri", prekey);
-	hdf_set_value(hdf, key, fl->uri);
-	snprintf(key, sizeof(key), "%s.dataer", prekey);
-	hdf_set_value(hdf, key, fl->dataer);
-	snprintf(key, sizeof(key), "%s.render", prekey);
-	hdf_set_value(hdf, key, fl->render);
-	snprintf(key, sizeof(key), "%s.intime", prekey);
-	hdf_set_value(hdf, key, fl->intime);
-	snprintf(key, sizeof(key), "%s.uptime", prekey);
-	hdf_set_value(hdf, key, fl->uptime);
+	STORE_IN_HDF_INT(fl, id);
+	STORE_IN_HDF_INT(fl, pid);
+	STORE_IN_HDF_INT(fl, uid);
+	STORE_IN_HDF_INT(fl, gid);
+	STORE_IN_HDF_INT(fl, mode);
+	STORE_IN_HDF_STR(fl, name);
+	STORE_IN_HDF_STR(fl, remark);
+	STORE_IN_HDF_STR(fl, uri);
+	STORE_IN_HDF_STR(fl, dataer);
+	STORE_IN_HDF_STR(fl, render);
+	STORE_IN_HDF_STR(fl, intime);
+	STORE_IN_HDF_STR(fl, uptime);
 }
 
 void file_reset(file_t *fl)
 {
 	if (fl == NULL)
 		return;
-	
-	if (fl->name != NULL)
-		free(fl->name);
-	if (fl->remark != NULL)
-		free(fl->remark);
-	if (fl->uri != NULL)
-		free(fl->uri);
-	if (fl->dataer != NULL)
-		free(fl->dataer);
-	if (fl->render != NULL)
-		free(fl->render);
-	if (fl->intime != NULL)
-		free(fl->intime);
-	if (fl->uptime != NULL)
-		free(fl->uptime);
+
+	SAFE_FREE(fl->name);
+	SAFE_FREE(fl->remark);
+	SAFE_FREE(fl->uri);
+	SAFE_FREE(fl->dataer);
+	SAFE_FREE(fl->render);
+	SAFE_FREE(fl->intime);
+	SAFE_FREE(fl->uptime);
 }
 
 void file_del(void *fl)
@@ -182,82 +182,50 @@ member_t* member_new()
 }
 int member_pack(member_t *member, char **res, size_t *outlen)
 {
-	STRING sgid, sgmode;
-	char *gid, *gmode;
-	NEOERR *err;
-	int gidslen = uListLength(member->gids);
-	int gmodeslen = uListLength(member->gmodes);
-	int i;
-
 	if (member == NULL || res == NULL) {
 		return 1;
 	}
 
-	string_init(&sgid); string_init(&sgmode);
-	for (i = 0; i < gidslen; i++) {
-		err = uListGet(member->gids, i, (void**)&gid);
-		RETURN_V_NOK(err, 1);
-		string_appendf(&sgid, "%s;", gid);
-	}
-	for (i = 0; i < gmodeslen; i++) {
-		err = uListGet(member->gmodes, i, (void**)&gmode);
-		RETURN_V_NOK(err, 1);
-		string_appendf(&sgmode, "%s;", gmode);
-	}
-	
 	char *buf;
 	int len = sizeof(member_t);
-	len += strlen(member->uname)+1;
-	len += strlen(member->usn)+1;
-	len += strlen(member->musn)+1;
-	len += strlen(member->email)+1;
-	len += strlen(member->intime)+1;
-	len += strlen(member->uptime)+1;
-	len += sgid.len+1;
-	len += sgmode.len+1;
+
+	STRUCT_ADD_LEN(len, member, uname);
+	STRUCT_ADD_LEN(len, member, usn);
+	STRUCT_ADD_LEN(len, member, musn);
+	STRUCT_ADD_LEN(len, member, email);
+	STRUCT_ADD_LEN(len, member, intime);
+	STRUCT_ADD_LEN(len, member, uptime);
+	STRUCT_ADD_LEN(len, member, gids);
+	STRUCT_ADD_LEN(len, member, gmodes);
+	len += 1;
 
 	buf = (char*)calloc(1, len);
 	if (buf == NULL) {
 		mtc_err("alloc mem for member pack failure");
 		return 1;
 	}
+
 	memcpy(buf, member, sizeof(member_t));
-
 	int pos = sizeof(member_t);
-	memcpy(buf+pos, member->uname, strlen(member->uname)+1);
-
-	pos += strlen(member->uname)+1;
-	memcpy(buf+pos, member->usn, strlen(member->usn)+1);
-
-	pos += strlen(member->usn)+1;
-	memcpy(buf+pos, member->musn, strlen(member->musn)+1);
-
-	pos += strlen(member->musn)+1;
-	memcpy(buf+pos, member->email, strlen(member->email)+1);
-
-	pos += strlen(member->email)+1;
-	memcpy(buf+pos, member->intime, strlen(member->intime)+1);
-
-	pos += strlen(member->intime)+1;
-	memcpy(buf+pos, member->uptime, strlen(member->uptime)+1);
-	
-	pos += strlen(member->uptime)+1;
-	memcpy(buf+pos, sgid.buf, sgid.len+1);
-
-	pos += sgid.len+1;
-	memcpy(buf+pos, sgmode.buf, sgmode.len+1);
+	STRUCT_PACK_STR(member, uname);
+	STRUCT_PACK_STR(member, usn);
+	STRUCT_PACK_STR(member, musn);
+	STRUCT_PACK_STR(member, email);
+	STRUCT_PACK_STR(member, intime);
+	STRUCT_PACK_STR(member, uptime);
+	STRUCT_PACK_STR(member, gids);
+	STRUCT_PACK_STR(member, gmodes);
 	*(buf+pos+1) = '\0';
 
 	*res = buf;
 	*outlen = len;
 
-	string_clear(&sgid); string_clear(&sgmode);
 	return 0;
 }
 int member_unpack(char *buf, size_t inlen, member_t **member)
 {
-	STRING sgid, sgmode;
-	string_init(&sgid); string_init(&sgmode);
+	STRING str;
+	string_init(&str);
 	
 	if (inlen < sizeof(member_t)) {
 		return 1;
@@ -265,7 +233,6 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 
 	char *p;
 	member_t *mb;
-	NEOERR *err;
 	mb = member_new();
 	if (mb == NULL) {
 		mtc_err("alloc mem for member unpack failure");
@@ -273,29 +240,16 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 	}
 	memcpy(mb, buf, sizeof(member_t));
 	p = buf+sizeof(member_t);
-	mb->uname = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	mb->usn = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	mb->musn = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	mb->email = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	mb->intime = strdup(p);
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	mb->uptime = strdup(p);
-
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	string_append(&sgid, p);
-	err = string_array_split(&(mb->gids), sgid.buf, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, 1);
-
-	while (*p != '\0' && p <= buf+inlen) p++; p++;
-	string_append(&sgmode, p);
-	err = string_array_split(&(mb->gmodes), sgmode.buf, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, 1);
-
-	string_clear(&sgid); string_clear(&sgmode);
+	
+	STRUCT_UNPACK_STR(p, mb, uname);
+	STRUCT_UNPACK_STR(p, mb, usn);
+	STRUCT_UNPACK_STR(p, mb, musn);
+	STRUCT_UNPACK_STR(p, mb, email);
+	STRUCT_UNPACK_STR(p, mb, intime);
+	STRUCT_UNPACK_STR(p, mb, uptime);
+	STRUCT_UNPACK_STR(p, mb, gids);
+	STRUCT_UNPACK_STR(p, mb, gmodes);
+	
 	*member = mb;
 	
 	return 0;
@@ -306,22 +260,16 @@ void member_del(void *mb)
 
 	if (lmb == NULL)
 		return;
-	if (lmb->uname != NULL)
-		free(lmb->uname);
-	if (lmb->usn != NULL)
-		free(lmb->usn);
-	if (lmb->musn != NULL)
-		free(lmb->musn);
-	if (lmb->email != NULL)
-		free(lmb->email);
-	if (lmb->intime != NULL)
-		free(lmb->intime);
-	if (lmb->uptime != NULL)
-		free(lmb->uptime);
-	if (lmb->gids != NULL)
-		uListDestroy(&(lmb->gids), ULIST_FREE);
-	if (lmb->gmodes != NULL)
-		uListDestroy(&(lmb->gmodes), ULIST_FREE);
+
+	SAFE_FREE(lmb->uname);
+	SAFE_FREE(lmb->usn);
+	SAFE_FREE(lmb->musn);
+	SAFE_FREE(lmb->email);
+	SAFE_FREE(lmb->intime);
+	SAFE_FREE(lmb->uptime);
+	SAFE_FREE(lmb->gids);
+	SAFE_FREE(lmb->gmodes);
+
 	if (lmb != NULL)
 		free(lmb);
 }

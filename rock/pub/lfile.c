@@ -58,7 +58,7 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri, bool 
 	 * set file name for later use 
 	 */
 	hdf_set_value(cgi->hdf, PRE_RSV_FILE, file->name);
-	hdf_set_int_value(cgi->hdf, PRE_RSV_FILE_MASK, file->mask);
+	hdf_set_int_value(cgi->hdf, PRE_RSV_FILE_MARK, file->mark);
 	hdf_set_value(cgi->hdf, PRE_RSV_DATAER, file->dataer);
 	hdf_set_value(cgi->hdf, PRE_RSV_RENDER, file->render);
 	

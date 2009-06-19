@@ -21,6 +21,7 @@ int main(int argc, char **argv, char **envp)
 	int (*data_handler)(CGI *cgi, HASH *dbh, session_t *session);
 	void *lib;
 
+	//sleep(20);
 	mutil_wrap_fcgi(argc, argv, envp);
 
 	mconfig_parse_file(SITE_CONFIG, &g_cfg);

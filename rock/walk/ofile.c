@@ -3,17 +3,17 @@
 #include "ofile.h"
 #include "omember.h"
 
-#define FILE_QUERY_COL	" id, pid, uid, gid, mode, mask, name, remark, uri, " \
+#define FILE_QUERY_COL	" id, pid, uid, gid, mode, mark, name, remark, uri, " \
 	" dataer, render, substring(intime from '[^.]*') as intime, "		\
 	" substring(uptime from '[^.]*') as uptime "
 
 #define FILE_QUERY_RAW(conn, condition, sfmt, ...)						\
 	mdb_exec(conn, NULL, "SELECT "FILE_QUERY_COL" FROM fileinfo WHERE %s;", \
-			 sfmt, ##__VA_ARGS__)
+			 sfmt, condition, ##__VA_ARGS__)
 
 #define FILE_GET_RAW(conn, fl)											\
 	mdb_get(conn, "iiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid), &(fl->gid), \
-			&(fl->mode), &(fl->mask), &(fl->name), &(fl->remark), &(fl->uri), \
+			&(fl->mode), &(fl->mark), &(fl->name), &(fl->remark), &(fl->uri), \
 			&(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime))
 
 

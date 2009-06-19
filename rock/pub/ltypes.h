@@ -11,7 +11,7 @@ typedef struct _file {
 	int uid;
 	int gid;
 	int mode;					/* file mode */
-	int mask;					/* file type mask */
+	int mark;					/* file type mark */
 	char *name;
 	char *remark;
 	char *uri;
@@ -31,8 +31,8 @@ typedef struct _member {
 	char *email;
 	char *intime;
 	char *uptime;
-	ULIST *gids;
-	ULIST *gmodes;
+	char *gids;
+	char *gmodes;
 } member_t;
 
 file_t* file_new();

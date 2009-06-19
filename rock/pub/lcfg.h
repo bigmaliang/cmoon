@@ -30,7 +30,7 @@ __BEGIN_DECLS
 #define PRE_REQ_AJAX_FN	PRE_QUERY".JsonCallback"
 
 #define PRE_RSV_FILE		PRE_RESERVE".RequestFile"	/* lutil_get_data_handler() */
-#define PRE_RSV_FILE_MASK	PRE_RESERVE".RequestType"
+#define PRE_RSV_FILE_MARK	PRE_RESERVE".RequestType"
 #define PRE_RSV_DATAER		PRE_RESERVE".Dataer"
 #define PRE_RSV_RENDER		PRE_RESERVE".Render"
 
