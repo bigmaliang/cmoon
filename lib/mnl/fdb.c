@@ -26,7 +26,8 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass,
 	mysql_options(ldb->conn, MYSQL_INIT_COMMAND, "SET NAMES 'utf8'");
 
 	MYSQL *lcon = NULL;
-	lcon = mysql_real_connect(ldb->conn, ip, user, pass, name, port, NULL, 0);
+	lcon = mysql_real_connect(ldb->conn, ip, user, pass, name, port,
+							  NULL, CLIENT_FOUND_ROWS);
 	if (lcon == NULL)
 		return RET_DBOP_CONNECTE;
 	else
