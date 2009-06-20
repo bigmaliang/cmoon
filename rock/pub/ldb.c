@@ -14,7 +14,7 @@ static void get_errmsg(int ret, char *res)
 		strcpy(res, "号码使用中");
 		break;
 	case RET_RBTOP_NOTLOGIN:
-		strcpy(res, "用户未登录");
+		strcpy(res, "敏感操作, 请先登录");
 		break;
 	case RET_RBTOP_LIMITE:
 		strcpy(res, "用户无权限");

@@ -18,6 +18,14 @@ enum group_mode {
 	GROUP_MODE_OWN
 };
 
+enum limit_type {
+	LMT_TYPE_START = 1,
+	LMT_TYPE_GJOIN,
+	LMT_TYPE_GADM,
+	LMT_TYPE_GOWN,
+	LMT_TYPE_ROOT
+};
+
 #define MIN_USER_NUM	998
 
 #define LMT_CLI_REGIST	400

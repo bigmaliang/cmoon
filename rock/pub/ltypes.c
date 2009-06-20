@@ -28,16 +28,16 @@
 		psrc++;													\
 	} while (0)
 
-#define STORE_IN_HDF_INT(parent, dstname)					\
-	do {													\
-		snprintf(key, sizeof(key), "%s.dstname", prekey);	\
-		hdf_set_int_value(hdf, key, parent->dstname);		\
+#define STORE_IN_HDF_INT(parent, dstname)						\
+	do {														\
+		snprintf(key, sizeof(key), "%s.%s", prekey, #dstname);	\
+		hdf_set_int_value(hdf, key, parent->dstname);			\
 	} while (0)
 
-#define STORE_IN_HDF_STR(parent, dstname)					\
-	do {													\
-		snprintf(key, sizeof(key), "%s.dstname", prekey);	\
-		hdf_set_value(hdf, key, parent->dstname);			\
+#define STORE_IN_HDF_STR(parent, dstname)						\
+	do {														\
+		snprintf(key, sizeof(key), "%s.%s", prekey, #dstname);	\
+		hdf_set_value(hdf, key, parent->dstname);				\
 	} while (0)
 
 #define SAFE_FREE(str)							\
@@ -57,6 +57,7 @@ file_t* file_new()
 }
 int file_pack(file_t *file, char **res, size_t *outlen)
 {
+	*res = NULL;
 	if (file == NULL || res == NULL) {
 		return 1;
 	}
@@ -89,7 +90,6 @@ int file_pack(file_t *file, char **res, size_t *outlen)
 	STRUCT_PACK_STR(file, render);
 	STRUCT_PACK_STR(file, intime);
 	STRUCT_PACK_STR(file, uptime);
-	*(buf+pos+1) = '\0';
 
 	*res = buf;
 	*outlen = len;
@@ -138,6 +138,8 @@ void file_store_in_hdf(file_t *fl, char *prefix, HDF *hdf)
 	STORE_IN_HDF_INT(fl, uid);
 	STORE_IN_HDF_INT(fl, gid);
 	STORE_IN_HDF_INT(fl, mode);
+	STORE_IN_HDF_INT(fl, reqtype);
+	STORE_IN_HDF_INT(fl, lmttype);
 	STORE_IN_HDF_STR(fl, name);
 	STORE_IN_HDF_STR(fl, remark);
 	STORE_IN_HDF_STR(fl, uri);
@@ -182,6 +184,7 @@ member_t* member_new()
 }
 int member_pack(member_t *member, char **res, size_t *outlen)
 {
+	*res = NULL;
 	if (member == NULL || res == NULL) {
 		return 1;
 	}
@@ -215,7 +218,10 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	STRUCT_PACK_STR(member, uptime);
 	STRUCT_PACK_STR(member, gids);
 	STRUCT_PACK_STR(member, gmodes);
-	*(buf+pos+1) = '\0';
+	/*
+	 * oh, fuck, this line will cause SIGABORT (double free)
+	 */
+	//*(buf+pos+1) = '\0';
 
 	*res = buf;
 	*outlen = len;

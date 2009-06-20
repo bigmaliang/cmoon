@@ -28,6 +28,7 @@ __BEGIN_DECLS
 int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 						  file_t *file, int access);
 
+
 /*
  * low level file operater, by id/ pid+name/ uri
  */

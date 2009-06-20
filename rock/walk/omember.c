@@ -27,7 +27,7 @@ void member_remember_login(CGI *cgi, mdb_conn *conn, int uin)
 	char musn[LEN_CK];
 	char *musn_esc;
 
-	char *tmp = hdf_get_value(cgi->hdf, PRE_CGI".Cookie.musn", NULL);
+	char *tmp = hdf_get_value(cgi->hdf, PRE_COOKIE".musn", NULL);
 	if (tmp == NULL) {
 		sprintf(usertable, "user_%d", uin%DIV_USER_TB);
 		memset(musn, 0x0, sizeof(musn));
@@ -35,7 +35,7 @@ void member_remember_login(CGI *cgi, mdb_conn *conn, int uin)
 		cgi_url_escape(musn, &musn_esc);
 
 		MDATA_SET(conn, EVT_PLUGIN_USER, NULL, FLAGS_NONE,
-				  "UPDATE %s SET musn='$1' WHERE uin=%d",
+				  "UPDATE %s SET musn=$1 WHERE uin=%d",
 				  "s", usertable, uin, musn_esc);
 		hdf_set_value(cgi->hdf, PRE_OUTPUT".musn", musn_esc);
 		member_refresh_info(uin);
@@ -75,7 +75,7 @@ int member_release_uin(HDF *hdf, mdb_conn *conn)
 	 * mark released 
 	 */
 	ret = MDATA_SET(conn, EVT_PLUGIN_USER, &rows, FLAGS_SYNC,
-					"UPDATE %s SET status=%d, uname='$1', male=$2 WHERE uin=%d AND status=%d;",
+					"UPDATE %s SET status=%d, uname=$1, male=$2 WHERE uin=%d AND status=%d;",
 					"si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
 					hdf_get_value(hdf, PRE_QUERY".uname", ""),
 					hdf_get_int_value(hdf, PRE_QUERY".male", 1));
@@ -104,7 +104,7 @@ int member_alloc_uin(HDF *hdf, mdb_conn *conn)
 	 * mark released 
 	 */
 	ret = MDATA_SET(conn, EVT_PLUGIN_USER, &rows, FLAGS_SYNC,
-					"UPDATE %s SET status=%d, uname='$1', male=$2 WHERE uin=%d AND status=%d;",
+					"UPDATE %s SET status=%d, uname=$1, male=$2 WHERE uin=%d AND status=%d;",
 					"si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
 					hdf_get_value(hdf, PRE_QUERY".uname", ""),
 					hdf_get_int_value(hdf, PRE_QUERY".male", 1));
@@ -298,7 +298,7 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 			return RET_RBTOP_MMCERR;
 		}
 	}
-	free(buf);
+	if (buf != NULL) free(buf);
 	*member = mb;
 
 	return RET_RBTOP_OK;
@@ -306,10 +306,16 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 
 int member_has_login(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
-	char *ckusn = hdf_get_value(hdf, PRE_COOKIE".ckusn", NULL);
+	char *ckusn = hdf_get_value(hdf, PRE_COOKIE".musn", NULL);
 
-	if (ses->member == NULL)
+	if (ses->member == NULL) {
+		mtc_err("member null");
 		return RET_RBTOP_NOTLOGIN;
+	}
+	if (ckusn == NULL) {
+		mtc_err("cookie's musn is null");
+		return RET_RBTOP_NOTLOGIN;
+	}
 	
 	if (!strcmp(ckusn, ses->member->musn))
 		return RET_RBTOP_OK;

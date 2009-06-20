@@ -9,10 +9,10 @@ int CGI_REQ_METHOD(CGI *cgi)
 		return CGI_REQ_GET;
 	} else if (REQ_IS_PUT(op) || !strcmp(opt, "add")) {
 		return CGI_REQ_PUT;
-	} else if (REQ_IS_POST(op)) {
-		return CGI_REQ_POST;
 	} else if (REQ_IS_DEL(op) || !strcmp(opt, "del")) {
 		return CGI_REQ_DEL;
+	} else if (REQ_IS_POST(op)) {
+		return CGI_REQ_POST;
 	}
 	return CGI_REQ_UNKNOWN;
 }
@@ -180,11 +180,11 @@ int mutil_replace_dbint(char **sql, int val)
 	
 	p = strchr(ostr, '$');
 	if (p != NULL) {
-		if (q-ostr < slen) q = p+1;
+		if (p-ostr < slen) q = p+1;
 		else q = NULL;
 		while (p && q && !isdigit(*q)) {
 			p = strchr(p, '$');
-			if (q-ostr < slen) q = p+1;
+			if (p != NULL && p-ostr < slen) q = p+1;
 			else q = NULL;
 		}
 		while (q != NULL && *q != '\0' && isdigit(*q)) {
@@ -208,22 +208,31 @@ int mutil_replace_dbint(char **sql, int val)
 int mutil_replace_dbstr(char **sql, char *val)
 {
 	char *ostr = *sql;
+	size_t slen = strlen(ostr);
 	char *p, *q;
 	
 	p = strchr(ostr, '$');
 	if (p != NULL) {
-		q = p+1;
+		if(p-ostr < slen) q = p+1;
+		else q = NULL;
+		while (p && q && !isdigit(*q)) {
+			p = strchr(q, '$');
+			if (p != NULL && p-ostr < slen) q = p+1;
+			else q = NULL;
+		}
 		while (q != NULL && *q != '\0' && isdigit(*q)) {
 			q++;
 		}
 	}
 	if (!p || !q) return RET_RBTOP_INPUTE;
 	
-	*sql = calloc(1, strlen(ostr)+strlen(val)*2+2);
+	*sql = calloc(1, strlen(ostr)+strlen(val)*2+4);
 	if (*sql == NULL) return RET_RBTOP_MEMALLOCE;
 	char *nstr = *sql;
 	strncpy(nstr, ostr, p-ostr);
-	mutil_real_escape_string(nstr+(p-ostr), val, strlen(val));
+	strcat(nstr, "'");
+	mutil_real_escape_string(nstr+(p-ostr)+1, val, strlen(val));
+	strcat(nstr, "'");
 	strcat(nstr, q);
 
 	free(ostr);

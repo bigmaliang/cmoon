@@ -61,7 +61,7 @@ int  mutil_expand_strvf_dbfmt(char **str, const char *fmt, va_list ap);
 int  mutil_expand_strvf(char **outstr, const char *sql_fmt, const char *fmt, va_list ap);
 /*
  * expand
- * "UPDATE %s SET musn='$1', uin=$2 WHERE uin=%d", "s", &p, table, uin, musn, uinnew
+ * "UPDATE %s SET musn=$1, uin=$2 WHERE uin=%d", "s", &p, table, uin, musn, uinnew
  * to
  * "UPDATE tablexxx SET musn='test\'s member', uin=3333 WHERE uin=2323"
  *

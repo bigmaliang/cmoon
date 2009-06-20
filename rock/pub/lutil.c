@@ -13,7 +13,7 @@ static void lutil_donotcall()
 
 int CGI_REQ_TYPE(CGI *cgi)
 {
-	return hdf_get_int_value(cgi->hdf, PRE_RSV_FILE_MARK, 0) & 0x00000001;
+	return hdf_get_int_value(cgi->hdf, PRE_RSV_REQ_TYPE, 0);
 }
 
 void* lutil_get_data_handler(void *lib, CGI *cgi)

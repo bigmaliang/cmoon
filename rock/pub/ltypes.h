@@ -11,7 +11,8 @@ typedef struct _file {
 	int uid;
 	int gid;
 	int mode;					/* file mode */
-	int mark;					/* file type mark */
+	int reqtype;				/* file request type */
+	int lmttype;				/* some extra limit to access this file */
 	char *name;
 	char *remark;
 	char *uri;

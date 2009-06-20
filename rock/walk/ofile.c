@@ -3,18 +3,18 @@
 #include "ofile.h"
 #include "omember.h"
 
-#define FILE_QUERY_COL	" id, pid, uid, gid, mode, mark, name, remark, uri, " \
-	" dataer, render, substring(intime from '[^.]*') as intime, "		\
-	" substring(uptime from '[^.]*') as uptime "
+#define FILE_QUERY_COL	" id, pid, uid, gid, mode, reqtype, lmttype, name, remark, uri, " \
+	" dataer, render, substring(intime from '[^ ]*') as intime, "		\
+	" substring(uptime from '[^ ]*') as uptime "
 
 #define FILE_QUERY_RAW(conn, condition, sfmt, ...)						\
 	mdb_exec(conn, NULL, "SELECT "FILE_QUERY_COL" FROM fileinfo WHERE %s;", \
 			 sfmt, condition, ##__VA_ARGS__)
 
 #define FILE_GET_RAW(conn, fl)											\
-	mdb_get(conn, "iiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid), &(fl->gid), \
-			&(fl->mode), &(fl->mark), &(fl->name), &(fl->remark), &(fl->uri), \
-			&(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime))
+	mdb_get(conn, "iiiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid), &(fl->gid), \
+			&(fl->mode), &(fl->reqtype), &(fl->lmttype), &(fl->name), &(fl->remark), \
+			&(fl->uri),	&(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime))
 
 
 int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
@@ -81,7 +81,7 @@ int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
 		if (id <= 0) {
-			snprintf(tok, sizeof(tok), "pid=%d AND name='$1'", pid);
+			snprintf(tok, sizeof(tok), "pid=%d AND name=$1", pid);
 			FILE_QUERY_RAW(conn, tok, "s", url);
 		} else {
 			snprintf(tok, sizeof(tok), "id=%d", id);
@@ -130,7 +130,7 @@ int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn)
 	err = uListInit(files, 0, 0);
 	RETURN_V_NOK(err, RET_RBTOP_MEMALLOCE);
 
-	int pid = 0;
+	int pid = 1;
 	int i;
 	for (i = 0; i < listlen; i++) {
 		err = uListGet(urls, i, (void**)&url);
@@ -225,13 +225,14 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 	member_t *mb;
 	file_t *fl;
 
-	pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 0);
+	pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 1);
 	limit = hdf_get_int_value(hdf, PRE_QUERY".limit", 0);
-	
-	mmisc_set_count(hdf, conn, "fileinfo", "1=1");
+
+	sprintf(tok, "pid=%d", pid);
+	mmisc_set_count(hdf, conn, "fileinfo", tok);
 	mmisc_get_offset(hdf, &count, &offset);
 
-	if (ses->member == NULL) {
+	if (member_has_login(hdf, conn, ses) != RET_RBTOP_OK) {
 		return RET_RBTOP_NOTLOGIN;
 	}
 
@@ -364,7 +365,7 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 	file_t *fl;
 	char *name = hdf_get_value(hdf, PRE_QUERY".name", NULL);
 	char *remark = hdf_get_value(hdf, PRE_QUERY".remark", NULL);
-	int pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 0);
+	int pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 1);
 	int mode = hdf_get_int_value(hdf, PRE_QUERY".mode", 0);
 	int uid = hdf_get_int_value(hdf, PRE_COOKIE".uin", 0);
 	int gid = hdf_get_int_value(hdf, PRE_QUERY".gid", 0);
@@ -385,6 +386,7 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 	}
 
 	char keycol[LEN_SM];
+	/* TODO sql hole */
 	snprintf(keycol, sizeof(keycol), "pid=%d AND name='%s'", pid, name);
 	if (mmisc_get_count(conn, "fileinfo", keycol) > 0) {
 		mtc_err("%d %s already exist", pid, name);
@@ -393,7 +395,7 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 	}
 	ret = MDATA_SET(conn, EVT_PLUGIN_SYS, NULL, FLAGS_NONE, "INSERT INTO fileinfo "
 					" (pid, uid, gid, mode, name, remark) VALUES "
-					" (%d, %d, %d, %d, '$1', '$2')", "ss",
+					" (%d, %d, %d, %d, $1, $2)", "ss",
 					pid, uid, gid, mode, name, remark);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("add file err %s", mdb_get_errmsg(conn));
@@ -453,12 +455,48 @@ int file_delete(HDF *hdf, mdb_conn *conn, session_t *ses)
 
 int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
-	if (ses->member == NULL) {
+	char tok[256];
+	
+	if (member_has_login(hdf, conn, ses) != RET_RBTOP_OK) {
 		return RET_RBTOP_NOTLOGIN;
+	}
+
+	memset(tok, 0x0, sizeof(tok));
+	
+	if (member_is_root(ses->member)) {
+		sprintf(tok, "lmttype >= %d", LMT_TYPE_START);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_OWN)) {
+		sprintf(tok, "lmttype >= %d AND lmttype < %d",
+				LMT_TYPE_START, LMT_TYPE_ROOT);
+		FILE_QUERY_RAW(conn, tok, NULL);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_ADM)) {
+		sprintf(tok, "lmttype >= %d AND lmttype < %d",
+				LMT_TYPE_START, LMT_TYPE_GOWN);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_JOIN)) {
+		sprintf(tok, "lmttype >= %d AND lmttype < %d",
+				LMT_TYPE_START, LMT_TYPE_GADM);
 	} else {
+		sprintf(tok, "lmttype >= %d AND lmttype < %d",
+				LMT_TYPE_START, LMT_TYPE_GJOIN);
+	}
+
+	FILE_QUERY_RAW(conn, tok, NULL);
+	mdb_set_rows(hdf, conn, FILE_QUERY_COL, "actions");
+
+	HDF *node = hdf_get_obj(hdf, PRE_OUTPUT".actions.0");
+	char href[_POSIX_PATH_MAX];
+	while (node != NULL) {
+		memset(href, 0x0, sizeof(href));
+		hdf_set_copy(node, "name", "remark");
+		hdf_set_copy(node, "href", "uri");
+		if (hdf_get_int_value(node, "reqtype", 0)
+			== CGI_REQ_AJAX) {
+			strncpy(href, hdf_get_value(node, "uri", "/index"),
+					sizeof(href));
+			strcat(href, ".html");
+			hdf_set_value(node, "href", href);
+		}
+		node = hdf_obj_next(node);
 	}
 
 	return RET_RBTOP_OK;

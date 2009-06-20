@@ -2,16 +2,17 @@
 
 CREATE TABLE fileinfo (
 	   id SERIAL,
-	   pid int NOT NULL DEFAULT 0,
+	   pid int NOT NULL DEFAULT 1,
 	   uid int NOT NULL DEFAULT 0,
 	   gid int NOT NULL DEFAULT 0,
 	   mode int NOT NULL DEFAULT 0,	   -- ofile.h
-	   mark int NOT NULL DEFAULT 0,		  -- ofile.h
+	   reqtype int NOT NULL DEFAULT 0,	  -- request type
+	   lmttype int NOT NULL DEFAULT 0,	  -- action type (need some extra limit to access this file)
 	   name varchar(256) NOT NULL DEFAULT '', --file name present in url
 	   remark varchar(256) NOT NULL DEFAULT '', --description remark
 	   uri varchar(1024) NOT NULL DEFAULT '/',	--consider as file's absolute path
-	   dataname varchar(256) NOT NULL DEFAULT '',
-	   rendname varchar(256) NOT NULL DEFAULT '',
+	   dataer varchar(256) NOT NULL DEFAULT '',
+	   render varchar(256) NOT NULL DEFAULT '',
 	   intime timestamp DEFAULT now(),
 	   uptime timestamp DEFAULT now(),
 	   PRIMARY KEY (id)

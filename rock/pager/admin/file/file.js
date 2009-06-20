@@ -10,7 +10,7 @@ $(document).ready(function()
 	var heads = {
 		id: "ID",
 		pid: "父ID",
-		name: "url名",
+		uri: "uri",
 		remark: "名称",
 		_type: "类型",
 		uname: "创建者",

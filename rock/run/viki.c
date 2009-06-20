@@ -55,6 +55,14 @@ int main(int argc, char **argv, char **envp)
 		JUMP_NOK_CGI(err, response);
 		err = cgi_parse(cgi);
 		JUMP_NOK_CGI(err, response);
+
+#ifdef NCGI_MODE
+		hdf_set_value(cgi->hdf, PRE_REQ_URI_RW, "/service/action");
+		hdf_set_value(cgi->hdf, PRE_COOKIE".uin", "1001");
+		hdf_set_value(cgi->hdf, PRE_COOKIE".uname", "bigml");
+		hdf_set_value(cgi->hdf, PRE_COOKIE".musn", "wwLOnz");
+#endif
+		
 		ret = session_init(cgi->hdf, dbh, &session);
 		if (ret != RET_RBTOP_OK) {
 			mtc_err("init session failure");
@@ -110,6 +118,9 @@ int main(int argc, char **argv, char **envp)
 				cgi_redirect(cgi, "/503.html");
 				break;
 			}
+#ifdef DEBUG_HDF
+			hdf_write_file(cgi->hdf, TC_ROOT"hdf.viki");
+#endif
 			cgi_destroy(&cgi);
 			session_destroy(&session);
 		}
