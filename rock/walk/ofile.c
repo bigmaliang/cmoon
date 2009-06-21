@@ -22,7 +22,7 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 {
 	int ret;
 	
-	if ((PMS_OTHER(file->mode) & access) == 1) return 0;
+	if ((PMS_OTHER(file->mode) & access) == 1) return RET_RBTOP_OK;
 
 	ret = member_has_login(hdf, conn, ses);
 	if (ret != RET_RBTOP_OK) {
@@ -226,10 +226,10 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 	file_t *fl;
 
 	pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 1);
-	limit = hdf_get_int_value(hdf, PRE_QUERY".limit", 0);
+	limit = hdf_get_int_value(hdf, PRE_QUERY".limit", LMT_GET);
 
-	sprintf(tok, "pid=%d", pid);
-	mmisc_set_count(hdf, conn, "fileinfo", tok);
+	//sprintf(tok, "pid=%d", pid);
+	//mmisc_set_count(hdf, conn, "fileinfo", tok);
 	mmisc_get_offset(hdf, &count, &offset);
 
 	if (member_has_login(hdf, conn, ses) != RET_RBTOP_OK) {
@@ -256,6 +256,7 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 		}
 		file_reset(fl);
 	}
+	hdf_set_int_value(hdf, PRE_OUTPUT".ttnum", cnt);
 	
 	HDF *res = hdf_get_obj(hdf, PRE_OUTPUT".files.0");
 	while (res != NULL) {
@@ -457,10 +458,6 @@ int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
 	char tok[256];
 	
-	if (member_has_login(hdf, conn, ses) != RET_RBTOP_OK) {
-		return RET_RBTOP_NOTLOGIN;
-	}
-
 	memset(tok, 0x0, sizeof(tok));
 	
 	if (member_is_root(ses->member)) {

@@ -136,7 +136,7 @@ int member_confirm_uin(HDF *hdf, mdb_conn *conn)
 	 */
 	sprintf(usertable, "user_%d", uin%DIV_USER_TB);
 	mdb_begin(conn);
-	mdb_exec(conn, NULL, "UPDATE %s SET status=%d, usn='$1', email='$2' WHERE uin=%d AND status=%d;",
+	mdb_exec(conn, NULL, "UPDATE %s SET status=%d, usn=$1, email=$2 WHERE uin=%d AND status=%d;",
 			 "ss", TABLE_RLS_USER, USER_CFMED, uin, USER_RLSED,
 			 hdf_get_value(hdf, PRE_QUERY".usn", ""),
 			 hdf_get_value(hdf, PRE_QUERY".email", ""));
