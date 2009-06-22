@@ -70,7 +70,7 @@ int main(int argc, char **argv, char **envp)
 	nmdb_t *db = NULL;
 	fdb_t *fdb = NULL;
 	size_t r;
-	int i;
+	int i, op = CGI_REQ_GET;
 	int ret = 0;
 	time_t tm;
 
@@ -160,7 +160,7 @@ int main(int argc, char **argv, char **envp)
 		/*
 		 * 开始干活
 		 */
-		int op = CGI_REQ_METHOD(cgi);
+		op = CGI_REQ_METHOD(cgi);
 		if (!strcmp(hdf_get_value(cgi->hdf, PRE_QUERY".query", "unknown"), "post")) op = CGI_REQ_POST;
 		else if (!strcmp(hdf_get_value(cgi->hdf, PRE_QUERY".query", "unknown"), "put")) op = CGI_REQ_PUT;
 		switch (op) {
@@ -308,9 +308,15 @@ int main(int argc, char **argv, char **envp)
 		if (cgi != NULL) {
 			char *cb = hdf_get_value(cgi->hdf, PRE_QUERY".jsoncallback", NULL);
 			if (cb != NULL) {
-				mjson_execute_hdf(cgi->hdf, cb);
+				if (op == CGI_REQ_GET)
+					mjson_execute_hdf(cgi->hdf, cb, CDS_CACHE_SECOND);
+				else
+					mjson_execute_hdf(cgi->hdf, cb, 0);
 			} else {
-				mjson_output_hdf(cgi->hdf);
+				if (op == CGI_REQ_GET)
+					mjson_output_hdf(cgi->hdf, CDS_CACHE_SECOND);
+				else
+					mjson_output_hdf(cgi->hdf, 0);
 			}
 			cgi_destroy(&cgi);
 		}

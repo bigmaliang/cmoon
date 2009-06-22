@@ -34,7 +34,7 @@ int main()
 	ret = ids_get_data(cgi->hdf, dbt);
 	fdb_opfinish_json(ret, cgi->hdf, NULL);
 
-	mjson_output_hdf(cgi->hdf);
+	mjson_output_hdf(cgi->hdf, 0);
 
 	cgi_destroy(&cgi);
 	dbt_free(dbt);
