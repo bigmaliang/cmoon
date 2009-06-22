@@ -15,7 +15,7 @@ enum user_status
 enum group_mode {
 	GROUP_MODE_JOIN = 0,
 	GROUP_MODE_ADM,
-	GROUP_MODE_OWN
+	GROUP_MODE_OWN = 255
 };
 
 enum limit_type {
@@ -23,7 +23,7 @@ enum limit_type {
 	LMT_TYPE_GJOIN,
 	LMT_TYPE_GADM,
 	LMT_TYPE_GOWN,
-	LMT_TYPE_ROOT
+	LMT_TYPE_ROOT = 255
 };
 
 #define MIN_USER_NUM	998

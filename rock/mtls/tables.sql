@@ -27,3 +27,17 @@ CREATE TABLE groupinfo (
 	   mode int NOT NULL DEFAULT 0, -- lnum.h
 	   PRIMARY KEY (uid, gid)
 );
+
+CREATE RULE filerule AS ON INSERT TO fileinfo
+	DO ( UPDATE fileinfo SET uri= (SELECT uri FROM fileinfo WHERE id=NEW.pid) || '/' || NEW.name WHERE id=NEW.id;
+	INSERT INTO groupinfo (uid, gid, mode) VALUES (NEW.uid, NEW.id, 255); );
+
+
+
+CREATE FUNCTION update_file() RETURNS TRIGGER AS $$
+BEGIN
+	SET NEW.uri= (SELECT uri FROM fileinfo WHERE id=NEW.pid) || '/' || NEW.name;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tg_upuri_file AFTER INSERT ON fileinfo FOR EACH ROW EXECUTE PROCEDURE update_file();
