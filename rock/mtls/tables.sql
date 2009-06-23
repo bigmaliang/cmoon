@@ -27,7 +27,8 @@ CREATE TABLE groupinfo (
 
 CREATE INDEX file_index ON fileinfo (pid, uid, gid, mode, name);
 CREATE TRIGGER tg_uptime_file BEFORE UPDATE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE update_time();
-CREATE FUNCTION after_file_insert() RETURNS TRIGGER AS $$
+
+CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $$
 BEGIN
 	NEW.uri := (SELECT uri FROM fileinfo WHERE id=NEW.pid;) || '/' || NEW.name;
 	NEW.gid := NEW.id;
@@ -45,7 +46,21 @@ BEGIN
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-CREATE TRIGGER tg_suf_fileinfo_insert AFTER INSERT ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_insert();
+-- after insert return NEW make no sense, so update by hand
+CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $file_insert$
+	BEGIN
+		UPDATE fileinfo SET
+		gid = NEW.id,
+		uri = (SELECT uri FROM fileinfo WHERE id=NEW.pid) || '/' || NEW.name,
+		dataer = SUBSTRING((SELECT dataer FROM fileinfo WHERE id=NEW.pid) || '_' || NEW.name FROM '^[^_]*_[^_]*')
+		WHERE id=NEW.id;
+
+		INSERT INTO groupinfo (uid, gid, mode) VALUES (NEW.uid, NEW.id, 255);
+		RETURN NULL;
+	END;
+$file_insert$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE TRIGGER tg_suf_fileinfo_insert AFTER INSERT ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_insert();
 
 
 
