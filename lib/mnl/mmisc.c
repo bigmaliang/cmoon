@@ -109,3 +109,36 @@ void mmisc_get_offset(HDF *hdf, int *count, int *offset)
 	*count = i;
 	*offset = (j-1)*i;
 }
+
+/*
+ * IE's bug: second must >= 43300
+ */
+void mmisc_cache_headers(time_t second)
+{
+	/*
+	char my_time[256];
+	time_t now = time(NULL);
+	time_t exp_date = now + second;
+	time_t mod_date = now - second;
+	*/
+		
+	//cgiwrap_writef("Cache-Control: public, max-age=%lu\r\n", second);
+	cgiwrap_writef("Cache-Control: max-age=%lu\r\n", second);
+
+	/*
+	strftime (my_time, 48, "%A, %d-%b-%Y %H:%M:%S GMT",
+			  gmtime (&exp_date));
+	cgiwrap_writef ("Expires: %s\r\n", my_time);
+	*/
+		
+	//strftime (my_time, 48, "%A, %d-%b-%Y %H:%M:%S GMT",
+	//		  gmtime (&mod_date));
+	//cgiwrap_writef ("Last-Modified: %s\r\n", my_time);
+	//cgiwrap_writef ("Last-Modified: Tue, 02 Jun 2009 05:21:07 GMT\r\n");
+
+	/*
+	strftime (my_time, 48, "%A, %d-%b-%Y %H:%M:%S GMT",
+			  gmtime (&now));
+	cgiwrap_writef ("Date: %s\r\n", my_time);
+	*/
+}

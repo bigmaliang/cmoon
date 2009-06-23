@@ -1,7 +1,7 @@
 #ifndef __FCONFIG_H__
 #define __FCONFIG_H__
 
-#define CDS_CACHE_SECOND	18
+#define CDS_CACHE_SECOND	43300
 
 #define POST_INCREMENT	"increment"
 #define POST_TIMESTAMP	"timestamp"

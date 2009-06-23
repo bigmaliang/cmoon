@@ -97,12 +97,7 @@ next_obj:
 void mjson_output_hdf(HDF *hdf, time_t second)
 {
 	if (second > 0) {
-		char my_time[256];
-		time_t exp_date = time(NULL) + second;
-		strftime (my_time, 48, "%A, %d-%b-%Y %H:%M:%S GMT",
-				  gmtime (&exp_date));
-		cgiwrap_writef ("Expires: %s\r\n", my_time);
-		cgiwrap_writef("Cache-Control: max-age=%lu\r\n", second);
+		mmisc_cache_headers(second);
 	}
 	
 	NEOERR *err = cgiwrap_writef("Content-Type: text/html; charset=UTF-8\r\n\r\n");
@@ -124,12 +119,7 @@ void mjson_output_hdf(HDF *hdf, time_t second)
 void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
 {
 	if (second > 0) {
-		char my_time[256];
-		time_t exp_date = time(NULL) + second;
-		strftime (my_time, 48, "%A, %d-%b-%Y %H:%M:%S GMT",
-				  gmtime (&exp_date));
-		cgiwrap_writef ("Expires: %s\r\n", my_time);
-		cgiwrap_writef("Cache-Control: max-age=%lu\r\n", second);
+		mmisc_cache_headers(second);
 	}
 	
 	NEOERR *err = cgiwrap_writef("Content-Type: text/html; charset=UTF-8\r\n\r\n");

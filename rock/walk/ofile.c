@@ -368,7 +368,8 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 	char *remark = hdf_get_value(hdf, PRE_QUERY".remark", NULL);
 	int pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 1);
 	int mode = hdf_get_int_value(hdf, PRE_QUERY".mode", 0);
-	int uid = hdf_get_int_value(hdf, PRE_COOKIE".uin", 0);
+	//int uid = hdf_get_int_value(hdf, PRE_COOKIE".uin", 0);
+	int uid = ses->member->uin;
 	int gid = hdf_get_int_value(hdf, PRE_QUERY".gid", 0);
 
 	int ret;
