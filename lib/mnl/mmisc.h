@@ -18,5 +18,10 @@ int mmisc_get_count(mdb_conn *conn, char *table, char *col);
 void mmisc_set_count(HDF *hdf, mdb_conn *conn, char *table, char *col);
 void mmisc_get_offset(HDF *hdf, int *count, int *offset);
 
+/*
+ * IE's bug: second must > 7200 
+ */
+void mmisc_cache_headers(time_t second);
+
 __END_DECLS
 #endif	/* __MMISC_H__ */
