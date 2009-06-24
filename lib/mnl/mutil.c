@@ -33,6 +33,36 @@ bool mutil_client_attack(HDF *hdf, char *action, uint64_t limit, time_t exp)
 	return false;
 }
 
+bool mutil_client_attack_cookie(HDF *hdf, char *action, uint64_t limit, time_t exp)
+{
+	char scnt[LEN_MMC_KEY], sdur[LEN_MMC_KEY], val[64], tm[LEN_TM_GMT];
+	snprintf(scnt, sizeof(scnt), "%s_%s_cnt", PRE_MMC_CLIENT, action);
+	snprintf(sdur, sizeof(sdur), "%s_%s_dur", PRE_MMC_CLIENT, action);
+	
+	char tok[LEN_MMC_KEY];
+	snprintf(tok, sizeof(tok), PRE_COOKIE".%s", scnt);
+	int cnt = hdf_get_int_value(hdf, tok, 0);
+	if (cnt > limit) {
+		return true;
+	}
+
+	/*
+	 * no attack, store increment 
+	 */
+	if (cnt < 0) cnt = 0;
+	sprintf(val, "%d", cnt+1);
+	snprintf(tok, sizeof(tok), PRE_COOKIE".%s", sdur);
+	char *dur = hdf_get_value(hdf, tok, NULL);
+	if (dur == NULL) {
+		mmisc_getdatetime_gmt(tm, sizeof(tm), "%A, %d-%b-%Y %T GMT", exp);
+		dur = tm;
+		cgi_cookie_set(NULL, sdur, dur, NULL, NULL, dur, 1, 0);
+	}
+
+	cgi_cookie_set(NULL, scnt, val, NULL, NULL, dur, 1, 0);
+	return false;
+}
+
 void mutil_redirect(const char *msg, const char *target, const char *url, bool header)
 {
 	char outstr[LEN_MD];

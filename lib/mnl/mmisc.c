@@ -15,6 +15,16 @@ bool mmisc_getdatetime(char *res, int len, const char *fmt, time_t second)
 	return true;
 }
 
+bool mmisc_getdatetime_gmt(char *res, int len, const char *fmt, time_t second)
+{
+	memset(res, 0x0, len);
+	time_t tm = time(NULL) + second;
+	struct tm *stm = gmtime(&tm);
+	if (strftime(res, len, fmt, stm) == 0)
+		return false;
+	return true;
+}
+
 int mmisc_compare_int(const void *a, const void *b)
 {
 	int *i = (int*)a;
@@ -111,7 +121,7 @@ void mmisc_get_offset(HDF *hdf, int *count, int *offset)
 }
 
 /*
- * IE's bug: second must >= 43300
+ * IE: make sure timezone & time set correct on web server
  */
 void mmisc_cache_headers(time_t second)
 {
@@ -137,6 +147,7 @@ void mmisc_cache_headers(time_t second)
 	//cgiwrap_writef ("Last-Modified: Tue, 02 Jun 2009 05:21:07 GMT\r\n");
 
 	/*
+	// Date: should return by web server
 	strftime (my_time, 48, "%A, %d-%b-%Y %H:%M:%S GMT",
 			  gmtime (&now));
 	cgiwrap_writef ("Date: %s\r\n", my_time);
