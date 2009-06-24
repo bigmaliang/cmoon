@@ -8,7 +8,7 @@ __BEGIN_DECLS
 
 void ldb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 				  char *target, char *url, bool header);
-void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn);
+void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn, time_t second);
 
 int  ldb_init(HASH **dbh);
 void ldb_destroy(HASH *dbh);

@@ -9,6 +9,7 @@ __BEGIN_DECLS
 
 void exiting(void);
 bool mmisc_getdatetime(char *res, int len, const char *fmt, time_t second);
+bool mmisc_getdatetime_gmt(char *res, int len, const char *fmt, time_t second);
 int  mmisc_compare_int(const void *a, const void *b);
 int  mmisc_compare_inta(const void *a, const void *b);
 
@@ -19,7 +20,7 @@ void mmisc_set_count(HDF *hdf, mdb_conn *conn, char *table, char *col);
 void mmisc_get_offset(HDF *hdf, int *count, int *offset);
 
 /*
- * IE's bug: second must > 7200 
+ * IE: make sure timezone & time set correct on web server
  */
 void mmisc_cache_headers(time_t second);
 

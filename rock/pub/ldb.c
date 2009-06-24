@@ -55,7 +55,7 @@ void ldb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 	exit(ret);
 }
 
-void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
+void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn, time_t second)
 {
 	char msg[LEN_SM];
 	
@@ -72,7 +72,7 @@ void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
 	hdf_remove_tree(hdf, PRE_SUCCESS);
 	get_errmsg(ret, msg);
 	hdf_set_value(hdf, PRE_ERRMSG, msg);
-	mjson_output_hdf(hdf);
+	mjson_output_hdf(hdf, second);
 	
 	if (conn != NULL) {
 		mdb_destroy(conn);

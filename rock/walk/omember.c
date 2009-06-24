@@ -44,7 +44,7 @@ void member_remember_login(CGI *cgi, mdb_conn *conn, int uin)
 		 * just a while
 		 */
 		char tm[LEN_TM_GMT];
-		mmisc_getdatetime(tm, sizeof(tm), "%A, %d-%b-%Y %T GMT", 60*60*3);
+		mmisc_getdatetime_gmt(tm, sizeof(tm), "%A, %d-%b-%Y %T GMT", 60*60*3);
 		cgi_cookie_set(cgi, "musn", musn_esc, NULL, SITE_DOMAIN, tm, 1, 0);
 		free(musn_esc);
 	}

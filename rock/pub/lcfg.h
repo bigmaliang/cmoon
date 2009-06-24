@@ -34,15 +34,16 @@ __BEGIN_DECLS
 #define PRE_RSV_DATAER		PRE_RESERVE".Dataer"
 #define PRE_RSV_RENDER		PRE_RESERVE".Render"
 
-#define PRE_MMC_FILE	"File"
-#define PRE_MMC_MEMBER	"Member"
+#define PRE_MMC_FILE		"File"
+#define PRE_MMC_MEMBER		"Member"
 
-#define PRE_CFG_OUTPUT	"Output"
-#define PRE_CFG_LAYOUT	"Layout"
-#define PRE_CFG_DATASET	"Dataset"
+#define PRE_CFG_OUTPUT		"Output"
+#define PRE_CFG_LAYOUT		"Layout"
+#define PRE_CFG_DATASET		"Dataset"
+#define PRE_CFG_FILECACHE	"FileCache"
 
-#define EVT_PLUGIN_SYS	"db_sys"
-#define EVT_PLUGIN_USER	"db_user"
+#define EVT_PLUGIN_SYS		"db_sys"
+#define EVT_PLUGIN_USER		"db_user"
 
 __END_DECLS
 #endif	/* __LCFG_H__ */

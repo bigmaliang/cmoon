@@ -113,6 +113,18 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri, bool 
 		goto notpass;
 	}
 
+	if (!split) {
+		ses->file = file;
+		HDF *node = hdf_get_obj(g_cfg, PRE_CFG_FILECACHE);
+		if (node != NULL) node = hdf_obj_child(node);
+		while (node != NULL) {
+			if (reg_search(hdf_get_value(node, "uri", "NULL"), file->uri)) {
+				ses->tm_cache_browser = hdf_get_int_value(node, "tm_cache", 0);
+				break;
+			}
+			node = hdf_obj_next(node);
+		}
+	}
 	if (urls != NULL)
 		uListDestroy(&urls, ULIST_FREE);
 	if (files != NULL)

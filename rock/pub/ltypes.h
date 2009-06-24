@@ -50,6 +50,8 @@ void member_del(void *member);
 
 typedef struct _session {
 	member_t *member;
+	file_t *file;
+	time_t tm_cache_browser;
 } session_t;
 
 int session_init(HDF *hdf, HASH *dbh, session_t **ses);

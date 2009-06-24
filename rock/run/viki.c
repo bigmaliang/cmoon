@@ -106,12 +106,12 @@ int main(int argc, char **argv, char **envp)
 				}
 				break;
 			case CGI_REQ_AJAX:
-				ldb_opfinish_json(ret, cgi->hdf, NULL);
+				ldb_opfinish_json(ret, cgi->hdf, NULL, 0);
 				jsoncb = hdf_get_value(cgi->hdf, PRE_REQ_AJAX_FN, NULL);
 				if (jsoncb != NULL) {
-					mjson_execute_hdf(cgi->hdf, jsoncb);
+					mjson_execute_hdf(cgi->hdf, jsoncb, session->tm_cache_browser);
 				} else {
-					mjson_output_hdf(cgi->hdf);
+					mjson_output_hdf(cgi->hdf, session->tm_cache_browser);
 				}
 				break;
 			default:

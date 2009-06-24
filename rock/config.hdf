@@ -34,3 +34,10 @@ Mevent {
 		port = 26010
 	}
 }
+
+FileCache {
+	0 {
+		uri = ^/service/action$
+		tm_cache = 1800
+	}
+}

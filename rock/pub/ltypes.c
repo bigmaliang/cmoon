@@ -316,6 +316,8 @@ void session_destroy(session_t **ses)
 
 	if (lses->member != NULL)
 		member_del(lses->member);
+	if (lses->file != NULL)
+		file_del(lses->file);
 
 	free(lses);
 	lses = NULL;
