@@ -27,7 +27,8 @@ int ids_dbt_init(ids_db_t **dbt)
 						  hdf_get_value(node, "user", "test"),
 						  hdf_get_value(node, "pass", "test"),
 						  hdf_get_value(node, "name", "test"),
-						  (unsigned int)hdf_get_int_value(node, "port", 0)) != RET_DBOP_OK) {
+						  (unsigned int)hdf_get_int_value(node, "port", 0))
+			!= RET_DBOP_OK) {
 			mtc_err("connect %d error", hdf_obj_value(node));
 		} else {
 			ldb->dbs[ldb->num] = sdb;

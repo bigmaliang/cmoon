@@ -101,6 +101,8 @@ int main(int argc, char **argv, char **envp)
 		/*
 		 * 获取参数
 		 */
+		db = NULL;			/* nmdb_free 该db会造成fastcgi core 掉。。。 */
+		keylist = domainlist = NULL;
 		err = cgi_init(&cgi, NULL);
 		if (err != STATUS_OK) {
 			mtc_err("init cgi error");
@@ -114,6 +116,12 @@ int main(int argc, char **argv, char **envp)
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "初始化错误");
 			goto opfinish;
 		}
+		if (mutil_client_attack_cookie(cgi->hdf, "cds", 10, 60)) {
+			mtc_err("client attack");
+			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "需要休息");
+			goto opfinish;
+		}
+		
 		char *domain = hdf_get_value(cgi->hdf, PRE_QUERY".op", NULL);
 		k = hdf_get_value(cgi->hdf, PRE_QUERY".key", NULL);
 		if (k == NULL) {
@@ -126,7 +134,6 @@ int main(int argc, char **argv, char **envp)
 
 
 		/* 解析 key */
-		keylist = domainlist = NULL;
 		ret = cds_parse_key(k, &keylist);
 		if (ret != RET_DBOP_OK || uListLength(keylist) < 1) {
 			mtc_err("key %s illegal", k);
@@ -153,7 +160,6 @@ int main(int argc, char **argv, char **envp)
 		if (ret != RET_DBOP_OK) {
 			mtc_err("add nmdb server for %s failure", p);
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "op 参数无效");
-			db = NULL;			/* nmdb_free 该db会造成fastcgi core 掉。。。 */
 			goto opfinish;
 		}
 
@@ -318,6 +324,9 @@ int main(int argc, char **argv, char **envp)
 				else
 					mjson_output_hdf(cgi->hdf, 0);
 			}
+#ifdef DEBUG_HDF
+			hdf_write_file(cgi->hdf, HF_LOG_PATH"hdf.cds");
+#endif
 			cgi_destroy(&cgi);
 		}
  	}
