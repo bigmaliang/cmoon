@@ -22,11 +22,15 @@ CREATE TABLE groupinfo (
 	   uid int NOT NULL DEFAULT 0,
 	   gid int NOT NULL DEFAULT 0,
 	   mode int NOT NULL DEFAULT 0, -- lnum.h
+	   intime timestamp DEFAULT now(),
+	   uptime timestamp DEFAULT now(),
 	   PRIMARY KEY (uid, gid)
 );
 
 CREATE INDEX file_index ON fileinfo (pid, uid, gid, mode, name);
-CREATE TRIGGER tg_uptime_file BEFORE UPDATE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE update_time();
+--done in after_file_insert()
+--CREATE TRIGGER tg_uptime_file BEFORE UPDATE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE update_time();
+CREATE TRIGGER tg_uptime_group BEFORE UPDATE ON groupinfo FOR EACH ROW EXECUTE PROCEDURE update_time();
 
 CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $$
 BEGIN
@@ -52,15 +56,24 @@ CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $file_insert$
 		UPDATE fileinfo SET
 		gid = NEW.id,
 		uri = (SELECT uri FROM fileinfo WHERE id=NEW.pid) || '/' || NEW.name,
-		dataer = SUBSTRING((SELECT dataer FROM fileinfo WHERE id=NEW.pid) || '_' || NEW.name FROM '^[^_]*_[^_]*')
+		uptime = NOW()
 		WHERE id=NEW.id;
+
+		IF NEW.pid = 1 THEN
+			UPDATE fileinfo SET
+			dataer = NEW.name WHERE id=NEW.id;
+		ELSE
+			UPDATE fileinfo SET
+			dataer = SUBSTRING((SELECT dataer FROM fileinfo WHERE id=NEW.pid) || '_' || NEW.name FROM '^[^_]*_[^_]*')
+			WHERE id=NEW.id;
+		END IF;
 
 		INSERT INTO groupinfo (uid, gid, mode) VALUES (NEW.uid, NEW.id, 255);
 		RETURN NULL;
 	END;
 $file_insert$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE TRIGGER tg_suf_fileinfo_insert AFTER INSERT ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_insert();
+CREATE TRIGGER tg_suf_fileinfo_insert AFTER INSERT ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_insert();
 
 
 
