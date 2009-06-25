@@ -47,7 +47,7 @@ bool mutil_client_attack_cookie(HDF *hdf, char *action, uint64_t limit, time_t e
 	}
 
 	/*
-	 * no attack, store increment 
+	 * not attack, store increment 
 	 */
 	if (cnt < 0) cnt = 0;
 	sprintf(val, "%d", cnt+1);
