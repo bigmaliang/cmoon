@@ -455,6 +455,27 @@ int file_delete(HDF *hdf, mdb_conn *conn, session_t *ses)
 	return ret;
 }
 
+static void file_uri_2_anchor(HDF *hdf, char *key)
+{
+	char tok[LEN_ST], href[LEN_URL];
+	snprintf(tok, sizeof(tok), "%s.%s.0", PRE_OUTPUT, key);
+	
+	HDF *node = hdf_get_obj(hdf, key);
+	while (node != NULL) {
+		memset(href, 0x0, sizeof(href));
+		hdf_set_copy(node, "name", "remark");
+		hdf_set_copy(node, "href", "uri");
+		if (hdf_get_int_value(node, "reqtype", 0)
+			== CGI_REQ_AJAX) {
+			strncpy(href, hdf_get_value(node, "uri", "/index"),
+					sizeof(href));
+			strcat(href, ".html");
+			hdf_set_value(node, "href", href);
+		}
+		node = hdf_obj_next(node);
+	}
+}
+
 int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
 	char tok[256];
@@ -480,27 +501,30 @@ int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 
 	FILE_QUERY_RAW(conn, tok, NULL);
 	mdb_set_rows(hdf, conn, FILE_QUERY_COL, "actions");
-
-	HDF *node = hdf_get_obj(hdf, PRE_OUTPUT".actions.0");
-	char href[_POSIX_PATH_MAX];
-	while (node != NULL) {
-		memset(href, 0x0, sizeof(href));
-		hdf_set_copy(node, "name", "remark");
-		hdf_set_copy(node, "href", "uri");
-		if (hdf_get_int_value(node, "reqtype", 0)
-			== CGI_REQ_AJAX) {
-			strncpy(href, hdf_get_value(node, "uri", "/index"),
-					sizeof(href));
-			strcat(href, ".html");
-			hdf_set_value(node, "href", href);
-		}
-		node = hdf_obj_next(node);
-	}
+	file_uri_2_anchor(hdf, "actions");
 
 	return RET_RBTOP_OK;
 }
 
 int file_get_nav(HDF *hdf, mdb_conn *conn)
 {
+	char *uri = hdf_get_value(hdf, PRE_QUERY".uri", NULL);
+	if (uri == NULL) return RET_RBTOP_INPUTE;
+
+	file_t *fl;
+	int ret;
+	
+	ret = file_get_info_uri(conn, uri, &fl);
+	if (ret != RET_RBTOP_OK) {
+		mtc_err("get info for %s failure", uri);
+		return RET_RBTOP_SELECTE;
+	}
+	
+	FILE_QUERY_RAW(conn, "pid=%d AND mode%2 = 1 AND lmttype = 0", NULL, fl->id);
+	mdb_set_rows(hdf, conn, FILE_QUERY_COL, "navs");
+	file_uri_2_anchor(hdf, "navs");
+
+	file_del(fl);
+
 	return RET_RBTOP_OK;
 }

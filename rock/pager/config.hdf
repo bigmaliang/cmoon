@@ -7,11 +7,28 @@ index {
 			crumbs {
 				0 {
 					name = 市中心
-					href = /
+					href = /index.html
 				}
 			}
 		}
 	}
+}
+
+csc {
+	Output = csc.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = 菜市场
+			crumbs {
+				0 {
+					name = 菜市场
+					href = /csc.html
+				}
+			}
+		}
+	}
+	data_geter = static_csc_data_get
 }
 
 member_login {

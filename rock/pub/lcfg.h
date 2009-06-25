@@ -40,6 +40,7 @@ __BEGIN_DECLS
 #define PRE_CFG_OUTPUT		"Output"
 #define PRE_CFG_LAYOUT		"Layout"
 #define PRE_CFG_DATASET		"Dataset"
+#define PRE_CFG_DATAER		"data_geter"
 #define PRE_CFG_FILECACHE	"FileCache"
 
 #define EVT_PLUGIN_SYS		"db_sys"

@@ -16,18 +16,20 @@ __BEGIN_DECLS
 #define LEN_IP		16		// IP length 202.202.202.202
 #define LEN_TB		64		/* table name length */
 #define LEN_CK		32		/* user login cookie length */
-#define LEN_MMC_KEY	256		/* memcached key length */
 #define LEN_LT		43
 #define LEN_ST		65
 #define LEN_SM		257
 #define LEN_MD		1025
 #define LEN_ML		10001		/* 2000*5+1 */
 #define LEN_LN		65537
-#define LEN_FN		1024		/* LEN_FILENAME */
+
+#define LEN_FN		_POSIX_PATH_MAX		/* LEN_FILENAME */
 #define LEN_LINE	(1024*100)
 #define LEN_SQL		1024
+#define LEN_MMC_KEY	256					/* memcached key length */
 #define LEN_NMDB_KEY 256
 #define LEN_NMDB_VAL (1024*64)
+#define LEN_URL		_POSIX_PATH_MAX
 
 #define RET_USER_LOGIN	0
 #define RET_USER_NLOGIN	1

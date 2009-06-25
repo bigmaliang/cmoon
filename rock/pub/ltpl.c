@@ -14,17 +14,30 @@ int ltpl_parse_dir(char *dir, HASH *outhash)
 	struct dirent **eps = NULL;
 	HDF *node = NULL, *child = NULL, *tmphdf = NULL;
 	CSPARSE *cs = NULL;
-	char *buf = NULL, *tpl = NULL;
+	char *buf = NULL, *tpl = NULL, *dataer = NULL, *tp = NULL;
 	char fname[_POSIX_PATH_MAX];
 	NEOERR *err;
 	STRING str;
-	int n;
+	int n, ret;
 
 	if (dir == NULL) {
 		mtc_err("can't read null directory");
 		return RET_RBTOP_INPUTE;
 	}
 
+	HASH *dbh;
+	int (*data_handler)(HDF *hdf, HASH *dbh);
+	void *lib = dlopen(NULL, RTLD_NOW|RTLD_GLOBAL);
+	if (lib == NULL) {
+		mtc_err("possible? %s", dlerror());
+		return RET_RBTOP_ERROR;
+	}
+	ret = ldb_init(&dbh);
+	if (ret != RET_RBTOP_OK) {
+		mtc_err("init db error");
+		return RET_RBTOP_INITE;
+	}
+	
 	n = scandir(dir, &eps, tpl_config, alphasort);
 	for (int i = 0; i < n; i++) {
 		mtc_dbg("parse file %s", eps[i]->d_name);
@@ -58,6 +71,23 @@ int ltpl_parse_dir(char *dir, HASH *outhash)
 			snprintf(fname, sizeof(fname), PRE_CONFIG"."PRE_CFG_DATASET"_%s", tpl);
 			tmphdf = hdf_get_obj(g_cfg, fname);
 			if (tmphdf != NULL) hdf_copy(child, PRE_CFG_DATASET, tmphdf);
+
+			/*
+			 * get_data
+			 */
+			dataer = hdf_get_value(child, PRE_CFG_DATAER, NULL);
+			if (dataer != NULL) {
+				data_handler = dlsym(lib, dataer);
+				if( (tp = dlerror()) != NULL) {
+					mtc_err("%s", tp);
+					//continue;
+				} else {
+					ret = (*data_handler)(hdf_get_obj(child, PRE_CFG_DATASET), dbh);
+					if (ret != RET_RBTOP_OK) {
+						mtc_err("%s return %d", dataer, ret);
+					}
+				}
+			}
 
 			/*
 			 * do rend 
@@ -96,6 +126,10 @@ int ltpl_parse_dir(char *dir, HASH *outhash)
 	next:
 		if (node != NULL) hdf_destroy(&node);
 	}
+
+	ldb_destroy(dbh);
+	dlclose(lib);
+	
 	if (n > 0) {
 		free(eps);
 		return RET_RBTOP_OK;
