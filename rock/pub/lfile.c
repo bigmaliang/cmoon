@@ -43,7 +43,7 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri, bool 
 		}
 		uListGet(files, uListLength(files)-1, (void**)&file);
 	} else {
-		ret = file_get_info_uri(conn, uri, &file);
+		ret = file_get_info_by_uri(conn, uri, &file);
 		if (ret != RET_RBTOP_OK) {
 			mtc_warn("get file for %s failure", uri);
 			if (ret == RET_RBTOP_NEXIST)

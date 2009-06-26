@@ -116,7 +116,7 @@ int main(int argc, char **argv, char **envp)
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "初始化错误");
 			goto opfinish;
 		}
-		if (mutil_client_attack_cookie(cgi->hdf, "cds", 10, 60)) {
+		if (mutil_client_attack_cookie(cgi->hdf, "cds", 30, 60)) {
 			mtc_err("client attack");
 			hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "需要休息");
 			goto opfinish;

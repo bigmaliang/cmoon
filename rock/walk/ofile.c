@@ -54,7 +54,7 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 	return RET_RBTOP_LIMITE;
 }
 
-int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file)
+int file_get_info_by_id(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 {
 	char mmckey[LEN_MMC_KEY], tok[LEN_MD];
 	file_t *fl;
@@ -109,47 +109,8 @@ int file_get_info(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 	*file = fl;
 	return RET_RBTOP_OK;
 }
-/*
- * get fileset's info
- * inp: urls, url list you want to get
- * out: files, file list with file_t elements. don't forget free
- */
-int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn)
-{
-	int listlen;
-	char *url;
-	file_t *file;
-	NEOERR *err;
-	int ret;
 
-	listlen = uListLength(urls);
-	if (listlen <= 0 || url == NULL || files == NULL) {
-		return RET_RBTOP_INPUTE;
-	}
-
-	err = uListInit(files, 0, 0);
-	RETURN_V_NOK(err, RET_RBTOP_MEMALLOCE);
-
-	int pid = 1;
-	int i;
-	for (i = 0; i < listlen; i++) {
-		err = uListGet(urls, i, (void**)&url);
-		RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
-		ret = file_get_info(conn, 0, url, pid, &file);
-		if (ret != RET_RBTOP_OK) {
-			mtc_warn("can't get file info for %s", url);
-			*noksn = i;
-			return RET_RBTOP_GETLISTE;
-		} else {
-			pid = file->id;
-			uListAppend(*files, file);
-		}
-	}
-	*noksn = -1;
-	return RET_RBTOP_OK;
-}
-
-int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
+int file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file)
 {
 	file_t *fl;
 	size_t datalen;
@@ -194,6 +155,46 @@ int file_get_info_uri(mdb_conn *conn, char *uri, file_t **file)
 	return RET_RBTOP_OK;
 }
 
+/*
+ * get fileset's info
+ * inp: urls, url list you want to get
+ * out: files, file list with file_t elements. don't forget free
+ */
+int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn)
+{
+	int listlen;
+	char *url;
+	file_t *file;
+	NEOERR *err;
+	int ret;
+
+	listlen = uListLength(urls);
+	if (listlen <= 0 || url == NULL || files == NULL) {
+		return RET_RBTOP_INPUTE;
+	}
+
+	err = uListInit(files, 0, 0);
+	RETURN_V_NOK(err, RET_RBTOP_MEMALLOCE);
+
+	int pid = 1;
+	int i;
+	for (i = 0; i < listlen; i++) {
+		err = uListGet(urls, i, (void**)&url);
+		RETURN_V_NOK(err, RET_RBTOP_GETLISTE);
+		ret = file_get_info_by_id(conn, 0, url, pid, &file);
+		if (ret != RET_RBTOP_OK) {
+			mtc_warn("can't get file info for %s", url);
+			*noksn = i;
+			return RET_RBTOP_GETLISTE;
+		} else {
+			pid = file->id;
+			uListAppend(*files, file);
+		}
+	}
+	*noksn = -1;
+	return RET_RBTOP_OK;
+}
+
 void file_refresh_me(file_t *fl)
 {
 	mmc_deletef(0, PRE_MMC_FILE".%d.%s", fl->pid, fl->name);
@@ -205,7 +206,7 @@ void file_refresh_info(mdb_conn *conn, int id, char *url, int pid)
 	file_t *fl;
 	int ret;
 
-	ret = file_get_info(conn, id, url, pid, &fl);
+	ret = file_get_info_by_id(conn, id, url, pid, &fl);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("get info failure %d %s %d", id, url, pid);
 		return;
@@ -318,7 +319,7 @@ int file_modify(HDF *hdf, mdb_conn *conn, session_t *ses)
 				id, area, unit, enable);
 		return RET_RBTOP_INPUTE;
 	}
-	ret = file_get_info(conn, id, NULL, -1, &fl);
+	ret = file_get_info_by_id(conn, id, NULL, -1, &fl);
 	if (ret != RET_RBTOP_OK) return ret;
 	ret = file_check_user_power(hdf, conn, ses, fl, LMT_MOD);
 	if (ret != RET_RBTOP_OK) {
@@ -379,7 +380,7 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return RET_RBTOP_INPUTE;
 	}
 
-	ret = file_get_info(conn, pid, NULL, -1, &fl);
+	ret = file_get_info_by_id(conn, pid, NULL, -1, &fl);
 	if (ret != RET_RBTOP_OK) return ret;
 	ret = file_check_user_power(hdf, conn, ses, fl, LMT_APPEND);
 	if (ret != RET_RBTOP_OK) {
@@ -405,7 +406,7 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 	}
 
 	file_del(fl);
-	ret = file_get_info(conn, 0, name, pid, &fl);
+	ret = file_get_info_by_id(conn, 0, name, pid, &fl);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("get file %d %s failure", pid, name);
 		goto done;
@@ -433,7 +434,7 @@ int file_delete(HDF *hdf, mdb_conn *conn, session_t *ses)
 		mtc_err("input error %d", id);
 		return RET_RBTOP_INPUTE;
 	}
-	ret = file_get_info(conn, id, NULL, -1, &fl);
+	ret = file_get_info_by_id(conn, id, NULL, -1, &fl);
 	if (ret != RET_RBTOP_OK) return ret;
 	ret = file_check_user_power(hdf, conn, ses, fl, LMT_DEL);
 	if (ret != RET_RBTOP_OK) {
@@ -458,7 +459,7 @@ int file_delete(HDF *hdf, mdb_conn *conn, session_t *ses)
 static void file_uri_2_anchor(HDF *hdf, char *key)
 {
 	char tok[LEN_ST], href[LEN_URL];
-	snprintf(tok, sizeof(tok), "%s.%s.0", PRE_OUTPUT, key);
+	snprintf(tok, sizeof(tok), "%s.0", key);
 	
 	HDF *node = hdf_get_obj(hdf, key);
 	while (node != NULL) {
@@ -500,13 +501,44 @@ int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 	}
 
 	FILE_QUERY_RAW(conn, tok, NULL);
-	mdb_set_rows(hdf, conn, FILE_QUERY_COL, "actions");
-	file_uri_2_anchor(hdf, "actions");
+	mdb_set_rows(hdf, conn, FILE_QUERY_COL, PRE_OUTPUT".actions");
+	file_uri_2_anchor(hdf, PRE_OUTPUT".actions");
 
 	return RET_RBTOP_OK;
 }
 
-int file_get_nav(HDF *hdf, mdb_conn *conn)
+int file_get_nav_by_id(mdb_conn *conn, int id, HDF *hdf)
+{
+	char tok[LEN_ST];
+
+	if (id <= 0) return RET_RBTOP_INPUTE;
+	if (id == 1) {
+		strcpy(tok, PRE_OUTPUT".navs");
+	} else {
+		strcpy(tok, "nav");
+	}
+	
+	FILE_QUERY_RAW(conn, "pid=%d AND lmttype=0", NULL, id);
+	mdb_set_rows(hdf, conn, FILE_QUERY_COL, tok);
+	file_uri_2_anchor(hdf, tok);
+
+	strcat(tok, "0");
+	HDF *node = hdf_get_obj(hdf, tok);
+	int mode, cid;
+	while (node != NULL) {
+		cid = hdf_get_int_value(node, "id", -1);
+		mode = hdf_get_int_value(node, "mode", 0);
+		if ((mode & FILE_MODE_DIR) == FILE_MODE_DIR) {
+			file_get_nav_by_id(conn, cid, node);
+		}
+
+		node = hdf_obj_next(node);
+	}
+
+	return RET_RBTOP_OK;
+}
+
+int file_get_nav_by_uri(HDF *hdf, mdb_conn *conn)
 {
 	char *uri = hdf_get_value(hdf, PRE_QUERY".uri", NULL);
 	if (uri == NULL) return RET_RBTOP_INPUTE;
@@ -514,17 +546,16 @@ int file_get_nav(HDF *hdf, mdb_conn *conn)
 	file_t *fl;
 	int ret;
 	
-	ret = file_get_info_uri(conn, uri, &fl);
+	ret = file_get_info_by_uri(conn, uri, &fl);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("get info for %s failure", uri);
 		return RET_RBTOP_SELECTE;
 	}
-	
-	FILE_QUERY_RAW(conn, "pid=%d AND mode%2 = 1 AND lmttype = 0", NULL, fl->id);
-	mdb_set_rows(hdf, conn, FILE_QUERY_COL, "navs");
-	file_uri_2_anchor(hdf, "navs");
 
+	file_get_nav_by_id(conn, fl->id, hdf);
+	
 	file_del(fl);
 
 	return RET_RBTOP_OK;
 }
+
