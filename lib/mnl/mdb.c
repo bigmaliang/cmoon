@@ -212,7 +212,7 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	char hdfkey[LEN_ST];
 	/* append to last child */
 	int rowsn = 0;
-	snprintf(hdfkey, sizeof(hdfkey)-1, "%s.%s.0", PRE_OUTPUT, prefix);
+	snprintf(hdfkey, sizeof(hdfkey)-1, "%s.0", prefix);
 	HDF *res = hdf_get_obj(hdf, hdfkey);
 	while (res != NULL) {
 		rowsn++;
@@ -228,7 +228,8 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	while (mdb_get(conn, fmt, &col[0], &col[1], &col[2], &col[3],
 				   &col[4], &col[5], &col[6], &col[7], &col[8],
 				   &col[9], &col[10], &col[11], &col[12], &col[13],
-				   &col[14], &col[15], &col[16], &col[17], &col[18]) == MDB_ERR_NONE ){
+				   &col[14], &col[15], &col[16], &col[17], &col[18])
+		   == MDB_ERR_NONE ){
 		for (i = 0; i < qrcnt; i++) {
 			snprintf(hdfkey, sizeof(hdfkey)-1, "%s.%s.%d.%s",
 					 PRE_OUTPUT, prefix, rowsn, qrarray[i]);
