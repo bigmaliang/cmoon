@@ -19,8 +19,9 @@ a:hover {color: white !important;}
 .valid {border: 2px solid green !important;}
 .invalid {border: 2px solid #800 !important;}
 .clearer {clear: both;}
-.sep {height: 3ex;}
-.sepl {height: 2ex;}
+.sep {clear: both; height: 3ex;}
+.sepl {clear: both; height: 2ex;}
+input.middle {width: 45px;}
 input.short {width: 25px;}
 input.bordless {border: 0 none;}
 

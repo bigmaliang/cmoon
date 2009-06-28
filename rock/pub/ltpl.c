@@ -9,12 +9,43 @@ static int tpl_config(const struct dirent *ent)
 		return 0;
 }
 
+void ltpl_prepare_rend(HDF *hdf, char *tpl)
+{
+	char key[LEN_ST], *href;
+	HDF *tmphdf; 
+	if (hdf == NULL) return;
+	
+	/*
+	 * merge dataset from g_cfg 
+	 */
+	snprintf(key, sizeof(key), PRE_CONFIG"."PRE_CFG_DATASET"_%s", tpl);
+	tmphdf = hdf_get_obj(g_cfg, key);
+	if (tmphdf != NULL) hdf_copy(hdf, NULL, tmphdf);
+	
+	/*
+	 * set classes
+	 */
+	href = hdf_get_value(hdf, "Layout.crumbs.0.href", NULL);
+	if (href != NULL) {
+		tmphdf = hdf_get_obj(hdf, "Layout.tabs.0");
+		while (tmphdf != NULL) {
+			if (!strcmp(hdf_get_value(tmphdf, "href", "NULL"), href)) {
+				hdf_set_value(tmphdf, "class", "selected");
+				break;
+			}
+			tmphdf = hdf_obj_next(tmphdf);
+		}
+	}
+
+
+}
+
 int ltpl_parse_dir(char *dir, HASH *outhash)
 {
 	struct dirent **eps = NULL;
-	HDF *node = NULL, *child = NULL, *tmphdf = NULL;
+	HDF *node = NULL, *child = NULL;
 	CSPARSE *cs = NULL;
-	char *buf = NULL, *tpl = NULL, *dataer = NULL, *tp = NULL;
+	char *tp = NULL, *tpl = NULL, *dataer = NULL;
 	char fname[_POSIX_PATH_MAX];
 	NEOERR *err;
 	STRING str;
@@ -65,60 +96,52 @@ int ltpl_parse_dir(char *dir, HASH *outhash)
 			err = cs_parse_file(cs, fname);
 			JUMP_NOK(err, wnext);
 
-			/*
-			 * merge dataset from g_cfg 
-			 */
-			snprintf(fname, sizeof(fname), PRE_CONFIG"."PRE_CFG_DATASET"_%s", tpl);
-			tmphdf = hdf_get_obj(g_cfg, fname);
-			if (tmphdf != NULL) hdf_copy(child, PRE_CFG_DATASET, tmphdf);
-
-			/*
-			 * get_data
-			 */
-			dataer = hdf_get_value(child, PRE_CFG_DATAER, NULL);
-			if (dataer != NULL) {
-				data_handler = dlsym(lib, dataer);
-				if( (tp = dlerror()) != NULL) {
-					mtc_err("%s", tp);
-					//continue;
-				} else {
-					ret = (*data_handler)(hdf_get_obj(child, PRE_CFG_DATASET), dbh);
-					if (ret != RET_RBTOP_OK) {
-						mtc_err("%s return %d", dataer, ret);
-					}
-				}
-			}
-
-			/*
-			 * do rend 
-			 */
-			err = cs_render(cs, &str, mcs_strcb);
-			JUMP_NOK(err, wnext);
-
 			if (outhash != NULL) {
-				buf = calloc(1, str.len);
-				if (buf == NULL) {
-					mtc_err("oops, memery calloc error");
-					goto wnext;
-				}
-				memcpy(buf, str.buf, str.len);
 				/*
 				 * strdup the key, baby, because we'll free the hdf later
 				 */
-				hash_insert(outhash, (void*)strdup(hdf_obj_name(child)), (void*)buf);
+				hash_insert(outhash, (void*)strdup(hdf_obj_name(child)), (void*)cs);
 			}
 			
 			if (hdf_get_value(child, PRE_CFG_OUTPUT, NULL) != NULL) {
+				ltpl_prepare_rend(hdf_get_obj(child, PRE_CFG_DATASET), tpl);
+				
+				/*
+				 * get_data
+				 */
+				dataer = hdf_get_value(child, PRE_CFG_DATAER, NULL);
+				if (dataer != NULL) {
+					data_handler = dlsym(lib, dataer);
+					if( (tp = dlerror()) != NULL) {
+						mtc_err("%s", tp);
+						//continue;
+					} else {
+						ret = (*data_handler)(hdf_get_obj(child, PRE_CFG_DATASET), dbh);
+						if (ret != RET_RBTOP_OK) {
+							mtc_err("%s return %d", dataer, ret);
+						}
+					}
+				}
+				
+				err = cs_render(cs, &str, mcs_strcb);
+				JUMP_NOK(err, wnext);
+				
 				snprintf(fname, sizeof(fname), PATH_DOC"%s",
 						 hdf_get_value(child, PRE_CFG_OUTPUT, "null.html"));
 				mutil_makesure_dir(fname);
 				if(!mcs_str2file(str, fname)) {
 					mtc_err("write result to %s failure", fname);
 				}
+#ifdef DEBUG_HDF
+				snprintf(fname, sizeof(fname), "%s/hdf.%s",
+						 TC_ROOT, hdf_obj_name(child));
+				hdf_write_file(child, fname);
+#endif
 			}
 
 		wnext:
-			if (cs != NULL) cs_destroy(&cs);
+			if (cs != NULL && outhash == NULL)
+				cs_destroy(&cs);
 			string_clear(&str);
 			child = hdf_obj_next(child);
 		}
@@ -173,13 +196,13 @@ void ltpl_destroy(HASH *tplh)
 	hash_destroy(&tplh);
 }
 
-int ltpl_render(CGI *cgi, HASH *tplh)
+int ltpl_render(CGI *cgi, HASH *tplh, session_t *ses)
 {
 	CSPARSE *cs;
 	STRING str;
 	NEOERR *err;
 
-	char *file, *buf;
+	char *file;
 	
 	/*
 	 * how to distinguish /music/zhangwei and /member/zhangwei ?
@@ -192,21 +215,18 @@ int ltpl_render(CGI *cgi, HASH *tplh)
 		return RET_RBTOP_NEXIST;
 	}
 
-	buf = (char*)hash_lookup(tplh, file);
-	if (buf == NULL) {
+	cs = (CSPARSE*)hash_lookup(tplh, file);
+	if (cs == NULL) {
 		mtc_err("file not found");
 		return RET_RBTOP_NEXIST;
 	}
 
-	err = cs_init(&cs, cgi->hdf);
-	RETURN_V_NOK(err, RET_RBTOP_INITE);
-
-	err = cgi_register_strfuncs(cs);
-	/* TODO memory leak */
-	RETURN_V_NOK(err, RET_RBTOP_ERROR);
-
-	err = cs_parse_string(cs, buf, strlen(buf));
-	RETURN_V_NOK(err, RET_RBTOP_ERROR);
+	ltpl_prepare_rend(cgi->hdf, "layout.html");
+	if (ses->tm_cache_browser > 0) {
+		hdf_set_valuef(cgi->hdf, "cgiout.other.cache=Cache-Control: max-age=%lu",
+					   ses->tm_cache_browser);
+	}
+	cs->hdf = cgi->hdf;
 
 	string_init(&str);
 	err = cs_render(cs, &str, mcs_strcb);
@@ -214,8 +234,8 @@ int ltpl_render(CGI *cgi, HASH *tplh)
 
 	err = cgi_output(cgi, &str);
 	RETURN_V_NOK(err, RET_RBTOP_ERROR);
-	
-	cs_destroy(&cs);
+
+	cs->hdf = NULL;
 	string_clear(&str);
 
 	return RET_RBTOP_OK;

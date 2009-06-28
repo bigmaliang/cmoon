@@ -69,11 +69,12 @@ ul.uc-menu {
 }
 #colone {
     float: left;
-    width: 190px;
+    /*width: 190px;*/
+	width: 10em;
     margin: 0 15px;
 }
 #colone .title {
-	margin: 15px 0;
+	margin: 15px 0 0 0;
     padding: 2px 0;
 	
     background: black url(/images/upl2.jpg) center center repeat-x;

@@ -334,9 +334,9 @@ bool member_in_group(member_t *mb, int gid)
 	
 	char *p = strstr(mb->gids, tok);
 	while (p != NULL) {
-		if (*(p-1) == ';')
+		if (p == mb->gids || *(p-1) == ';')
 			return true;
-		p = strstr(p, tok);
+		p = strstr(p+1, tok);
 	}
 	
 	return false;
@@ -360,9 +360,9 @@ bool member_has_gmode(member_t *mb, int gmode)
 
 	char *p = strstr(mb->gmodes, tok);
 	while (p != NULL) {
-		if (*(p-1) == ';')
+		if (p == mb->gmodes || *(p-1) == ';')
 			return true;
-		p = strstr(p, tok);
+		p = strstr(p+1, tok);
 	}
 	
 	return false;

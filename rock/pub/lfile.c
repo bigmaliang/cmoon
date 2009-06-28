@@ -2,56 +2,25 @@
 #include "lheads.h"
 #include "ofile.h"
 
-int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri, bool split)
+int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri)
 {
-	ULIST *urls, *files;
 	file_t *file;
-	int listlen;
-	char *url;
 
 	char errmsg[LEN_MD];
-	NEOERR *err;
-	int i, ret = RET_RBTOP_OK, reqmethod;
-
-	urls = files = NULL;
+	int ret = RET_RBTOP_OK, reqmethod;
 
 	if (uri == NULL) {
 		mtc_err("input uri null");
 		return RET_RBTOP_INPUTE;
 	}
-	if (split) {
-		err = string_array_split(&urls, uri, URI_SPLITER, MAX_URI_ITEM);
-		RETURN_V_NOK(err, RET_RBTOP_INPUTE);
-		listlen = uListLength(urls);
-		if (listlen < 1) {
-			mtc_warn("%s not a valid request", uri);
-			hdf_set_value(cgi->hdf, PRE_ERRMSG, "非法请求");
-			goto notpass;
-		}
-
-		/* get splited url's file info */
-		ret = file_get_infos(conn, urls, &files, &i);
-		if (ret != RET_RBTOP_OK) {
-			uListGet(urls, i, (void**)&url);
-			mtc_warn("get file for %s failure", url);
-			if (ret == RET_RBTOP_NEXIST)
-				snprintf(errmsg, sizeof(errmsg)-1, " %s 不存在", url);
-			else
-				snprintf(errmsg, sizeof(errmsg)-1, "对不起, %s 权限验证失败", url);
-			hdf_set_value(cgi->hdf, PRE_ERRMSG, errmsg);
-			goto notpass;
-		}
-		uListGet(files, uListLength(files)-1, (void**)&file);
-	} else {
-		ret = file_get_info_by_uri(conn, uri, &file);
-		if (ret != RET_RBTOP_OK) {
-			mtc_warn("get file for %s failure", uri);
-			if (ret == RET_RBTOP_NEXIST)
-				hdf_set_valuef(cgi->hdf, PRE_ERRMSG"= %s 不存在", uri);
-			else
-				hdf_set_valuef(cgi->hdf, PRE_ERRMSG"=对不起, %s 权限验证失败", uri);
-			goto notpass;
-		}
+	ret = file_get_info_by_uri(conn, uri, &file);
+	if (ret != RET_RBTOP_OK) {
+		mtc_warn("get file for %s failure", uri);
+		if (ret == RET_RBTOP_NEXIST)
+			hdf_set_valuef(cgi->hdf, PRE_ERRMSG"= %s 不存在", uri);
+		else
+			hdf_set_valuef(cgi->hdf, PRE_ERRMSG"=对不起, %s 权限验证失败", uri);
+		goto notpass;
 	}
 
 	/*
@@ -113,30 +82,20 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri, bool 
 		goto notpass;
 	}
 
-	if (!split) {
-		ses->file = file;
-		HDF *node = hdf_get_obj(g_cfg, PRE_CFG_FILECACHE);
-		if (node != NULL) node = hdf_obj_child(node);
-		while (node != NULL) {
-			if (reg_search(hdf_get_value(node, "uri", "NULL"), file->uri)) {
-				ses->tm_cache_browser = hdf_get_int_value(node, "tm_cache", 0);
-				break;
-			}
-			node = hdf_obj_next(node);
+	ses->file = file;
+	HDF *node = hdf_get_obj(g_cfg, PRE_CFG_FILECACHE);
+	if (node != NULL) node = hdf_obj_child(node);
+	while (node != NULL) {
+		if (reg_search(hdf_get_value(node, "uri", "NULL"), file->uri)) {
+			ses->tm_cache_browser = hdf_get_int_value(node, "tm_cache", 0);
+			break;
 		}
+		node = hdf_obj_next(node);
 	}
-	if (urls != NULL)
-		uListDestroy(&urls, ULIST_FREE);
-	if (files != NULL)
-		uListDestroyFunc(&files, file_del);
 	return RET_RBTOP_OK;
 	
 notpass:
 	hdf_remove_tree(cgi->hdf, PRE_SUCCESS);
-	if (urls != NULL)
-		uListDestroy(&urls, ULIST_FREE);
-	if (files != NULL)
-		uListDestroyFunc(&files, file_del);
 	return ret;
 }
 
@@ -149,7 +108,7 @@ int lfile_access(CGI *cgi, mdb_conn *conn, session_t *ses)
 	}
 
 	/* ignore /run in uri */
-	return lfile_check_power(cgi, conn, ses, uri+strlen(CGI_RUN_DIR)+1, true);
+	return lfile_check_power(cgi, conn, ses, uri+strlen(CGI_RUN_DIR)+1);
 }
 
 int lfile_access_rewrited(CGI *cgi, HASH *dbh, session_t *ses)
@@ -161,6 +120,6 @@ int lfile_access_rewrited(CGI *cgi, HASH *dbh, session_t *ses)
 	}
 
 	char *uri = hdf_get_value(cgi->hdf, PRE_REQ_URI_RW, NULL);
-	return lfile_check_power(cgi, conn, ses, uri, false);
+	return lfile_check_power(cgi, conn, ses, uri);
 }
 

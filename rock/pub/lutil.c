@@ -1,10 +1,13 @@
 #include "mheads.h"
 #include "lheads.h"
 
+#include "ofile.h"
+
 #include "member.h"
 #include "admin.h"
 #include "service.h"
 #include "static.h"
+#include "csc.h"
 /*
  * TODO how make local dlsym ok? so tired 
  */
@@ -14,10 +17,12 @@ static void lutil_donotcall()
 	admin_account_data_add(NULL, NULL, NULL);
 	service_action_data_get(NULL, NULL, NULL);
 	static_csc_data_get(NULL, NULL);
+	csc_data_get(NULL, NULL, NULL);
 }
 
 int CGI_REQ_TYPE(CGI *cgi)
 {
+	if (cgi == NULL) return CGI_REQ_UNSUPPORT;
 	return hdf_get_int_value(cgi->hdf, PRE_RSV_REQ_TYPE, 0);
 }
 
@@ -63,5 +68,41 @@ void* lutil_get_data_handler(void *lib, CGI *cgi)
 	} else
 		mtc_info("%s found for data handler", hname);
 	return res;
+}
+
+int lutil_fill_layout_by_file(mdb_conn *conn, file_t *file, HDF *hdf)
+{
+	ULIST *files = NULL;
+	file_t *fl;
+	int ret, errsn;
+
+	PRE_DBOP(hdf, conn);
+	if (file == NULL)
+		return RET_RBTOP_INPUTE;
+
+	hdf_set_value(hdf, PRE_LAYOUT".title", file->remark);
+
+	ret = file_get_infos_by_uri(conn, file->uri, &files, &errsn);
+	if (ret != RET_RBTOP_OK) {
+		mtc_err("get files's infos by uri %s failure %d",
+				file->uri, errsn);
+		return ret;
+	}
+
+	MLIST_ITERATE(files, fl) {
+		hdf_set_valuef(hdf, "%s.crumbs.%d.name=%s",
+					   PRE_LAYOUT, t_rsv_i, fl->remark);
+		if (fl->reqtype == CGI_REQ_AJAX) {
+			hdf_set_valuef(hdf, "%s.crumbs.%d.href=%s.html",
+						   PRE_LAYOUT, t_rsv_i, fl->uri);
+		} else {
+			hdf_set_valuef(hdf, "%s.crumbs.%d.href=%s",
+						   PRE_LAYOUT, t_rsv_i, fl->uri);
+		}
+	}
+
+	if (files != NULL)
+		uListDestroy(&files, ULIST_FREE);
+	return RET_RBTOP_OK;
 }
 

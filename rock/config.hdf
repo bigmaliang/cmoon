@@ -5,13 +5,11 @@ Config {
 			tabs {
 				0 {
 					name = 市中心
-					href = /
-					class = selected
+					href = /index.html
 				}
 				1 {
 					name = 菜市场
-					href = /xxx
-					class = 
+					href = /csc.html
 				}
 			}
 		}
@@ -22,6 +20,7 @@ Db {
 	Dsn {
 		Sys = pgsql:dbname=mn_sys host=localhost user=mner password=loveu
 		Music = pgsql:dbname=mn_user host=localhost user=mner password=loveu
+		Csc = pgsql:dbname=csc host=localhost user=mner password=loveu
 	}
 	Table {
 		release_user = rls_user_4
@@ -39,5 +38,9 @@ FileCache {
 	0 {
 		uri = ^/service/action$
 		tm_cache = 1800
+	}
+	1 {
+		uri = ^/csc/.*
+		tm_cache = 60
 	}
 }

@@ -105,7 +105,7 @@ $(document).ready(function()
 			type: "GET",
 			url: "/admin/file",
 			cache: false,
-			data: "pg="+page,
+			data: "pg="+page+"&pid="+$("#querypid").val(),
 			dataType: "json",
 			success: function(data) {
 				if (type(data.files) != "Array") {
@@ -138,6 +138,10 @@ $(document).ready(function()
 	}
 
 	showFile(1);
+	$("#requery").click(function()
+	{
+		showFile(1);
+	});
 
 
 	function sucFileadd(data) {

@@ -34,7 +34,8 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
  */
 int  file_get_info_by_id(mdb_conn *conn, int id, char *url, int pid, file_t **file);
 int  file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file);
-int  file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn);
+int  file_get_infos_by_list(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn);
+int  file_get_infos_by_uri(mdb_conn *conn, char *uri, ULIST **files, int *noksn);
 void file_refresh_me(file_t *fl);
 void file_refresh_info(mdb_conn *conn, int id, char *url, int pid);
 
@@ -55,8 +56,8 @@ int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses);
 /*
  * get second-class nav menu
  */
-int file_get_nav_by_id(mdb_conn *conn, int id, HDF *hdf);
-int file_get_nav_by_uri(HDF *hdf, mdb_conn *conn);
+int file_get_nav_by_id(mdb_conn *conn, int id, char *prefix, HDF *hdf);
+int file_get_nav_by_uri(mdb_conn *conn, char *uri, char *prefix, HDF *hdf);
 
 
 __END_DECLS

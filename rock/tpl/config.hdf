@@ -22,3 +22,13 @@ table {
 	}
 }
 
+u2 {
+	Layout = layout.html
+	Dataset {
+		Include {
+			css = u2/u2.css.html
+			js = u2/u2.js.html
+			content = u2/u2.html
+		}
+	}
+}

@@ -3,6 +3,8 @@ include $(BASEDIR)Make.env
 LOCALBASE = ../
 include $(LOCALBASE)Make.env
 
+CFLAGS += -rdynamic
+
 INCS	= $(INC_PUB) $(INC_ROBOT) $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_NMDB) $(INC_QDBM) $(INC_FCGI) $(INC_SYSTEM)
 LIBS	= $(LIB_PUB) $(LIB_ROBOT) $(LIB_MNL) $(LIB_MEMC) $(LIB_CS) $(LIB_JSON) $(LIB_NMDB) $(LIB_QDBM) $(LIB_FCGI) $(LIB_SYSTEM) $(LIB_PUB)
 
@@ -13,7 +15,7 @@ DEPEND = .depend
 all: preload $(BINARY)
 
 $(DEPEND): $(SOURCES)
-	@$(CC) $(CFLAGS) -MM $^ $(INCS) > $(DEPEND)
+	@$(CC) $(CFLAGS) -MM $^ $(INCS) > $@
 
 preload:
 	@$(MAKE) -C $(MNLBASE)

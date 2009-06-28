@@ -96,7 +96,7 @@ int main(int argc, char **argv, char **envp)
 				if (ret != RET_RBTOP_OK && ret == RET_RBTOP_NEXIST) {
 					cgi_redirect(cgi, "/404.html");
 				} else {
-					ret = ltpl_render(cgi, tplh);
+					ret = ltpl_render(cgi, tplh, session);
 					if (ret != RET_RBTOP_OK) {
 						if (ret == RET_RBTOP_NEXIST)
 							cgi_redirect(cgi, "/404.html");

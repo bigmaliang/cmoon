@@ -4,7 +4,7 @@ $(document).ready(function()
 	{
 		logoutEol();
 	});
-	$(ul.sf-menu).superfish(
+	$("ul.sf-menu").superfish(
 	{
 		animation: {height: 'slow'},
 		delay: 1200

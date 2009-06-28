@@ -160,7 +160,7 @@ int file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file)
  * inp: urls, url list you want to get
  * out: files, file list with file_t elements. don't forget free
  */
-int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn)
+int file_get_infos_by_list(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn)
 {
 	int listlen;
 	char *url;
@@ -193,6 +193,27 @@ int file_get_infos(mdb_conn *conn, ULIST *urls, ULIST **files, int *noksn)
 	}
 	*noksn = -1;
 	return RET_RBTOP_OK;
+}
+
+int file_get_infos_by_uri(mdb_conn *conn, char *uri, ULIST **files, int *noksn)
+{
+	ULIST *urls;
+	int listlen;
+	NEOERR *err;
+	int ret;
+	
+	err = string_array_split(&urls, uri, URI_SPLITER, MAX_URI_ITEM);
+	RETURN_V_NOK(err, RET_RBTOP_INPUTE);
+	listlen = uListLength(urls);
+	if (listlen < 1) {
+		mtc_warn("%s not a valid request", uri);
+		return RET_RBTOP_INPUTE;
+	}
+
+	ret = file_get_infos_by_list(conn, urls, files, noksn);
+	if (urls != NULL)
+		uListDestroy(&urls, ULIST_FREE);
+	return ret;
 }
 
 void file_refresh_me(file_t *fl)
@@ -461,7 +482,7 @@ static void file_uri_2_anchor(HDF *hdf, char *key)
 	char tok[LEN_ST], href[LEN_URL];
 	snprintf(tok, sizeof(tok), "%s.0", key);
 	
-	HDF *node = hdf_get_obj(hdf, key);
+	HDF *node = hdf_get_obj(hdf, tok);
 	while (node != NULL) {
 		memset(href, 0x0, sizeof(href));
 		hdf_set_copy(node, "name", "remark");
@@ -507,29 +528,31 @@ int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 	return RET_RBTOP_OK;
 }
 
-int file_get_nav_by_id(mdb_conn *conn, int id, HDF *hdf)
+int file_get_nav_by_id(mdb_conn *conn, int id, char *prefix, HDF *hdf)
 {
 	char tok[LEN_ST];
 
 	if (id <= 0) return RET_RBTOP_INPUTE;
-	if (id == 1) {
-		strcpy(tok, PRE_OUTPUT".navs");
+
+	sprintf(tok, "pid=%d AND lmttype=0", id);
+	FILE_QUERY_RAW(conn, tok, NULL);
+
+	if (prefix != NULL) {
+		snprintf(tok, sizeof(tok), "%s.navs", prefix);
 	} else {
-		strcpy(tok, "nav");
+		strcpy(tok, "navs");
 	}
-	
-	FILE_QUERY_RAW(conn, "pid=%d AND lmttype=0", NULL, id);
 	mdb_set_rows(hdf, conn, FILE_QUERY_COL, tok);
 	file_uri_2_anchor(hdf, tok);
 
-	strcat(tok, "0");
+	strcat(tok, ".0");
 	HDF *node = hdf_get_obj(hdf, tok);
 	int mode, cid;
 	while (node != NULL) {
 		cid = hdf_get_int_value(node, "id", -1);
 		mode = hdf_get_int_value(node, "mode", 0);
 		if ((mode & FILE_MODE_DIR) == FILE_MODE_DIR) {
-			file_get_nav_by_id(conn, cid, node);
+			file_get_nav_by_id(conn, cid, NULL, node);
 		}
 
 		node = hdf_obj_next(node);
@@ -538,9 +561,8 @@ int file_get_nav_by_id(mdb_conn *conn, int id, HDF *hdf)
 	return RET_RBTOP_OK;
 }
 
-int file_get_nav_by_uri(HDF *hdf, mdb_conn *conn)
+int file_get_nav_by_uri(mdb_conn *conn, char *uri, char *prefix, HDF *hdf)
 {
-	char *uri = hdf_get_value(hdf, PRE_QUERY".uri", NULL);
 	if (uri == NULL) return RET_RBTOP_INPUTE;
 
 	file_t *fl;
@@ -552,7 +574,7 @@ int file_get_nav_by_uri(HDF *hdf, mdb_conn *conn)
 		return RET_RBTOP_SELECTE;
 	}
 
-	file_get_nav_by_id(conn, fl->id, hdf);
+	file_get_nav_by_id(conn, fl->id, prefix, hdf);
 	
 	file_del(fl);
 

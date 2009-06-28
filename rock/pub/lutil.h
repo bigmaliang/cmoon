@@ -14,6 +14,7 @@ enum cgi_req_type {
 int CGI_REQ_TYPE(CGI *cgi);
 
 void* lutil_get_data_handler(void *lib, CGI *cgi);
+int lutil_fill_layout_by_file(mdb_conn *conn, file_t *file, HDF *hdf);
 
 __END_DECLS
 #endif	/* __LUTIL_H__ */

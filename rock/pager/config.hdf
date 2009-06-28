@@ -27,11 +27,11 @@ csc {
 				}
 			}
 		}
+		Include {
+			content = csc.html
+		}
 	}
 	data_geter = static_csc_data_get
-	Include {
-		content = csc.html
-	}
 }
 
 member_login {

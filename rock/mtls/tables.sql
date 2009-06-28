@@ -29,7 +29,7 @@ CREATE TABLE groupinfo (
 
 CREATE INDEX file_index ON fileinfo (pid, uid, gid, mode, name);
 --done in after_file_insert()
---CREATE TRIGGER tg_uptime_file BEFORE UPDATE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE update_time();
+CREATE TRIGGER tg_uptime_file BEFORE UPDATE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE update_time();
 CREATE TRIGGER tg_uptime_group BEFORE UPDATE ON groupinfo FOR EACH ROW EXECUTE PROCEDURE update_time();
 
 CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $$
@@ -55,16 +55,17 @@ CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $file_insert$
 	BEGIN
 		UPDATE fileinfo SET
 		gid = NEW.id,
-		uri = (SELECT uri FROM fileinfo WHERE id=NEW.pid) || '/' || NEW.name,
-		uptime = NOW()
+		uri = (SELECT uri FROM fileinfo WHERE id=NEW.pid) || '/' || NEW.name
 		WHERE id=NEW.id;
 
 		IF NEW.pid = 1 THEN
 			UPDATE fileinfo SET
-			dataer = NEW.name WHERE id=NEW.id;
+			dataer = NEW.name, render = NEW.name WHERE id=NEW.id;
 		ELSE
 			UPDATE fileinfo SET
-			dataer = SUBSTRING((SELECT dataer FROM fileinfo WHERE id=NEW.pid) || '_' || NEW.name FROM '^[^_]*_[^_]*')
+			--dataer = SUBSTRING((SELECT dataer FROM fileinfo WHERE id=NEW.pid) || '_' || NEW.name FROM '^[^_]*_[^_]*')
+			dataer = (SELECT dataer FROM fileinfo WHERE id=NEW.pid),
+			render = (SELECT render FROM fileinfo WHERE id=NEW.pid)
 			WHERE id=NEW.id;
 		END IF;
 
@@ -73,7 +74,15 @@ CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $file_insert$
 	END;
 $file_insert$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION after_file_delete() RETURNS TRIGGER AS $$
+	BEGIN
+		DELETE FROM groupinfo WHERE gid=OLD.gid;
+		RETURN NULL;
+	END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER tg_suf_fileinfo_insert AFTER INSERT ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_insert();
+CREATE TRIGGER tg_suf_fileinfo_delete AFTER DELETE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_delete();
 
 
 
