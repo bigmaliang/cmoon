@@ -231,8 +231,8 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 				   &col[14], &col[15], &col[16], &col[17], &col[18])
 		   == MDB_ERR_NONE ){
 		for (i = 0; i < qrcnt; i++) {
-			snprintf(hdfkey, sizeof(hdfkey)-1, "%s.%s.%d.%s",
-					 PRE_OUTPUT, prefix, rowsn, qrarray[i]);
+			snprintf(hdfkey, sizeof(hdfkey)-1, "%s.%d.%s",
+					 prefix, rowsn, qrarray[i]);
 			hdf_set_value(hdf, hdfkey, col[i]);
 		}
 		rowsn++;
