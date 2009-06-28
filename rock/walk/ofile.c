@@ -22,7 +22,7 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 {
 	int ret;
 	
-	if ((PMS_OTHER(file->mode) & access) == 1) return RET_RBTOP_OK;
+	if ((PMS_OTHER(file->mode) & access) == access) return RET_RBTOP_OK;
 
 	ret = member_has_login(hdf, conn, ses);
 	if (ret != RET_RBTOP_OK) {
@@ -31,18 +31,18 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 	}
 
 	if (member_is_owner(ses->member, file->uid) &&
-		(PMS_OWNER(file->mode)&access) == 1) {
+		(PMS_OWNER(file->mode)&access) == access) {
 		return RET_RBTOP_OK;
 	}
 
 	if (member_in_group(ses->member, file->gid) &&
-		(PMS_GROUP(file->mode)&access) == 1) {
+		(PMS_GROUP(file->mode)&access) == access) {
 		return RET_RBTOP_OK;
 	}
 
 #if 0
 	if (member_is_friend(ses->member, file->uid) &&
-		(PMS_FRIEND(file->mode)&access) == 1) {
+		(PMS_FRIEND(file->mode)&access) == access) {
 		return RET_RBTOP_OK;
 	}
 #endif
