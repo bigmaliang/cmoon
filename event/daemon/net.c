@@ -15,11 +15,13 @@ typedef unsigned char u_char;
 #include "sctp.h"
 #include "net.h"
 #include "log.h"
+#include "smsalarm.h"
 
 
 static void exit_sighandler(int fd, short event, void *arg)
 {
 	wlog("Got signal! Puf!\n");
+	SMS_ALARM("Got signal Puf\n");
 	event_loopexit(NULL);
 }
 

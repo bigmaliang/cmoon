@@ -50,23 +50,23 @@ static void dbcm_process_driver(struct event_entry *entry, struct queue_entry *q
 	e = (struct dbcm_entry*)entry;
 	FILE *fp = e->logf;
 	fdb_t *db = e->db;
-	struct dbcm_stats st = e->st;
+	struct dbcm_stats *st = &(e->st);
 
-	st.msg_total++;
+	st->msg_total++;
 
 	//usleep(300);
 	if (q->operation != REQ_CMD_STATS) {
 		c = data_cell_search(q->dataset, true, DATA_TYPE_STRING, "sqls");
 		if (c != NULL) {
 			ret = dbcm_exec_cell(c, db, fp);
-			if (ret != RET_DBOP_OK)	st.proc_fai++;
-			else st.proc_suc++;
+			if (ret != RET_DBOP_OK)	st->proc_fai++;
+			else st->proc_suc++;
 		} else {
 			c = data_cell_search(q->dataset, true, DATA_TYPE_ARRAY, "sqls");
 		}
 
 		if (c == NULL) {
-			st.msg_unrec++;
+			st->msg_unrec++;
 			dtc_err(fp, "excutable sqls not found\n");
 		}
 
@@ -77,7 +77,7 @@ static void dbcm_process_driver(struct event_entry *entry, struct queue_entry *q
 					dtc_dbg(fp, "exec %s ...\n", cc->v.sval.val);
 					ret = dbcm_exec_cell(cc, db, fp);
 					if (ret != RET_DBOP_OK) {
-						st.proc_fai++;
+						st->proc_fai++;
 						size_t tlen = strlen(MASTER_EVT_NAME) >
 							cc->ksize? strlen(MASTER_EVT_NAME):
 							cc->ksize;
@@ -86,18 +86,18 @@ static void dbcm_process_driver(struct event_entry *entry, struct queue_entry *q
 							break;
 						}
 					}
-					else st.proc_suc++;
+					else st->proc_suc++;
 				}
 			}
 		}
 	} else {
-		st.msg_stats++;
+		st->msg_stats++;
 		if ((q->req->flags & FLAGS_SYNC)) {
-			reply_add_ulong(q, NULL, "msg_total", st.msg_total);
-			reply_add_ulong(q, NULL, "msg_unrec", st.msg_unrec);
-			reply_add_ulong(q, NULL, "msg_stats", st.msg_stats);
-			reply_add_ulong(q, NULL, "proc_suc", st.proc_suc);
-			reply_add_ulong(q, NULL, "proc_fai", st.proc_fai);
+			reply_add_ulong(q, NULL, "msg_total", st->msg_total);
+			reply_add_ulong(q, NULL, "msg_unrec", st->msg_unrec);
+			reply_add_ulong(q, NULL, "msg_stats", st->msg_stats);
+			reply_add_ulong(q, NULL, "proc_suc", st->proc_suc);
+			reply_add_ulong(q, NULL, "proc_fai", st->proc_fai);
 			reply_trigger(q, REP_OK);
 		}
 	}
@@ -108,6 +108,18 @@ static void dbcm_process_driver(struct event_entry *entry, struct queue_entry *q
 		} else {
 			q->req->reply_err(q->req, ERR_DB);
 		}
+	}
+
+	if (st->proc_fai >= 1000 && st->proc_fai % 200 == 0) {
+		dtc_err(fp, "proc_fai %lu", st->proc_fai);
+		SMS_ALARM("db_community proc_fai %lu", st->proc_fai);
+	} else if (st->proc_fai >= 100 && st->proc_fai % 20 == 0) {
+		dtc_err(fp, "proc_fai %lu", st->proc_fai);
+		SMS_ALARM("db_community proc_fai %lu", st->proc_fai);
+	}
+
+	if (st->msg_unrec == 1000 || st->msg_unrec == 1500) {
+		SMS_ALARM("db_community msg_unrec %lu", st->msg_unrec);
 	}
 }
 

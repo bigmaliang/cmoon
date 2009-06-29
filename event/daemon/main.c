@@ -29,6 +29,7 @@ static void help(void) {
 	  "  -S addr	SCTP listening address (all local addresses)\n"
 	  "  -o fname	log to the given file (stdout).\n"
 	  "  -c fname	config file.\n"
+	  "  -a		short message alarm on(default off).\n"
 	  "  -f		don't fork and stay in the foreground\n"
 	  "  -p		enable passive mode, for redundancy purposes (read docs.)\n"
 	  "  -h		show this help\n"
@@ -55,8 +56,9 @@ static int load_settings(int argc, char **argv)
 	settings.passive = 0;
 	settings.logfname = "-";
 	settings.conffname = NULL;
+	settings.smsalarm = 0;
 
-	while ((c = getopt(argc, argv, "l:L:t:T:u:U:s:S:o:c:fph?")) != -1) {
+	while ((c = getopt(argc, argv, "l:L:t:T:u:U:s:S:o:c:fpha?")) != -1) {
 		switch(c) {
 		case 'l':
 			settings.tipc_lower = atoi(optarg);
@@ -99,6 +101,9 @@ static int load_settings(int argc, char **argv)
 			break;
 		case 'p':
 			settings.passive = 1;
+			break;
+		case 'a':
+			settings.smsalarm = 1;
 			break;
 
 		case 'h':

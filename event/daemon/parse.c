@@ -14,6 +14,7 @@
 #include "mevent.h"
 #include "data.h"
 #include "packet.h"
+#include "smsalarm.h"
 
 
 static void parse_stats(struct req_info *req);
@@ -99,12 +100,18 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 		wlog("plugin %s size exceed %d\n",
 		     entry->name, entry->op_queue->size);
 	}
-	if (entry->op_queue->size > QUEUE_SIZE_WARNING) {
+#endif
+	if (entry->op_queue->size > QUEUE_SIZE_WARNING &&
+		entry->op_queue->size % 100 == 0) {
+		SMS_ALARM("plugin %s size exceed %d\n",
+				  entry->name, entry->op_queue->size);
 		wlog("plugin %s size exceed %d\n",
 		     entry->name, entry->op_queue->size);
 	}
-#endif
-	if (entry->op_queue->size > MAX_QUEUE_ENTRY) {
+	if (entry->op_queue->size > MAX_QUEUE_ENTRY &&
+		entry->op_queue->size % 100 == 0) {
+		SMS_ALARM("plugin %s busy, queue size is %d\n",
+				  entry->name, entry->op_queue->size);
 		wlog("plugin %s busy, queue size is %d\n",
 			 entry->name, entry->op_queue->size);
 		data_cell_free(dataset);
