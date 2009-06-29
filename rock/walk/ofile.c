@@ -20,6 +20,8 @@
 int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 						  file_t *file, int access)
 {
+	ULIST *gids, *gmodes;
+	NEOERR *err;
 	int ret;
 	
 	if ((PMS_OTHER(file->mode) & access) == access) return RET_RBTOP_OK;
@@ -35,23 +37,59 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 		return RET_RBTOP_OK;
 	}
 
-	if (member_in_group(ses->member, file->gid) &&
-		(PMS_GROUP(file->mode)&access) == access) {
-		return RET_RBTOP_OK;
+	err = string_array_split(&gids, ses->member->gids, ";", MAX_GROUP_AUSER);
+	RETURN_V_NOK(err, RET_RBTOP_LIMITE);
+	err = string_array_split(&gmodes, ses->member->gmodes, ";", MAX_GROUP_AUSER);
+	RETURN_V_NOK(err, RET_RBTOP_LIMITE);
+
+	ret = RET_RBTOP_LIMITE;
+
+	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_JOIN) &&
+		(PMS_JOIN(file->mode)&access) == access) {
+		ret = RET_RBTOP_OK;
+		goto done;
+	}
+
+	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_JUNIOR) &&
+		(PMS_JUNIOR(file->mode)&access) == access) {
+		ret = RET_RBTOP_OK;
+		goto done;
+	}
+
+	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_SENIOR) &&
+		(PMS_SENIOR(file->mode)&access) == access) {
+		ret = RET_RBTOP_OK;
+		goto done;
+	}
+
+	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_ADM) &&
+		(PMS_ADMIN(file->mode)&access) == access) {
+		ret = RET_RBTOP_OK;
+		goto done;
+	}
+
+	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_OWN) &&
+		(PMS_OWNER(file->mode)&access) == access) {
+		ret = RET_RBTOP_OK;
+		goto done;
 	}
 
 #if 0
 	if (member_is_friend(ses->member, file->uid) &&
 		(PMS_FRIEND(file->mode)&access) == access) {
-		return RET_RBTOP_OK;
+		ret = RET_RBTOP_OK;
 	}
 #endif
 
 	if (member_is_root(ses->member)) {
-		return RET_RBTOP_OK;
+		ret = RET_RBTOP_OK;
+		goto done;
 	}
 
-	return RET_RBTOP_LIMITE;
+ done:
+	uListDestroy(&gids, ULIST_FREE);
+	uListDestroy(&gmodes, ULIST_FREE);
+	return ret;
 }
 
 int file_get_info_by_id(mdb_conn *conn, int id, char *url, int pid, file_t **file)
@@ -314,8 +352,11 @@ void file_translate_mode(HDF *hdf)
 			hdf_set_value(res, "_type", "其他");
 		}
 		hdf_set_int_value(res, "_ownerp", PMS_OWNER(mode)&LMT_MASK);
-		hdf_set_int_value(res, "_groupp", PMS_GROUP(mode)&LMT_MASK);
 		hdf_set_int_value(res, "_otherp", PMS_OTHER(mode)&LMT_MASK);
+		hdf_set_int_value(res, "_joinp", PMS_JOIN(mode)&LMT_MASK);
+		hdf_set_int_value(res, "_juniorp", PMS_JUNIOR(mode)&LMT_MASK);
+		hdf_set_int_value(res, "_seniorp", PMS_SENIOR(mode)&LMT_MASK);
+		hdf_set_int_value(res, "_adminp", PMS_ADMIN(mode)&LMT_MASK);
 		res = hdf_obj_next(res);
 	}
 }
@@ -351,10 +392,16 @@ int file_modify(HDF *hdf, mdb_conn *conn, session_t *ses)
 	mode = fl->mode;
 	if (!strcmp(area, "_ownerp")) {
 		unit = unit << 4;
-	} else if (!strcmp(area, "_groupp")) {
-		unit = unit << 8;
 	} else if (!strcmp(area, "_otherp")) {
+		unit = unit << 8;
+	} else if (!strcmp(area, "_joinp")) {
 		unit = unit << 12;
+	} else if (!strcmp(area, "_juniorp")) {
+		unit = unit << 16;
+	} else if (!strcmp(area, "_seniorp")) {
+		unit = unit << 20;
+	} else if (!strcmp(area, "_adminp")) {
+		unit = unit << 24;
 	} else {
 		mtc_err("area %s error");
 		ret = RET_RBTOP_INPUTE;

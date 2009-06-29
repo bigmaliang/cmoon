@@ -14,6 +14,8 @@ enum user_status
 
 enum group_mode {
 	GROUP_MODE_JOIN = 0,
+	GROUP_MODE_JUNIOR,
+	GROUP_MODE_SENIOR,
 	GROUP_MODE_ADM,
 	GROUP_MODE_OWN = 255
 };
@@ -21,6 +23,8 @@ enum group_mode {
 enum limit_type {
 	LMT_TYPE_START = 1,
 	LMT_TYPE_GJOIN,
+	LMT_TYPE_JUNIOR,
+	LMT_TYPE_SENIOR,
 	LMT_TYPE_GADM,
 	LMT_TYPE_GOWN,
 	LMT_TYPE_ROOT = 255

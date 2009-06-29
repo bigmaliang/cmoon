@@ -15,9 +15,19 @@ __BEGIN_DECLS
 /* 0001 0101 1111 0000 */
 #define SYS_NOR_MODE	0x8AF0
 
-#define PMS_OWNER(mode)	(mode>>4)
-#define PMS_GROUP(mode)	(mode>>8)
-#define PMS_OTHER(mode)	(mode>>12)
+#define PMS_OWNER(mode)		(mode>>4)
+#define PMS_OTHER(mode)		(mode>>8)
+#define PMS_JOIN(mode)		(mode>>12)
+#define PMS_JUNIOR(mode)	(mode>>16)
+#define PMS_SENIOR(mode)	(mode>>20)
+#define PMS_ADMIN(mode)		(mode>>24)
+/*
+ * user can set somebody to owner group, use the same power as himself,
+ * so, there is no need to offer PMS_OWN because of PMS_OWNER is the same
+ * see file_check_user_power for more detail
+ */
+//#define PMS_OWN(mode)		(mode>>24)
+
 
 #define LMT_MASK	0x0000000F
 #define LMT_GET		0x00000001

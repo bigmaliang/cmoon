@@ -324,23 +324,6 @@ int member_has_login(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return RET_RBTOP_LOGINPSW;
 	}
 }
-bool member_in_group(member_t *mb, int gid)
-{
-	if (mb == NULL || mb->gids == NULL)
-		return false;
-
-	char tok[64];
-	sprintf(tok, "%d;", gid);
-	
-	char *p = strstr(mb->gids, tok);
-	while (p != NULL) {
-		if (p == mb->gids || *(p-1) == ';')
-			return true;
-		p = strstr(p+1, tok);
-	}
-	
-	return false;
-}
 bool member_is_owner(member_t *mb, int uid)
 {
 	if (mb == NULL)
@@ -350,22 +333,63 @@ bool member_is_owner(member_t *mb, int uid)
 	else
 		return false;
 }
-bool member_has_gmode(member_t *mb, int gmode)
+bool member_in_group_fast(ULIST *gids, ULIST *gmodes, int gid, int mode)
 {
+	char *gmode;
+	int umode;
+	int sn = uListIndex(gids, &gid, mmisc_compare_inta);
+	if (sn >= 0 && sn <= MAX_GROUP_AUSER) {
+		uListGet(gmodes, sn, (void**)&gmode);
+		umode = atoi(gmode);
+		if (umode >= mode)
+			return true;
+	}
+	return false;
+}
+bool member_in_group(member_t *mb, int gid, int mode)
+{
+	ULIST *gids, *gmodes;
+	bool ret;
+	NEOERR *err;
+
+	if (mb == NULL || mb->gids == NULL || mb->gmodes == NULL)
+		return false;
+
+	err = string_array_split(&gids, mb->gids, ";", MAX_GROUP_AUSER);
+	RETURN_V_NOK(err, false);
+	err = string_array_split(&gmodes, mb->gmodes, ";", MAX_GROUP_AUSER);
+	RETURN_V_NOK(err, false);
+
+	ret = member_in_group_fast(gids, gmodes, gid, mode);
+
+	uListDestroy(&gids, ULIST_FREE);
+	uListDestroy(&gmodes, ULIST_FREE);
+
+	return ret;
+}
+bool member_has_gmode(member_t *mb, int mode)
+{
+	ULIST *gmodes;
+	char *gmode;
+	bool ret;
+	NEOERR *err;
+
 	if (mb == NULL || mb->gmodes == NULL)
 		return false;
 
-	char tok[64];
-	sprintf(tok, "%d;", gmode);
+	err = string_array_split(&gmodes, mb->gmodes, ";", MAX_GROUP_AUSER);
+	RETURN_V_NOK(err, false);
 
-	char *p = strstr(mb->gmodes, tok);
-	while (p != NULL) {
-		if (p == mb->gmodes || *(p-1) == ';')
-			return true;
-		p = strstr(p+1, tok);
+	ret = false;
+	MLIST_ITERATE(gmodes, gmode) {
+		if (atoi(gmode) >= mode) {
+			ret = true;
+			break;
+		}
 	}
-	
-	return false;
+	uListDestroy(&gmodes, ULIST_FREE);
+
+	return ret;
 }
 bool member_uin_is_root(int uin)
 {
