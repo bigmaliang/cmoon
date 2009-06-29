@@ -25,6 +25,7 @@ struct settings {
 	char *logfname;
 	int trace_level;
 	char *conffname;
+	int smsalarm;
 };
 extern struct settings settings;
 

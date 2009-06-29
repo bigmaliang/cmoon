@@ -17,6 +17,7 @@
 #include "dtrace.h"
 #include "queue.h"
 #include "reply.h"
+#include "smsalarm.h"
 
 #include "ClearSilver.h"
 
