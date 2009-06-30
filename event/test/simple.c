@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	mevent_add_udp_server(evt, host, 26010);
+	mevent_add_tcp_server(evt, host, 26011);
 #if 1
 	mevent_chose_plugin(evt, "db_community", REQ_CMD_SET, FLAGS_NONE);
 	mevent_add_array(evt, NULL, "sqls");
