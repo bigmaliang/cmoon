@@ -28,6 +28,11 @@ static int add_udp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port)
 	if (fd < 0)
 		return 0;
 
+	struct timeval tv;
+	tv.tv_sec = 3;
+	tv.tv_usec = 0;
+	setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv));
+
 	newarray = realloc(evt->servers,
 			   sizeof(struct mevent_srv) * (evt->nservers + 1));
 	if (newarray == NULL) {

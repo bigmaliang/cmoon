@@ -369,6 +369,7 @@ int mevent_trigger(mevent_t *evt, uint32_t *errcode)
 		return -1;
 	}
 
+	vsize = 0;
 	rv = get_rep(srv, evt->rcvbuf, MAX_PACKET_LEN, &p, &vsize);
 	if (rv == REP_ERR) {
 		if (errcode != NULL) {
