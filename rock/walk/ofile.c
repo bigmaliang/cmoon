@@ -326,6 +326,10 @@ void file_translate_mode(HDF *hdf)
 		hdf_set_int_value(res, "_ownerp", PMS_OWNER(mode));
 		hdf_set_int_value(res, "_joinp", PMS_JOIN(mode));
 		hdf_set_int_value(res, "_otherp", PMS_OTHER(mode));
+		hdf_set_attr(res, "_ownerp", "type", "int");
+		hdf_set_attr(res, "_joinp", "type", "int");
+		hdf_set_attr(res, "_otherp", "type", "int");
+		
 		res = hdf_obj_next(res);
 	}
 }

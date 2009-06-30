@@ -14,8 +14,8 @@ $(document).ready(function()
 		remark: "名称",
 		uname: "创建者",
 		_ownerp: ["所有者权限", displayMode],
-		_otherp: ["其它用户权限", displayMode],
 		_joinp: ["组用户权限", displayMode],
+		_otherp: ["其它用户权限", displayMode],
 		intime: "加入时间",
 		_delete: ["删除", function(row, col, val, tr) {
 			$("<td "+opts_mntable.tdattr+"><input type='button' class='submitbtn' value='删除' /></td>").appendTo(tr).click(function() {

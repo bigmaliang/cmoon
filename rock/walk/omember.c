@@ -361,6 +361,9 @@ bool member_in_group(member_t *mb, int gid, int mode)
 	RETURN_V_NOK(err, false);
 
 	ret = member_in_group_fast(gids, gmodes, gid, mode);
+	if (!ret) {
+		ret = member_is_root(mb);
+	}
 
 	uListDestroy(&gids, ULIST_FREE);
 	uListDestroy(&gmodes, ULIST_FREE);
