@@ -4,40 +4,25 @@
 
 __BEGIN_DECLS
 
-#define FILE_MASK_NOR	0x0000000F
-#define FILE_MODE_NOR	0x00000000
-#define FILE_MODE_DIR	0x00000001
-#define FILE_MODE_LINK	0x00000002
+#define LMT_MASK	0xFF
+#define LMT_GET		0x1
+#define LMT_MOD		0x2
+#define LMT_APPEND	0x4
+#define LMT_DEL		0x8
 
-/* 0001 0101 1111 0001 */
-/* 5617 */
-#define SYS_DIR_MODE	0x8AF1
-/* 0001 0101 1111 0000 */
-#define SYS_NOR_MODE	0x8AF0
+#define PMS_OWNER(mode)		(mode & LMT_MASK)
+#define PMS_JOIN(mode)		((mode>>8) & LMT_MASK)
+#define PMS_OTHER(mode)		((mode>>16) & LMT_MASK)
 
-#define PMS_OWNER(mode)		(mode>>4)
-#define PMS_OTHER(mode)		(mode>>8)
-#define PMS_JOIN(mode)		(mode>>12)
-#define PMS_JUNIOR(mode)	(mode>>16)
-#define PMS_SENIOR(mode)	(mode>>20)
-#define PMS_ADMIN(mode)		(mode>>24)
+#define MODE_OWNER(mode)	(mode & LMT_MASK)
+#define MODE_JOIN(mode)		((mode & LMT_MASK) << 8)
+#define MODE_OTHER(mode)	((mode & LMT_MASK) << 16)
 /*
- * user can set somebody to owner group, use the same power as himself,
- * so, there is no need to offer PMS_OWN because of PMS_OWNER is the same
- * see file_check_user_power for more detail
+ * user have priviliage >= GROUP_MODE_SENIOR can do ANY Not-system operation
  */
-//#define PMS_OWN(mode)		(mode>>24)
-
-
-#define LMT_MASK	0x0000000F
-#define LMT_GET		0x00000001
-#define LMT_MOD		0x00000002
-#define LMT_APPEND	0x00000004
-#define LMT_DEL		0x00000008
 
 int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 						  file_t *file, int access);
-
 
 /*
  * low level file operater, by id/ pid+name/ uri

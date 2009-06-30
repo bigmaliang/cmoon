@@ -12,7 +12,6 @@ $(document).ready(function()
 		pid: "父ID",
 		uri: "uri",
 		remark: "名称",
-		_type: "类型",
 		uname: "创建者",
 		_ownerp: ["所有者权限", displayMode],
 		_otherp: ["其它用户权限", displayMode],

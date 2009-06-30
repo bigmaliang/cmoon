@@ -50,26 +50,7 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 		goto done;
 	}
 
-	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_JUNIOR) &&
-		(PMS_JUNIOR(file->mode)&access) == access) {
-		ret = RET_RBTOP_OK;
-		goto done;
-	}
-
-	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_SENIOR) &&
-		(PMS_SENIOR(file->mode)&access) == access) {
-		ret = RET_RBTOP_OK;
-		goto done;
-	}
-
-	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_ADM) &&
-		(PMS_ADMIN(file->mode)&access) == access) {
-		ret = RET_RBTOP_OK;
-		goto done;
-	}
-
-	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_OWN) &&
-		(PMS_OWNER(file->mode)&access) == access) {
+	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_SENIOR)) {
 		ret = RET_RBTOP_OK;
 		goto done;
 	}
@@ -342,21 +323,9 @@ void file_translate_mode(HDF *hdf)
 
 	while (res != NULL) {
 		mode = hdf_get_int_value(res, "mode", 0);
-		if ((mode & FILE_MASK_NOR) == FILE_MODE_NOR) {
-			hdf_set_value(res, "_type", "文件");
-		} else if ((mode & FILE_MODE_DIR) == FILE_MODE_DIR) {
-			hdf_set_value(res, "_type", "目录");
-		} else if ((mode & FILE_MODE_LINK) == FILE_MODE_LINK) {
-			hdf_set_value(res, "_type", "链接");
-		} else {
-			hdf_set_value(res, "_type", "其他");
-		}
-		hdf_set_int_value(res, "_ownerp", PMS_OWNER(mode)&LMT_MASK);
-		hdf_set_int_value(res, "_otherp", PMS_OTHER(mode)&LMT_MASK);
-		hdf_set_int_value(res, "_joinp", PMS_JOIN(mode)&LMT_MASK);
-		hdf_set_int_value(res, "_juniorp", PMS_JUNIOR(mode)&LMT_MASK);
-		hdf_set_int_value(res, "_seniorp", PMS_SENIOR(mode)&LMT_MASK);
-		hdf_set_int_value(res, "_adminp", PMS_ADMIN(mode)&LMT_MASK);
+		hdf_set_int_value(res, "_ownerp", PMS_OWNER(mode));
+		hdf_set_int_value(res, "_joinp", PMS_JOIN(mode));
+		hdf_set_int_value(res, "_otherp", PMS_OTHER(mode));
 		res = hdf_obj_next(res);
 	}
 }
@@ -382,26 +351,30 @@ int file_modify(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return RET_RBTOP_INPUTE;
 	}
 	ret = file_get_info_by_id(conn, id, NULL, -1, &fl);
-	if (ret != RET_RBTOP_OK) return ret;
-	ret = file_check_user_power(hdf, conn, ses, fl, LMT_MOD);
 	if (ret != RET_RBTOP_OK) {
+		mtc_err("get file %d failure", id);
+		return ret;
+	}
+
+	ret = member_has_login(hdf, conn, ses);
+	if (ret != RET_RBTOP_OK) {
+		mtc_warn("%d attemped modify file %s, not login", ses->member->uin, fl->uri);
+		return ret;
+	}
+	
+	if (!member_in_group(ses->member, fl->id, GROUP_MODE_SENIOR)) {
 		mtc_warn("%d attemped modify %s, limited", ses->member->uin, fl->uri);
+		ret = RET_RBTOP_LIMITE;
 		goto done;
 	}
 	
 	mode = fl->mode;
 	if (!strcmp(area, "_ownerp")) {
-		unit = unit << 4;
-	} else if (!strcmp(area, "_otherp")) {
-		unit = unit << 8;
+		unit = MODE_OWNER(unit);
 	} else if (!strcmp(area, "_joinp")) {
-		unit = unit << 12;
-	} else if (!strcmp(area, "_juniorp")) {
-		unit = unit << 16;
-	} else if (!strcmp(area, "_seniorp")) {
-		unit = unit << 20;
-	} else if (!strcmp(area, "_adminp")) {
-		unit = unit << 24;
+		unit = MODE_JOIN(unit);
+	} else if (!strcmp(area, "_otherp")) {
+		unit = MODE_OTHER(unit);
 	} else {
 		mtc_err("area %s error");
 		ret = RET_RBTOP_INPUTE;
@@ -449,10 +422,20 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 	}
 
 	ret = file_get_info_by_id(conn, pid, NULL, -1, &fl);
-	if (ret != RET_RBTOP_OK) return ret;
-	ret = file_check_user_power(hdf, conn, ses, fl, LMT_APPEND);
 	if (ret != RET_RBTOP_OK) {
+		mtc_err("get file id %d failure", pid);
+		return ret;
+	}
+
+	ret = member_has_login(hdf, conn, ses);
+	if (ret != RET_RBTOP_OK) {
+		mtc_warn("%d attemped add file %s, not login", ses->member->uin, fl->uri);
+		return ret;
+	}
+	
+	if (!member_in_group(ses->member, fl->gid, GROUP_MODE_SENIOR)) {
 		mtc_warn("%d attemped add file to %s, limited", ses->member->uin, fl->uri);
+		ret = RET_RBTOP_LIMITE;
 		goto done;
 	}
 
@@ -502,11 +485,22 @@ int file_delete(HDF *hdf, mdb_conn *conn, session_t *ses)
 		mtc_err("input error %d", id);
 		return RET_RBTOP_INPUTE;
 	}
+
 	ret = file_get_info_by_id(conn, id, NULL, -1, &fl);
-	if (ret != RET_RBTOP_OK) return ret;
-	ret = file_check_user_power(hdf, conn, ses, fl, LMT_DEL);
 	if (ret != RET_RBTOP_OK) {
+		mtc_warn("get file %d failure", id);
+		return ret;
+	}
+
+	ret = member_has_login(hdf, conn, ses);
+	if (ret != RET_RBTOP_OK) {
+		mtc_warn("%d attemped del file %s, not login", ses->member->uin, fl->uri);
+		return ret;
+	}
+
+	if (!member_in_group(ses->member, fl->gid, LMT_TYPE_GADM)) {
 		mtc_warn("%d attemped del file %s, limited", ses->member->uin, fl->uri);
+		ret = RET_RBTOP_LIMITE;
 		goto done;
 	}
 
@@ -594,13 +588,10 @@ int file_get_nav_by_id(mdb_conn *conn, int id, char *prefix, HDF *hdf)
 
 	strcat(tok, ".0");
 	HDF *node = hdf_get_obj(hdf, tok);
-	int mode, cid;
+	int cid;
 	while (node != NULL) {
 		cid = hdf_get_int_value(node, "id", -1);
-		mode = hdf_get_int_value(node, "mode", 0);
-		if ((mode & FILE_MODE_DIR) == FILE_MODE_DIR) {
-			file_get_nav_by_id(conn, cid, NULL, node);
-		}
+		file_get_nav_by_id(conn, cid, NULL, node);
 
 		node = hdf_obj_next(node);
 	}

@@ -12,6 +12,11 @@ enum user_status
 	USER_CFMED
 };
 
+/*
+ * JUNIOR: add/del group member
+ * SENIOR: MOD sys-file mode; ADD sub sys-file to myself
+ * ADMIN:  DEL sys-file; MANAGE group's >JOIN member
+ */
 enum group_mode {
 	GROUP_MODE_JOIN = 0,
 	GROUP_MODE_JUNIOR,
