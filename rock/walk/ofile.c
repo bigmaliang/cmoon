@@ -119,7 +119,7 @@ int file_get_info_by_id(mdb_conn *conn, int id, char *url, int pid, file_t **fil
 		}
 	} else {
 		ret = file_unpack(buf, datalen, &fl);
-		if (ret != 0) {
+		if (ret != RET_RBTOP_OK) {
 			mtc_err("assembly file from mmc error");
 			return RET_RBTOP_MMCERR;
 		}
@@ -149,8 +149,8 @@ int file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file)
 		}
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
-		snprintf(tok, sizeof(tok), "uri='%s'", uri);
-		FILE_QUERY_RAW(conn, tok, NULL);
+		strcpy(tok, "uri=$1");
+		FILE_QUERY_RAW(conn, tok, NULL, uri);
 		ret = FILE_GET_RAW(conn, fl);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("get %s info failure from db %s", uri, mdb_get_errmsg(conn));
@@ -164,7 +164,7 @@ int file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file)
 		}
 	} else {
 		ret = file_unpack(buf, datalen, &fl);
-		if (ret != 0) {
+		if (ret != RET_RBTOP_OK) {
 			mtc_err("assembly file from mmc error");
 			return RET_RBTOP_MMCERR;
 		}
@@ -262,12 +262,13 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 
 	int ret, cnt = 0;
 	char tok[LEN_MD];
-	int count, offset, uin, pid, limit;
+	int count, offset, uin, pid;
+	ULIST *gids;
+	int *gid;
 	member_t *mb;
 	file_t *fl;
 
 	pid = hdf_get_int_value(hdf, PRE_QUERY".pid", 1);
-	limit = hdf_get_int_value(hdf, PRE_QUERY".limit", LMT_GET);
 
 	//sprintf(tok, "pid=%d", pid);
 	//mmisc_set_count(hdf, conn, "fileinfo", tok);
@@ -277,27 +278,29 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return RET_RBTOP_NOTLOGIN;
 	}
 
-	fl = file_new();
-	if (fl == NULL) {
-		mtc_err("file_new failure");
-		return RET_RBTOP_MEMALLOCE;
+	if (!member_has_gmode(ses->member, GROUP_MODE_SENIOR)) {
+		mtc_warn("%d attemped to list sys-file", ses->member->uin);
+		return RET_RBTOP_LIMITE;
 	}
-	
-	snprintf(tok, sizeof(tok), "pid=%d ORDER BY id LIMIT %d OFFSET %d",
-			 pid, count, offset);
-	FILE_QUERY_RAW(conn, tok, NULL);
-	while (FILE_GET_RAW(conn, fl) == MDB_ERR_NONE) {
-		ret = file_check_user_power(hdf, conn, ses, fl, limit);
-		if (ret == RET_RBTOP_OK) {
-			sprintf(tok, "files.%d", cnt++);
-			file_store_in_hdf(fl, tok, hdf);
-		} else {
-			mtc_noise("user %d has no %s's %d limit",
-					  ses->member->uin, fl->uri, limit);
+
+	ret = member_get_group(ses->member, GROUP_MODE_SENIOR, &gids);
+	if (ret != RET_RBTOP_OK) {
+		mtc_err("get %s %d failure", ses->member->gmodes, GROUP_MODE_SENIOR);
+		return ret;
+	}
+
+	MLIST_ITERATE(gids, gid) {
+		ret = file_get_info_by_id(conn, *gid, NULL, -1, &fl);
+		if (ret != RET_RBTOP_OK) {
+			mtc_err("get %d info failure", *gid);
+			continue;
 		}
-		file_reset(fl);
+		sprintf(tok, "%s.files.%d", PRE_OUTPUT, cnt++);
+		file_store_in_hdf(fl, tok, hdf);
+		file_del(fl);
 	}
 	hdf_set_int_value(hdf, PRE_OUTPUT".ttnum", cnt);
+	uListDestroy(&gids, ULIST_FREE);
 	
 	HDF *res = hdf_get_obj(hdf, PRE_OUTPUT".files.0");
 	while (res != NULL) {
@@ -466,7 +469,7 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 		mtc_err("get file %d %s failure", pid, name);
 		goto done;
 	}
-	file_store_in_hdf(fl, "files.0", hdf);
+	file_store_in_hdf(fl, PRE_OUTPUT".files.0", hdf);
 	file_translate_mode(hdf);
 	hdf_set_copy(hdf, PRE_OUTPUT".files.0.uname", PRE_COOKIE".uname");
 

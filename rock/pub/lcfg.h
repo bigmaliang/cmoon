@@ -36,6 +36,7 @@ __BEGIN_DECLS
 
 #define PRE_MMC_FILE		"File"
 #define PRE_MMC_MEMBER		"Member"
+#define PRE_MMC_GROUP		"Group"
 
 #define PRE_CFG_OUTPUT		"Output"
 #define PRE_CFG_LAYOUT		"Layout"

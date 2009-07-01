@@ -268,7 +268,8 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 		char usertable[LEN_TB];
 		sprintf(usertable, "user_%d", uin%DIV_USER_TB);
 		mdb_exec(conn, NULL, "SELECT uin, male, status, uname, usn, musn, "
-				 " email, intime, uptime FROM %s WHERE uin=%d;", NULL, usertable, uin);
+				 " email, intime, uptime FROM %s WHERE uin=%d;",
+				 NULL, usertable, uin);
 		ret = mdb_get(conn, "iiiSSSSSS", &mb->uin, &mb->male, &mb->status, &mb->uname,
 					  &mb->usn, &mb->musn, &mb->email, &mb->intime, &mb->uptime);
 		if (ret != MDB_ERR_NONE) {
@@ -278,7 +279,8 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 			return RET_RBTOP_SELECTE;
 		}
 		STRING sgid, sgmode; string_init(&sgid); string_init(&sgmode);
-		mdb_exec(conn, NULL, "SELECT gid, mode FROM groupinfo WHERE uid=%d;", NULL, uin);
+		mdb_exec(conn, NULL, "SELECT gid, mode FROM groupinfo WHERE uid=%d "
+				 " AND stat=%d;", NULL, uin, GROUP_STAT_OK);
 		while (mdb_get_errcode(conn) == MDB_ERR_NONE &&
 			   mdb_get(conn, "ii", &gid, &gmode) == MDB_ERR_NONE) {
 			string_appendf(&sgid, "%d;", gid);
@@ -293,7 +295,7 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 		string_clear(&sgid); string_clear(&sgmode);
 	} else {
 		ret = member_unpack(buf, datalen, &mb);
-		if (ret != 0) {
+		if (ret != RET_RBTOP_OK) {
 			mtc_err("assembly member from mmc error");
 			return RET_RBTOP_MMCERR;
 		}
@@ -369,6 +371,46 @@ bool member_in_group(member_t *mb, int gid, int mode)
 	uListDestroy(&gmodes, ULIST_FREE);
 
 	return ret;
+}
+int member_get_group(member_t *mb, int mode, ULIST **res)
+{
+	ULIST *gids, *gmodes, *lres;
+	char *gid, *gmode;
+	int *igid = 0;
+	NEOERR *err;
+	
+	*res = NULL;
+
+	if (mb == NULL || mb->gids == NULL || mb->gmodes == NULL)
+		return RET_RBTOP_INPUTE;
+	
+	err = string_array_split(&gids, mb->gids, ";", MAX_GROUP_AUSER);
+	RETURN_V_NOK(err, RET_RBTOP_SPLITSTRE);
+	err = string_array_split(&gmodes, mb->gmodes, ";", MAX_GROUP_AUSER);
+	RETURN_V_NOK(err, RET_RBTOP_SPLITSTRE);
+
+	err = uListInit(&lres, 0, 0);
+	RETURN_V_NOK(err, RET_RBTOP_INITE);
+	
+	MLIST_ITERATE(gmodes, gmode) {
+		if (atoi(gmode) >= mode) {
+			uListGet(gids, t_rsv_i, (void**)&gid);
+			igid = (int*) calloc(1, sizeof(int));
+			*igid = atoi(gid);
+			uListAppend(lres, (void*)igid);
+		}
+	}
+
+	uListDestroy(&gids, ULIST_FREE);
+	uListDestroy(&gmodes, ULIST_FREE);
+
+	if (igid == 0) {
+		uListDestroy(&lres, 0);
+		return RET_RBTOP_NEXIST;
+	}
+
+	*res = lres;
+	return RET_RBTOP_OK;
 }
 bool member_has_gmode(member_t *mb, int mode)
 {

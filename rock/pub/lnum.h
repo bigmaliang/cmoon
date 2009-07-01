@@ -25,6 +25,14 @@ enum group_mode {
 	GROUP_MODE_OWN = 255
 };
 
+enum group_stat {
+	GROUP_STAT_APPLY = 0,
+	GROUP_STAT_REJECT,
+	GROUP_STAT_INVITE,
+	GROUP_STAT_REFUSE,
+	GROUP_STAT_OK
+};
+
 enum limit_type {
 	LMT_TYPE_START = 1,
 	LMT_TYPE_GJOIN,
@@ -56,6 +64,7 @@ enum limit_type {
 #define RET_RBTOP_RELEASED	2003
 
 #define RET_RBTOP_GETLISTE	2010
+#define RET_RBTOP_SPLITSTRE	2011
 
 #define RET_RBTOP_MMCERR	2020
 

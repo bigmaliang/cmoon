@@ -2,6 +2,7 @@
 #include "lheads.h"
 #include "omember.h"
 #include "ofile.h"
+#include "ogroup.h"
 
 int admin_account_data_add(CGI *cgi, HASH *dbh, session_t *ses)
 {
@@ -32,3 +33,9 @@ int admin_file_data_del(CGI *cgi, HASH *dbh, session_t *ses)
 	return file_delete(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"), ses);
 }
 
+
+
+int admin_group_data_get(CGI *cgi, HASH *dbh, session_t *ses)
+{
+	return group_get_group(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"), ses);
+}

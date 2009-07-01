@@ -21,6 +21,7 @@ int  member_has_login(HDF *hdf, mdb_conn *conn, session_t *ses);
 bool member_is_owner(member_t *mb, int uid);
 bool member_in_group_fast(ULIST *gids, ULIST *gmodes, int gid, int mode);
 bool member_in_group(member_t *mb, int gid, int mode);
+int  member_get_group(member_t *mb, int mode, ULIST **res);
 bool member_has_gmode(member_t *mb, int mode);
 bool member_uin_is_root(int uin);
 bool member_is_root(member_t *mb);
