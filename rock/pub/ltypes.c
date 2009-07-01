@@ -448,6 +448,14 @@ int session_init(HDF *hdf, HASH *dbh, session_t **ses)
 	ret = member_get_info((mdb_conn*)hash_lookup(dbh, "Sys"), uin, &(lses->member));
 	if (ret != RET_RBTOP_OK) {
 		mtc_info("get %d member info failure", uin);
+		/*
+		 * set guest info avoid sigsegv 
+		 */
+		lses->member = member_new();
+		if (lses->member == NULL) {
+			mtc_err("alloc guest info failure");
+			return RET_RBTOP_MEMALLOCE;
+		}
 	}
 
 	return RET_RBTOP_OK;
