@@ -5,6 +5,7 @@
 
 __BEGIN_DECLS
 
+#define GNODE_LEN	(sizeof(gnode_t))
 typedef struct _gnode {
 	int uid;
 	int gid;
@@ -39,8 +40,7 @@ typedef struct _member {
 	char *email;
 	char *intime;
 	char *uptime;
-	char *gids;
-	char *gmodes;
+	ULIST *gnode;
 } member_t;
 
 typedef struct _group {

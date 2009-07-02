@@ -22,7 +22,8 @@ enum group_mode {
 	GROUP_MODE_JUNIOR,
 	GROUP_MODE_SENIOR,
 	GROUP_MODE_ADM,
-	GROUP_MODE_OWN = 255
+	GROUP_MODE_OWN,
+	GROUP_MODE_ROOT = 255
 };
 
 enum group_stat {
@@ -30,7 +31,8 @@ enum group_stat {
 	GROUP_STAT_REJECT,
 	GROUP_STAT_INVITE,
 	GROUP_STAT_REFUSE,
-	GROUP_STAT_OK
+	GROUP_STAT_OK,
+	GROUP_STAT_ALL = 255
 };
 
 enum limit_type {

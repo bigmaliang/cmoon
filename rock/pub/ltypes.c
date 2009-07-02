@@ -240,9 +240,13 @@ void file_del(void *fl)
  */
 member_t* member_new()
 {
+	NEOERR *err;
 	member_t *mb = (member_t*)calloc(1, sizeof(member_t));
 	if (mb == NULL)
 		return NULL;
+	err = uListInit(&(mb->gnode), 0, 0);
+	/* TODO memory leak */
+	RETURN_V_NOK(err, NULL);
 	
 	return mb;
 }
@@ -263,8 +267,7 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	STRUCT_ADD_LEN(len, member, email);
 	STRUCT_ADD_LEN(len, member, intime);
 	STRUCT_ADD_LEN(len, member, uptime);
-	STRUCT_ADD_LEN(len, member, gids);
-	STRUCT_ADD_LEN(len, member, gmodes);
+	len += uListLength(member->gnode) *GNODE_LEN;
 	len += 1;
 
 	buf = (char*)calloc(1, len);
@@ -281,8 +284,7 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	STRUCT_PACK_STR(member, email);
 	STRUCT_PACK_STR(member, intime);
 	STRUCT_PACK_STR(member, uptime);
-	STRUCT_PACK_STR(member, gids);
-	STRUCT_PACK_STR(member, gmodes);
+	pos += list_pack(member->gnode, gnode_pack_nalloc, buf);
 	/*
 	 * oh, fuck, this line will cause SIGABORT (double free)
 	 */
@@ -319,8 +321,8 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 	STRUCT_UNPACK_STR(p, mb, email);
 	STRUCT_UNPACK_STR(p, mb, intime);
 	STRUCT_UNPACK_STR(p, mb, uptime);
-	STRUCT_UNPACK_STR(p, mb, gids);
-	STRUCT_UNPACK_STR(p, mb, gmodes);
+
+	p = list_unpack(p, gnode_unpack, mb->gnode);
 	
 	*member = mb;
 	
@@ -340,9 +342,8 @@ void member_del(void *mb)
 	SAFE_FREE(lmb->email);
 	SAFE_FREE(lmb->intime);
 	SAFE_FREE(lmb->uptime);
-	SAFE_FREE(lmb->gids);
-	SAFE_FREE(lmb->gmodes);
-
+	if (lmb->gnode != NULL)
+		uListDestroyFunc(&lmb->gnode, gnode_del);
 	free(lmb);
 }
 
@@ -350,8 +351,6 @@ void member_del(void *mb)
 /*
  * gnode
  */
-#define GNODE_LEN	(sizeof(gnode_t))
-
 gnode_t* gnode_new()
 {
 	return (gnode_t*)calloc(1, sizeof(gnode_t));
@@ -527,8 +526,6 @@ int session_init(HDF *hdf, HASH *dbh, session_t **ses)
 		lses->member->email = "nothing";
 		lses->member->intime = "1970-01-01";
 		lses->member->uptime = "1970-01-01";
-		lses->member->gids = "-1";
-		lses->member->gmodes = "-1";
 	}
 
 	return RET_RBTOP_OK;

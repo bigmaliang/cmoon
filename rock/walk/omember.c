@@ -1,6 +1,7 @@
 #include "mheads.h"
 #include "lheads.h"
 #include "omember.h"
+#include "ogroup.h"
 
 void member_refresh_info(int uin)
 {
@@ -253,7 +254,6 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 
 	member_t *mb;
 	char *buf;
-	int gid, gmode;
 	size_t datalen;
 	int ret;
 
@@ -278,21 +278,9 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 			*member = NULL;
 			return RET_RBTOP_SELECTE;
 		}
-		STRING sgid, sgmode; string_init(&sgid); string_init(&sgmode);
-		mdb_exec(conn, NULL, "SELECT gid, mode FROM groupinfo WHERE uid=%d "
-				 " AND stat=%d;", NULL, uin, GROUP_STAT_OK);
-		while (mdb_get_errcode(conn) == MDB_ERR_NONE &&
-			   mdb_get(conn, "ii", &gid, &gmode) == MDB_ERR_NONE) {
-			string_appendf(&sgid, "%d;", gid);
-			string_appendf(&sgmode, "%d;", gmode);
-		}
-		if (sgid.len != 0) {
-			mb->gids = strdup(sgid.buf);
-			mb->gmodes = strdup(sgmode.buf);
-		}
+		group_get_node(conn, uin, -1, mb->gnode);
 		member_pack(mb, &buf, &datalen);
 		mmc_storef(MMC_OP_SET, buf, datalen, ONE_DAY, 0, PRE_MMC_MEMBER".%d", uin);
-		string_clear(&sgid); string_clear(&sgmode);
 	} else {
 		ret = member_unpack(buf, datalen, &mb);
 		if (ret != RET_RBTOP_OK) {
@@ -326,6 +314,7 @@ int member_has_login(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return RET_RBTOP_LOGINPSW;
 	}
 }
+
 bool member_is_owner(member_t *mb, int uid)
 {
 	if (mb == NULL)
@@ -335,76 +324,61 @@ bool member_is_owner(member_t *mb, int uid)
 	else
 		return false;
 }
-bool member_in_group_fast(ULIST *gids, ULIST *gmodes, int gid, int mode)
+
+bool member_in_group(member_t *mb, int gid, int mode, int status, int *pos)
 {
-	char *gmode;
-	int umode;
-	int sn = uListIndex(gids, &gid, mmisc_compare_inta);
-	if (sn >= 0 && sn <= MAX_GROUP_AUSER) {
-		uListGet(gmodes, sn, (void**)&gmode);
-		umode = atoi(gmode);
-		if (umode >= mode)
-			return true;
-	}
-	return false;
-}
-bool member_in_group(member_t *mb, int gid, int mode)
-{
-	ULIST *gids, *gmodes;
 	bool ret;
+	gnode_t *node;
 	NEOERR *err;
 
-	if (mb == NULL || mb->gids == NULL || mb->gmodes == NULL)
-		return false;
-
-	err = string_array_split(&gids, mb->gids, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, false);
-	err = string_array_split(&gmodes, mb->gmodes, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, false);
-
-	ret = member_in_group_fast(gids, gmodes, gid, mode);
-	if (!ret) {
-		ret = member_is_root(mb);
+	if (pos != NULL) *pos = -1;
+	
+	if (mb == NULL || mb->gnode == NULL) {
+		if (member_is_root(mb))
+			return true;
+		else
+			return false;
 	}
 
-	uListDestroy(&gids, ULIST_FREE);
-	uListDestroy(&gmodes, ULIST_FREE);
+	MLIST_ITERATE(mb->gnode, node) {
+		if (node != NULL && node->gid == gid) {
+			if (node->mode >= mode) {
+				if (node->status == status || status == GROUP_STAT_ALL) {
+					if (pos != NULL)
+						*pos = t_rsv_i;
+					return true;
+				}
+			}
+			break;
+		}
+	}
 
-	return ret;
+	return member_is_root(mb);
 }
-int member_get_group(member_t *mb, int mode, ULIST **res)
+
+int member_get_group(member_t *mb, int mode, int status, ULIST **res)
 {
-	ULIST *gids, *gmodes, *lres;
-	char *gid, *gmode;
-	int *igid = 0;
+	ULIST *lres;
+	gnode_t *node;
 	NEOERR *err;
 	
 	*res = NULL;
 
-	if (mb == NULL || mb->gids == NULL || mb->gmodes == NULL)
-		return RET_RBTOP_INPUTE;
+	if (mb == NULL || mb->gnode == NULL)
+		return RET_RBTOP_NEXIST;
 	
-	err = string_array_split(&gids, mb->gids, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, RET_RBTOP_SPLITSTRE);
-	err = string_array_split(&gmodes, mb->gmodes, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, RET_RBTOP_SPLITSTRE);
-
 	err = uListInit(&lres, 0, 0);
 	RETURN_V_NOK(err, RET_RBTOP_INITE);
 	
-	MLIST_ITERATE(gmodes, gmode) {
-		if (atoi(gmode) >= mode) {
-			uListGet(gids, t_rsv_i, (void**)&gid);
-			igid = (int*) calloc(1, sizeof(int));
-			*igid = atoi(gid);
-			uListAppend(lres, (void*)igid);
+	MLIST_ITERATE(mb->gnode, node) {
+		if (node->mode >= mode) {
+			if (node->status == status || status == GROUP_STAT_ALL) {
+				uListAppend(lres, (void*)node);
+			}
 		}
 	}
 
-	uListDestroy(&gids, ULIST_FREE);
-	uListDestroy(&gmodes, ULIST_FREE);
-
-	if (igid == 0) {
+	if (uListLength(lres) == 0) {
 		uListDestroy(&lres, 0);
 		return RET_RBTOP_NEXIST;
 	}
@@ -412,27 +386,25 @@ int member_get_group(member_t *mb, int mode, ULIST **res)
 	*res = lres;
 	return RET_RBTOP_OK;
 }
-bool member_has_gmode(member_t *mb, int mode)
+
+bool member_has_gmode(member_t *mb, int mode, int status)
 {
-	ULIST *gmodes;
-	char *gmode;
+	gnode_t *node;
 	bool ret;
 	NEOERR *err;
 
-	if (mb == NULL || mb->gmodes == NULL)
+	if (mb == NULL || mb->gnode == NULL)
 		return false;
 
-	err = string_array_split(&gmodes, mb->gmodes, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, false);
-
 	ret = false;
-	MLIST_ITERATE(gmodes, gmode) {
-		if (atoi(gmode) >= mode) {
-			ret = true;
-			break;
+	MLIST_ITERATE(mb->gnode, node) {
+		if (node->mode >= mode) {
+			if (node->status == status || status == GROUP_STAT_ALL) {
+				ret = true;
+				break;
+			}
 		}
 	}
-	uListDestroy(&gmodes, ULIST_FREE);
 
 	if (!ret) {
 		ret = member_is_root(mb);

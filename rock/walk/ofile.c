@@ -20,8 +20,6 @@
 int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 						  file_t *file, int access)
 {
-	ULIST *gids, *gmodes;
-	NEOERR *err;
 	int ret;
 	
 	if ((PMS_OTHER(file->mode) & access) == access) return RET_RBTOP_OK;
@@ -37,22 +35,15 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 		return RET_RBTOP_OK;
 	}
 
-	err = string_array_split(&gids, ses->member->gids, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, RET_RBTOP_LIMITE);
-	err = string_array_split(&gmodes, ses->member->gmodes, ";", MAX_GROUP_AUSER);
-	RETURN_V_NOK(err, RET_RBTOP_LIMITE);
-
-	ret = RET_RBTOP_LIMITE;
-
-	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_JOIN) &&
+	if (member_in_group(ses->member, file->gid,
+						GROUP_MODE_JOIN, GROUP_STAT_OK, NULL) &&
 		(PMS_JOIN(file->mode)&access) == access) {
-		ret = RET_RBTOP_OK;
-		goto done;
+		return RET_RBTOP_OK;
 	}
 
-	if (member_in_group_fast(gids, gmodes, file->gid, GROUP_MODE_SENIOR)) {
-		ret = RET_RBTOP_OK;
-		goto done;
+	if (member_in_group(ses->member, file->gid,
+						GROUP_MODE_SENIOR, GROUP_STAT_OK, NULL)) {
+		return RET_RBTOP_OK;
 	}
 
 #if 0
@@ -63,14 +54,10 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 #endif
 
 	if (member_is_root(ses->member)) {
-		ret = RET_RBTOP_OK;
-		goto done;
+		return RET_RBTOP_OK;
 	}
 
- done:
-	uListDestroy(&gids, ULIST_FREE);
-	uListDestroy(&gmodes, ULIST_FREE);
-	return ret;
+	return RET_RBTOP_LIMITE;
 }
 
 int file_get_info_by_id(mdb_conn *conn, int id, char *url, int pid, file_t **file)
@@ -263,8 +250,8 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 	int ret, cnt = 0;
 	char tok[LEN_MD];
 	int count, offset, uin, pid;
-	ULIST *gids;
-	int *gid;
+	ULIST *gnode;
+	gnode_t *node;
 	member_t *mb;
 	file_t *fl;
 
@@ -278,21 +265,21 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return RET_RBTOP_NOTLOGIN;
 	}
 
-	if (!member_has_gmode(ses->member, GROUP_MODE_SENIOR)) {
+	if (!member_has_gmode(ses->member, GROUP_MODE_SENIOR, GROUP_STAT_OK)) {
 		mtc_warn("%d attemped to list sys-file", ses->member->uin);
 		return RET_RBTOP_LIMITE;
 	}
 
-	ret = member_get_group(ses->member, GROUP_MODE_SENIOR, &gids);
+	ret = member_get_group(ses->member, GROUP_MODE_SENIOR, GROUP_STAT_OK, &gnode);
 	if (ret != RET_RBTOP_OK) {
-		mtc_err("get %s %d failure", ses->member->gmodes, GROUP_MODE_SENIOR);
+		mtc_err("get %d %d failure", ses->member->uin, GROUP_MODE_SENIOR);
 		return ret;
 	}
 
-	MLIST_ITERATE(gids, gid) {
-		ret = file_get_info_by_id(conn, *gid, NULL, -1, &fl);
+	MLIST_ITERATE(gnode, node) {
+		ret = file_get_info_by_id(conn, node->gid, NULL, -1, &fl);
 		if (ret != RET_RBTOP_OK) {
-			mtc_err("get %d info failure", *gid);
+			mtc_err("get %d info failure", node->gid);
 			continue;
 		}
 		sprintf(tok, "%s.files.%d", PRE_OUTPUT, cnt++);
@@ -300,7 +287,7 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 		file_del(fl);
 	}
 	hdf_set_int_value(hdf, PRE_OUTPUT".ttnum", cnt);
-	uListDestroy(&gids, ULIST_FREE);
+	uListDestroy(&gnode, 0);
 	
 	HDF *res = hdf_get_obj(hdf, PRE_OUTPUT".files.0");
 	while (res != NULL) {
@@ -369,7 +356,8 @@ int file_modify(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return ret;
 	}
 	
-	if (!member_in_group(ses->member, fl->id, GROUP_MODE_SENIOR)) {
+	if (!member_in_group(ses->member, fl->id,
+						 GROUP_MODE_SENIOR, GROUP_STAT_OK, NULL)) {
 		mtc_warn("%d attemped modify %s, limited", ses->member->uin, fl->uri);
 		ret = RET_RBTOP_LIMITE;
 		goto done;
@@ -440,7 +428,8 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return ret;
 	}
 	
-	if (!member_in_group(ses->member, fl->gid, GROUP_MODE_SENIOR)) {
+	if (!member_in_group(ses->member, fl->gid,
+						 GROUP_MODE_SENIOR, GROUP_STAT_OK, NULL)) {
 		mtc_warn("%d attemped add file to %s, limited", ses->member->uin, fl->uri);
 		ret = RET_RBTOP_LIMITE;
 		goto done;
@@ -505,7 +494,8 @@ int file_delete(HDF *hdf, mdb_conn *conn, session_t *ses)
 		return ret;
 	}
 
-	if (!member_in_group(ses->member, fl->gid, LMT_TYPE_GADM)) {
+	if (!member_in_group(ses->member, fl->gid,
+						 LMT_TYPE_GADM, GROUP_STAT_OK, NULL)) {
 		mtc_warn("%d attemped del file %s, limited", ses->member->uin, fl->uri);
 		ret = RET_RBTOP_LIMITE;
 		goto done;
@@ -554,14 +544,14 @@ int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 	
 	if (member_is_root(ses->member)) {
 		sprintf(tok, "lmttype >= %d", LMT_TYPE_START);
-	} else if (member_has_gmode(ses->member, GROUP_MODE_OWN)) {
+	} else if (member_has_gmode(ses->member, GROUP_MODE_OWN, GROUP_STAT_OK)) {
 		sprintf(tok, "lmttype >= %d AND lmttype < %d",
 				LMT_TYPE_START, LMT_TYPE_ROOT);
 		FILE_QUERY_RAW(conn, tok, NULL);
-	} else if (member_has_gmode(ses->member, GROUP_MODE_ADM)) {
+	} else if (member_has_gmode(ses->member, GROUP_MODE_ADM, GROUP_STAT_OK)) {
 		sprintf(tok, "lmttype >= %d AND lmttype < %d",
 				LMT_TYPE_START, LMT_TYPE_GOWN);
-	} else if (member_has_gmode(ses->member, GROUP_MODE_JOIN)) {
+	} else if (member_has_gmode(ses->member, GROUP_MODE_JOIN, GROUP_STAT_OK)) {
 		sprintf(tok, "lmttype >= %d AND lmttype < %d",
 				LMT_TYPE_START, LMT_TYPE_GADM);
 	} else {
