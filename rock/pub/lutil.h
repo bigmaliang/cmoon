@@ -5,6 +5,7 @@
 __BEGIN_DECLS
 
 #define UIN_ILLEGAL(u)	(u < MIN_USER_NUM)
+#define GID_ILLEGAL(g)	(g < 0)
 
 enum cgi_req_type {
 	CGI_REQ_HTML = 0,

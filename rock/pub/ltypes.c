@@ -1,6 +1,9 @@
 #include "mheads.h"
 #include "lheads.h"
 
+/*
+ * MACROS LOCALY USED
+ */
 #define STRUCT_ADD_LEN(len, parent, name)		\
 	do {										\
 		if (parent->name != NULL)				\
@@ -57,8 +60,52 @@
 		if (str != NULL)						\
 			free(str);							\
 	} while (0)
-	
 
+
+/*
+ * public tool func
+ */
+size_t list_pack(ULIST *list, size_t (*pack)(void *item, char *buf), char *buf)
+{
+	size_t pos = 0;
+	void *node;
+
+	if (list == NULL || pack == NULL || buf == NULL)
+		return 0;
+
+	STRUCT_PACK_INT(list, flags);
+	STRUCT_PACK_INT(list, num);
+	STRUCT_PACK_INT(list, max);
+	MLIST_ITERATE(list, node) {
+		pos += pack(node, buf+pos);
+	}
+
+	return pos;
+}
+
+char* list_unpack(char *buf, size_t (*unpack)(char *buf, void **item), ULIST *list)
+{
+	void *node;
+	
+	if (list == NULL || unpack == NULL || buf == NULL)
+		return buf;
+
+	STRUCT_UNPACK_INT(buf, list, flags);
+	STRUCT_UNPACK_INT(buf, list, num);
+	STRUCT_UNPACK_INT(buf, list, max);
+
+	for (int i = 0; i <  list->num; i++) {
+		buf += unpack(buf, &node);
+		uListSet(list, i, node);
+	}
+	
+	return buf;
+}
+
+
+/*
+ * file 
+ */
 file_t* file_new()
 {
 	file_t *fl = (file_t*)calloc(1, sizeof(file_t));
@@ -67,6 +114,7 @@ file_t* file_new()
 	
 	return fl;
 }
+
 int file_pack(file_t *file, char **res, size_t *outlen)
 {
 	*res = NULL;
@@ -108,6 +156,7 @@ int file_pack(file_t *file, char **res, size_t *outlen)
 	
 	return RET_RBTOP_OK;
 }
+
 int file_unpack(char *buf, size_t inlen, file_t **file)
 {
 	if (inlen < sizeof(file_t)) {
@@ -185,6 +234,10 @@ void file_del(void *fl)
 	free(fl);
 }
 
+
+/*
+ * member
+ */
 member_t* member_new()
 {
 	member_t *mb = (member_t*)calloc(1, sizeof(member_t));
@@ -193,6 +246,7 @@ member_t* member_new()
 	
 	return mb;
 }
+
 int member_pack(member_t *member, char **res, size_t *outlen)
 {
 	*res = NULL;
@@ -239,6 +293,7 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 
 	return RET_RBTOP_OK;
 }
+
 int member_unpack(char *buf, size_t inlen, member_t **member)
 {
 	STRING str;
@@ -271,6 +326,7 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 	
 	return RET_RBTOP_OK;
 }
+
 void member_del(void *mb)
 {
 	member_t *lmb = (member_t*)mb;
@@ -290,17 +346,24 @@ void member_del(void *mb)
 	free(lmb);
 }
 
+
+/*
+ * gnode
+ */
 #define GNODE_LEN	(sizeof(gnode_t))
+
 gnode_t* gnode_new()
 {
 	return (gnode_t*)calloc(1, sizeof(gnode_t));
 }
-size_t gnode_pack_nalloc(gnode_t *node, char *buf)
+
+size_t gnode_pack_nalloc(void *node, char *buf)
 {
 	memcpy(buf, node, sizeof(gnode_t));
 	return GNODE_LEN;
 }
-size_t gnode_unpack(char *buf, gnode_t **gnode)
+
+size_t gnode_unpack(char *buf, void **gnode)
 {
 	*gnode = NULL;
 	gnode_t *gn = gnode_new();
@@ -309,9 +372,10 @@ size_t gnode_unpack(char *buf, gnode_t **gnode)
 		return 0;
 	}
 	memcpy(gn, buf, sizeof(gnode_t));
-	*gnode = gn;
+	*gnode = (void*)gn;
 	return GNODE_LEN;
 }
+
 void gnode_del(void *gn)
 {
 	gnode_t *lgn = (gnode_t*)gn;
@@ -320,6 +384,10 @@ void gnode_del(void *gn)
 	free(lgn);
 }
 
+
+/*
+ * group
+ */
 group_t* group_new()
 {
 	NEOERR *err;
@@ -332,6 +400,7 @@ group_t* group_new()
 
 	return gp;
 }
+
 int group_pack(group_t *gp, char **res, size_t *outlen)
 {
 	*res = NULL;
@@ -354,18 +423,13 @@ int group_pack(group_t *gp, char **res, size_t *outlen)
 	memcpy(buf, gp, sizeof(gp));
 	size_t pos = sizeof(group_t);
 
-	gnode_t *node;
-	STRUCT_PACK_INT(gp->node, flags);
-	STRUCT_PACK_INT(gp->node, num);
-	STRUCT_PACK_INT(gp->node, max);
-	MLIST_ITERATE(gp->node, node) {
-		pos += gnode_pack_nalloc(node, buf+pos);
-	}
+	pos += list_pack(gp->node, gnode_pack_nalloc, buf);
 
 	*res = buf;
 	*outlen = len;
 	return RET_RBTOP_OK;
 }
+
 int group_unpack(char *buf, size_t inlen, group_t **group)
 {
 	if (inlen < sizeof(group_t) + sizeof(ULIST)) {
@@ -382,20 +446,13 @@ int group_unpack(char *buf, size_t inlen, group_t **group)
 	gp->gid = *(int*)buf;
 	p = buf + sizeof(group_t);
 
-	STRUCT_UNPACK_INT(p, gp->node, flags);
-	STRUCT_UNPACK_INT(p, gp->node, num);
-	STRUCT_UNPACK_INT(p, gp->node, max);
-
-	gnode_t *gn;
-	for (int i = 0; i < gp->node->num; i++) {
-		p += gnode_unpack(p, &gn);
-		uListSet(gp->node, i, (void*)gn);
-	}
+	p = list_unpack(p, gnode_unpack, gp->node);
 
 	*group = gp;
 
 	return RET_RBTOP_OK;
 }
+
 void group_store_in_hdf(group_t *gp, char *prefix, HDF *hdf)
 {
 	if (gp == NULL || prefix == NULL || hdf == NULL)
@@ -404,18 +461,20 @@ void group_store_in_hdf(group_t *gp, char *prefix, HDF *hdf)
 	char key[LEN_ST], tok[LEN_MD];
 
 	STORE_IN_HDF_INT(gp, gid);
-	gnode_t *node;
 
+	gnode_t *node;
 	if (gp->node != NULL) {
 		MLIST_ITERATE(gp->node, node) {
 			sprintf(tok, "%s.members.%d", prefix, t_rsv_i);
 			prefix = tok;
 			STORE_IN_HDF_INT(node, uid);
+			STORE_IN_HDF_INT(node, gid);
 			STORE_IN_HDF_INT(node, mode);
-			STORE_IN_HDF_INT(node, stat);
+			STORE_IN_HDF_INT(node, status);
 		}
 	}
 }
+
 void group_del(void *gp)
 {
 	group_t *lgp = (group_t*)gp;
@@ -427,6 +486,10 @@ void group_del(void *gp)
 	free(lgp);
 }
 
+
+/*
+ * session
+ */
 #include "omember.h"
 
 int session_init(HDF *hdf, HASH *dbh, session_t **ses)
@@ -456,6 +519,16 @@ int session_init(HDF *hdf, HASH *dbh, session_t **ses)
 			mtc_err("alloc guest info failure");
 			return RET_RBTOP_MEMALLOCE;
 		}
+		lses->member->uin = 0;
+		lses->member->male = 0;
+		lses->member->status = 0;
+		lses->member->uname = "guest";
+		lses->member->musn = "nothing";
+		lses->member->email = "nothing";
+		lses->member->intime = "1970-01-01";
+		lses->member->uptime = "1970-01-01";
+		lses->member->gids = "-1";
+		lses->member->gmodes = "-1";
 	}
 
 	return RET_RBTOP_OK;

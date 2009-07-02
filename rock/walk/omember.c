@@ -434,6 +434,10 @@ bool member_has_gmode(member_t *mb, int mode)
 	}
 	uListDestroy(&gmodes, ULIST_FREE);
 
+	if (!ret) {
+		ret = member_is_root(mb);
+	}
+
 	return ret;
 }
 bool member_uin_is_root(int uin)

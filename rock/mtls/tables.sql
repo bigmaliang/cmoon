@@ -22,7 +22,7 @@ CREATE TABLE groupinfo (
 	   uid int NOT NULL DEFAULT 0,
 	   gid int NOT NULL DEFAULT 0,
 	   mode int NOT NULL DEFAULT 0, -- lnum.h
-	   stat int NOT NULL DEFAULT 0, -- lnum.h
+	   status int NOT NULL DEFAULT 0, -- lnum.h
 	   intime timestamp DEFAULT now(),
 	   uptime timestamp DEFAULT now(),
 	   PRIMARY KEY (uid, gid)
