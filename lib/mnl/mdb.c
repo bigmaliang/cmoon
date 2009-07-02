@@ -382,6 +382,9 @@ static void get_errmsg(int ret, char *res)
 	case RET_RBTOP_INPUTE:
 		strcpy(res, "输入参数错误");
 		break;
+	case RET_RBTOP_OPCODEE:
+		strcpy(res, "操作码错误");
+		break;
 	case RET_RBTOP_DBNINIT:
 		strcpy(res, "数据库未初始化");
 		break;
