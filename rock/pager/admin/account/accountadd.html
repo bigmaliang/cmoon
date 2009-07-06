@@ -1,0 +1,35 @@
+<div id="accountadd">
+  <form id="formalloc" class="infoform" method="post" enctype="multipart/form-data" action="/admin/account">
+    <input type="hidden" name="op" value="add" />
+    <ul>
+    <li>
+      <div class="leftitem">号 码:</div>
+      <input type="text" name="uin" value="" class="is_required vint" />
+    </li>
+    <li>
+      <div class="leftitem">昵 称:</div>
+      <input type="text" name="uname" value="" class="is_required" />
+    </li>
+    <li><div class="leftitem">密码:</div> <input type="password" name="usn" id="usnalloc" class="is_required" /></li>
+    <li><div class="leftitem">电子邮件:</div> <input type="text" name="email" class="vemail"/></li>
+    <li>
+      <div class="leftitem">性 别:</div>
+      <input type="radio" name="male" value="1" checked="checked" />男
+      <input type="radio" name="male" value="0" />女
+    </li>
+    <li>
+      <div class="leftitem">类型</div>
+      <select id="status">
+        <option value="0">开拓者</option>
+        <option value="1">名誉</option>
+        <option value="2">合作</option>
+      </select>
+    </li>
+    <li>
+      <div class="leftitem"> &nbsp; </div>
+      <input type="submit" class="submitbtn" value="提交" />
+    </li>
+    </ul>
+  </form>
+</div>
+

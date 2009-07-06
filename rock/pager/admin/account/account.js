@@ -1,4 +1,48 @@
-$(document).ready(function() {
+$(document).ready(function()
+{
+	var heads = {
+		uin: "用户ID",
+		uname: "分配名",
+		status: "帐号类型",
+		uptime: "操作日期"
+	};
+
+	function showAccount(page)
+	{
+		$.ajax({
+			type: "GET",
+			url: "/admin/account",
+			cache: false,
+			data: "pg="+page,
+			dataType: "json",
+			success: function(data)	{
+				if (type(data.accounts) != "Array") {
+					if (data.errmsg == "敏感操作, 请先登录") {
+						document.loginopts = {
+							title: data.errmsg,
+							rurl: "admin/account.html"
+						};
+						$.facebox({ajax: '/member/login.html'});
+					} else {
+						alert(data.errmsg || "获取组列表失败");
+					}
+					return;
+				}
+				if (typeof myaccount != "undefined") {
+					myaccount.remove();
+				}
+				myaccount = $(document).mntable(heads, data.accounts,
+				opts_mntable).appendTo($("#accounts"));
+				$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showAccount});
+			},
+			error: function() {
+				alter("获取组列表失败");
+			}
+		});
+	}
+
+	showAccount(1);
+
 	function beforeAllocSerial(obj, opts) {
 		if ($("#usnalloc").val().length != 0)
 			$("#usnalloc").attr("value", $.md5($.md5($("#usnalloc").val())) );

@@ -22,7 +22,7 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 {
 	int ret;
 	
-	if ((PMS_OTHER(file->mode) & access) == access) return RET_RBTOP_OK;
+	if ((PMS_ALL(file->mode) & access) == access) return RET_RBTOP_OK;
 
 	ret = member_has_login(hdf, conn, ses);
 	if (ret != RET_RBTOP_OK) {
@@ -30,8 +30,7 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 		return RET_RBTOP_NOTLOGIN;
 	}
 
-	if (member_is_owner(ses->member, file->uid) &&
-		(PMS_OWNER(file->mode)&access) == access) {
+	if ((PMS_MEMBER(file->mode)&access) == access) {
 		return RET_RBTOP_OK;
 	}
 
@@ -42,7 +41,8 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 	}
 
 	if (member_in_group(ses->member, file->gid,
-						GROUP_MODE_SENIOR, GROUP_STAT_OK, NULL)) {
+						GROUP_MODE_SENIOR, GROUP_STAT_OK, NULL) ||
+		ses->member->uin == file->uid) {
 		return RET_RBTOP_OK;
 	}
 
@@ -313,12 +313,12 @@ void file_translate_mode(HDF *hdf)
 
 	while (res != NULL) {
 		mode = hdf_get_int_value(res, "mode", 0);
-		hdf_set_int_value(res, "_ownerp", PMS_OWNER(mode));
+		hdf_set_int_value(res, "_allp", PMS_ALL(mode));
+		hdf_set_int_value(res, "_memberp", PMS_MEMBER(mode));
 		hdf_set_int_value(res, "_joinp", PMS_JOIN(mode));
-		hdf_set_int_value(res, "_otherp", PMS_OTHER(mode));
-		hdf_set_attr(res, "_ownerp", "type", "int");
+		hdf_set_attr(res, "_allp", "type", "int");
+		hdf_set_attr(res, "_memberp", "type", "int");
 		hdf_set_attr(res, "_joinp", "type", "int");
-		hdf_set_attr(res, "_otherp", "type", "int");
 		
 		res = hdf_obj_next(res);
 	}
@@ -364,12 +364,12 @@ int file_modify(HDF *hdf, mdb_conn *conn, session_t *ses)
 	}
 	
 	mode = fl->mode;
-	if (!strcmp(area, "_ownerp")) {
-		unit = MODE_OWNER(unit);
-	} else if (!strcmp(area, "_joinp")) {
+	if (!strcmp(area, "_allp")) {
+		unit = MODE_ALL(unit);
+	} else if (!strcmp(area, "_memberp")) {
+		unit = MODE_MEMBER(unit);
+	} else if (!strcmp(area, "_join")) {
 		unit = MODE_JOIN(unit);
-	} else if (!strcmp(area, "_otherp")) {
-		unit = MODE_OTHER(unit);
 	} else {
 		mtc_err("area %s error");
 		ret = RET_RBTOP_INPUTE;
@@ -543,20 +543,20 @@ int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 	memset(tok, 0x0, sizeof(tok));
 	
 	if (member_is_root(ses->member)) {
-		sprintf(tok, "lmttype >= %d", LMT_TYPE_START);
+		sprintf(tok, "lmttype >= %d", LMT_TYPE_MEMBER);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_OWN, GROUP_STAT_OK)) {
 		sprintf(tok, "lmttype >= %d AND lmttype < %d",
-				LMT_TYPE_START, LMT_TYPE_ROOT);
+				LMT_TYPE_MEMBER, LMT_TYPE_ROOT);
 		FILE_QUERY_RAW(conn, tok, NULL);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_ADM, GROUP_STAT_OK)) {
 		sprintf(tok, "lmttype >= %d AND lmttype < %d",
-				LMT_TYPE_START, LMT_TYPE_GOWN);
+				LMT_TYPE_MEMBER, LMT_TYPE_GOWN);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_JOIN, GROUP_STAT_OK)) {
 		sprintf(tok, "lmttype >= %d AND lmttype < %d",
-				LMT_TYPE_START, LMT_TYPE_GADM);
+				LMT_TYPE_MEMBER, LMT_TYPE_GADM);
 	} else {
 		sprintf(tok, "lmttype >= %d AND lmttype < %d",
-				LMT_TYPE_START, LMT_TYPE_GJOIN);
+				LMT_TYPE_MEMBER, LMT_TYPE_GJOIN);
 	}
 
 	FILE_QUERY_RAW(conn, tok, NULL);

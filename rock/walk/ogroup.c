@@ -3,12 +3,14 @@
 #include "ofile.h"
 #include "omember.h"
 
-#define GROUP_QUERY_COL " uid, gid, mode, status "
+#define GROUP_QUERY_COL " uid, gid, mode, status, " \
+	" substring(intime from '[^ ]*') as intime, substring(uptime from '[^ ]*') as uptime "
 #define GROUP_QUERY_RAW(conn, condition, sfmt, ...)						\
 	mdb_exec(conn, NULL, "SELECT "GROUP_QUERY_COL" FROM groupinfo WHERE %s;", \
 			 sfmt, condition, ##__VA_ARGS__)
 #define GROUP_GET_RAW(conn, gn)									\
-	mdb_get(conn, "iiii", &(gn->uid), &(gn->gid), &(gn->mode), &(gn->status))
+	mdb_get(conn, "iiiiSS", &(gn->uid), &(gn->gid), &(gn->mode), &(gn->status), \
+			&(gn->intime), &(gn->uptime))
 
 /*
  * group_node, an abstract/concept data, not invisible by application direct.

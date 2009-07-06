@@ -28,6 +28,15 @@ CREATE TABLE groupinfo (
 	   PRIMARY KEY (uid, gid)
 );
 
+CREATE TABLE accountinfo (
+	uin int CHECK (Uin > 998),
+	uname varchar(64) NOT NULL DEFAULT '',
+	status smallint NOT NULL DEFAULT 0,
+	intime timestamp DEFAULT now(),
+	uptime timestamp DEFAULT now(),
+	PRIMARY KEY (Uin)
+);
+
 CREATE INDEX file_index ON fileinfo (pid, uid, gid, mode, name);
 --done in after_file_insert()
 CREATE TRIGGER tg_uptime_file BEFORE UPDATE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE update_time();

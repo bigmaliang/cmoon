@@ -3,12 +3,17 @@
 #include "omember.h"
 #include "ofile.h"
 #include "ogroup.h"
+#include "oaccount.h"
+
+int admin_account_data_get(CGI *cgi, HASH *dbh, session_t *ses)
+{
+	return account_get_accounts(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"), ses);
+}
 
 int admin_account_data_add(CGI *cgi, HASH *dbh, session_t *ses)
 {
-	return member_alloc_user(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"));
+	return account_add_partner(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"), ses);
 }
-
 
 int admin_file_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
@@ -54,3 +59,4 @@ int admin_group_data_del(CGI *cgi, HASH *dbh, session_t *ses)
 {
 	return group_del_member(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"), ses);
 }
+

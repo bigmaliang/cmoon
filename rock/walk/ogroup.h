@@ -4,6 +4,7 @@
 
 __BEGIN_DECLS
 
+int group_get_node(mdb_conn *conn, int uid, int gid, ULIST *node);
 void group_refresh_info(int gid);
 int group_get_info(mdb_conn *conn, int gid, group_t **group);
 int group_get_groups(HDF *hdf, mdb_conn *conn, session_t *ses);

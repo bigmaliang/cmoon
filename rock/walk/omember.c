@@ -105,7 +105,8 @@ int member_alloc_uin(HDF *hdf, mdb_conn *conn)
 	 * mark released 
 	 */
 	ret = MDATA_SET(conn, EVT_PLUGIN_USER, &rows, FLAGS_SYNC,
-					"UPDATE %s SET status=%d, uname=$1, male=$2 WHERE uin=%d AND status=%d;",
+					"UPDATE %s SET status=%d, uname=$1, male=$2 WHERE uin=%d "
+					" AND status=%d;",
 					"si", TABLE_RLS_USER, USER_RLSED, uin, USER_FRESH,
 					hdf_get_value(hdf, PRE_QUERY".uname", ""),
 					hdf_get_int_value(hdf, PRE_QUERY".male", 1));
@@ -327,9 +328,7 @@ bool member_is_owner(member_t *mb, int uid)
 
 bool member_in_group(member_t *mb, int gid, int mode, int status, int *pos)
 {
-	bool ret;
 	gnode_t *node;
-	NEOERR *err;
 
 	if (pos != NULL) *pos = -1;
 	
@@ -391,7 +390,6 @@ bool member_has_gmode(member_t *mb, int mode, int status)
 {
 	gnode_t *node;
 	bool ret;
-	NEOERR *err;
 
 	if (mb == NULL || mb->gnode == NULL)
 		return false;

@@ -13,9 +13,9 @@ $(document).ready(function()
 		uri: "uri",
 		remark: "名称",
 		uname: "创建者",
-		_ownerp: ["所有者权限", displayMode],
+		_allp: ["所有用户权限", displayMode],
+		_memberp: ["注册用户权限", displayMode],
 		_joinp: ["组用户权限", displayMode],
-		_otherp: ["其它用户权限", displayMode],
 		intime: "加入时间",
 		_delete: ["删除", function(row, col, val, tr) {
 			$("<td "+opts_mntable.tdattr+"><input type='button' class='submitbtn' value='删除' /></td>").appendTo(tr).click(function() {
@@ -118,17 +118,11 @@ $(document).ready(function()
 					}
 					return;
 				}
-				if (typeof myfile == "undefined") {
-					myfile = $(document).mntable(heads, data.files, opts_mntable).appendTo($("#files"));
-				} else {
+				if (typeof myfile != "undefined") {
 					myfile.remove();
-					myfile = $(document).mntable(heads, data.files, opts_mntable).appendTo($("#files"));
 				}
-				var opts_mnpagenav = {
-					ttnum: data.ttnum,
-					callback: showFile
-				};
-				$("#pagenav").mnpagenav(opts_mnpagenav);
+				myfile = $(document).mntable(heads, data.files, opts_mntable).appendTo($("#files"));
+				$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showFile});
 			},
 			error: function() {
 				alert("获取文件失败");

@@ -12,6 +12,15 @@ enum user_status
 	USER_CFMED
 };
 
+enum group_stat {
+	GROUP_STAT_APPLY = 0,
+	GROUP_STAT_REJECT,
+	GROUP_STAT_INVITE,
+	GROUP_STAT_REFUSE,
+	GROUP_STAT_OK,
+	GROUP_STAT_ALL = 255
+};
+
 /*
  * JUNIOR: add/del group member
  * SENIOR: MOD sys-file mode; ADD sub sys-file to myself
@@ -26,17 +35,8 @@ enum group_mode {
 	GROUP_MODE_ROOT = 255
 };
 
-enum group_stat {
-	GROUP_STAT_APPLY = 0,
-	GROUP_STAT_REJECT,
-	GROUP_STAT_INVITE,
-	GROUP_STAT_REFUSE,
-	GROUP_STAT_OK,
-	GROUP_STAT_ALL = 255
-};
-
 enum limit_type {
-	LMT_TYPE_START = 1,
+	LMT_TYPE_MEMBER = 1,
 	LMT_TYPE_GJOIN,
 	LMT_TYPE_JUNIOR,
 	LMT_TYPE_SENIOR,

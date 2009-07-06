@@ -83,9 +83,11 @@ size_t list_pack(ULIST *list, size_t (*pack)(void *item, char *buf), char *buf)
 	return pos;
 }
 
-char* list_unpack(char *buf, size_t (*unpack)(char *buf, void **item), ULIST *list)
+char* list_unpack(char *buf, size_t (*unpack)(char *buf, size_t inlen, void **item),
+				  size_t inlen, ULIST *list)
 {
 	void *node;
+	size_t len = 0, reslen;
 	
 	if (list == NULL || unpack == NULL || buf == NULL)
 		return buf;
@@ -94,8 +96,14 @@ char* list_unpack(char *buf, size_t (*unpack)(char *buf, void **item), ULIST *li
 	STRUCT_UNPACK_INT(buf, list, num);
 	STRUCT_UNPACK_INT(buf, list, max);
 
+	len = sizeof(int)*3;
+
 	for (int i = 0; i <  list->num; i++) {
-		buf += unpack(buf, &node);
+		if (len >= inlen)
+			break;
+		reslen = unpack(buf, inlen-len, &node);
+		buf += reslen;
+		len += reslen;
 		uListSet(list, i, node);
 	}
 	
@@ -259,6 +267,7 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	}
 
 	char *buf;
+	gnode_t *node;
 	size_t len = sizeof(member_t);
 
 	STRUCT_ADD_LEN(len, member, uname);
@@ -267,7 +276,9 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	STRUCT_ADD_LEN(len, member, email);
 	STRUCT_ADD_LEN(len, member, intime);
 	STRUCT_ADD_LEN(len, member, uptime);
-	len += uListLength(member->gnode) *GNODE_LEN;
+	MLIST_ITERATE(member->gnode, node) {
+		len += GNODE_LEN(node);
+	}
 	len += 1;
 
 	buf = (char*)calloc(1, len);
@@ -322,7 +333,7 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 	STRUCT_UNPACK_STR(p, mb, intime);
 	STRUCT_UNPACK_STR(p, mb, uptime);
 
-	p = list_unpack(p, gnode_unpack, mb->gnode);
+	p = list_unpack(p, gnode_unpack, inlen-(p-buf), mb->gnode);
 	
 	*member = mb;
 	
@@ -351,6 +362,21 @@ void member_del(void *mb)
 /*
  * gnode
  */
+size_t GNODE_LEN(gnode_t *node)
+{
+	if (node == NULL)
+		return 0;
+
+	size_t len = sizeof(gnode_t);
+	
+	if (node->intime != NULL)
+		len += strlen(node->intime) + 1;
+	if (node->uptime != NULL)
+		len += strlen(node->uptime) + 1;
+
+	return len;
+}
+
 gnode_t* gnode_new()
 {
 	return (gnode_t*)calloc(1, sizeof(gnode_t));
@@ -358,21 +384,37 @@ gnode_t* gnode_new()
 
 size_t gnode_pack_nalloc(void *node, char *buf)
 {
+	size_t pos = 0;
+	gnode_t *gn = (gnode_t*)node;
+	
 	memcpy(buf, node, sizeof(gnode_t));
-	return GNODE_LEN;
+	pos += sizeof(gnode_t);
+
+	STRUCT_PACK_STR(gn, intime);
+	STRUCT_PACK_STR(gn, uptime);
+	
+	return pos;
 }
 
-size_t gnode_unpack(char *buf, void **gnode)
+size_t gnode_unpack(char *buf, size_t inlen, void **gnode)
 {
+	char *p;
 	*gnode = NULL;
+	
 	gnode_t *gn = gnode_new();
 	if (gn == NULL) {
 		mtc_err("alloc mem for gnode unpack failure");
 		return 0;
 	}
 	memcpy(gn, buf, sizeof(gnode_t));
+
+	p = buf + sizeof(gnode_t);
+
+	STRUCT_UNPACK_STR(p, gn, intime);
+	STRUCT_UNPACK_STR(p, gn, uptime);
+	
 	*gnode = (void*)gn;
-	return GNODE_LEN;
+	return p-buf;
 }
 
 void gnode_del(void *gn)
@@ -408,9 +450,12 @@ int group_pack(group_t *gp, char **res, size_t *outlen)
 	}
 
 	char *buf;
+	gnode_t *node;
 	size_t len = sizeof(group_t);
 	len += sizeof(ULIST);
-	len += uListLength(gp->node) * GNODE_LEN;
+	MLIST_ITERATE(gp->node, node) {
+		len += GNODE_LEN(node);
+	}
 	len += 1;
 	
 	buf = (char*)calloc(1, len);
@@ -445,7 +490,7 @@ int group_unpack(char *buf, size_t inlen, group_t **group)
 	gp->gid = *(int*)buf;
 	p = buf + sizeof(group_t);
 
-	p = list_unpack(p, gnode_unpack, gp->node);
+	p = list_unpack(p, gnode_unpack, inlen-(p-buf), gp->node);
 
 	*group = gp;
 
