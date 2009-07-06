@@ -16,7 +16,7 @@ mseekatt.js: ref/jquery.seekAttention.js
 msuperfish.js: ref/superfish/js/hoverIntent.js ref/superfish/js/superfish.js ref/superfish/js/supersubs.js \
 			  own/jquery.mnsuperfish.js
 
-mlist.js: own/juqery.mnlist.js
+mlist.js: own/jquery.mnlist.js
 
 mtable.js: own/jquery.mntable.js
 

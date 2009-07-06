@@ -1,0 +1,34 @@
+
+	var data = {
+		success: 1,
+		groups: [
+			{
+				uri: "/member",
+				intime: "2009-01-01",
+				groupinfo: {
+					members: [
+						{
+							uid: 1001,
+							gid: 21,
+							mode: 255,
+							intime: "2009-01-01"
+						}
+					]
+				}
+			},
+			{
+				uri: "/admin",
+				intime: "2009-01-01",
+				groupinfo: {
+					members: [
+						{
+							uid: 1001,
+							gid: 21,
+							mode: 255,
+							intime: "2009-01-01"
+						}
+					]
+				}
+			}
+		]
+	};
