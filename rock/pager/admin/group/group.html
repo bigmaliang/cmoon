@@ -10,4 +10,41 @@
   <div class="sep"></div>
   <div id="pagenav"></div>
   <div class="sep"></div>
+
+  <div id="memberadd">
+	<form class="infoform" method="post" enctype="multipart/form-data" action="/admin/group">
+	  <input type="hidden" name="op" value="add" />
+	  <input type="hidden" name="gid" value="0" id="gid" />
+	  <ul>
+		<li>
+		  <div class="leftitem">uid</div>
+		  <input type="text" name="uid" id="uid" class="is_required" maxlen="20" />
+	    </li>
+		<li>
+		  <div class="leftitem">权限类型</div>
+          <select name="mode" id="mode">
+            <option value="0">加入</option>
+            <option value="1">初级用户</option>
+            <option value="2">高级用户</option>
+            <option value="3">组管理员</option>
+          </select>
+	    </li>
+        <li>
+          <div class="leftitem">操作类型</div>
+          <select name="status" id="status">
+            <option value="0">申请</option>
+            <option value="1">驳回</option>
+            <option value="2">邀请</option>
+            <option value="3">拒绝</option>
+            <option value="4">确认</option>
+          </select>
+        </li>
+	    <li>
+	      <div class="leftitem"> &nbsp; </div>
+	      <input type="submit" class="submitbtn" value="提交" />
+	    </li>
+	  </ul>
+	</form>
+  </div>
+  
 </div>
