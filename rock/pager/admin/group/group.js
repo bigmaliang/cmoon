@@ -1,18 +1,108 @@
 $(document).ready(function()
 {
-	var heads = {
-		uid: "用户ID",
-		mode: "组属性",
-		status: "状态"
-	};
 	var opts_table = {
-		tbattr: "width='100%' border='0' cellspacing='1' cellpadding='0' class='list'",
+		tbattr: "width='100%' border='0' cellspacing='1' cellpadding='0' " +
+		" class='list'",
 		tdattr: "class='td_border' align='center'"
 	};
+	var heads = {
+		uid: "用户ID",
+		mode: ["权限属性", function(row, col, val, tr)
+			   {
+				   var smode = "";
+				   switch(val) {
+				   case "0":
+					   smode = "普通组员";
+					   break;
+				   case "1":
+					   smode = "初级会员";
+					   break;
+				   case "2":
+					   smode = "高级会员";
+					   break;
+				   default:
+					   smode = "组管理员";
+					   break;
+				   }
+				   $("<td "+opts_table.tdattr+">"+smode+"</td>").appendTo(tr);
+			   }],
+		status: ["状态", function(row, col, val, tr)
+				 {
+					 var sstatus = "";
+					 switch(val) {
+					 case "0":
+						 sstatus = "申请中";
+						 break;
+					 case "1":
+						 sstatus = "被驳回";
+						 break;
+					 case "2":
+						 sstatus = "被邀请";
+						 break;
+					 case "3":
+						 sstatus = "已拒绝";
+						 break;
+					 default:
+						 sstatus = "正常";
+						 break;
+					 }
+					 $("<td "+opts_table.tdattr+">"+sstatus+"</td>").appendTo(tr);
+				 }],
+		_delete: ["删除", function(row, col, val, tr)
+				  {
+					  $("<td "+opts_table.tdattr+"><input type='button' class='submitbtn' value='删除' /></td>").appendTo(tr).click(function()
+					  {
+						  if (confirm("确认删除?")) {
+							  manageRow("del", {uid: row[uid], gid: row[gid], callBack: function(){tr.remove();}});
+						  }
+					  });
+				  }]
+	};
+
+	function manageRow(op, optm)
+	{
+		optm = $.extend(
+		{
+			uid: -1,
+			gid: -1,
+			callBack: function() {return;}
+		}, optm||{});
+		$.ajax(
+		{
+			type: "POST",
+			url: "/admin/group",
+			cache: false,
+			data: "uid="+optm.uid+"&gid="+optm.gid,
+			dataType: "json",
+			success: function(data) {
+				if (data.success != "1") {
+					if (data.errmsg == "敏感操作, 请先登录") {
+						document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
+						$.facebox({ajax: '/member/login.html'});
+					} else {
+						alert(data.errmsg || "操作失败!");
+					}
+					return;
+				}
+				alert("操作成功!");
+				optm.callBack(data);
+			},
+			error: function(){alert("操作失败");}
+		});
+	}
 
 	function addMember(group)
 	{
-		$("#pid").val(group.id);
+		$("#gid").val(group.gid);
+		if (group.amadmin == "1") {
+			$(".mode_normal").removeAttr("disabled");
+			$(".mode_admin").removeClass("show");
+			$(".mode_admin").addClass("hide");
+		} else {
+			$(".mode_normal").attr("disabled", "disabled");
+			$(".mode_admin").removeClass("hide");
+			$(".mode_admin").addClass("show");
+		}
 	}
 
 	function rendRow(row, obj)
