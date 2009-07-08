@@ -365,7 +365,7 @@ int member_get_group(member_t *mb, int mode, int status, ULIST **res)
 
 	if (mb == NULL || mb->gnode == NULL)
 		return RET_RBTOP_NEXIST;
-	
+
 	err = uListInit(&lres, 0, 0);
 	RETURN_V_NOK(err, RET_RBTOP_INITE);
 	

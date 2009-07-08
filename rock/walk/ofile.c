@@ -137,7 +137,7 @@ int file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file)
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
 		strcpy(tok, "uri=$1");
-		FILE_QUERY_RAW(conn, tok, NULL, uri);
+		FILE_QUERY_RAW(conn, tok, "s", uri);
 		ret = FILE_GET_RAW(conn, fl);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("get %s info failure from db %s", uri, mdb_get_errmsg(conn));
