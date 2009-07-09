@@ -368,6 +368,14 @@ int member_get_group(member_t *mb, int mode, int status, ULIST **res)
 
 	err = uListInit(&lres, 0, 0);
 	RETURN_V_NOK(err, RET_RBTOP_INITE);
+
+	if (member_is_root(mb)) {
+		MLIST_ITERATE(mb->gnode, node) {
+			uListAppend(lres, (void*)node);
+		}
+		*res = lres;
+		return RET_RBTOP_OK;
+	}
 	
 	MLIST_ITERATE(mb->gnode, node) {
 		if (node->mode >= mode) {
