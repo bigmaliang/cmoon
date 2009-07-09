@@ -103,8 +103,8 @@ $(document).ready(function()
 			$(".mode_admin").removeClass("hide");
 			$(".mode_admin").addClass("show");
 		}
-		$("#memberadd").FormValidate();
 		$.facebox({div: '#memberadd'});
+		$(".memberadd").FormValidate();
 	}
 
 	function rendRow(row, obj)
