@@ -36,7 +36,7 @@ int group_get_node(mdb_conn *conn, int uid, int gid, ULIST *node)
 		return RET_RBTOP_INPUTE;
 	}
 		
-	while (GROUP_GET_RAW(conn, gn) != MDB_ERR_NONE) {
+	while (GROUP_GET_RAW(conn, gn) == MDB_ERR_NONE) {
 		uListAppend(node, (void*)gn);
 		gn = gnode_new();
 	}
