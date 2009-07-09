@@ -502,7 +502,7 @@ void group_store_in_hdf(group_t *gp, char *prekey, HDF *hdf)
 	if (gp == NULL || prekey == NULL || hdf == NULL)
 		return;
 
-	char key[LEN_ST], tok[LEN_MD], *prefix;
+	char key[LEN_ST], tok[LEN_MD], *prefix = prekey;
 
 	STORE_IN_HDF_INT(gp, gid);
 
