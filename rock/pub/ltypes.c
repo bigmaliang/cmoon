@@ -566,11 +566,11 @@ int session_init(HDF *hdf, HASH *dbh, session_t **ses)
 		lses->member->uin = 0;
 		lses->member->male = 0;
 		lses->member->status = 0;
-		lses->member->uname = "guest";
-		lses->member->musn = "nothing";
-		lses->member->email = "nothing";
-		lses->member->intime = "1970-01-01";
-		lses->member->uptime = "1970-01-01";
+		lses->member->uname = strdup("guest");
+		lses->member->musn = strdup("nothing");
+		lses->member->email = strdup("nothing");
+		lses->member->intime = strdup("1970-01-01");
+		lses->member->uptime = strdup("1970-01-01");
 	}
 
 	return RET_RBTOP_OK;
