@@ -103,6 +103,7 @@ $(document).ready(function()
 			$(".mode_admin").removeClass("hide");
 			$(".mode_admin").addClass("show");
 		}
+		this.facebox();
 	}
 
 	function rendRow(row, obj)
