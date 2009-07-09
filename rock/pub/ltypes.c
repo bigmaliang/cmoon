@@ -497,19 +497,19 @@ int group_unpack(char *buf, size_t inlen, group_t **group)
 	return RET_RBTOP_OK;
 }
 
-void group_store_in_hdf(group_t *gp, char *prefix, HDF *hdf)
+void group_store_in_hdf(group_t *gp, char *prekey, HDF *hdf)
 {
-	if (gp == NULL || prefix == NULL || hdf == NULL)
+	if (gp == NULL || prekey == NULL || hdf == NULL)
 		return;
 
-	char key[LEN_ST], tok[LEN_MD];
+	char key[LEN_ST], tok[LEN_MD], *prefix;
 
 	STORE_IN_HDF_INT(gp, gid);
 
 	gnode_t *node;
 	if (gp->node != NULL) {
 		MLIST_ITERATE(gp->node, node) {
-			sprintf(tok, "%s.members.%d", prefix, t_rsv_i);
+			sprintf(tok, "%s.members.%d", prekey, t_rsv_i);
 			prefix = tok;
 			STORE_IN_HDF_INT(node, uid);
 			STORE_IN_HDF_INT(node, gid);
