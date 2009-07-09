@@ -118,7 +118,6 @@ $(document).ready(function()
 		title: "uri",
 		time: "intime",
 		titleClickName: "添加用户",
-		titleClickHref: "#memberadd",
 		titleClickCbk: addMember,
 		content: rendRow
 	};
