@@ -94,7 +94,7 @@ $(document).ready(function()
 	function addMember(group)
 	{
 		$("#gid").val(group.gid);
-		if (group.amadmin == "1") {
+		if (group.amadmin != "1") {
 			$(".mode_normal").removeAttr("disabled");
 			$(".mode_admin").removeClass("show");
 			$(".mode_admin").addClass("hide");
@@ -103,7 +103,7 @@ $(document).ready(function()
 			$(".mode_admin").removeClass("hide");
 			$(".mode_admin").addClass("show");
 		}
-		$.facebox("#memberadd");
+		$.facebox({div: '#memberadd'});
 	}
 
 	function rendRow(row, obj)
