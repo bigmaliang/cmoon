@@ -107,8 +107,9 @@ $(document).ready(function()
 
 	function rendRow(row, obj)
 	{
-		$(document).mntable(heads, row.groupinfo.members, opts_table).
-		appendTo(obj);
+		var content = $(document).mntable(heads, row.groupinfo.members, opts_table);
+		content.appendTo(obj);
+		return content;
 	}
 
 	var opt_list = {
