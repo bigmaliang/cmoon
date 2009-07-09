@@ -104,7 +104,7 @@ $(document).ready(function()
 			$(".mode_admin").addClass("show");
 		}
 		$.facebox({div: '#memberadd'});
-		$(".memberadd").FormValidate();
+		$(".infoform").FormValidate();
 	}
 
 	function rendRow(row, obj)
