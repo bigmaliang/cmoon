@@ -91,6 +91,20 @@ $(document).ready(function()
 		});
 	}
 
+	function sucMemberadd(data)
+	{
+		if (data.success != "1") {
+			alert(data.errmsg || "操作失败, 请稍后再试");
+			return;
+		}
+		alert("操作成功");
+		$(document).trigger('close.facebox');
+	}
+
+	function errFileadd() {
+		alert("操作失败");
+	}
+
 	function addMember(group)
 	{
 		$("#gid").val(group.gid);
@@ -104,7 +118,14 @@ $(document).ready(function()
 			$(".mode_admin").addClass("show");
 		}
 		$.facebox({div: '#memberadd'});
-		$(".infoform").submit(FormValidateOnsubmit());
+		$(".infoform").FormValidate().ajaxForm(
+		{
+			success: sucMemberadd,
+			error: errMemberadd,
+			dataType: 'json',
+			validateForm: true,
+			timeout: 5000
+		});
 	}
 
 	function rendRow(row, obj)
@@ -115,7 +136,6 @@ $(document).ready(function()
 	}
 
 	var opt_list = {
-		bindTo: "#grouplist",
 		title: "uri",
 		time: "intime",
 		titleClickName: "添加用户",
@@ -147,8 +167,7 @@ $(document).ready(function()
 				if (typeof mygroup != "undefined") {
 					mygroup.remove();
 				}
-				mygroup = $("<div id='grouplist'></div>").appendTo($("#groups"));
-				$(document).mnlist(data.groups, opt_list);
+				mygroup = $(document).mnlist(data.groups, opt_list).appendTo($("#groups"));
 				$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showGroup});
 			},
 			error: function() {
