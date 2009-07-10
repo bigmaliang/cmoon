@@ -1,0 +1,56 @@
+http://tools.mozilla.com
+========================
+http://www.yeeyan.com (推荐)
+http://www.yeeyan.com/beta
+http://tools.mozilla.com/
+http://tools.mozilla.com/simple.html
+http://www.cnblogs.com/hacker84/archive/2009/04/22/1441536.html jQuery中的this
+哪个交互更好? 浏览列表的时候选择一行能跟用户用友好的方式突出这行, 更容易让人接受
+
+codeburner
+----------
+	http://tools.sitepoint.com/codeburner/
+	查找 HTML, CSS 各个标签的标准用法和浏览器兼容性, 带实例.
+
+
+Pencil
+------
+	http://www.evolus.vn/Pencil/
+	针对 HTML 的xfig/inkscape?
+
+
+Favoicon
+--------
+	http://favicon-generator.org/
+	生成 favorate icon
+
+	http://spritegen.website-performance.org/
+	CSS 图片自动合并工具以减少http请求
+
+
+jQuery Tools
+------------
+	http://flowplayer.org/tools/index.html
+	页卡(tabs), 提示(tips), 醒目(expose), 弹出框(overlay), 滚动(scrollable), 嵌入Flash(flashembed)
+
+
+Visual Event
+------------
+	http://www.sprymedia.co.uk/article/Visual+Event
+	又一个配合jQuery使用NB的工具, 可以看到当前页面有哪些事件.
+
+	http://www.westciv.com/xray/
+	http://www.sprymedia.co.uk/article/Rule
+	两个小工具, 盒子和尺子
+
+
+jsondiff
+--------
+	http://tlrobinson.net/projects/js/jsondiff/
+	展现 json 格式数据, 可查看区别.
+
+
+jsBeauty
+--------
+	http://jsbeautifier.org/
+	压缩后的js代码还原, 便于阅读.
