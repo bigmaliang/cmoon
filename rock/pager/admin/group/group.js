@@ -101,7 +101,7 @@ $(document).ready(function()
 		$(document).trigger('close.facebox');
 	}
 
-	function errMemberAdd() {
+	function errMemberadd() {
 		alert("操作失败");
 	}
 
