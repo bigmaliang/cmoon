@@ -33,6 +33,16 @@ jQuery Tools
 	http://flowplayer.org/tools/index.html
 	页卡(tabs), 提示(tips), 醒目(expose), 弹出框(overlay), 滚动(scrollable), 嵌入Flash(flashembed)
 
+	Uploadify
+	---------
+	http://www.uploadify.com/
+	JS 上传图片
+	
+	Jcrop
+	-----
+	http://deepliquid.com/content/Jcrop.html
+	JS 裁剪图片
+
 
 Visual Event
 ------------
