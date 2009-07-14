@@ -4,6 +4,16 @@
   <div class="sep"></div>
 </div>
 
+
 <div id="coltwo">
+
+  <?cs if:Output.appendable == 1 ?>
+    <button type="button" rel="#fileappend">add</button>
+    <div class="overlay" id="fileappend">
+	  <input type="file" id="imageadder" />
+    </div>
+  <?cs /if ?>
+
+  <div class="sep"></div>
   <div class="title"></div>
 </div>
