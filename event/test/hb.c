@@ -1,3 +1,12 @@
+/*
+ * 事件中心心跳检测报警程序, 需配合 crontab 定时拉起使用
+ * PATH/hb 192.168.1.15 db_community ../daemon/mevent.hdf > /tmp/meventhb.log
+ * 每次检查一个后端插件的工作情况
+ *
+ * 正常情况下 输出 后端插件的 stats 统计信息
+ * 处理错误 0x800 时 短信上报 errcode
+ * 网络,客户端错误时  短信上报 trigger return
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
