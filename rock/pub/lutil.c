@@ -3,21 +3,13 @@
 
 #include "ofile.h"
 
-#include "member.h"
-#include "admin.h"
-#include "service.h"
-#include "static.h"
-#include "csc.h"
+#include "honghong.h"
 /*
  * TODO how make local dlsym ok? so tired 
  */
 static void lutil_donotcall()
 {
-	member_login_data_get(NULL, NULL, NULL);
 	admin_account_data_add(NULL, NULL, NULL);
-	service_action_data_get(NULL, NULL, NULL);
-	static_csc_data_get(NULL, NULL);
-	csc_data_get(NULL, NULL, NULL);
 }
 
 int CGI_REQ_TYPE(CGI *cgi)

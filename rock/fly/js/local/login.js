@@ -1,4 +1,5 @@
-$(document).ready(function() {
+$(document).ready(function()
+{
 	function beforeLoginSerial(obj, opts) {
 		if ($("#usnlogin").val().length != 0)
 			$("#usnlogin").attr("value", $.md5($.md5($("#usnlogin").val())) );
@@ -45,7 +46,7 @@ $(document).ready(function() {
 	};
 
 	$("a[rel=facebox]").facebox({opacity: 0.4, closeImage: "/js/pub/ref/facebox/closelabeld.jpg"});
-	$(document).bind("reveal.facebox", function() {
+	$(document).bind("reveal.facebox", function(){
 		$("#formlogin").FormValidate().ajaxForm(opt_login);
 		var uin = $.cookie("uin");
 		if (uin != null) {
@@ -55,6 +56,10 @@ $(document).ready(function() {
 			$("#uinlg").focus();
 		}
 	});
+	$("a[rel]").overlay(function()
+	{
+	});
+
 });
 
 function modifyLogin(opts)
