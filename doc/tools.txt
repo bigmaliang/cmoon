@@ -1,10 +1,31 @@
+知识
+===
+
+译言
+---
+	http://www.yeeyan.com/beta
+
+jQuery中的this
+-------------
+	http://www.cnblogs.com/hacker84/archive/2009/04/22/1441536.html
+
+DTD
+---
+	http://www.w3school.com.cn/dtd/index.asp DTD学习
+	http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd 实例
+
+unlink
+------
+	unlink 函数主要和mkstemp一起使用用来创建一个临时文件, 然后通过 unlink 删掉这个文件的
+	目录入口, 保证临时文件不被其他用户查看, 所以临时文件还是可以通过文件描述符访问,
+	直到最后一个打开的进程关闭文件操作符或者程序退出后临时文件被彻底的删除.
+	
+
+
 http://tools.mozilla.com
 ========================
-http://www.yeeyan.com (推荐)
-http://www.yeeyan.com/beta
 http://tools.mozilla.com/
 http://tools.mozilla.com/simple.html
-http://www.cnblogs.com/hacker84/archive/2009/04/22/1441536.html jQuery中的this
 哪个交互更好? 浏览列表的时候选择一行能跟用户用友好的方式突出这行, 更容易让人接受
 
 codeburner

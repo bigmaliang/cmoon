@@ -402,6 +402,10 @@ static void get_errmsg(int ret, char *res)
 		break;
 	case RET_RBTOP_MEMALLOCE:
 		strcpy(res, "分配内存失败");
+		break;
+	case RET_RBTOP_CREATEFE:
+		strcpy(res, "创建文件失败");
+		break;
 	default:
 		strcpy(res, "数据库操作错误");
 		break;
