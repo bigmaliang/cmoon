@@ -98,3 +98,34 @@ int lutil_fill_layout_by_file(mdb_conn *conn, file_t *file, HDF *hdf)
 	return RET_RBTOP_OK;
 }
 
+int lutil_image_accept(FILE *fp, char *outpath, unsigned char result[16])
+{
+	if (fp == NULL || result == NULL || outpath == NULL)
+		return RET_RBTOP_INPUTE;
+
+    md5_ctx my_md5;
+	unsigned char data[4096];
+	unsigned int bytes;
+
+    MD5Init(&my_md5);
+
+	fseek(fp, 0, SEEK_SET);
+	while ((bytes = fread(data, 1, 1024, fp)) != 0)
+		MD5Update(&my_md5, data, bytes);
+    MD5Final(result, &my_md5);
+
+	char fname[LEN_FN];
+	snprintf(fname, sizeof(fname), "%s/%s.jpg", outpath, result);
+	FILE *fpout = fopen(fname, "w+");
+	if (fpout == NULL) {
+		mtc_err("open %s for write failure", fname);
+		return RET_RBTOP_CREATEFE;
+	}
+
+	fseek(fp, 0, SEEK_SET);
+	while ((bytes = fread(data, 4096, 1, fp)) != 0)
+		fwrite(data, bytes, 1, fpout);
+	fclose(fpout);
+
+	return RET_RBTOP_OK;
+}

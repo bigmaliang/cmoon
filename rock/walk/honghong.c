@@ -4,6 +4,7 @@
 #include "ofile.h"
 #include "ogroup.h"
 #include "oaccount.h"
+#include "ocsc.h"
 
 int admin_account_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
@@ -60,19 +61,6 @@ int admin_group_data_del(CGI *cgi, HASH *dbh, session_t *ses)
 }
 
 
-int csc_data_get(CGI *cgi, HASH *dbh, session_t *ses)
-{
-	if (ses->file != NULL)
-		lutil_fill_layout_by_file((mdb_conn*)hash_lookup(dbh, "Sys"),
-								  ses->file, cgi->hdf);
-	hdf_set_value(cgi->hdf, PRE_OUTPUT".navtitle", "菜色");
-	return file_get_nav_by_uri((mdb_conn*)hash_lookup(dbh, "Sys"),
-						"/csc", PRE_OUTPUT, cgi->hdf);
-	//return csc_get_data(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Csc"));
-
-}
-
-
 int member_login_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
 	int ret;
@@ -118,4 +106,30 @@ int static_csc_data_get(HDF *hdf, HASH *dbh)
 {
 	return file_get_nav_by_uri((mdb_conn*)hash_lookup(dbh, "Sys"),
 							   "/csc", PRE_OUTPUT, hdf);
+}
+
+
+int csc_data_get(CGI *cgi, HASH *dbh, session_t *ses)
+{
+	if (ses->file != NULL)
+		lutil_fill_layout_by_file((mdb_conn*)hash_lookup(dbh, "Sys"),
+								  ses->file, cgi->hdf);
+	hdf_set_value(cgi->hdf, PRE_OUTPUT".navtitle", "菜色");
+	return file_get_nav_by_uri((mdb_conn*)hash_lookup(dbh, "Sys"),
+						"/csc", PRE_OUTPUT, cgi->hdf);
+	//return csc_get_data(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Csc"));
+
+}
+
+int csc_data_add(CGI *cgi, HASH *dbh, session_t *ses)
+{
+	int ret;
+	
+	char *tp = hdf_get_value(cgi->hdf, PRE_QUERY".tp", NULL);
+
+	if (tp != NULL && !strcmp(tp, "imageadd")) {
+		return csc_add_image(cgi, (mdb_conn*)hash_lookup(dbh, "Csc"), ses);
+	}
+
+	return csc_add_item(cgi, (mdb_conn*)hash_lookup(dbh, "Csc"), ses);
 }

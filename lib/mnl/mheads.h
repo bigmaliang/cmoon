@@ -101,6 +101,7 @@
 #include "mmemc.h"
 #include "mjson.h"
 #include "mutil.h"
+#include "md5.h"
 #include "mdb.h"
 #include "mdata.h"
 #include "fdb.h"
