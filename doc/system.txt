@@ -51,13 +51,8 @@ config-avilable
 10-cgi.conf:
 
 -$HTTP["url"] =~ "^/cgi-bin/" {
-+#$HTTP["url"] =~ "^/cgi-bin/" {
-+#	cgi.assign = ( "" => "" )
-+#}
-+
 +$HTTP["url"] =~ "^/run/" {
- 	cgi.assign = ( "" => "" )
- }
+
 
 /usr/sbin/lighty-enable-mod
 
