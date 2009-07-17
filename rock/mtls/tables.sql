@@ -37,6 +37,7 @@ CREATE TABLE accountinfo (
 	PRIMARY KEY (Uin)
 );
 
+-- insert root row before trigger create
 INSERT INTO fileinfo (pid, uid, mode, reqtype, lmttype, name, remark) VALUES (0, 1001, 1, 0, 0, '/', '首页'); -- can't direct access
 
 CREATE INDEX file_index ON fileinfo (pid, uid, gid, mode, name);
