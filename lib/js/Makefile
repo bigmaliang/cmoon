@@ -7,8 +7,8 @@ mbase.js: ref/jquery-1.2.6.js  ref/jquery.cookie.js  own/jquery.mnmisc.js
 
 mbox.js: ref/facebox/facebox.js
 
-mflowtools.js: ref/flowtools/tools.tabs.js ref/flowtools/tools.tooltip.js \
-		ref/flowtools/tools.overlay.js ref/flowtools/tools.expose.js ref/flowtools/tools.scrollable.js
+mflowtools.js: ref/flowtools/js/tools.tabs.js ref/flowtools/js/tools.tooltip.js \
+		ref/flowtools/js/tools.overlay.js ref/flowtools/js/tools.expose.js ref/flowtools/js/tools.scrollable.js
 
 mform.js: ref/jquery.md5.js  ref/jquery.formval.js  ref/jquery.form.js
 
