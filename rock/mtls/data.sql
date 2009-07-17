@@ -3,8 +3,6 @@
 -- 0001' 0000'0001' 0000'0000 65792
 -- 0101' 0000'0001' 0000'0001 327937
 -- 1111' 0000'0111' 0000'0001 984833
-INSERT INTO fileinfo (pid, uid, mode, reqtype, lmttype, name, remark) VALUES (0, 1001, 1, 0, 0, '/', '首页'); -- can't direct access
-
 INSERT INTO fileinfo (pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1001, 65792, 0, 0, 'admin', '管理'); -- can't direct access
 INSERT INTO fileinfo (pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1001, 1, 0, 0, 'member', '用户'); -- can't direct access
 INSERT INTO fileinfo (pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1001, 1, 0, 0, 'service', '服务'); -- can't direct access

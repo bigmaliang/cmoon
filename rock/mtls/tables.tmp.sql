@@ -17,3 +17,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 -- after insert return NEW make no sense, so update by hand
+
+
+
+
+
+
+-- file rule deprecated, use file triggle instead
+CREATE RULE filerule AS ON INSERT TO fileinfo
+	DO ( UPDATE fileinfo SET uri= (SELECT uri FROM fileinfo WHERE id=NEW.pid) || '/' || NEW.name WHERE id=NEW.id;
+	INSERT INTO groupinfo (uid, gid, mode) VALUES (NEW.uid, NEW.id, 255); );

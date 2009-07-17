@@ -37,6 +37,8 @@ CREATE TABLE accountinfo (
 	PRIMARY KEY (Uin)
 );
 
+INSERT INTO fileinfo (pid, uid, mode, reqtype, lmttype, name, remark) VALUES (0, 1001, 1, 0, 0, '/', '首页'); -- can't direct access
+
 CREATE INDEX file_index ON fileinfo (pid, uid, gid, mode, name);
 --done in after_file_insert()
 CREATE TRIGGER tg_uptime_file BEFORE UPDATE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE update_time();
@@ -74,14 +76,4 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tg_suf_fileinfo_insert AFTER INSERT ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_insert();
 CREATE TRIGGER tg_suf_fileinfo_delete AFTER DELETE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_delete();
-
-
-
-
-
-
--- file rule deprecated, use file triggle instead
-CREATE RULE filerule AS ON INSERT TO fileinfo
-	DO ( UPDATE fileinfo SET uri= (SELECT uri FROM fileinfo WHERE id=NEW.pid) || '/' || NEW.name WHERE id=NEW.id;
-	INSERT INTO groupinfo (uid, gid, mode) VALUES (NEW.uid, NEW.id, 255); );
 
