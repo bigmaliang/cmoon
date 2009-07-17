@@ -10,7 +10,7 @@ CREATE TABLE fileinfo (
 	   lmttype int NOT NULL DEFAULT 0,	  -- action type (need some extra limit to access this file)
 	   name varchar(256) NOT NULL DEFAULT '', --file name present in url
 	   remark varchar(256) NOT NULL DEFAULT '', --description remark
-	   uri varchar(1024) NOT NULL DEFAULT '/',	--consider as file's absolute path
+	   uri varchar(1024) NOT NULL DEFAULT '',	--consider as file's absolute path
 	   dataer varchar(256) NOT NULL DEFAULT '',
 	   render varchar(256) NOT NULL DEFAULT '',
 	   intime timestamp DEFAULT now(),
