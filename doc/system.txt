@@ -69,7 +69,6 @@ postgresql
 1, 建立 postgresql 账号
 	用 postgres 用户登录psql,	执行
 	CREATE USER mner CREATEDB password 'loveu';
-	CREATE LANGUAGE plpgsql; -- 开启 plpgsql 语言
 	这样就建立了一个 可以创建数据库的 mner 用户, 通过非ident方式链接的时候密码为 loveu
 	\du 查看当前用户
 
@@ -91,7 +90,12 @@ postgresql
 	用刚建立和配置的 mner 账号登录:
 	$psql -U mner -d postgres (当前还没建立mn_sys库)
 		create database mn_sys encoding='utf8';
-		create table...
+		create database csc encoding='utf8';
+		用postgres帐号登录:
+		\c mn_sys
+		CREATE LANGUAGE plpgsql; -- 开启 plpgsql 语言
+		\c csc
+		CREATE LANGUAGE plpgsql;
 	以后都可以用 $psql -U mner -d mn_sys 登录
 
 4, 修改postgresql可选配置
@@ -104,6 +108,11 @@ postgresql
 	-#full_page_writes = on			# recover from partial page writes
 	+full_page_writes = off			# recover from partial page writes
 
+5, 建立mn表
+	$moon/rock/mtls/createTable.sh
+	mn_sys=> \i .../moon/rock/mtls/table.sql
+	
+	
 备注:
 	上述配置, mnuser 只能以bigml通过 local 方式登录, 如需其他方式请修改 pg_hba.conf 文件,
 	pg_ident.conf 文件只是在 认证方式为 ident 的时候配合修改(ident也可以存在于TCP/IP方式)
