@@ -18,14 +18,13 @@ function rpcError {
 for ip in $rtds; do
 	wget --quiet --timeout=5 --tries=1 --save-headers "http://$ip/cgi-bin/cds.cgi?op=n_photo&key=1" -O $outfile
 	#STATUS=`sed -n 1p $outfile`
-	grep -q "HTTP/.* 200 OK" $outfile
-	if [ "$?" = "0" ]; then
-		grep -q "errmsg" $outfile
-		if [ "$?" != "0" ]; then
-			echo $TIMENOW $ip "is fine" >> $logfile
-		else
+	
+	if grep -q "HTTP/.* 200 OK" $outfile && grep -q "success" $outfile; then
+		if grep -q "errmsg" $outfile; then
 			errmsg=`grep errmsg $outfile`
 			rpcError $ip "$errmsg"
+		else
+			echo $TIMENOW $ip "is fine" >> $logfile
 		fi
 	else
 		errmsg=`grep "HTTP/.*" $outfile`
