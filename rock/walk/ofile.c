@@ -4,8 +4,8 @@
 #include "omember.h"
 
 #define FILE_QUERY_COL	" id, pid, uid, gid, mode, reqtype, lmttype, name, " \
-	"remark, uri, dataer, render, to_char(intime 'YYYY-MM-DD') as intime, " \
-	" to_char(uptime 'YYYY-MM-DD') as uptime "
+	"remark, uri, dataer, render, to_char(intime, 'YYYY-MM-DD') as intime, " \
+	" to_char(uptime, 'YYYY-MM-DD') as uptime "
 
 #define FILE_QUERY_RAW(conn, condition, sfmt, ...)						\
 	mdb_exec(conn, NULL, "SELECT "FILE_QUERY_COL" FROM fileinfo WHERE %s;", \

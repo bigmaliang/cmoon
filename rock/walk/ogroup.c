@@ -4,7 +4,7 @@
 #include "omember.h"
 
 #define GROUP_QUERY_COL " uid, gid, mode, status, " \
-	" to_char(intime 'YYYY-MM-DD') as intime, to_char(uptime 'YYYY-MM-DD') as uptime "
+	" to_char(intime, 'YYYY-MM-DD') as intime, to_char(uptime, 'YYYY-MM-DD') as uptime "
 #define GROUP_QUERY_RAW(conn, condition, sfmt, ...)						\
 	mdb_exec(conn, NULL, "SELECT "GROUP_QUERY_COL" FROM groupinfo WHERE %s;", \
 			 sfmt, condition, ##__VA_ARGS__)

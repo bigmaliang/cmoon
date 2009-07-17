@@ -3,7 +3,7 @@
 #include "omember.h"
 
 #define ACCOUNT_QUERY_COL " uin, uname, status, " \
-	" to_char(intime 'YYYY-MM-DD') as intime, to_char(uptime 'YYYY-MM-DD') as uptime "
+	" to_char(intime, 'YYYY-MM-DD') as intime, to_char(uptime, 'YYYY-MM-DD') as uptime "
 #define ACCOUNT_QUERY_RAW(conn, condition, sfmt, ...)					\
 	mdb_exec(conn, NULL, "SELECT "ACCOUNT_QUERY_COL" FROM accountinfo WHERE %s;", \
 			 sfmt, condition, ##__VA_ARGS__)
