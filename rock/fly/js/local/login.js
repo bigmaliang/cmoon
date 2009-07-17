@@ -45,7 +45,13 @@ $(document).ready(function()
 		timeout: 5000
 	};
 
-	$("a[rel=facebox]").facebox({opacity: 0.4, closeImage: "/js/pub/ref/facebox/closelabeld.jpg"});
+	$("a[rel]").overlay(function()
+	{
+		var wrap = this.getContent().find("div.wrap");
+		if (wrap.is(":empty")) {
+			wrap.load(this.getTrigger().attr("href"));
+		}
+	});
 	$(document).bind("reveal.facebox", function(){
 		$("#formlogin").FormValidate().ajaxForm(opt_login);
 		var uin = $.cookie("uin");
@@ -56,10 +62,6 @@ $(document).ready(function()
 			$("#uinlg").focus();
 		}
 	});
-	$("a[rel]").overlay(function()
-	{
-	});
-
 });
 
 function modifyLogin(opts)

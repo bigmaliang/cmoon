@@ -10,7 +10,7 @@
     <title>易生活 - <?cs var:Layout.title ?></title>
 
     <link rel="stylesheet" type="text/css" href="/css/mbase.css" />
-    <link rel="stylesheet" type="text/css" href="/css/mbox.css" />
+    <link rel="stylesheet" type="text/css" href="/css/mflowtools.css" />
     <link rel="stylesheet" type="text/css" href="/css/msuperfish.css" />
     <?cs include:Include.css ?>
 	<style type="text/css">
@@ -19,7 +19,6 @@
 
     <script type="text/javascript" src="/js/pub/mbase.js"></script>
     <script type="text/javascript" src="/js/pub/mform.js"></script>
-    <!--<script type="text/javascript" src="/js/pub/mbox.js"></script>-->
     <script type="text/javascript" src="/js/pub/mflowtools.js"></script>
     <script type="text/javascript" src="/js/pub/msuperfish.js"></script>
     <script type="text/javascript" src="/js/llayout.js"></script>
@@ -37,11 +36,14 @@
           <li class="last"><a href="javascript:void(0);" id="userlogout">退出</a></li>
         </ul>
         <ul id="nav-guest">
-          <li><a href="/member/login.html" rel="login">登录</a></li>
+          <li><a href="/member/login.html" rel="#loginoverlay">登录</a></li>
           <li><a href="/member/regist.html">注册</a></li>
           <li class="last"><a href="/member/reset.html">忘记密码</a></li>
         </ul>
       </div>
+	  <div class="overlay" id="loginoverlay">
+		<div class="wrap"></div>
+	  </div>
     </div>
 
     <div id="mid">
