@@ -66,6 +66,7 @@ postgresql
 	CREATE USER mner CREATEDB password 'loveu';
 	这样就建立了一个 可以创建数据库的 mner 用户, 通过非ident方式链接的时候密码为 loveu
 	\du 查看当前用户
+	select * from pg_trigger; 查看系统中所有的 trigger
 
 2, 配置访问方式
 	...pg_hba.conf
@@ -106,6 +107,9 @@ postgresql
 5, 建立mn表
 	$moon/rock/mtls/createTable.sh
 	mn_sys=> \i .../moon/rock/mtls/table.sql
+
+6, mn表初始化
+	mn_sys=> \i .../moon/rock/mtls/data.sql
 	
 	
 备注:
