@@ -3,7 +3,7 @@
 div.overlay {
 	
 	/* growing background image */
-	background-image:url(../img/overlay/white.png);
+	background-image:url(/js/pub/ref/flowtools/image/overlay/white.png);
 	
 	/* dimensions after the growing animation finishes  */
 	width:600px;
@@ -18,7 +18,7 @@ div.overlay {
 
 /* default close button positioned on upper right corner */
 div.overlay div.close {
-	background-image:url(../img/overlay/close.png);
+	background-image:url(/js/pub/ref/flowtools/image/overlay/close.png);
 	position:absolute;
 	right:5px;
 	top:5px;
@@ -30,13 +30,13 @@ div.overlay div.close {
 
 /* black */
 div.overlay.black {
-	background:url(../img/overlay/transparent.png) no-repeat !important;
+	background:url(/js/pub/ref/flowtools/image/overlay/transparent.png) no-repeat !important;
 	color:#fff;
 }
 
 /* petrol */
 div.overlay.petrol {
-	background:url(../img/overlay/petrol.png) no-repeat !important;
+	background:url(/js/pub/ref/flowtools/image/overlay/petrol.png) no-repeat !important;
 	color:#fff;
 }
 
