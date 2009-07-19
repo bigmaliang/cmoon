@@ -17,13 +17,15 @@ $(document).ready(function()
 			$("#loggedin").fadeIn("slow", function() {
 				$("#unamelogin").text(data.uname);
 			});
-			$("#loggedin").delay(500, function() {
-				$(document).trigger('close.facebox');
-				loginCheck();
+			$("#loggedin").delay(500, function()
+			{
+				overlay_login.close();
+				jumpToRurl();
+				if (typeof document.loginopts == "undefined" ||
+					document.loginopts.rurl == "") {
+					loginCheck();
+				}
 			});
-			if (type(data.rurl) == "String" && data.rurl != "") {
-				window.location.href = data.rurl;
-			}
 		} else if (data.tired != null && data.tired != "0") {
 			$("#tiredlogin").fadeIn("slow", function() {
 				$("#periodlogin").html(data.during);
@@ -45,31 +47,26 @@ $(document).ready(function()
 		timeout: 5000
 	};
 
-	$("a[rel]").overlay(function()
+	overlay_login = $("a[rel=#loginoverlay]").overlay(
 	{
-		var wrap = this.getContent().find("div.wrap");
-		if (wrap.is(":empty")) {
-			wrap.load(this.getTrigger().attr("href"));
-		}
-	});
-	$(document).bind("reveal.facebox", function(){
-		$("#formlogin").FormValidate().ajaxForm(opt_login);
-		var uin = $.cookie("uin");
-		if (uin != null) {
-			$("#uinlg").val(uin);
-			$("#usnlogin").focus();
-		} else {
-			$("#uinlg").focus();
+		api: true,
+		closeOnClick: false,
+		onBeforeLoad: function() {
+			var wrap = this.getContent().find("div.wrap");
+			if (wrap.is(":empty")) {
+				wrap.load(this.getTrigger().attr("href"));
+			}
+		},
+		onLoad: function() {
+			modifyTitle();
+			$("#formlogin").FormValidate().ajaxForm(opt_login);
+			var uin = $.cookie("uin");
+			if (uin != null) {
+				$("#uinlg").val(uin);
+				$("#usnlogin").focus();
+			} else {
+				$("#uinlg").focus();
+			}
 		}
 	});
 });
-
-function modifyLogin(opts)
-{
-	if (opts.title) {
-		$("#titlelg").html(opts.title);
-	}
-	if (opts.rurl) {
-		$("#rurllg").text(opts.rurl);
-	}
-};

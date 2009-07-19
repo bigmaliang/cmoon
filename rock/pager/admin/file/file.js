@@ -13,9 +13,9 @@ $(document).ready(function()
 		uri: "uri",
 		remark: "名称",
 		uname: "创建者",
-		_allp: ["所有用户权限", displayMode],
-		_memberp: ["注册用户权限", displayMode],
-		_joinp: ["组用户权限", displayMode],
+		//_allp: ["所有用户权限", displayMode],
+		//_memberp: ["注册用户权限", displayMode],
+		//_joinp: ["组用户权限", displayMode],
 		intime: "加入时间",
 		_delete: ["删除", function(row, col, val, tr) {
 			$("<td "+opts_mntable.tdattr+"><input type='button' class='submitbtn' value='删除' /></td>").appendTo(tr).click(function() {
@@ -109,10 +109,9 @@ $(document).ready(function()
 			success: function(data) {
 				if (type(data.files) != "Array") {
 					if (data.errmsg == "敏感操作, 请先登录") {
-						//$.facebox({ajax: '/member/login.html'});
-						//({title: data.errmsg, rurl: "/admin/file.html"});
 						document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
-						$.facebox({ajax: '/member/login.html'});
+						//$.facebox({ajax: '/member/login.html'});
+						overlay_login.load();
 					} else {
 						alert(data.errmsg || "获取文件列表失败!");
 					}
@@ -146,7 +145,7 @@ $(document).ready(function()
 		$("#mntrow"+data.files[0].id).seekAttention({
 			pulseSpeed: 800
 		});
-		$(document).trigger('close.facebox');
+		overlay_file.close();
 	}
 	function errFileadd() {
 		alert("操作失败");
@@ -170,8 +169,19 @@ $(document).ready(function()
 		timeout: 5000
 	};
 
-	$(document).bind("reveal.facebox", function() {
-		$("#formfileadd").FormValidate().ajaxForm(opt_fileadd);
-		$("#remark").focus();
+	overlay_file = $("a[rel=#fileoverlay]").overlay(
+	{
+		api: true,
+		closeOnClick: false,
+		onBeforeLoad: function() {
+			var wrap = this.getContent().find("div.wrap");
+			if (wrap.is(":empty")) {
+				wrap.load(this.getTrigger().attr("href"));
+			}
+		},
+		onLoad: function() {
+			$("#formfileadd").FormValidate().ajaxForm(opt_fileadd);
+			$("#remark").focus();
+		}
 	});
 });

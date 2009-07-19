@@ -31,17 +31,3 @@
 <div id="failurelogin" class="hide">
   <span>出错了, 稍后再试吧. <span id="errmsglogin"></span></span>
 </div>
-
-<script language="javascript">
-  var lopt = document.loginopts;
-  if (type(lopt) == "Object") {
-    if (lopt.title != "") {
-    	$("#titlelg").text(lopt.title);
-		lopt.title = "";
-    }
-    if (lopt.rurl != "") {
-    	$("#rurllg").text(lopt.rurl);
-		lopt.rurl = "";
-    }
-  }
-</script>

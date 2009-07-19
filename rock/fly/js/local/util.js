@@ -41,3 +41,28 @@ function logoutEol()
 		cache: false
 	});
 }
+
+function modifyTitle()
+{
+	var lopt = document.loginopts;
+	if (type(lopt) == "Object") {
+		if (lopt.title != "") {
+    		$("#titlelg").text(lopt.title);
+			lopt.title = "登录 EOL";
+		}
+		if (lopt.rurl != "") {
+    		$("#rurllg").text(lopt.rurl);
+		}
+	}
+}
+
+function jumpToRurl()
+{
+	var lopt = document.loginopts;
+	if (type(lopt) == "Object") {
+		if (type(lopt.rurl) == "String" && lopt.rurl != "") {
+			window.location.href = lopt.rurl;
+			lopt.rurl = "";
+		}
+	}
+}

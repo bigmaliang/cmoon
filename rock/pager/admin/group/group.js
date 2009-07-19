@@ -78,7 +78,7 @@ $(document).ready(function()
 				if (data.success != "1") {
 					if (data.errmsg == "敏感操作, 请先登录") {
 						document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
-						$.facebox({ajax: '/member/login.html'});
+						overlay_login.load();
 					} else {
 						alert(data.errmsg || "操作失败!");
 					}
@@ -98,7 +98,7 @@ $(document).ready(function()
 			return;
 		}
 		alert("操作成功");
-		$(document).trigger('close.facebox');
+		overlay_group.close();
 	}
 
 	function errMemberadd() {
@@ -109,16 +109,15 @@ $(document).ready(function()
 	{
 		$("#gid").val(group.gid);
 		if (group.amadmin != "1") {
-			$(".mode_normal").removeAttr("disabled");
-			$(".mode_admin").removeClass("show");
-			$(".mode_admin").addClass("hide");
+			$("#mode_normal").removeAttr("disabled");
+			$("#mode_admin").removeClass("show");
+			$("#mode_admin").addClass("hide");
 		} else {
-			$(".mode_normal").attr("disabled", "disabled");
-			$(".mode_admin").removeClass("hide");
-			$(".mode_admin").addClass("show");
+			$("#mode_normal").attr("disabled", "disabled");
+			$("#mode_admin").removeClass("hide");
+			$("#mode_admin").addClass("show");
 		}
-		$.facebox({div: '#memberadd'});
-		$(".infoform").FormValidate().ajaxForm(
+		$("#formgroupadd").FormValidate().ajaxForm(
 		{
 			success: sucMemberadd,
 			error: errMemberadd,
@@ -126,6 +125,7 @@ $(document).ready(function()
 			validateForm: true,
 			timeout: 5000
 		});
+		overlay_group.load();
 	}
 
 	function rendRow(row, obj)
@@ -156,9 +156,9 @@ $(document).ready(function()
 					if (data.errmsg == "敏感操作, 请先登录") {
 						document.loginopts = {
 							title: data.errmsg,
-							rurl: "admin/group.html"
+							rurl: "/admin/group.html"
 						};
-						$.facebox({ajax: '/member/login.html'});
+						overlay_login.load();
 					} else {
 						alert(data.errmsg || "获取组列表失败");
 					}
@@ -177,4 +177,12 @@ $(document).ready(function()
 	}
 
 	showGroup(1);
+	overlay_group = $("input[rel=#memberadd]").overlay(
+	{
+		api:true,
+		closeOnClick: false,
+		expose: {
+			closeOnClick: false
+		}
+	});
 });

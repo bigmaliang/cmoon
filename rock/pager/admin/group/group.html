@@ -11,8 +11,9 @@
   <div id="pagenav"></div>
   <div class="sep"></div>
 
-  <div id="memberadd" class="hide">
-	<form class="infoform" method="post" enctype="multipart/form-data" action="/admin/group">
+  <div id="memberadd" class="overlay">
+	<form class="infoform" id="formgroupadd" method="post" enctype="multipart/form-data" action="/admin/group">
+	  <input type="hidden" rel="#memberadd" />
 	  <input type="hidden" name="op" value="add" />
 	  <input type="hidden" name="gid" value="0" id="gid" />
 	  <input type="hidden" name="status" value="2" id="status" /> <!--GROUP_STAT_INVITE-->
