@@ -107,11 +107,15 @@ int lutil_image_accept(FILE *fp, char *outpath, unsigned char result[16])
 	unsigned char data[4096];
 	unsigned int bytes;
 
+	memset(data, 0x0, sizeof(data));
     MD5Init(&my_md5);
 
 	fseek(fp, 0, SEEK_SET);
-	while ((bytes = fread(data, 1, 1024, fp)) != 0)
+	while ((bytes = fread(data, 1, 4096, fp)) != 0) {
 		MD5Update(&my_md5, data, bytes);
+		memset(data, 0x0, sizeof(data));
+	}
+	memset(result, 0x0, 16);
     MD5Final(result, &my_md5);
 
 	char fname[LEN_FN];
@@ -123,8 +127,8 @@ int lutil_image_accept(FILE *fp, char *outpath, unsigned char result[16])
 	}
 
 	fseek(fp, 0, SEEK_SET);
-	while ((bytes = fread(data, 4096, 1, fp)) != 0)
-		fwrite(data, bytes, 1, fpout);
+	while ((bytes = fread(data, 1, 4096, fp)) != 0)
+		fwrite(data, 1, bytes, fpout);
 	fclose(fpout);
 
 	return RET_RBTOP_OK;
