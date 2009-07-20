@@ -63,7 +63,7 @@ CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $file_insert$
 			WHERE id=NEW.id;
 		END IF;
 
-		INSERT INTO groupinfo (uid, gid, mode) VALUES (NEW.uid, NEW.id, 255);
+		INSERT INTO groupinfo (uid, gid, mode, status) VALUES (NEW.uid, NEW.id, 255, 4);
 		RETURN NULL;
 	END;
 $file_insert$ LANGUAGE plpgsql;

@@ -119,11 +119,6 @@ admin_file {
 	}
 }
 
-admin_groupadd {
-	Output = admin/groupadd.html
-	Layout = admin/group/groupadd.html
-}
-
 admin_group {
 	Output = admin/group.html
 	Layout = layout.html

@@ -110,7 +110,15 @@ postgresql
 
 6, mn表初始化
 	mn_sys=> \i .../moon/rock/mtls/data.sql
-	
+
+7, 注册root用户
+	update rls_user_4 set status=2 where uin=1001;
+	insert into user_1 (uin, uname, usn, status) values (1001, 'maliang', 'fb469d7ef430b0baf0cab6c436e70375', 2);
+	其中 fb... 为 'test' 密匙的两次 MD5, 用 root 登录后修改密码
+
+8, 创建csc ktz 用户
+	root 用户登录后, 组管理里面, 把开拓者帐号加入 /csc 组中
+
 	
 备注:
 	上述配置, mnuser 只能以bigml通过 local 方式登录, 如需其他方式请修改 pg_hba.conf 文件,

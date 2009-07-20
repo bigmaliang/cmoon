@@ -109,11 +109,10 @@ $(document).ready(function()
 	{
 		$("#gid").val(group.gid);
 		if (group.amadmin != "1") {
-			$("#mode_normal").removeAttr("disabled");
 			$("#mode_admin").removeClass("show");
 			$("#mode_admin").addClass("hide");
+			$("#mode_admin select").val(0);
 		} else {
-			$("#mode_normal").attr("disabled", "disabled");
 			$("#mode_admin").removeClass("hide");
 			$("#mode_admin").addClass("show");
 		}

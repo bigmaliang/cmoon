@@ -19,7 +19,6 @@ Config {
 Db {
 	Dsn {
 		Sys = pgsql:dbname=mn_sys host=localhost user=mner password=loveu
-		Music = pgsql:dbname=mn_user host=localhost user=mner password=loveu
 		Csc = pgsql:dbname=csc host=localhost user=mner password=loveu
 	}
 	Table {

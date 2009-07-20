@@ -22,9 +22,9 @@ $(document).ready(function()
 							title: data.errmsg,
 							rurl: "admin/account.html"
 						};
-						$.facebox({ajax: '/member/login.html'});
+						overlay_login.load();
 					} else {
-						alert(data.errmsg || "获取组列表失败");
+						alert(data.errmsg || "获取帐号列表失败");
 					}
 					return;
 				}
@@ -36,7 +36,7 @@ $(document).ready(function()
 				$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showAccount});
 			},
 			error: function() {
-				alter("获取组列表失败");
+				alter("获取帐号列表失败");
 			}
 		});
 	}

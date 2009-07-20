@@ -91,6 +91,9 @@ int main(int argc, char **argv, char **envp)
 		
 	response:
 		if (cgi != NULL && cgi->hdf != NULL) {
+#ifdef DEBUG_HDF
+			hdf_write_file(cgi->hdf, TC_ROOT"hdf.viki");
+#endif
 			switch (CGI_REQ_TYPE(cgi)) {
 			case CGI_REQ_HTML:
 				if (ret != RET_RBTOP_OK && ret == RET_RBTOP_NEXIST) {
@@ -118,9 +121,6 @@ int main(int argc, char **argv, char **envp)
 				cgi_redirect(cgi, "/503.html");
 				break;
 			}
-#ifdef DEBUG_HDF
-			hdf_write_file(cgi->hdf, TC_ROOT"hdf.viki");
-#endif
 			cgi_destroy(&cgi);
 			session_destroy(&session);
 		}
