@@ -14,6 +14,7 @@ __BEGIN_DECLS
 #define LEN_TM		25		// time 2008-01-01 12:12:43
 #define LEN_TM_GMT	32		/* Wdy, DD-Mon-YYYY HH:MM:SS GMT */
 #define LEN_IP		16		// IP length 202.202.202.202
+#define LEN_MD5		33		/* 098f6bcd4621d373cade4e832627b4f6\0 */
 #define LEN_TB		64		/* table name length */
 #define LEN_CK		32		/* user login cookie length */
 #define LEN_LT		43
