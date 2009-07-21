@@ -98,13 +98,14 @@ int lutil_fill_layout_by_file(mdb_conn *conn, file_t *file, HDF *hdf)
 	return RET_RBTOP_OK;
 }
 
-int lutil_image_accept(FILE *fp, char *outpath, unsigned char result[16])
+/* make sure result has enough capacity */
+int lutil_image_accept(FILE *fp, char *outpath, unsigned char *result)
 {
 	if (fp == NULL || result == NULL || outpath == NULL)
 		return RET_RBTOP_INPUTE;
 
     md5_ctx my_md5;
-	unsigned char data[4096];
+	unsigned char data[4096], hexres[16], tok[3];
 	unsigned int bytes;
 
 	memset(data, 0x0, sizeof(data));
@@ -115,8 +116,15 @@ int lutil_image_accept(FILE *fp, char *outpath, unsigned char result[16])
 		MD5Update(&my_md5, data, bytes);
 		memset(data, 0x0, sizeof(data));
 	}
-	memset(result, 0x0, 16);
-    MD5Final(result, &my_md5);
+
+	memset(result, 0x0, LEN_MD5);
+	memset(hexres, 0x0, 16);
+    MD5Final(hexres, &my_md5);
+	
+	for (int i = 0; i < 16; i++) {
+		sprintf(tok, "%02x", hexres[i]);
+		strcat(result, tok);
+	}
 
 	char fname[LEN_FN];
 	snprintf(fname, sizeof(fname), "%s/%s.jpg", outpath, result);

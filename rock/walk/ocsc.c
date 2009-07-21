@@ -4,7 +4,7 @@
 
 int csc_add_image(CGI *cgi, mdb_conn *conn, session_t *ses)
 {
-	unsigned char hash[16];
+	unsigned char hash[LEN_MD5];
 	int ret;
 
 	FILE *fp = cgi_filehandle(cgi, "imagename");
@@ -15,7 +15,7 @@ int csc_add_image(CGI *cgi, mdb_conn *conn, session_t *ses)
 		mtc_err("input file named: imagename not found");
 		return RET_RBTOP_INPUTE;
 	}
-	
+
 	ret = lutil_image_accept(fp, "/data/pic/csc/", hash);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("accept image failure %d", ret);

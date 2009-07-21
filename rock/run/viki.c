@@ -21,7 +21,7 @@ int main(int argc, char **argv, char **envp)
 	int (*data_handler)(CGI *cgi, HASH *dbh, session_t *session);
 	void *lib;
 
-	sleep(20);
+	//sleep(20);
 	mutil_wrap_fcgi(argc, argv, envp);
 
 	mconfig_parse_file(SITE_CONFIG, &g_cfg);
@@ -96,6 +96,9 @@ int main(int argc, char **argv, char **envp)
 #endif
 			switch (CGI_REQ_TYPE(cgi)) {
 			case CGI_REQ_HTML:
+				if (CGI_REQ_METHOD(cgi) != CGI_REQ_GET) {
+					goto resp_ajax;
+				}
 				if (ret != RET_RBTOP_OK && ret == RET_RBTOP_NEXIST) {
 					cgi_redirect(cgi, "/404.html");
 				} else {
@@ -109,6 +112,7 @@ int main(int argc, char **argv, char **envp)
 				}
 				break;
 			case CGI_REQ_AJAX:
+			resp_ajax:
 				ldb_opfinish_json(ret, cgi->hdf, NULL, 0);
 				jsoncb = hdf_get_value(cgi->hdf, PRE_REQ_AJAX_FN, NULL);
 				if (jsoncb != NULL) {
