@@ -24,5 +24,10 @@ void mmisc_get_offset(HDF *hdf, int *count, int *offset);
  */
 void mmisc_cache_headers(time_t second);
 
+/*
+ * make sure charout has inlen*2+1 len
+ */
+void mmisc_hex2str(unsigned char *hexin, unsigned int inlen, unsigned char *charout);
+
 __END_DECLS
 #endif	/* __MMISC_H__ */
