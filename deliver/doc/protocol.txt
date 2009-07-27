@@ -1,5 +1,3 @@
-CONNECT
-=======
 /?CONNECT & nicka & 1 & 1248335432213
 [
 {"raw":"LOGIN","time":"1248446278","datas":{"sessid":"527ebd7506d57421a01894e7e92add48"}},
@@ -27,9 +25,11 @@ CONNECT
 ]
 
 
+
 /?SESSION & 527ebd7506d57421a01894e7e92add48 & set & 264c6cd279bcdc284626f9c7822a2c7a & currentPipe & 1248417459202
 25s
 CLOSE
+
 
 
 /?CHECK & 527ebd7506d57421a01894e7e92add48 & 1248418320062
@@ -37,16 +37,9 @@ CLOSE
 CLOSE
 
 
+
 立马close上一个 CHECK
 /?SEND & 527ebd7506d57421a01894e7e92add48 & 264c6cd279bcdc284626f9c7822a2c7a & messagea & 1248419122844
 25s
 CLOSE
 
-{"raw":"CHANNEL","time":"1248445323","datas":{
-	"pipe":{
-		"properties":{"name":"test"},
-		"casttype":"multi" ,
-		"pubid":"6601d752835abd9016c014e12bdacda9"
-	},
-	"users":[{"level":"1","properties":{"name":"11"},"casttype":"uni","pubid":"356f501efb8db229ee76952798761baa"}]
-}}
