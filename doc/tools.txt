@@ -19,7 +19,15 @@ unlink
 	unlink 函数主要和mkstemp一起使用用来创建一个临时文件, 然后通过 unlink 删掉这个文件的
 	目录入口, 保证临时文件不被其他用户查看, 所以临时文件还是可以通过文件描述符访问,
 	直到最后一个打开的进程关闭文件操作符或者程序退出后临时文件被彻底的删除.
-	
+
+Algorithms
+----------
+	http://www.algosort.com/
+	Computer Programming Algorithms Directory
+	Encryption Sorting Search Tree Phonetic ...
+
+	http://www.itl.nist.gov/div897/sqg/dads/terms.html
+	Dictionary of Algorithms and Data Structures
 
 
 http://tools.mozilla.com
