@@ -1,0 +1,13 @@
+为了在 modules 中使用 src 下的公有函数, 修改了 Makefile
+
+修改了 extend.c, 对 hash 类型的属性, clear 时自动调用 hashtbl_free()
+
+增加了log.c, 为 ape 提供日志功能, ape.conf 中增加了 log_file 和 log_level 配置项
+
+libape-mysql.c 中的公用函数提到了 src/adb.c 中
+
+增加了 ulist.c, 暂时还没用上
+
+为了针对不同的 subuser 实现订阅不同业务类型的消息, users.h 中 subuser 加了个properties
+
+json.c 190 free(jlist->name); ===> if (jlist->name != NULL) free(jlist->name);
