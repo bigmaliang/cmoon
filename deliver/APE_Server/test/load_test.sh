@@ -21,7 +21,7 @@ done
 
 echo -n > ${CHECKFILE}
 for key in `seq 10000`; do
-	echo "http://1.push.hunantv.com/?TRUSTCHECK&$key&$key" >> ${CHECKFILE}
+	echo "http://1.push.hunantv.com/?TRUSTCHECK&$key&$key-" >> ${CHECKFILE}
 done
 
 function do_test()
@@ -43,3 +43,7 @@ function do_test()
 do_test $CONNECTFILE $OUTCONNECT
 do_test $SENDFILE $OUTSEND
 do_test $CHECKFILE $OUTCHECK
+
+#init user friendship
+#for j in `seq 20`; do for i in `seq 20`; do mysql -D relation -e "insert into user_friends (userid, friend_userid) values ($j, $i)"; done; done
+#delete from user_friends where userid=friend_userid;

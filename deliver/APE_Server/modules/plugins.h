@@ -37,10 +37,8 @@
 #include "../src/pipe.h"
 #include "../src/raw.h"
 #include "../src/log.h"
-#include "../src/ulist.h"
 #include "../src/adb.h"
-
-#include <stdarg.h>
+#include "../src/smsalarm.h"
 
 #define READ_CONF(key) plugin_get_conf(infos_module.conf, key)
 

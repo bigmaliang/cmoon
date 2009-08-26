@@ -134,7 +134,7 @@ static void check_idle(struct _socks_list *sl)
 			//wlog_dbg("%dst not empty at %d connect", x, i);
 			x++;
 			if (sl->co[i].attach == NULL && sl->co[i].idle <= current_time-TCP_TIMEOUT) {
-				wlog_dbg("shutdown %d", i);
+				//wlog_dbg("shutdown %d", i);
 				shutdown(i, 2);
 			}
 		}
@@ -220,7 +220,7 @@ unsigned int sockroutine(int s_listen, acetables *g_ape)
 
 						strncpy(co[new_fd].ip_client, inet_ntoa(their_addr.sin_addr), 16);
 						
-						wlog_info("accept new_fd %d %s", new_fd, co[new_fd].ip_client);
+						//wlog_info("accept new_fd %d %s", new_fd, co[new_fd].ip_client);
 					
 						co[new_fd].buffer.data = xmalloc(sizeof(char) * (DEFAULT_BUFFER_SIZE + 1));
 						co[new_fd].buffer.size = DEFAULT_BUFFER_SIZE;
@@ -266,7 +266,7 @@ unsigned int sockroutine(int s_listen, acetables *g_ape)
 								((ape_proxy *)(co[events[i].data.fd].attach))->state = PROXY_THROTTLED;
 								//epoll_ctl(epoll_fd, EPOLL_CTL_DEL, events[i].data.fd, NULL);
 								clear_buffer(&co[events[i].data.fd], &tfd);
-								wlog_dbg("close %d", events[i].data.fd);
+								//wlog_dbg("close %d", events[i].data.fd);
 								close(events[i].data.fd);
 							}
 
@@ -346,7 +346,7 @@ unsigned int sockroutine(int s_listen, acetables *g_ape)
 										g_ape->bufout[events[i].data.fd].allocsize = 0;
 									}
 									
-									wlog_dbg("readed %d, close %d", readb, events[i].data.fd);
+									//wlog_dbg("readed %d, close %d", readb, events[i].data.fd);
 									close(events[i].data.fd);
 							
 									break;
@@ -370,7 +370,7 @@ unsigned int sockroutine(int s_listen, acetables *g_ape)
 											co[events[i].data.fd].http.ready = -1;
 			
 										} else if (co[events[i].data.fd].http.error == 1) {
-											wlog_dbg("shutdown %d's %d", i, events[i].data.fd);
+											//wlog_dbg("shutdown %d's %d", i, events[i].data.fd);
 											shutdown(events[i].data.fd, 2);
 										}
 

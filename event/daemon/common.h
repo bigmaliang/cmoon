@@ -36,5 +36,7 @@ extern struct stats stats;
 #include "ClearSilver.h"
 extern HDF *g_cfg;
 
+size_t explode(const char split, char *input, char **tP, unsigned int limit);
+
 #endif
 

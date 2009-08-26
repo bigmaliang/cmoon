@@ -1,6 +1,7 @@
 #include "mevent_plugin.h"
 
 #define PLUGIN_NAME	"skeleton"
+#define CONFIG_PATH	PRE_PLUGIN"."PLUGIN_NAME
 
 struct skeleton_stats {
 	size_t memlen;
@@ -22,7 +23,7 @@ static void skeleton_process_driver(struct event_entry *entry, struct queue_entr
 	if (e->fp) usleep(10);
 
 	e->st.memlen = queue_entry_size(q);
-	printf("memory len %d\n", e->st.memlen);
+	printf("memory len %lu\n", e->st.memlen);
 	data_cell_dump(q->dataset);
 	
 	if ((q->req->flags & FLAGS_SYNC))

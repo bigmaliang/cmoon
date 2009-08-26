@@ -11,3 +11,5 @@ libape-mysql.c 中的公用函数提到了 src/adb.c 中
 为了针对不同的 subuser 实现订阅不同业务类型的消息, users.h 中 subuser 加了个properties
 
 json.c 190 free(jlist->name); ===> if (jlist->name != NULL) free(jlist->name);
+
+短信报警功能

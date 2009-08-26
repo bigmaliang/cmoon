@@ -13,15 +13,15 @@
 
 /* TCP default listen address and port. */
 #define TCP_SERVER_ADDR "0.0.0.0"
-#define TCP_SERVER_PORT 26010
+#define TCP_SERVER_PORT 26000
 
 /* UDP default listen address and port. */
 #define UDP_SERVER_ADDR "0.0.0.0"
-#define UDP_SERVER_PORT 26010
+#define UDP_SERVER_PORT 26000
 
 /* SCTP default listen address and port. */
 #define SCTP_SERVER_ADDR "0.0.0.0"
-#define SCTP_SERVER_PORT 26010
+#define SCTP_SERVER_PORT 26000
 
 #define TRACE_LEVEL	2
 #define CONFIG_FILENAME "./mevent.hdf"

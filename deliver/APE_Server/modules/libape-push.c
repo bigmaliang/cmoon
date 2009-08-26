@@ -1,6 +1,8 @@
 #include "plugins.h"
 #include "config.h"
 #include <mysql/mysql.h>
+#include "mevent.h"
+#include "data.h"
 
 #define MODULE_NAME "push"
 
@@ -16,6 +18,8 @@
 	"{\"code\":\"009\",\"value\":\"ERR_UIN_NEXIST\"}}\n]\n"
 #define ERR_USER_REFUSE	"[\n{\"raw\":\"ERR\",\"time\":null,\"datas\":" \
 	"{\"code\":\"010\",\"value\":\"ERR_USER_REFUSE\"}}\n]\n"
+#define ERR_NO_MESSAGE	"[\n{\"raw\":\"ERR\",\"time\":null,\"datas\":" \
+	"{\"code\":\"011\",\"value\":\"ERR_NO_MESSAGE\"}}\n]\n"
 
 #define MSG_SUC			"[\n{\"raw\":\"SUC\",\"time\":null,\"datas\":" \
 	"{\"code\":\"999\",\"value\":\"OPERATION_SUCCESS\"}}\n]\n"
@@ -83,8 +87,8 @@ static void init_user_info(char *uin, USERS *user, acetables *g_ape)
 	HTBL *ulist;
 	extend *ext;
 	
-	res = ape_mysql_selectf(g_ape, "SELECT incept_dynamic, receive_msg FROM "
-							" relation.user_info WHERE userid=%s;", uin);
+	res = ape_mysql_selectf(g_ape, "userinfo", "SELECT incept_dynamic, receive_msg "
+							" FROM relation.user_info WHERE userid=%s;", uin);
 	if (res == NULL) {
 		goto init_friend;
 	}
@@ -118,7 +122,7 @@ static void init_user_info(char *uin, USERS *user, acetables *g_ape)
 	mysql_free_result(res);
 
  init_friend:
-	res = ape_mysql_selectf(g_ape, "SELECT friend_userid FROM "
+	res = ape_mysql_selectf(g_ape, "userinfo", "SELECT friend_userid FROM "
 							" relation.user_friends WHERE userid=%s;", uin);
 	if (res == NULL)
 		return;
@@ -180,6 +184,7 @@ static unsigned int push_connect(callbackp *callbacki)
 	if ((chan = getchan(schan, callbacki->g_ape)) == NULL) {
 		chan = mkchan(schan, "Pipe For My Friend", callbacki->g_ape);
 		if (chan == NULL) {
+			smsalarm_msgf(callbacki->g_ape, "make channel %s failed", schan);
 			SENDH(callbacki->fdclient, ERR_MAKE_CHAN, callbacki->g_ape);
 			return (FOR_NOTHING);
 		}
@@ -219,11 +224,11 @@ static unsigned int push_connect(callbackp *callbacki)
 	
 	post_raw(newraw, nuser, callbacki->g_ape);
 
-	return (FOR_LOGIN | FOR_UPDATE_IP);
+	//return (FOR_LOGIN | FOR_UPDATE_IP);
 
-	//send_raws(nuser->subuser, callbacki->g_ape);
-	//do_died(nuser->subuser);
-	//return (FOR_NULL);
+	send_raws(nuser->subuser, callbacki->g_ape);
+	do_died(nuser->subuser);
+	return (FOR_NULL);
 }
 
 static unsigned int push_regpageclass(callbackp *callbacki)
@@ -568,7 +573,11 @@ static unsigned int push_trustcheck(callbackp *callbacki)
 	raw = sub->rawhead;
 	
 	if (raw != NULL) {
+		sendbin(callbacki->fdclient, HEADER, HEADER_LEN, callbacki->g_ape);
 		finish &= sendbin(callbacki->fdclient, "[\n", 2, callbacki->g_ape);
+	} else {
+		SENDH(callbacki->fdclient, ERR_NO_MESSAGE, callbacki->g_ape);
+		return (FOR_NULL);
 	}
 	while(raw != NULL) {
 
@@ -616,18 +625,20 @@ static unsigned int push_trustsend(callbackp *callbacki)
 	newraw->priority = 1;
 	
 	post_raw(newraw, user, callbacki->g_ape);
+
+	SENDH(callbacki->fdclient, MSG_SUC, callbacki->g_ape);
 	return (FOR_NULL);
 }
 
 static void init_module(acetables *g_ape)
 {
-	add_property(&g_ape->properties, "userlist", hashtbl_init(), EXTEND_POINTER, EXTEND_ISPRIVATE);
+	add_property(&g_ape->properties, "userlist", hashtbl_init(),
+				 EXTEND_POINTER, EXTEND_ISPRIVATE);
 	register_cmd("CONNECT",	2, push_connect, NEED_NOTHING, g_ape);
 	register_cmd("REGCLASS", 2, push_regpageclass, NEED_SESSID, g_ape);
 	register_cmd("USERLIST", 1, push_userlist, NEED_SESSID, g_ape);
 	register_cmd("FRIENDLIST", 1, push_friendlist, NEED_SESSID, g_ape);
 	register_cmd("SENDUNIQ", 3, push_senduniq, NEED_SESSID, g_ape);
-
 	register_cmd("TRUSTCHECK", 1, push_trustcheck, NEED_NOTHING, g_ape);
 	register_cmd("TRUSTSEND", 2, push_trustsend, NEED_NOTHING, g_ape);
 }
