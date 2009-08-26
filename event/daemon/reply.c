@@ -10,7 +10,7 @@
 #include "queue.h"
 
 int reply_add_u32(struct queue_entry *q, const char *parent,
-		  const char *key, uint32_t val)
+				  const char *key, uint32_t val)
 {
 	if (q == NULL || key == NULL) return 0;
 
@@ -21,7 +21,7 @@ int reply_add_u32(struct queue_entry *q, const char *parent,
 }
 
 int reply_add_ulong(struct queue_entry *q, const char *parent,
-		    const char *key, unsigned long val)
+					const char *key, unsigned long val)
 {
 	if (q == NULL || key == NULL) return 0;
 
@@ -32,7 +32,7 @@ int reply_add_ulong(struct queue_entry *q, const char *parent,
 }
 
 int reply_add_str(struct queue_entry *q, const char *parent,
-		  const char *key, const char *val)
+				  const char *key, const char *val)
 {
 	if (q == NULL || key == NULL) return 0;
 

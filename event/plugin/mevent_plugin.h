@@ -16,6 +16,8 @@
 #include "log.h"
 #include "dtrace.h"
 #include "queue.h"
+#include "cache.h"
+#include "fdb.h"
 #include "reply.h"
 #include "smsalarm.h"
 

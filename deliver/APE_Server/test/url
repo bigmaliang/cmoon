@@ -1,0 +1,15 @@
+1, http://0.push.hunantv.com/?CONNECT&$key&1&$rand
+返回 LOGIN IDENT CHANNEL
+
+2, http://0.push.hunantv.com/?TRUSTSEND&$key&{pageclass%3A1,content:%22message$key%22}&$rand
+返回空
+
+3, http://1.push.hunantv.com/?TRUSTCHECK&$key&$rand
+返回 DATA
+
+
+$key 为 数字参数, 1 ~ 100000
+
+$rand 为随机数字, 防止缓存
+
+3 条命令尽量 45 秒内做完

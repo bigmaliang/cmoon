@@ -130,7 +130,7 @@ unsigned int checkcmd(clientget *cget, subuser **iuser, acetables *g_ape)
 							shutdown(cget->fdclient, 2); /* Immediatly close controller */
 						} else {
 							/* Only one connection is allowed per user/host */
-							wlog_dbg("%d reconnect with %d %s , close old one...\n", sub->fd, cget->fdclient, cget->host);
+							//wlog_dbg("%d reconnect with %d %s , close old one...\n", sub->fd, cget->fdclient, cget->host);
 							CLOSE(sub->fd, g_ape);
 							shutdown(sub->fd, 2);
 							sub->state = ADIED;

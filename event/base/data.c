@@ -43,7 +43,7 @@ struct data_cell* data_cell_create_ulong(const unsigned char *key, size_t ksize,
 }
 
 struct data_cell* data_cell_create_str(const unsigned char *key, size_t ksize,
-				       const unsigned char *val, size_t vsize)
+									   const unsigned char *val, size_t vsize)
 {
 	struct data_cell *c = calloc(1, sizeof(struct data_cell));
 	if (c == NULL) return NULL;
@@ -65,7 +65,7 @@ struct data_cell* data_cell_create_str(const unsigned char *key, size_t ksize,
 }
 
 struct data_cell* data_cell_create_array(const unsigned char *key, size_t ksize,
-					 size_t vcount, unsigned char *buf, uint32_t *vsize)
+										 size_t vcount, unsigned char *buf, uint32_t *vsize)
 {
 	struct data_cell *c = calloc(1, sizeof(struct data_cell));
 	if (c == NULL) return NULL;
@@ -168,7 +168,7 @@ void data_cell_dump(struct data_cell *c)
 
 	depth++;
 	
-#define DEPTHP \
+#define DEPTHP													\
 	do {for (ti = 1; ti < depth; ti++) printf("\t");} while(0)
 	
 	DEPTHP; printf("%s", c->key);
@@ -274,7 +274,7 @@ int data_cell_compare(const void *pa, const void *pb)
 }
 
 struct data_cell* data_cell_search(struct data_cell *dataset, bool recursive,
-				   unsigned int type, const char *key)
+								   unsigned int type, const char *key)
 {
 	struct data_cell *res;
 	if (key == NULL) return NULL;
@@ -295,7 +295,7 @@ struct data_cell* data_cell_search(struct data_cell *dataset, bool recursive,
 	c->ksize = strlen(key);
 
 	res = (struct data_cell*)uListSearch(dataset->v.aval,
-					     (const void*)&c, data_cell_compare);
+										 (const void*)&c, data_cell_compare);
 	data_cell_free(c);
 
  done:
@@ -320,7 +320,7 @@ struct data_cell* data_cell_search(struct data_cell *dataset, bool recursive,
 }
 
 int data_cell_add_u32(struct data_cell *dataset, const char *parent,
-		      const char *key, uint32_t val)
+					  const char *key, uint32_t val)
 {
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
 	
@@ -337,7 +337,7 @@ int data_cell_add_u32(struct data_cell *dataset, const char *parent,
 }
 
 int data_cell_add_ulong(struct data_cell *dataset, const char *parent,
-			const char *key, unsigned long val)
+						const char *key, unsigned long val)
 {
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
 	
@@ -354,7 +354,7 @@ int data_cell_add_ulong(struct data_cell *dataset, const char *parent,
 }
 
 int data_cell_add_str(struct data_cell *dataset, const char *parent,
-		      const char *key, const char *val)
+					  const char *key, const char *val)
 {
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
 	
@@ -363,7 +363,7 @@ int data_cell_add_str(struct data_cell *dataset, const char *parent,
 	if (pc == NULL) return 0;
 
 	struct data_cell *c = data_cell_create_str((const unsigned char*)key, strlen(key),
-						   (const unsigned char*)val, strlen(val));
+											   (const unsigned char*)val, strlen(val));
 	if (c == NULL) return 0;
 	
 	data_cell_append(pc, c);
@@ -371,7 +371,8 @@ int data_cell_add_str(struct data_cell *dataset, const char *parent,
 	return 1;
 }
 
-int data_cell_add_array(struct data_cell *dataset, const char *parent, const char *key)
+int data_cell_add_array(struct data_cell *dataset, const char *parent,
+						const char *key)
 {
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
 	

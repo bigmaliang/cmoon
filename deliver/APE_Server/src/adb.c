@@ -20,34 +20,42 @@
 #include "hash.h"
 
 
-MYSQL *mysql_instance(acetables *g_ape)
+MYSQL *mysql_instance(acetables *g_ape, char *name)
 {
-	return get_property(g_ape->properties, "mysql")->val;
+	if (get_property(g_ape->properties, name) != NULL)
+		return get_property(g_ape->properties, name)->val;
+	return NULL;
 }
 
-char *ape_mysql_real_escape_string(const char *str, acetables *g_ape)
+char *ape_mysql_real_escape_string(const char *str,
+								   acetables *g_ape, char *name)
 {
-        MYSQL *mysql = mysql_instance(g_ape);
+	MYSQL *mysql = mysql_instance(g_ape, name);
 	unsigned int n = strlen(str);
-        char *buf = xmalloc(n*2+1);
+	char *buf = xmalloc(n*2+1);
         
 	mysql_real_escape_string(mysql, buf, str, n);
 	
 	return buf;
 }
 
-MYSQL *ape_mysql_query(const char *query, acetables *g_ape)
+MYSQL *ape_mysql_query(const char *query, acetables *g_ape, char *name)
 {
-	MYSQL *mysql = mysql_instance(g_ape);
+	MYSQL *mysql = mysql_instance(g_ape, name);
+
+	if (mysql == NULL) {
+		wlog_err("db for %s null", name);
+		return NULL;
+	}
 
 	if (mysql_query(mysql, query)) {
-		fprintf(stderr, "[Module] [SQL-WARN] : %s\n", mysql_error(mysql));
+		wlog_err("[Module] [SQL-WARN] : %s\n", mysql_error(mysql));
 		return NULL;
 	}
 	return mysql;
 }
 
-MYSQL *ape_mysql_queryf(acetables *g_ape, const char *buf, ...)
+MYSQL *ape_mysql_queryf(acetables *g_ape, char *name, const char *buf, ...)
 {
 	MYSQL *mysql;
 	
@@ -59,7 +67,7 @@ MYSQL *ape_mysql_queryf(acetables *g_ape, const char *buf, ...)
 	vasprintf(&buff, buf, val);
 	va_end(val);
 	
-	mysql = ape_mysql_query(buff, g_ape);
+	mysql = ape_mysql_query(buff, g_ape, name);
 	
 	free(buff);
 	
@@ -67,11 +75,11 @@ MYSQL *ape_mysql_queryf(acetables *g_ape, const char *buf, ...)
 }
 
 
-MYSQL_RES *ape_mysql_select(const char *query, acetables *g_ape)
+MYSQL_RES *ape_mysql_select(const char *query, acetables *g_ape, char *name)
 {
 	// must be free'd
 	MYSQL_RES *res;
-	MYSQL *mysql = ape_mysql_query(query, g_ape);
+	MYSQL *mysql = ape_mysql_query(query, g_ape, name);
 	
 	if (mysql == NULL) {
 		return NULL;
@@ -85,9 +93,10 @@ MYSQL_RES *ape_mysql_select(const char *query, acetables *g_ape)
 	return res;
 }
 
-MYSQL_ROW ape_mysql_row(const char *query, MYSQL_RES **res, acetables *g_ape)
+MYSQL_ROW ape_mysql_row(const char *query, MYSQL_RES **res,
+						acetables *g_ape, char *name)
 {
-	*res = ape_mysql_select(query, g_ape);
+	*res = ape_mysql_select(query, g_ape, name);
 	if (*res == NULL) {
 		return NULL;
 	}
@@ -95,7 +104,7 @@ MYSQL_ROW ape_mysql_row(const char *query, MYSQL_RES **res, acetables *g_ape)
 	return mysql_fetch_row(*res);
 }
 
-MYSQL_RES *ape_mysql_selectf(acetables *g_ape, char *buf, ...)
+MYSQL_RES *ape_mysql_selectf(acetables *g_ape, char *name, char *buf, ...)
 {
 	MYSQL_RES *res;
 	
@@ -107,7 +116,7 @@ MYSQL_RES *ape_mysql_selectf(acetables *g_ape, char *buf, ...)
 	vasprintf(&buff, buf, val);
 	va_end(val);
 	
-	res = ape_mysql_select(buff, g_ape);
+	res = ape_mysql_select(buff, g_ape, name);
 	
 	free(buff);
 	
@@ -115,13 +124,13 @@ MYSQL_RES *ape_mysql_selectf(acetables *g_ape, char *buf, ...)
 }
 
 
-char *ape_mysql_get(const char *query, acetables *g_ape)
+char *ape_mysql_get(const char *query, acetables *g_ape, char *name)
 {
 	MYSQL_RES *res;
 	MYSQL_ROW row;
 	char *field;
 	
-	row = ape_mysql_row(query, &res, g_ape);
+	row = ape_mysql_row(query, &res, g_ape, name);
 	if (row != NULL) {
 		field = xstrdup(row[0]);
 		mysql_free_result(res);

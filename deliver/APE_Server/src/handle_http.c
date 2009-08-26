@@ -142,7 +142,7 @@ subuser *checkrecv(char *pSock, int fdclient, acetables *g_ape, char *ip_client)
 
 	if (strlen(pSock) < 3 || (local && getqueryip(pSock, cget->ip_get) == 0)) {  // get query IP (from htaccess)
 		free(cget);
-		wlog_dbg("shutdown %d", fdclient);
+		//wlog_dbg("shutdown %d", fdclient);
 		shutdown(fdclient, 2);
 		return NULL;		
 	}
@@ -158,7 +158,7 @@ subuser *checkrecv(char *pSock, int fdclient, acetables *g_ape, char *ip_client)
 		if (!fixpacket(pSock, 0) || (cget->get = getfirstparam(pSock, (local ? '&' : '?'))) == NULL) {
 			free(cget);
 			
-			wlog_dbg("shutdown %d", fdclient);
+			//wlog_dbg("shutdown %d", fdclient);
 			shutdown(fdclient, 2);
 			return NULL;			
 		}
@@ -166,14 +166,14 @@ subuser *checkrecv(char *pSock, int fdclient, acetables *g_ape, char *ip_client)
 		if ((cget->get = getpost(pSock)) == NULL) {
 			free(cget);
 			
-			wlog_dbg("shutdown %d", fdclient);
+			//wlog_dbg("shutdown %d", fdclient);
 			shutdown(fdclient, 2);
 			return NULL;			
 		}
 	} else {
 		free(cget);
 
-		wlog_dbg("shutdown %d", fdclient);
+		//wlog_dbg("shutdown %d", fdclient);
 		shutdown(fdclient, 2);
 		return NULL;		
 	}
@@ -183,7 +183,7 @@ subuser *checkrecv(char *pSock, int fdclient, acetables *g_ape, char *ip_client)
 
 	switch (op) {
 		case CONNECT_SHUTDOWN:
-			wlog_dbg("shutdown %d", fdclient);
+			//wlog_dbg("shutdown %d", fdclient);
 			shutdown(fdclient, 2);			
 			break;
 		case CONNECT_KEEPALIVE:

@@ -3,7 +3,7 @@ bindir		= $(prefix)/bin
 libdir		= $(prefix)/lib
 
 
-SRC_LIB = src/sock.c src/hash.c src/handle_http.c src/cmd.c src/users.c src/channel.c src/config.c src/json.c src/json_parser.c src/plugins.c src/http.c src/extend.c src/utils.c src/ticks.c src/proxy.c src/base64.c src/pipe.c src/raw.c src/log.c src/ulist.c src/adb.c
+SRC_LIB = src/sock.c src/hash.c src/handle_http.c src/cmd.c src/users.c src/channel.c src/config.c src/json.c src/json_parser.c src/plugins.c src/http.c src/extend.c src/utils.c src/ticks.c src/proxy.c src/base64.c src/pipe.c src/raw.c src/log.c src/adb.c src/smsalarm.c
 SRC_BIN = src/entry.c
 
 #SRC_LIB = src/config.c

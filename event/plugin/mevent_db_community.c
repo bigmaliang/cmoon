@@ -1,7 +1,5 @@
 #include "mevent_plugin.h"
 
-#include "fdb.h"
-
 #define PLUGIN_NAME	"db_community"
 #define CONFIG_PATH	PRE_PLUGIN"."PLUGIN_NAME
 
@@ -36,7 +34,7 @@ static int dbcm_exec_cell(struct data_cell *c, fdb_t *db, FILE *fp)
 	strncpy(db->sql, (const char*)c->v.sval.val, len);
 	ret = fdb_exec(db);
 	if (ret != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s\n", c->v.sval.val, fdb_error(db));
+		dtc_err(fp, "exec %s failure %s", c->v.sval.val, fdb_error(db));
 	}
 	return ret;
 }
@@ -146,9 +144,10 @@ static struct event_entry* dbcm_init_driver(void)
 	e->base.process_driver = dbcm_process_driver;
 	e->base.stop_driver = dbcm_stop_driver;
 
-	e->logf = dtc_init(hdf_get_value(g_cfg, CONFIG_PATH".logfile", TC_ROOT"plugin/db_community"));
+	e->logf = dtc_init(hdf_get_value(g_cfg, CONFIG_PATH".logfile",
+									 TC_ROOT"plugin/db_community"));
 	if (e->logf == NULL) {
-		wlog("open log file %splugin/db_community.log failure\n", TC_ROOT);
+		wlog("open log file failure\n");
 		goto error;
 	}
 	
@@ -156,7 +155,8 @@ static struct event_entry* dbcm_init_driver(void)
 					  hdf_get_value(g_cfg, CONFIG_PATH".user", DBCM_USER),
 					  hdf_get_value(g_cfg, CONFIG_PATH".pass", DBCM_PASS),
 					  hdf_get_value(g_cfg, CONFIG_PATH".name", DBCM_NAME),
-					  (unsigned int)hdf_get_int_value(g_cfg, CONFIG_PATH".port", 0)) != RET_DBOP_OK) {
+					  (unsigned int)hdf_get_int_value(g_cfg, CONFIG_PATH".port", 0))
+		!= RET_DBOP_OK) {
 		wlog("init %s failure %s\n", PLUGIN_NAME, fdb_error(e->db));
 		goto error;
 	}
