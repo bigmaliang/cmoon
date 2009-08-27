@@ -1,8 +1,6 @@
 #include "plugins.h"
 #include "config.h"
 #include <mysql/mysql.h>
-#include "mevent.h"
-#include "data.h"
 
 #define MODULE_NAME "push"
 
@@ -231,6 +229,20 @@ static unsigned int push_connect(callbackp *callbacki)
 	return (FOR_NULL);
 }
 
+static unsigned int push_send(callbackp *callbacki)
+{
+	json *jlist = NULL;
+
+	set_json("msg", callbacki->param[3], &jlist);
+
+	post_to_pipe(jlist, RAW_DATA, callbacki->param[2],
+				 getsubuser(callbacki->call_user, callbacki->host),
+				 NULL, callbacki->g_ape);
+
+	CLOSE(callbacki->fdclient, callbacki->g_ape);
+	return (FOR_NULL);
+}
+
 static unsigned int push_regpageclass(callbackp *callbacki)
 {
 	subuser *sub = getsubuser(callbacki->call_user, callbacki->host);
@@ -290,14 +302,22 @@ static unsigned int push_userlist(callbackp *callbacki)
 	HTBL_ITEM *item;
 	HTBL *ulist = GET_USER_LIST;
 	USERS *user;
+	int num;
+	char tok[64];
 
 	set_json("users", NULL, &jlist);
 
+	num = 0;
 	if (ulist != NULL) {
 		for (item = ulist->first; item != NULL; item = item->lnext) {
-			user = (USERS*)item->addrs;
-			json_attach(jlist, get_json_object_user(user), JSON_ARRAY);
+			if (num < 20) {
+				user = (USERS*)item->addrs;
+				json_attach(jlist, get_json_object_user(user), JSON_ARRAY);
+			}
+			num++;
 		}
+		sprintf(tok, "%d", num);
+		set_json("num", tok, &jlist);
 	}
 
 	newraw = forge_raw("USERLIST", jlist);
@@ -635,6 +655,7 @@ static void init_module(acetables *g_ape)
 	add_property(&g_ape->properties, "userlist", hashtbl_init(),
 				 EXTEND_POINTER, EXTEND_ISPRIVATE);
 	register_cmd("CONNECT",	2, push_connect, NEED_NOTHING, g_ape);
+	register_cmd("SEND",	3, push_send, NEED_SESSID, g_ape);
 	register_cmd("REGCLASS", 2, push_regpageclass, NEED_SESSID, g_ape);
 	register_cmd("USERLIST", 1, push_userlist, NEED_SESSID, g_ape);
 	register_cmd("FRIENDLIST", 1, push_friendlist, NEED_SESSID, g_ape);
