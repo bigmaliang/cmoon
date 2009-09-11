@@ -34,6 +34,8 @@ typedef struct {
 int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass,
 				  char *name, unsigned int port);
 void fdb_free(fdb_t **fdb);
+/* remember free result */
+char *fdb_escape_string(fdb_t *fdb, const char *str);
 int fdb_exec(fdb_t *fdb);
 int fdb_fetch_row(fdb_t *fdb);
 int fdb_affect_rows(fdb_t *fdb);

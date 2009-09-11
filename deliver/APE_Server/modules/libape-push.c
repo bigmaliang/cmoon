@@ -2,6 +2,10 @@
 #include "config.h"
 #include <mysql/mysql.h>
 
+#include "mevent.h"
+#include "data.h"
+#include "mevent_uic.h"
+
 #define MODULE_NAME "push"
 
 #define ERR_UIN_USED 	"[\n{\"raw\":\"ERR\",\"time\":null,\"datas\":" \
@@ -76,66 +80,73 @@ static int isvaliduin(char *uin)
 	return 1;
 }
 
-static void init_user_info(char *uin, USERS *user, acetables *g_ape)
+static void get_user_info(char *uin, USERS *user, acetables *g_ape)
 {
-	if (!isvaliduin(uin) || user == NULL || g_ape == NULL) return;
-
-	MYSQL_RES *res;
-	MYSQL_ROW row;
 	HTBL *ulist;
 	extend *ext;
 	
-	res = ape_mysql_selectf(g_ape, "userinfo", "SELECT incept_dynamic, receive_msg "
-							" FROM relation.user_info WHERE userid=%s;", uin);
-	if (res == NULL) {
-		goto init_friend;
-	}
-	if ((row = mysql_fetch_row(res)) == NULL) {
-		mysql_free_result(res);
-		goto init_friend;
-	}
-	if (!strcmp(row[0], "")) {
-		goto init_msgset;
-	}
-
-	/*
-	 * replace incpet pro if exist 
-	 */
-	ext = add_property(&user->properties, "incept", hashtbl_init(),
-					   EXTEND_HTBL, EXTEND_ISPRIVATE);
-	ulist = (HTBL*)ext->val;
-
-	char *incept = strdup(row[0]);
-	char *ids[100];
-	size_t num = explode(',', incept, ids, 99);
-	int loopi;
-	for (loopi = 0; loopi <= num; loopi++) {
-		hashtbl_append(ulist, ids[loopi], strdup(ids[loopi]));
-		//hashtbl_append(ulist, ids[loopi], NULL);
-	}
-	free(incept);
-
- init_msgset:
-	add_property(&user->properties, "msgset", row[1], EXTEND_STR, EXTEND_ISPRIVATE);
-	mysql_free_result(res);
-
- init_friend:
-	res = ape_mysql_selectf(g_ape, "userinfo", "SELECT friend_userid FROM "
-							" relation.user_friends WHERE userid=%s;", uin);
-	if (res == NULL)
-		return;
+	mevent_t *evt;
+	struct data_cell *pc, *cc;
+	char val[64];
 	
-	/*
-	 * replace friend pro if exist 
-	 */
-	ext = add_property(&user->properties, "friend", hashtbl_init(),
-					   EXTEND_HTBL, EXTEND_ISPRIVATE);
-	ulist = (HTBL*)ext->val;
-	while ((row = mysql_fetch_row(res)) != NULL) {
-		hashtbl_append(ulist, row[0], strdup(row[0]));
-		//hashtbl_append(ulist, row[0], NULL);
+	int ret;
+
+	if (!isvaliduin(uin) || user == NULL || g_ape == NULL) return;
+	
+	evt = mevent_init_plugin("uic", REQ_CMD_FRIENDLIST, FLAGS_SYNC);
+	mevent_add_u32(evt, NULL, "uin", atoi(uin));
+	ret = mevent_trigger(evt);
+	if (!ret || ret >= REP_ERR) {
+		wlog_err("get friend for user %s failure %d", uin, ret);
+		goto get_msgset;
 	}
-	mysql_free_result(res);
+	
+	pc = data_cell_search(evt->rcvdata, false, DATA_TYPE_ARRAY, "friend");
+	if (pc != NULL) {
+		ext = add_property(&user->properties, "friend", hashtbl_init(),
+						   EXTEND_HTBL, EXTEND_ISPRIVATE);
+		ulist = (HTBL*)ext->val;
+		data_cell_array_iterate(pc, cc) {
+			if (cc->type != DATA_TYPE_U32) continue;
+			sprintf(val, "%d", cc->v.ival);
+			wlog_dbg("add %s friend %s", uin, cc->key);
+			hashtbl_append(ulist, (char*)cc->key, strdup(val));
+		}
+	}
+
+ get_msgset:
+	mevent_chose_plugin(evt, "uic", REQ_CMD_MYSETTING, FLAGS_SYNC);
+	mevent_add_u32(evt, NULL, "uin", atoi(uin));
+	ret = mevent_trigger(evt);
+	if (!ret || ret >= REP_ERR) {
+		wlog_err("get setting for user %s failure %d", uin, ret);
+		goto done;
+	}
+	
+	pc = data_cell_search(evt->rcvdata, false, DATA_TYPE_ARRAY, "incept");
+	if (pc != NULL) {
+		ext = add_property(&user->properties, "incept", hashtbl_init(),
+						   EXTEND_HTBL, EXTEND_ISPRIVATE);
+		ulist = (HTBL*)ext->val;
+
+		data_cell_array_iterate(pc, cc) {
+			if (cc->type != DATA_TYPE_U32) continue;
+			sprintf(val, "%d", cc->v.ival);
+			wlog_dbg("add %s incpet %s", uin, cc->v.sval.val);
+			hashtbl_append(ulist, (char*)cc->key, strdup(val));
+		}
+	}
+
+	pc = data_cell_search(evt->rcvdata, false, DATA_TYPE_STRING, "msgset");
+	if (pc != NULL) {
+		sprintf(val, "%d", pc->v.ival);
+		wlog_dbg("add %s msgset %s", uin, val);
+		add_property(&user->properties, "msgset", val, EXTEND_STR, EXTEND_ISPRIVATE);
+	}
+
+ done:
+	mevent_free(evt);
+	return;
 }
 
 /*
@@ -168,7 +179,7 @@ static unsigned int push_connect(callbackp *callbacki)
 	SET_UIN_FOR_USER(nuser, callbacki->param[1]);
 	SET_USER_FOR_APE(callbacki->g_ape, callbacki->param[1], nuser);
 
-	init_user_info(callbacki->param[1], nuser, callbacki->g_ape);
+	get_user_info(callbacki->param[1], nuser, callbacki->g_ape);
 	
 	subuser_restor(getsubuser(callbacki->call_user, callbacki->host),
 				   callbacki->g_ape);
@@ -373,6 +384,59 @@ static unsigned int push_senduniq(callbackp *callbacki)
 	/*
 	 * target user may set 1: accept 2: reject 3: accept friend
 	 */
+#if 0
+	json_item *oitem, *pitem;
+	oitem = init_json_parser(callbacki->param[3]);
+	if (oitem == NULL) {
+		SENDH(callbacki->fdclient, ERR_BAD_PARAM, callbacki->g_ape);
+		return (FOR_NULL);
+	}
+	while (oitem != NULL) {
+		if (strcmp(oitem->key, "pageclass")) {
+			if (oitem->jval.vu.interger_value == 1) {
+				extend *ext = get_property(user->properties, "msgset");
+				if (ext != NULL && ext->val != NULL) {
+					if (!strcmp(ext->val, "2")) {
+						wlog_info("%s reject message", callbacki->param[2]);
+						SENDH(callbacki->fdclient, ERR_USER_REFUSE, callbacki->g_ape);
+						return (FOR_NULL);
+					} else if (!strcmp(ext->val, "3")) {
+						wlog_info("user %s just rcv friend's message",
+								  callbacki->param[2]);
+						char *sender = GET_UIN_FROM_USER(callbacki->call_user);
+						if (sender != NULL) {
+							HTBL *list = GET_USER_FRIEND_TBL(user);
+							if (list != NULL) {
+								if (hashtbl_seek(list, sender) == NULL) {
+									SENDH(callbacki->fdclient, ERR_USER_REFUSE,
+										  callbacki->g_ape);
+									return (FOR_NULL);
+								}
+							} else {
+								SENDH(callbacki->fdclient, ERR_USER_REFUSE,
+									  callbacki->g_ape);
+								return (FOR_NULL);
+							}
+						} else {
+							SENDH(callbacki->fdclient, ERR_USER_REFUSE,
+								  callbacki->g_ape);
+							return (FOR_NULL);
+						}
+						wlog_info("user %s is %s's friend", sender,
+								  callbacki->param[2]);
+					}
+				}
+			}
+			break;				/* pageclass supplied and accpeted! */
+		}
+		oitem = pitem->next;
+	}
+	if (oitem == NULL) {
+		SENDH(callbacki->fdclient, ERR_BAD_PARAM, callbacki->g_ape);
+		return (FOR_NULL);
+	}
+#endif
+	
 	if (strstr(callbacki->param[3], "pageclass%3A1") != NULL) {
 		extend *ext = get_property(user->properties, "msgset");
 		if (ext != NULL && ext->val != NULL) {

@@ -29,6 +29,9 @@ Algorithms
 	http://www.itl.nist.gov/div897/sqg/dads/terms.html
 	Dictionary of Algorithms and Data Structures
 
+	http://eternallyconfuzzled.com/jsw_home.aspx
+	Data Structure, Algorithms, Languages
+
 
 http://tools.mozilla.com
 ========================

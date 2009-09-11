@@ -35,6 +35,17 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass,
 	return RET_DBOP_OK;
 }
 
+char *fdb_escape_string(fdb_t *fdb, const char *str)
+{
+	size_t n = strlen(str);
+	char *buf = calloc(1, n);
+	if (buf == NULL) return NULL;
+
+	mysql_reql_escape_string(fdb->conn, buf, str, n);
+
+	return buf;
+}
+
 int fdb_exec(fdb_t *fdb)
 {
 	int ret;
