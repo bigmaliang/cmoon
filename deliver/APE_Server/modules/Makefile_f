@@ -6,13 +6,13 @@ PHP_LIB=php/libs/libphp5.a
 EVENT_BASE = ../../../event
 CS_BASE = ../../../lib/cs
 
-INC_EVENT = -I $(EVENT_BASE)/api -I $(EVENT_BASE)/base -I $(EVENT_BASE)/plugin -I $(CS_BASE)/include/ClearSilver
+INC_EVENT = -I $(EVENT_BASE)/api -I $(EVENT_BASE)/base  -I $(CS_BASE)/include/ClearSilver
 
 LIB_EVENT = -L $(EVENT_BASE)/api -lmevent -L $(EVENT_BASE)/daemon -lmevent_server -L/usr/local/lib -l neo_utl
 
 all: modules
 
-modules: libape-chat.c libape-mysql.c libape-setcord.c libape-helloworld.c libape-push.c
+modules: libape-chat.c libape-mysql.c libape-setcord.c libape-helloworld.c
 	$(CC) $(CFLAGS) -Wl,-soname,libmod_setcord.so -I../src -I/usr/local/mysql/include -fPIC -shared -o lib/libmod_setcord.so libape-setcord.c -L../ -laped
 	#$(CC) $(CFLAGS) -Wl,-soname,libmod_mouse.so -o lib/libmod_mouse.so libape-mouse.c
 	$(CC) $(CFLAGS) -Wl,-soname,libmod_controller.so -I../src -I/usr/local/mysql/include -fPIC -shared -o lib/libmod_controller.so libape-controller.c  -L../ -laped	

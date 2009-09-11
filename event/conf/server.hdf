@@ -1,0 +1,48 @@
+Mevent {
+	trace_level = 6
+	plugins {
+		0 = skeleton
+		1 = db_community
+		2 = uic
+		3 = udc
+	}
+	smsalarm {
+		db {
+			ip = 192.168.8.90
+			user = root
+			pass = mysqlroot
+			port = 3306
+			name = monitordb
+		}
+		leader {
+			ml = 15111231681
+		}
+	}
+}
+
+Plugin {
+	db_community {
+		logfile = /data/logs/mevent/db_community
+		ip = 192.168.8.84
+		user = root
+		pass = hifly1234
+		name = eventcenter
+	}
+	uic {
+		logfile = /data/logs/mevent/uic
+		numobjs = 102400
+		ip = 192.168.8.84
+		user = root
+		pass = hifly1234
+		name = relation
+	}
+	udc {
+		logfile = /data/logs/mevent/udc
+		numobjs = 10240
+		ip = 192.168.8.84
+		user = root
+		pass = hifly1234
+		name = home
+	}
+}
+

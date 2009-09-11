@@ -133,7 +133,8 @@ static void check_idle(struct _socks_list *sl)
 		if (sl->co[i].buffer.size) {
 			//wlog_dbg("%dst not empty at %d connect", x, i);
 			x++;
-			if (sl->co[i].attach == NULL && sl->co[i].idle <= current_time-TCP_TIMEOUT) {
+			if (sl->co[i].attach == NULL && sl->co[i].idle <=
+				current_time-TCP_TIMEOUT) {
 				//wlog_dbg("shutdown %d", i);
 				shutdown(i, 2);
 			}
@@ -183,7 +184,7 @@ unsigned int sockroutine(int s_listen, acetables *g_ape)
 	ev.data.fd = s_listen;
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s_listen, &ev);
 	
-	add_periodical(5, 0, check_idle, &sl, g_ape);
+	//add_periodical(5, 0, check_idle, &sl, g_ape);
 	
 	while (1) {
 		
@@ -375,7 +376,7 @@ unsigned int sockroutine(int s_listen, acetables *g_ape)
 										}
 
 #if 0
-										if (http_count++ >= 15) {
+										if (http_count++ >= 25) {
 											close(epoll_fd);
 											return 0;
 										}
