@@ -8,6 +8,7 @@
 #include <string.h>		/* for memcpy()/memcmp() */
 #include <stdio.h>		/* snprintf() */
 #include <unistd.h>		/* usleep() */
+#include <arpa/inet.h>	/* htonl() */
 #include "mevent.h"
 #include "net-const.h"
 #include "common.h"

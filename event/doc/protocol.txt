@@ -99,26 +99,14 @@ Request ID (32 bits)
     请求ID，用来标记每次通信请求，方便客户端区分
 
 Reply Code (32 bits)
-    入队操作结果，当前有以下几种值，当前只用到了 REP_OK, REP_ERROR
-        #define REP_ERR			0x800
-        #define REP_CACHE_HIT		0x801
-        #define REP_CACHE_MISS		0x802
-        #define REP_OK			0x803
-        #define REP_NOTIN		0x804
-        #define REP_NOMATCH		0x805
-    当操作成功，且后端插件无数据返回时，返回包到此结束。
+    操作结果，当前分为以下三段
+	REP_OK_xxx		100 ~ 512
+	REP_ERR_xxx		512 ~ 1024
+	REP_ERR_APP_xxx	1024 ~ 2048
+    当除了操作结果外，后端插件无其他数据返回时，返回包到此结束。
 
 vsize (32 bits)
-    当操作有误，或者后端插件有数据返回时，该项数据有意义。
-    1, 当Reply Code == REP_ERR 时， 该项数据为错误码，以下之一：
-        #define ERR_VER			0x101	/* Version mismatch */
-        #define ERR_SEND		0x102	/* Error sending data */
-        #define ERR_BROKEN		0x103	/* Broken request */
-        #define ERR_UNKREQ		0x104	/* Unknown request */
-        #define ERR_MEM			0x105	/* Memory allocation error */
-        #define ERR_DB			0x106	/* Database error */
-        #define ERR_BUSY		0x107	/* queue full */
-    2, 当后端插件有数据返回时，该项表示返回数据的长度。
+    当后端有其他业务数据需要返回时，该项表示返回数据的长度。
 
 val
     变量内容。该处内容跟请求包包体的格式一致。

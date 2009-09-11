@@ -90,7 +90,7 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 		}
 		data_cell_free(dataset);
 		stats.net_unk_req++;
-		req->reply_err(req, ERR_UNKREQ);
+		req->reply_mini(req, REP_ERR_UNKREQ);
 		return 1;
 	}
 	
@@ -116,7 +116,7 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 			 entry->name, entry->op_queue->size);
 		data_cell_free(dataset);
 		stats.pro_busy++;
-		req->reply_err(req, ERR_BUSY);
+		req->reply_mini(req, REP_ERR_BUSY);
 		return 1;
 	}
 	
@@ -163,7 +163,6 @@ static void parse_event(struct req_info *req)
 	const unsigned char *ename;
 	uint32_t esize, rsize;
 	unsigned char *pos;
-	const int max = 65536;
 	struct data_cell *dataset = NULL;
 
 	/*
@@ -186,16 +185,17 @@ static void parse_event(struct req_info *req)
 
 	pos = pos + esize;
 	rsize = unpack_data("root", pos, req->psize-esize-sizeof(uint32_t), &dataset);
-	if (rsize == 0 || rsize+esize+sizeof(uint32_t) > max || req->psize < esize) {
+	if (rsize == 0 || rsize+esize+sizeof(uint32_t) > MAX_PACKET_LEN ||
+		req->psize < esize) {
 		stats.net_broken_req++;
-		req->reply_err(req, ERR_BROKEN);
+		req->reply_mini(req, REP_ERR_BROKEN);
 		return;
 	}
 
 	FILL_SYNC_FLAG();
 	rv = put_in_queue(req, sync, ename, esize, dataset);
 	if (!rv) {
-		req->reply_err(req, ERR_MEM);
+		req->reply_mini(req, REP_ERR_MEM);
 		return;
 	}
 
@@ -222,7 +222,7 @@ int parse_message(struct req_info *req,
 
 	if (len < 17) {
 		stats.net_broken_req++;
-		req->reply_err(req, ERR_BROKEN);
+		req->reply_mini(req, REP_ERR_BROKEN);
 		return 0;
 	}
 	
@@ -246,7 +246,7 @@ int parse_message(struct req_info *req,
 
 	if (ver != PROTO_VER) {
 		stats.net_version_mismatch++;
-		req->reply_err(req, ERR_VER);
+		req->reply_mini(req, REP_ERR_VER);
 		return 0;
 	}
 
@@ -282,7 +282,8 @@ static void parse_stats(struct req_info *req)
 	vsize += pack_data_ulong("msg_tcp", stats.msg_tcp, buf+vsize);
 	vsize += pack_data_ulong("msg_udp", stats.msg_udp, buf+vsize);
 	vsize += pack_data_ulong("msg_sctp", stats.msg_sctp, buf+vsize);
-	vsize += pack_data_ulong("net_version_mismatch", stats.net_version_mismatch, buf+vsize);
+	vsize += pack_data_ulong("net_version_mismatch", stats.net_version_mismatch,
+							 buf+vsize);
 	vsize += pack_data_ulong("net_broken_req", stats.net_broken_req, buf+vsize);
 	vsize += pack_data_ulong("net_unk_req", stats.net_unk_req, buf+vsize);
 	vsize += pack_data_ulong("pro_busy", stats.pro_busy, buf+vsize);

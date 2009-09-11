@@ -90,7 +90,6 @@ mevent: $(OBJS_BIN) $(LIB_SERVER)
 install-bin: mevent
 	sudo install -d $(PREFIX)/bin
 	sudo install -m 0755 mevent $(PREFIX)/bin/
-	sudo install -m 0644 mevent.hdf $(PREFIX)/bin/
 
 install-man:
 	sudo install -d $(PREFIX)/man/man1

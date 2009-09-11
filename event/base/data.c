@@ -131,8 +131,17 @@ void data_cell_append(struct data_cell *pc, struct data_cell *c)
 {
 	if (pc == NULL || c == NULL || pc->type != DATA_TYPE_ARRAY) return;
 
-	uListAppend(pc->v.aval, (void*)c);
-	uListSort(pc->v.aval, data_cell_compare);
+	struct data_cell *oldc = data_cell_search(pc, false, c->type,
+											  (const char*)c->key);
+	if (oldc != NULL) {
+		data_cell_replace_val(oldc, c);
+		/* TODO free new array */
+		if (c->type != DATA_TYPE_ARRAY)
+			data_cell_free(c);
+	} else {
+		uListAppend(pc->v.aval, (void*)c);
+		uListSort(pc->v.aval, data_cell_compare);
+	}
 }
 
 int data_cell_replace_val(struct data_cell *dst, struct data_cell *src)
@@ -277,7 +286,7 @@ struct data_cell* data_cell_search(struct data_cell *dataset, bool recursive,
 								   unsigned int type, const char *key)
 {
 	struct data_cell *res;
-	if (key == NULL) return NULL;
+	if (dataset == NULL || key == NULL) return NULL;
 
 	if (dataset->type != DATA_TYPE_ARRAY ) {
 		if (dataset->type == type &&
@@ -325,7 +334,7 @@ int data_cell_add_u32(struct data_cell *dataset, const char *parent,
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
 	
 	struct data_cell *pc = data_cell_search(dataset, true, DATA_TYPE_ARRAY, parent);
-	if (pc == NULL && parent == NULL) pc = dataset;
+	if (pc == NULL && (parent == NULL || !strcmp(parent, ""))) pc = dataset;
 	if (pc == NULL) return 0;
 
 	struct data_cell *c = data_cell_create_u32((const unsigned char*)key, strlen(key), val);
@@ -342,7 +351,7 @@ int data_cell_add_ulong(struct data_cell *dataset, const char *parent,
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
 	
 	struct data_cell *pc = data_cell_search(dataset, true, DATA_TYPE_ARRAY, parent);
-	if (pc == NULL && parent == NULL) pc = dataset;
+	if (pc == NULL && (parent == NULL || !strcmp(parent, ""))) pc = dataset;
 	if (pc == NULL) return 0;
 
 	struct data_cell *c = data_cell_create_ulong((const unsigned char*)key, strlen(key), val);
@@ -359,7 +368,7 @@ int data_cell_add_str(struct data_cell *dataset, const char *parent,
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
 	
 	struct data_cell *pc = data_cell_search(dataset, true, DATA_TYPE_ARRAY, parent);
-	if (pc == NULL && parent == NULL) pc = dataset;
+	if (pc == NULL && (parent == NULL || !strcmp(parent, ""))) pc = dataset;
 	if (pc == NULL) return 0;
 
 	struct data_cell *c = data_cell_create_str((const unsigned char*)key, strlen(key),
@@ -377,7 +386,7 @@ int data_cell_add_array(struct data_cell *dataset, const char *parent,
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
 	
 	struct data_cell *pc = data_cell_search(dataset, true, DATA_TYPE_ARRAY, parent);
-	if (pc == NULL && parent == NULL) pc = dataset;
+	if (pc == NULL && (parent == NULL || !strcmp(parent, ""))) pc = dataset;
 	if (pc == NULL) return 0;
 
 	struct data_cell *c = data_cell_alloc_array(key);

@@ -4,7 +4,7 @@
  * 每次检查一个后端插件的工作情况
  *
  * 正常情况下 输出 后端插件的 stats 统计信息
- * 处理错误 0x800 时 短信上报 errcode
+ * 处理错误 0x800 时 短信上报
  * 网络,客户端错误时  短信上报 trigger return
  */
 #include <stdio.h>
@@ -19,7 +19,6 @@
 
 int main(int argc, char *argv[])
 {
-	uint32_t errcode;
 	int ret;
 
 	if (argc != 4) {
@@ -44,17 +43,12 @@ int main(int argc, char *argv[])
 	
 	mevent_add_udp_server(evt, argv[1], 26010);
 	mevent_chose_plugin(evt, argv[2], REQ_CMD_STATS, FLAGS_SYNC);
-	ret = mevent_trigger(evt, &errcode);
-	if (ret == REP_OK) {
+	ret = mevent_trigger(evt);
+	if (ret != 0 && ret < REP_ERR) {
 		data_cell_dump(evt->rcvdata);
-	} else if (ret == REP_ERR) {
-		if (errcode == ERR_BUSY) {
-			printf("process busy %d!\n", errcode);
-			SMS_ALARM("process busy %d", errcode);
-		} else {
-			printf("process error %d!\n", errcode);
-			SMS_ALARM("process error %d", errcode);
-		}
+	} else if (ret == REP_ERR_BUSY) {
+		printf("process busy!\n");
+		SMS_ALARM("process busy");
 	} else {
 		printf("process failure %d\n", ret);
 		SMS_ALARM("process failure %d", ret);

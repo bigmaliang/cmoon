@@ -223,7 +223,7 @@ static uint32_t get_rep(struct mevent_srv *srv,
 /* When a packet arrives, the message it contains begins on a
  * protocol-dependant offset. This functions returns the offset to use when
  * sending/receiving messages for the given server. */
-static unsigned int srv_get_msg_offset(struct mevent_srv *srv)
+unsigned int srv_get_msg_offset(struct mevent_srv *srv)
 {
 	if (srv == NULL)
 		return 0;
@@ -263,8 +263,8 @@ static uint32_t checksum(const unsigned char *buf, size_t bsize)
 }
 
 /* Selects which server to use for the given key. */
-static struct mevent_srv *select_srv(mevent_t *evt,
-									 const char *key, size_t ksize)
+struct mevent_srv *select_srv(mevent_t *evt,
+							  const char *key, size_t ksize)
 {
 	uint32_t n;
 	
@@ -284,14 +284,17 @@ int mevent_chose_plugin(mevent_t *evt, const char *key,
 {
 	struct mevent_srv *srv;
 	unsigned char *p;
-	size_t ksize = strlen(key);
+	size_t ksize;
 
 	if (key == NULL || evt == NULL ||
 	    ksize == 0 || ksize > MAX_PACKET_LEN-20) return 0;
 
-	evt->ename = strdup(key);
+	if (evt->ename == NULL) {
+		evt->ename = strdup(key);
+	}
+	ksize = strlen(evt->ename);
 	
-	srv = select_srv(evt, key, ksize);
+	srv = select_srv(evt, evt->ename, ksize);
 	if (srv == NULL) return 0;
 	unsigned int moff = srv_get_msg_offset(srv);
 
@@ -334,7 +337,7 @@ int mevent_add_array(mevent_t *evt, const char *parent, const char *key)
 	return data_cell_add_array(evt->dataset, parent, key);
 }
 
-int mevent_trigger(mevent_t *evt, uint32_t *errcode)
+int mevent_trigger(mevent_t *evt)
 {
 	size_t t, ksize, vsize;
 	struct mevent_srv *srv;
@@ -371,12 +374,7 @@ int mevent_trigger(mevent_t *evt, uint32_t *errcode)
 
 	vsize = 0;
 	rv = get_rep(srv, evt->rcvbuf, MAX_PACKET_LEN, &p, &vsize);
-	if (rv == REP_ERR) {
-		if (errcode != NULL) {
-			*errcode = * (uint32_t *) p;
-			*errcode = ntohl(*errcode);
-		}
-	}
+
 	if (vsize > 8) {
 		if (evt->rcvdata != NULL) {
 			data_cell_free(evt->rcvdata);
