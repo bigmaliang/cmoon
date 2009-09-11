@@ -7,6 +7,7 @@
 #include <sys/types.h>		/* for size_t */
 #include <stdint.h>		/* for int64_t */
 
+#define MAX_CACHEKEY_LEN	1024
 
 struct cache {
 	/* set directly by initialization */
@@ -41,15 +42,21 @@ struct cache_entry {
 struct cache *cache_create(size_t numobjs, unsigned int flags);
 int cache_free(struct cache *cd);
 int cache_get(struct cache *cd, const unsigned char *key, size_t ksize,
-		unsigned char **val, size_t *vsize);
+			  unsigned char **val, size_t *vsize);
 int cache_set(struct cache *cd, const unsigned char *k, size_t ksize,
-		const unsigned char *v, size_t vsize);
+			  const unsigned char *v, size_t vsize);
 int cache_del(struct cache *cd, const unsigned char *key, size_t ksize);
 int cache_cas(struct cache *cd, const unsigned char *key, size_t ksize,
-		const unsigned char *oldval, size_t ovsize,
-		const unsigned char *newval, size_t nvsize);
+			  const unsigned char *oldval, size_t ovsize,
+			  const unsigned char *newval, size_t nvsize);
 int cache_incr(struct cache *cd, const unsigned char *key, size_t ksize,
-		int64_t increment, int64_t *newval);
+			   int64_t increment, int64_t *newval);
+
+int cache_getf(struct cache *cd, unsigned char **val, size_t *vsize,
+			   const char *keyfmt, ...);
+int cache_setf(struct cache *cd, const unsigned char *v, size_t vsize,
+			   const char *keyfmt, ...);
+int cache_delf(struct cache *cd, const char *keyfmt, ...);
 
 #endif
 

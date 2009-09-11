@@ -8,6 +8,8 @@
 #include <arpa/inet.h>		/* htonls() and friends */
 #include <string.h>		/* memcpy() */
 #include <unistd.h>		/* close() */
+#include <time.h>
+#include <sys/time.h>
 
 #include <netinet/udp.h>	/* UDP stuff */
 #include <netdb.h>		/* gethostbyname() */

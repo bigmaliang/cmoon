@@ -104,7 +104,7 @@ static void dbcm_process_driver(struct event_entry *entry, struct queue_entry *q
 		if (ret == RET_DBOP_OK) {
 			q->req->reply_mini(q->req, REP_OK);
 		} else {
-			q->req->reply_err(q->req, ERR_DB);
+			q->req->reply_mini(q->req, REP_ERR_DB);
 		}
 	}
 

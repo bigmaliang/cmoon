@@ -9,9 +9,8 @@
 int main(int argc, char *argv[])
 {
 	unsigned long s_elapsed;
-	int times, suc, fai, err, busy;
+	int times, suc, fai, busy;
 	char host[64], sql[1024];
-	uint32_t errcode;
 	int ret;
 
 	if (argc > 1) {
@@ -46,7 +45,7 @@ int main(int argc, char *argv[])
 #endif
 	
 	int i;
-	suc = fai = err = busy = 0;
+	suc = fai = busy = 0;
 	timer_start();
 	for (i = 0; i < times; i++) {
 #if 0
@@ -56,24 +55,19 @@ int main(int argc, char *argv[])
 				" VALUES (1, 39, '%d', '%lu');", i, time(NULL));
 		mevent_add_str(evt, "sqls", "0", sql);
 #endif
-		ret = mevent_trigger(evt, &errcode);
-		if (ret == REP_OK) {
+		ret = mevent_trigger(evt);
+		if (ret != 0 && ret < REP_ERR) {
 			data_cell_dump(evt->rcvdata);
 			suc++;
-		} else if (ret == REP_ERR) {
-			if (errcode == ERR_BUSY) {
-				printf("process busy %d!\n", errcode);
-				busy++;
-			} else {
-				printf("process error %d!\n", errcode);
-				err++;
-			}
+		} else if (ret == REP_ERR_BUSY) {
+			printf("process busy!\n");
+			busy++;
 		} else
 			fai++;
 	}
 	s_elapsed = timer_stop();
 	printf("%lu\n", s_elapsed);
-	printf("suc %d fai %d err %d busy %d\n", suc, fai, err, busy);
+	printf("suc %d fai %d busy %d\n", suc, fai, busy);
 	
 	mevent_free(evt);
 	return 0;

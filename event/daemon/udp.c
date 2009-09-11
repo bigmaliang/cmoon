@@ -44,7 +44,7 @@ static void rep_send_error(const struct req_info *req, const unsigned int code)
 	}
 }
 
-
+static void udp_reply_mini(const struct req_info *req, uint32_t reply);
 static int rep_send(const struct req_info *req, const unsigned char *buf,
 		const size_t size)
 {
@@ -55,7 +55,8 @@ static int rep_send(const struct req_info *req, const unsigned char *buf,
 
 	rv = sendto(req->fd, buf, size, 0, req->clisa, req->clilen);
 	if (rv < 0) {
-		rep_send_error(req, ERR_SEND);
+		//rep_send_error(req, ERR_SEND);
+		udp_reply_mini(req, REP_ERR_SEND);
 		return 0;
 	}
 	return 1;

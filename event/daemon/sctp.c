@@ -45,23 +45,6 @@ static void rep_send_error(const struct req_info *req, const unsigned int code)
 }
 
 
-static int rep_send(const struct req_info *req, const unsigned char *buf,
-		const size_t size)
-{
-	int rv;
-
-	if (settings.passive)
-		return 1;
-
-	rv = sendto(req->fd, buf, size, 0, req->clisa, req->clilen);
-	if (rv < 0) {
-		rep_send_error(req, ERR_SEND);
-		return 0;
-	}
-	return 1;
-}
-
-
 /* Send small replies, consisting in only a value. */
 static void sctp_reply_mini(const struct req_info *req, uint32_t reply)
 {
@@ -77,6 +60,24 @@ static void sctp_reply_mini(const struct req_info *req, uint32_t reply)
 	memcpy(minibuf + 4, &reply, 4);
 	rep_send(req, minibuf, 8);
 	return;
+}
+
+
+static int rep_send(const struct req_info *req, const unsigned char *buf,
+		const size_t size)
+{
+	int rv;
+
+	if (settings.passive)
+		return 1;
+
+	rv = sendto(req->fd, buf, size, 0, req->clisa, req->clilen);
+	if (rv < 0) {
+		//rep_send_error(req, ERR_SEND);
+		sctp_reply_mini(req, REP_ERR_SEND);
+		return 0;
+	}
+	return 1;
 }
 
 

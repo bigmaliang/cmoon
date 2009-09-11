@@ -10,23 +10,36 @@ int main(int argc, char *argv[])
 {
 	unsigned long s_elapsed;
 	mevent_t *evt;
-	int ret, times, busy, err, fai, suc;
-	uint32_t errcode;
-	char host[64] = "127.0.0.1", uin[64] = "100";
+	int ret, times, fai, suc;
+	char host[64] = "127.0.0.1";
+	int cmd, uin, fuin, gid;
+	uin = fuin = gid = 0;
+	cmd = 1001;
 	
 	if (argc > 1) {
 		times = atoi(argv[1]);
 	} else {
-		printf("Usage: %s TIMES [HOST] [UIN]\n", argv[0]);
+		printf("Usage: %s TIMES [HOST] [COMMAND] [UIN] [FUIN] [GID]\n", argv[0]);
 		return 1;
 	}
 	if (argc > 2) {
 		strncpy(host, argv[2], sizeof(host));
 	}
 	if (argc > 3) {
-		strncpy(uin, argv[3], sizeof(uin));
+		cmd = atoi(argv[3]);
+	}
+	if (argc > 4) {
+		uin = atoi(argv[4]);
+	}
+	if (argc > 5) {
+		fuin = atoi(argv[5]);
+	}
+	if (argc > 6) {
+		gid = atoi(argv[6]);
 	}
 
+/* for change these 3 lines of code into one, sooo tired */
+#if 0
 	evt = mevent_init();
 	if (evt == NULL) {
 		printf("init error\n");
@@ -35,24 +48,25 @@ int main(int argc, char *argv[])
 
 	mevent_add_tcp_server(evt, host, 26000);
 	mevent_chose_plugin(evt, "uic", 1001, FLAGS_SYNC);
-	mevent_add_str(evt, NULL, "uin", uin);
+#endif
+	
+	evt = mevent_init_plugin("uic", cmd, FLAGS_SYNC);
+	if (uin != 0)
+		mevent_add_u32(evt, NULL, "uin", uin);
+	if (fuin != 0)
+		mevent_add_u32(evt, NULL, "frienduin", fuin);
+	if (gid != 0)
+		mevent_add_u32(evt, NULL, "groupid", gid);
 
-	suc = fai = err = busy = 0;
+	suc = fai = 0;
 	timer_start();
 	int i;
 	for (i = 0; i < times; i++) {
-		ret = mevent_trigger(evt, &errcode);
-		if (ret == REP_OK) {
+		ret = mevent_trigger(evt);
+		if (PROCESS_OK(ret)) {
+			printf("process success %d\n", ret);
 			data_cell_dump(evt->rcvdata);
 			suc++;
-		} else if (ret == REP_ERR) {
-			if (errcode == ERR_BUSY) {
-				printf("process busy %d!\n", errcode);
-				busy++;
-			} else {
-				printf("process error %d!\n", errcode);
-				err++;
-			}
 		} else {
 			printf("process failure %d!\n", ret);
 			fai++;
@@ -60,7 +74,7 @@ int main(int argc, char *argv[])
 	}
 	s_elapsed = timer_stop();
 	printf("%lu\n", s_elapsed);
-	printf("suc %d fai %d err %d busy %d\n", suc, fai, err, busy);
+	printf("suc %d fai %d\n", suc, fai);
 
 	mevent_free(evt);
 	return 0;

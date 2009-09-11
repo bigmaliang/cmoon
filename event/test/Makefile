@@ -20,6 +20,7 @@ all: $(BINARY)
 	@echo "$(CC) -o $@"
 	@$(CC) $(CFLAGS) $< -o $@ $(INCS) ${LIBS}
 
+install:
 
 flag:
 	@echo "=== "$(CFLAGS)

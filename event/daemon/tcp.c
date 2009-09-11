@@ -100,6 +100,7 @@ static void rep_send_error(const struct req_info *req, const unsigned int code)
 }
 
 
+static void tcp_reply_mini(const struct req_info *req, uint32_t reply);
 static int rep_send(const struct req_info *req, const unsigned char *buf,
 		const size_t size)
 {
@@ -116,7 +117,8 @@ static int rep_send(const struct req_info *req, const unsigned char *buf,
 			return 1;
 		} else if (rv < 0) {
 			if (errno != EAGAIN || errno != EWOULDBLOCK) {
-				rep_send_error(req, ERR_SEND);
+				//rep_send_error(req, ERR_SEND);
+				tcp_reply_mini(req, REP_ERR_SEND);
 				return 0;
 			} else {
 				/* With big packets, the receiver window might

@@ -30,6 +30,7 @@ struct req_info {
 	size_t psize;
 
 	/* operations */
+	/* reply_err is depracated */
 	void (*reply_mini)(const struct req_info *req, uint32_t reply);
 	void (*reply_err)(const struct req_info *req, uint32_t reply);
 	void (*reply_long)(const struct req_info *req, uint32_t reply,

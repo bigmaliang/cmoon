@@ -10,6 +10,7 @@
 #include <stdlib.h>		/* for malloc() */
 #include <string.h>		/* for memcpy()/memcmp() */
 #include <stdio.h>		/* snprintf() */
+#include <stdarg.h>		/* va_end() */
 #include "cache.h"
 
 
@@ -407,4 +408,44 @@ int cache_incr(struct cache *cd, const unsigned char *key, size_t ksize,
 	return 1;
 }
 
+int cache_getf(struct cache *cd, unsigned char **val, size_t *vsize,
+			   const char *keyfmt, ...)
+{
+	char key[MAX_CACHEKEY_LEN];
+	va_list ap;
+	int r;
+
+	va_start(ap, keyfmt);
+	r = vsnprintf(key, MAX_CACHEKEY_LEN, keyfmt, ap);
+	va_end(ap);
+
+	return cache_get(cd, (unsigned char*)key, (size_t)r, val, vsize);
+}
+
+int cache_setf(struct cache *cd, const unsigned char *v, size_t vsize,
+			   const char *keyfmt, ...)
+{
+	char key[MAX_CACHEKEY_LEN];
+	va_list ap;
+	int r;
+
+	va_start(ap, keyfmt);
+	r = vsnprintf(key, MAX_CACHEKEY_LEN, keyfmt, ap);
+	va_end(ap);
+
+	return cache_set(cd, (unsigned char*)key, (size_t)r, v, vsize);
+}
+
+int cache_delf(struct cache *cd, const char *keyfmt, ...)
+{
+	char key[MAX_CACHEKEY_LEN];
+	va_list ap;
+	int r;
+
+	va_start(ap, keyfmt);
+	r = vsnprintf(key, MAX_CACHEKEY_LEN, keyfmt, ap);
+	va_end(ap);
+
+	return cache_del(cd, (unsigned char*)key, (size_t)r);
+}
 

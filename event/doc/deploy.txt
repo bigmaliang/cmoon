@@ -22,10 +22,14 @@
 
 
 以安装到/usr/local为例
+daemon 程序安装:
+---------------
 	cd /usr/local
 	tar zcvf mevent.tar.gz bin/mevent bin/mevent.hdf lib/libmevent_server.so lib/mevent_db_community.so lib/mevent_skeleton.so \
 	lib/libneo_utl.so  mysql/lib/mysql/libmysqlclient* lib/libevent*
-
+PHP 扩展支持安装:
+---------------
+	tar zcvf libmevent.tar.gz usr/local/include/mevent.h usr/local/include/data.h usr/local/include/net-const.h usr/local/lib/libmevent.a usr/local/lib/libneo_utl.so usr/local/include/ClearSilver.h usr/local/include/cs_config.h usr/local/include/cgi/ usr/local/include/cs/ usr/local/include/util/ etc/mevent/
 
 
 扩展

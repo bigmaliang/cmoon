@@ -61,7 +61,8 @@ size_t unpack_data(const char *key, unsigned char *buf, size_t len,
 		} else
 			continue;
 		if (cell != NULL) {
-			oldcell = data_cell_search(rcell, false, cell->type, (const char*)cell->key);
+			oldcell = data_cell_search(rcell, false, cell->type,
+									   (const char*)cell->key);
 			if (oldcell != NULL) {
 				data_cell_replace_val(oldcell, cell);
 				/* TODO free new array */
@@ -117,13 +118,15 @@ size_t pack_data_str(const char *key, const char *val, unsigned char *buf)
 	return (8 + ksize + 4 + vsize);
 }
 
-size_t pack_data_array(const char *key, struct data_cell *dataset, unsigned char *buf, size_t maxsize)
+size_t pack_data_array(const char *key, struct data_cell *dataset,
+					   unsigned char *buf, size_t maxsize)
 {
 	struct data_cell *cell;
 	size_t psize;
 	int len, i;
 
-	if (dataset->type != DATA_TYPE_ARRAY || maxsize < RESERVE_SIZE) return 0;
+	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY ||
+		maxsize < RESERVE_SIZE) return 0;
 	
 	len = data_cell_length(dataset);
 

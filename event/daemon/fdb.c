@@ -43,6 +43,17 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass,
 	return RET_DBOP_OK;
 }
 
+char *fdb_escape_string(fdb_t *fdb, const char *str)
+{
+	size_t n = strlen(str);
+	char *buf = calloc(1, n);
+	if (buf == NULL) return NULL;
+
+	mysql_real_escape_string(fdb->conn, buf, str, n);
+
+	return buf;
+}
+
 int fdb_exec(fdb_t *fdb)
 {
 	int ret;
@@ -78,6 +89,10 @@ int fdb_affect_rows(fdb_t *fdb)
 	if (fdb->conn == NULL)
 		return RET_DBOP_CONNECTE;
 	return (int)mysql_affected_rows(fdb->conn);
+}
+int fdb_get_last_id(fdb_t *fdb)
+{
+	return (int)mysql_insert_id(fdb->conn);
 }
 char* fdb_error(fdb_t *fdb)
 {

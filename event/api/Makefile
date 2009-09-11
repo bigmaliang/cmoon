@@ -29,12 +29,12 @@ ALL_CFLAGS += -g -pg -fprofile-arcs -ftest-coverage
 endif
 
 
-ALL_CFLAGS += -I../base -I../daemon $(INC_CS)
+ALL_CFLAGS += -I../base -I../daemon $(INC_CS) $(INC_MYSQL)
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)
 
-OBJS = libmevent.o tcp.o tipc.o udp.o sctp.o
+OBJS = libmevent.o tcp.o tipc.o udp.o sctp.o wrapper.o
 OBJS += $(patsubst %.c, %.o, $(BASE_SOURCES))
 
 
@@ -80,6 +80,7 @@ install-lib: libs libmevent.pc
 	install -d $(PREFIX)/include
 	install -m 0644 mevent.h $(PREFIX)/include
 	install -m 0644 ../base/net-const.h $(PREFIX)/include
+	install -m 0644 ../base/data.h $(PREFIX)/include
 	install -d $(PREFIX)/lib/pkgconfig
 	install -m 644 libmevent.pc $(PREFIX)/lib/pkgconfig
 	@echo
