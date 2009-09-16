@@ -80,6 +80,42 @@ static int isvaliduin(char *uin)
 	return 1;
 }
 
+static void keep_up_with_my_friend(USERS *user, acetables *g_ape)
+{
+	HTBL_ITEM *item;
+	HTBL *ulist = GET_USER_FRIEND_TBL(user);
+    char *uin = GET_UIN_FROM_USER(user);
+	USERS *friend;
+	CHANNEL *chan, *jchan;
+
+    chan = getchanf(g_ape, FRIEND_PIP_NAME"%s", uin);
+    if (chan == NULL) {
+        wlog_err("%s baby, you didn't make a channel?", uin);
+        return;
+    }
+    
+	if (ulist != NULL)  {
+		for (item = ulist->first; item != NULL; item = item->lnext) {
+			/*
+			 * invite my friends
+			 */
+			friend = GET_USER_FROM_APE(g_ape, item->key);
+			if (friend != NULL) {
+				wlog_dbg("%s invite %s\n", uin, item->key);
+				join(friend, chan, g_ape);
+			}
+		
+			/*
+			 * join my friends
+			 */
+			jchan = getchanf(g_ape, FRIEND_PIP_NAME"%s", item->key);
+			if (jchan != NULL) {
+				join(user, jchan, g_ape);
+			}
+		}
+	}
+}
+
 static void get_user_info(char *uin, USERS *user, acetables *g_ape)
 {
 	HTBL *ulist;
@@ -154,18 +190,22 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
  */
 static unsigned int push_connect(callbackp *callbacki)
 {
-	USERS *nuser;
+	USERS *nuser, *ouser;
 	RAW *newraw;
 	json *jlist = NULL;
-	
+	CHANNEL *chan;
+
 	if (isvaliduin(callbacki->param[1]) != 1) {
 		SENDH(callbacki->fdclient, ERR_BAD_UIN, callbacki->g_ape);
 		return (FOR_NOTHING);
 	}
+    ouser = GET_USER_FROM_APE(callbacki->g_ape, callbacki->param[1]);
+#if 0
 	if (GET_USER_FROM_APE(callbacki->g_ape, callbacki->param[1])) {
 		SENDH(callbacki->fdclient, ERR_UIN_USED, callbacki->g_ape);
 		return (FOR_NOTHING);
 	}
+#endif
 
 	nuser = adduser(callbacki->fdclient, callbacki->host, callbacki->g_ape);
 	callbacki->call_user = nuser;
@@ -177,55 +217,45 @@ static unsigned int push_connect(callbackp *callbacki)
 	}
 	
 	SET_UIN_FOR_USER(nuser, callbacki->param[1]);
-	SET_USER_FOR_APE(callbacki->g_ape, callbacki->param[1], nuser);
-
-	get_user_info(callbacki->param[1], nuser, callbacki->g_ape);
-	
 	subuser_restor(getsubuser(callbacki->call_user, callbacki->host),
 				   callbacki->g_ape);
-	
+    if (ouser) {
+        make_link(ouser, nuser);
+        nuser->flags = nuser->flags |  FLG_VUSER;
+
+        /* post channel */
+        if ((chan = getchanf(callbacki->g_ape, FRIEND_PIP_NAME"%s",
+                             callbacki->param[1])) != NULL) {
+            set_json("pipe", NULL, &jlist);
+            json_attach(jlist, get_json_object_channel(chan), JSON_OBJECT);
+            newraw = forge_raw(RAW_CHANNEL, jlist);
+            post_raw(newraw, nuser, callbacki->g_ape);
+        }
+        goto done;
+    } else {
+        SET_USER_FOR_APE(callbacki->g_ape, callbacki->param[1], nuser);
+        get_user_info(callbacki->param[1], nuser, callbacki->g_ape);
+    }
+
 	/*
-	 * make own channel 
+	 * make own channel
 	 */
-	CHANNEL *chan;
-	char schan[MAX_CHAN_LEN];
-	snprintf(schan, sizeof(schan), FRIEND_PIP_NAME"%s", callbacki->param[1]);
-	if ((chan = getchan(schan, callbacki->g_ape)) == NULL) {
-		chan = mkchan(schan, "Pipe For My Friend", callbacki->g_ape);
+	if ((chan = getchanf(callbacki->g_ape, FRIEND_PIP_NAME"%s",
+                         callbacki->param[1])) == NULL) {
+		chan = mkchanf(callbacki->g_ape, "Pipe For My Friend",
+                       FRIEND_PIP_NAME"%s", callbacki->param[1]);
 		if (chan == NULL) {
-			smsalarm_msgf(callbacki->g_ape, "make channel %s failed", schan);
+			smsalarm_msgf(callbacki->g_ape, "make channel %s failed",
+                          callbacki->param[1]);
 			SENDH(callbacki->fdclient, ERR_MAKE_CHAN, callbacki->g_ape);
 			return (FOR_NOTHING);
 		}
 	}
 	join(nuser, chan, callbacki->g_ape);
+    keep_up_with_my_friend(nuser, callbacki->g_ape);
 
-	HTBL_ITEM *item;
-	HTBL *ulist = GET_USER_FRIEND_TBL(nuser);
-	USERS *friend;
-	CHANNEL *jchan;
-	if (ulist != NULL)  {
-		for (item = ulist->first; item != NULL; item = item->lnext) {
-			/*
-			 * invite my friends
-			 */
-			friend = GET_USER_FROM_APE(callbacki->g_ape, item->key);
-			if (friend != NULL) {
-				wlog_dbg("%s invite %s\n", callbacki->param[1], item->key);
-				join(friend, chan, callbacki->g_ape);
-			}
-		
-			/*
-			 * join my friends
-			 */
-			snprintf(schan, sizeof(schan), FRIEND_PIP_NAME"%s", item->key);
-			jchan = getchan(schan, callbacki->g_ape);
-			if (jchan != NULL) {
-				join(nuser, jchan, callbacki->g_ape);
-			}
-		}
-	}
-
+ done:
+    jlist = NULL;
 	set_json("sessid", nuser->sessid, &jlist);
 	
 	newraw = forge_raw(RAW_LOGIN, jlist);
@@ -233,23 +263,59 @@ static unsigned int push_connect(callbackp *callbacki)
 	
 	post_raw(newraw, nuser, callbacki->g_ape);
 
-	//return (FOR_LOGIN | FOR_UPDATE_IP);
+	return (FOR_LOGIN | FOR_UPDATE_IP);
 
-	send_raws(nuser->subuser, callbacki->g_ape);
-	do_died(nuser->subuser);
-	return (FOR_NULL);
+	//send_raws(nuser->subuser, callbacki->g_ape);
+	//do_died(nuser->subuser);
+	//return (FOR_NULL);
 }
 
 static unsigned int push_send(callbackp *callbacki)
 {
 	json *jlist = NULL;
+    USERS *user, *muser;
+    CHANNEL *chan;
+    char *uin;
 
+    user = muser = callbacki->call_user;
+    uin = GET_UIN_FROM_USER(user);
+    
+    if (user->flags & FLG_VUSER) {
+        muser = GET_USER_FROM_APE(callbacki->g_ape, uin);
+        if (!muser) {
+            /*
+             * TODO main user disconnected before visual user, how can i post them? 
+             */
+            wlog_warn("%s's main user may be disconnected", uin);
+            goto done;
+        }
+    }
+
+    /*
+     * refresh main user's friends..., and join the new friend 
+     */
+    get_user_info(uin, muser, callbacki->g_ape);
+    keep_up_with_my_friend(muser, callbacki->g_ape);
+
+    chan = getchanf(callbacki->g_ape, FRIEND_PIP_NAME"%s", uin);
+    if (chan == NULL || chan->pipe == NULL ||
+        chan->pipe->type != CHANNEL_PIPE) {
+        goto done;
+    }
+    
 	set_json("msg", callbacki->param[3], &jlist);
 
-	post_to_pipe(jlist, RAW_DATA, callbacki->param[2],
-				 getsubuser(callbacki->call_user, callbacki->host),
-				 NULL, callbacki->g_ape);
-
+    /*
+     * 1, we can use post_to_channel here, but comply with ape, post_to_pipe
+     * 2, callbacki->param[2] must be same as chan->pipe->pubid
+     */
+	//post_to_pipe(jlist, RAW_DATA, chan->pipe->pubid,
+	//			 getsubuser(callbacki->call_user, callbacki->host),
+	//			 NULL, callbacki->g_ape);
+	post_to_pipe(jlist, RAW_DATA, chan->pipe->pubid,
+				 muser->subuser, NULL, callbacki->g_ape);
+    
+ done:
 	CLOSE(callbacki->fdclient, callbacki->g_ape);
 	return (FOR_NULL);
 }
@@ -483,12 +549,14 @@ static unsigned int push_senduniq(callbackp *callbacki)
 
 static void push_deluser(USERS *user, acetables *g_ape)
 {
-	char schan[MAX_CHAN_LEN];
 	CHANNEL *chan;
+	char *uin = GET_UIN_FROM_USER(user);
 
-	snprintf(schan, sizeof(schan), FRIEND_PIP_NAME"%s",
-			 GET_UIN_FROM_USER(user));
-	chan = getchan(schan, g_ape);
+    if (user->flags & FLG_VUSER) {
+        goto normal_del;
+    }
+
+	chan = getchanf(g_ape, FRIEND_PIP_NAME"%s", uin);
 	if (chan != NULL) {
 		HTBL *ulist = GET_USER_FRIEND_TBL(user);
 		HTBL_ITEM *item;
@@ -512,16 +580,16 @@ static void push_deluser(USERS *user, acetables *g_ape)
 		}
 	}
 
+	if (uin != NULL && get_property(g_ape->properties, "userlist") != NULL) {
+		hashtbl_erase(get_property(g_ape->properties, "userlist")->val, uin);
+	}
+
+ normal_del:
 	left_all(user, g_ape);
 	
 	/* kill all users connections */
 	
 	clear_subusers(user);
-
-	char *uin = GET_UIN_FROM_USER(user);
-	if (uin != NULL && get_property(g_ape->properties, "userlist") != NULL) {
-		hashtbl_erase(get_property(g_ape->properties, "userlist")->val, uin);
-	}
 
 	hashtbl_erase(g_ape->hSessid, user->sessid);
 	
@@ -540,7 +608,7 @@ static void push_deluser(USERS *user, acetables *g_ape)
 	clear_sessions(user);
 	clear_properties(&user->properties);
 	destroy_pipe(user->pipe, g_ape);
-	
+
 	free(user);
 
 	user = NULL;
@@ -558,7 +626,7 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 	HTBL *list;
 	HTBL_ITEM *item;
 
-	wlog_dbg("prepare post %s", raw->data);
+	//wlog_dbg("prepare post %s", raw->data);
 	
 	/*
 	 * if not a DATA message, post anyway
@@ -635,7 +703,7 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 		sub->rawhead = raw;
 	}
 	(sub->nraw)++;
-	wlog_dbg("%s done", raw->data);
+	//wlog_dbg("%s done", raw->data);
 }
 
 static unsigned int push_trustcheck(callbackp *callbacki)

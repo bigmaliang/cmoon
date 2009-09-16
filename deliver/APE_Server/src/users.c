@@ -629,23 +629,25 @@ struct _users_link *are_linked(USERS *a, USERS *b)
 
 void make_link(USERS *a, USERS *b)
 {
-	struct _users_link *link;
+	struct _users_link *userlink = NULL;
 	struct _link_list *link_a, *link_b;
-	
-	if (are_linked(a, b) != NULL) {	
-		link = xmalloc(sizeof(*link));
+
+    userlink = are_linked(a, b);
+    
+	if (userlink == NULL) {	
+		userlink = xmalloc(sizeof(*link));
 	
 		link_a = xmalloc(sizeof(*link_a));
 		link_b = xmalloc(sizeof(*link_b));
 	
-		link_a->link = link;
-		link_b->link = link;
+		link_a->link = userlink;
+		link_b->link = userlink;
 	
 		link_a->next = a->links.ulink;
 		link_b->next = b->links.ulink;
 	
-		link->a = a;
-		link->b = b;
+		userlink->a = a;
+		userlink->b = b;
 	
 		a->links.ulink = link_a;
 		(a->links.nlink)++;
@@ -653,7 +655,7 @@ void make_link(USERS *a, USERS *b)
 		b->links.ulink = link_b;
 		(b->links.nlink)++;
 	
-		link->link_type = 0;
+		userlink->link_type = 0;
 		wlog_info("Link etablished between %s and %s\n", a->pipe->pubid, b->pipe->pubid);
 	} else {
 		wlog_warn("%s and %s are already linked\n", a->pipe->pubid, b->pipe->pubid);

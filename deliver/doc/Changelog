@@ -15,3 +15,8 @@ json.c 190 free(jlist->name); ===> if (jlist->name != NULL) free(jlist->name);
 短信报警功能
 
 sock.c basemem 太少会降低并发连接的个数, growup() 函数貌似没用, 现在 basemen 开始改成了 5120
+
+raw.c post_raw() 信息加上会发给他的 linked 的 user, users.h 加了 #define FLG_VUSER 0x16
+make_link 函数有修改
+
+channel.c 新增 getchanf 函数

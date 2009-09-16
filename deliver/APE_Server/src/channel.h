@@ -56,7 +56,9 @@ typedef struct BANNED
 } BANNED;
 
 CHANNEL *mkchan(char *chan, char *topic, acetables *g_ape);
+CHANNEL *mkchanf(acetables *g_ape, char *topic, const char*fmt, ...);
 CHANNEL *getchan(const char *chan, acetables *g_ape);
+CHANNEL *getchanf(acetables *g_ape, const char *fmt, ...);
 
 BANNED *getban(CHANNEL *chan, const char *ip);
 
