@@ -11,7 +11,7 @@
 #include <time.h>
 #include <ctype.h>				/* isdigit() */
 #include <inttypes.h>
-#include <stdint.h>
+#include <stdint.h>             /* uint32_t... */
 #include <sys/types.h>
 #include <dlfcn.h>				/* dlope()... */
 #include <dirent.h>				/* scandir()... */
