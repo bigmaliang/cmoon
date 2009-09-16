@@ -41,7 +41,7 @@ char *fdb_escape_string(fdb_t *fdb, const char *str)
 	char *buf = calloc(1, n);
 	if (buf == NULL) return NULL;
 
-	mysql_reql_escape_string(fdb->conn, buf, str, n);
+	mysql_real_escape_string(fdb->conn, buf, str, n);
 
 	return buf;
 }
