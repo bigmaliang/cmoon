@@ -62,5 +62,37 @@ struct queue_entry *queue_get(struct queue *q)
 int queue_isempty(struct queue *q)
 	__with_lock_acquired(q->lock);
 
+#define REQ_GET_PARAM_U32(c, q, recurse, key, ret)                      \
+    do {                                                                \
+        c = data_cell_search(q->dataset, recurse, DATA_TYPE_U32, key);  \
+        if (c == NULL)                                                  \
+            return REP_ERR_BADPARAM;                                    \
+        ret = c->v.ival;                                                \
+    } while (0)
+
+#define REQ_GET_PARAM_ULONG(c, q, recurse, key, ret)                    \
+    do {                                                                \
+        c = data_cell_search(q->dataset, recurse, DATA_TYPE_ULONG, key); \
+        if (c == NULL)                                                  \
+            return REP_ERR_BADPARAM;                                    \
+        ret = c->v.lval;                                                \
+    } while (0)
+
+#define REQ_GET_PARAM_STR(c, q, recurse, key, ret)                      \
+    do {                                                                \
+        c = data_cell_search(q->dataset, recurse, DATA_TYPE_STRING, key); \
+        if (c == NULL)                                                  \
+            return REP_ERR_BADPARAM;                                    \
+        ret = c->v.sval.val;                                            \
+    } while (0)
+
+#define REQ_GET_PARAM_ARRAY(c, q, recurse, key, ret)                    \
+    do {                                                                \
+        c = data_cell_search(q->dataset, recurse, DATA_TYPE_ARRAY, key); \
+        if (c == NULL)                                                  \
+            return REP_ERR_BADPARAM;                                    \
+        ret = c->v.sval.val;                                            \
+    } while (0)
+
 #endif
 

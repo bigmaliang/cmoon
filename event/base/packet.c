@@ -172,3 +172,23 @@ size_t pack_data_array(const char *key, struct data_cell *dataset,
 
 	return psize;
 }
+
+size_t pack_data_any(const char *key, struct data_cell *dataset,
+                     unsigned char *buf, size_t maxsize)
+{
+    struct data_cell *c = dataset;
+    if (c == NULL || maxsize < RESERVE_SIZE) return 0;
+
+    switch(dataset->type) {
+    case DATA_TYPE_U32:
+        return pack_data_u32((char*)c->key, c->v.ival, buf);
+    case DATA_TYPE_ULONG:
+        return pack_data_ulong((char*)c->key, c->v.lval, buf);
+    case DATA_TYPE_STRING:
+        return pack_data_str((char*)c->key, (char*)c->v.sval.val, buf);
+    case DATA_TYPE_ARRAY:
+        return pack_data_array(key, dataset, buf, maxsize);
+    default:
+        return 0;
+    }
+}

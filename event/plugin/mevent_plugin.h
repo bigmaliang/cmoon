@@ -21,6 +21,7 @@
 #include "fdb.h"
 #include "reply.h"
 #include "smsalarm.h"
+#include "syscmd.h"
 
 #include "ClearSilver.h"
 

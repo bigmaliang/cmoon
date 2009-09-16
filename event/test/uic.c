@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
 	unsigned long s_elapsed;
 	mevent_t *evt;
 	int ret, times, fai, suc;
-	char host[64] = "127.0.0.1";
 	int cmd, uin, fuin, gid;
 	uin = fuin = gid = 0;
 	cmd = 1001;
@@ -19,23 +18,20 @@ int main(int argc, char *argv[])
 	if (argc > 1) {
 		times = atoi(argv[1]);
 	} else {
-		printf("Usage: %s TIMES [HOST] [COMMAND] [UIN] [FUIN] [GID]\n", argv[0]);
+		printf("Usage: %s TIMES [COMMAND] [UIN] [FUIN] [GID]\n", argv[0]);
 		return 1;
 	}
 	if (argc > 2) {
-		strncpy(host, argv[2], sizeof(host));
+		cmd = atoi(argv[2]);
 	}
 	if (argc > 3) {
-		cmd = atoi(argv[3]);
+		uin = atoi(argv[3]);
 	}
 	if (argc > 4) {
-		uin = atoi(argv[4]);
+		fuin = atoi(argv[4]);
 	}
 	if (argc > 5) {
-		fuin = atoi(argv[5]);
-	}
-	if (argc > 6) {
-		gid = atoi(argv[6]);
+		gid = atoi(argv[5]);
 	}
 
 /* for change these 3 lines of code into one, sooo tired */
