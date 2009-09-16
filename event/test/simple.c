@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
 	mevent_add_tcp_server(evt, host, 26011);
 #if 1
-	mevent_chose_plugin(evt, "db_community", REQ_CMD_SET, FLAGS_NONE);
+	mevent_chose_plugin(evt, "db_community", REQ_CMD_NONE, FLAGS_NONE);
 	mevent_add_array(evt, NULL, "sqls");
 	if (!strcmp(sql, ""))
 		mevent_add_str(evt, "sqls", "0", "UPDATE myvideo.album SET title='没有杀毒' WHERE aid=11;");
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	timer_start();
 	for (i = 0; i < times; i++) {
 #if 0
-		mevent_chose_plugin(evt, "db_community", REQ_CMD_SET, FLAGS_NONE);
+		mevent_chose_plugin(evt, "db_community", REQ_CMD_NONE, FLAGS_NONE);
 		mevent_add_array(evt, NULL, "sqls");
 		sprintf(sql, "INSERT INTO eventcenter.events_3day(etype, fromuid, msg, eventtime) "
 				" VALUES (1, 39, '%d', '%lu');", i, time(NULL));

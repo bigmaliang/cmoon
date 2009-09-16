@@ -27,19 +27,23 @@ daemon 程序安装:
 	cd /usr/local
 	tar zcvf mevent.tar.gz bin/mevent bin/mevent.hdf lib/libmevent_server.so lib/mevent_db_community.so lib/mevent_skeleton.so \
 	lib/libneo_utl.so  mysql/lib/mysql/libmysqlclient* lib/libevent*
-PHP 扩展支持安装:
----------------
-	tar zcvf libmevent.tar.gz usr/local/include/mevent.h usr/local/include/data.h usr/local/include/net-const.h usr/local/lib/libmevent.a usr/local/lib/libneo_utl.so usr/local/include/ClearSilver.h usr/local/include/cs_config.h usr/local/include/cgi/ usr/local/include/cs/ usr/local/include/util/ etc/mevent/
+PHP 扩展编译环境安装:
+------------------
+    cd / &&	tar zcvf libmevent.tar.gz usr/local/include/mevent.h usr/local/include/data.h usr/local/include/net-const.h usr/local/lib/libmevent.a usr/local/lib/libneo_utl.so usr/local/include/ClearSilver.h usr/local/include/cs_config.h usr/local/include/cgi/ usr/local/include/cs/ usr/local/include/util/ etc/mevent/
 
 
 扩展
 ====
 	当前事件中心 支持 不同的后台插件放到不同的机器上处理, 只需要在调用层通过 add_xxx_server 添加多台处理后台.
 	进行平行扩展, 达到分担处理压力的目的.
-	
+
+    /*
 	但, 因为当前是对事件中心的名字(如 "db_community")进行 校验和 来选择后台处理服务器,
 	所以当前事件中心的前台与后台的处理只支持 多对一 的模式, 不支持 一对多 的模式,
 	即一个或多个前端的事件只能选择一个后台服务器来处理(mevent_chose_plugin),
 	不能将一种事件请求分发到不同的后端服务器上, 无法实现针对某个特定的事件逻辑进行扩展.
 
 	之后可以考虑对这方面进行改动, 达到能对单一事件, 多台后台处理的效果.
+    */
+
+    

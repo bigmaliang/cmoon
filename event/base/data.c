@@ -274,10 +274,13 @@ int data_cell_compare(const void *pa, const void *pb)
 	a = *(struct data_cell**)pa;
 	b = *(struct data_cell**)pb;
 
-	if (a->type != b->type) {
+    size_t max = a->ksize > b->ksize? a->ksize: b->ksize;
+    
+    if (a->type == DATA_TYPE_ANY) {
+		return strncmp((char*)a->key, (char*)b->key, max);
+    } else if (a->type != b->type) {
 		return (int)(a->type - b->type);
 	} else {
-		size_t max = a->ksize > b->ksize? a->ksize: b->ksize;
 		return strncmp((char*)a->key, (char*)b->key, max);
 	}
 }

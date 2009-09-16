@@ -39,7 +39,7 @@ LIBS = -levent -lpthread -lrt -ldl  $(LIB_MYSQL) $(LIB_NEOUTL_DYN)
 BASE_SOURCES = $(wildcard ../base/*.c)
 PLUGIN_SOURCES = $(wildcard ../plugin/*.c)
 
-OBJS = mevent.o queue.o log.o dtrace.o net.o parse.o reply.o stats.o config.o common.o cache.o fdb.o
+OBJS = mevent.o queue.o log.o dtrace.o net.o parse.o reply.o stats.o config.o common.o cache.o fdb.o syscmd.o
 OBJS += $(patsubst %.c, %.o, $(BASE_SOURCES))
 OBJS_BIN = main.o
 
