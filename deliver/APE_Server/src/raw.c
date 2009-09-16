@@ -109,14 +109,32 @@ void post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 /* Post raw to a user and propagate it to all of it's subuser */
 void post_raw(RAW *raw, USERS *user, acetables *g_ape)
 {
-	subuser *sub = user->subuser;
-	
+    struct _link_list *ulink;
+    USERS *luser;
+	subuser *sub;
+
+    if (user->flags & FLG_VUSER) {
+        goto post_sub;
+    }
+    
+    ulink = user->links.ulink;
+    while (ulink != NULL) {
+        luser = ulink->link->a == user? ulink->link->b: ulink->link->a;
+        post_raw(raw, luser, g_ape);
+        ulink = ulink->next;
+    }
+
+ post_sub:
+    sub = user->subuser;
 	while (sub != NULL) {
 		post_raw_sub(copy_raw(raw), sub, g_ape);
 		sub = sub->next;
 	}
-	free(raw->data);
-	free(raw);
+    
+    if (!(user->flags & FLG_VUSER)) {
+        free(raw->data);
+        free(raw);
+    }
 }
 
 /* Post raw to a user and propagate it to all of it's subuser with *sub exception */

@@ -31,6 +31,7 @@
 #include <signal.h>
 #include <syslog.h>
 #include <sys/resource.h>
+#include <sys/prctl.h>
 #include "utils.h"
 #include "ticks.h"
 #include "proxy.h"
@@ -51,10 +52,14 @@ static void signal_handler(int sign)
 static int inc_rlimit(int nofile)
 {
 	struct rlimit rl;
-	
+
+    rl.rlim_cur = 10240;
+    rl.rlim_max = 10240;
+    setrlimit(RLIMIT_CORE, &rl);
+    
 	rl.rlim_cur = nofile;
 	rl.rlim_max = nofile;
-	
+    
 	return setrlimit(RLIMIT_NOFILE, &rl);
 }
 
@@ -168,7 +173,7 @@ int main(int argc, char **argv)
 		if (inc_rlimit(atoi(CONFIG_VAL(Server, rlimit_nofile, srv))) == -1) {
 			printf("[WARN] Cannot set the max filedescriptos limit (setrlimit)\n");
 		}
-		
+
 		/* Get the user information (uid section) */
 		if ((pwd = getpwnam(CONFIG_VAL(uid, user, srv))) == NULL) {
 			printf("[ERR] Can\'t find username %s\n", CONFIG_VAL(uid, user, srv));
@@ -195,6 +200,7 @@ int main(int argc, char **argv)
 		initgroups(CONFIG_VAL(uid, user, srv), grp->gr_gid);
 		
 		setuid(pwd->pw_uid);
+        prctl(PR_SET_DUMPABLE, 1);
 	} else {
 		printf("[WARN] You have to run \'aped\' as root to increase r_limit\n");
 	}

@@ -81,12 +81,38 @@ CHANNEL *mkchan(char *chan, char *topic, acetables *g_ape)
 	
 }
 
+CHANNEL *mkchanf(acetables *g_ape, char *topic, const char*fmt, ...)
+{
+    char name[MAX_TOPIC_LEN];
+    va_list ap;
+    int r;
+
+    va_start(ap, fmt);
+    r = vsnprintf(name, MAX_TOPIC_LEN, fmt, ap);
+    va_end(ap);
+
+    return mkchan(name, topic, g_ape);
+}
+
 CHANNEL *getchan(const char *chan, acetables *g_ape)
 {
 	if (strlen(chan) > MAX_CHAN_LEN) {
 		return NULL;
 	}
 	return (CHANNEL *)hashtbl_seek(g_ape->hLusers, chan);	
+}
+
+CHANNEL *getchanf(acetables *g_ape, const char *fmt, ...)
+{
+    char name[MAX_TOPIC_LEN];
+    va_list ap;
+    int r;
+
+    va_start(ap, fmt);
+    r = vsnprintf(name, MAX_TOPIC_LEN, fmt, ap);
+    va_end(ap);
+
+    return getchan(name, g_ape);
 }
 
 void rmchan(CHANNEL *chan, acetables *g_ape)
