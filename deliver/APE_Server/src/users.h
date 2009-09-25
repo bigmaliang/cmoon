@@ -34,7 +34,7 @@
 #define FLG_NOKICK 	0x02
 #define FLG_BOTMANAGE 	0x04
 #define FLG_PCONNECT 	0x08
-#define FLG_VUSER	0x16
+#define FLG_VUSER	0x10
 
 
 #define MAX_SESSION_LENGTH 102400 // 100 ko

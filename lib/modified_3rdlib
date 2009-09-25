@@ -19,6 +19,16 @@ cs/utl/neo_str.c 234
 	}
 因为以 分割符开头的源字符串进行切割时会把第一个item内容置为""
 
+去掉分隔符结尾的字符及字符串
+248  /* Handle remainder */
++  if (sl == 1) {
++      if (*f = *sep)
++          return STATUS_OK;
++  } else {
++      if (!strcmp(f, sep))
++          return STATUS_OK;
++  }
+
 
 Clearsilver.h 26
 #define hash_destroy ne_hash_destroy
