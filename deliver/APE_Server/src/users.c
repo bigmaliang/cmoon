@@ -190,6 +190,17 @@ void deluser(USERS *user, acetables *g_ape)
 	
 	clear_subusers(user);
 
+    if (user->links.nlink != 0 && user->links.ulink) {
+        struct _link_list *cur, *next;
+        cur = user->links.ulink;
+        next = user->links.ulink->next;
+        while (cur) {
+            destroy_link(cur->link->a, cur->link->b);
+            cur = next;
+            if (next) next = next->next;
+        }
+    }
+
 	hashtbl_erase(g_ape->hSessid, user->sessid);
 	
 	g_ape->nConnected--;
@@ -630,29 +641,29 @@ struct _users_link *are_linked(USERS *a, USERS *b)
 void make_link(USERS *a, USERS *b)
 {
 	struct _users_link *userlink = NULL;
-	struct _link_list *link_a, *link_b;
+	struct _link_list *list_a, *list_b;
 
     userlink = are_linked(a, b);
     
 	if (userlink == NULL) {	
-		userlink = xmalloc(sizeof(*link));
+		userlink = xmalloc(sizeof(*userlink));
 	
-		link_a = xmalloc(sizeof(*link_a));
-		link_b = xmalloc(sizeof(*link_b));
+		list_a = xmalloc(sizeof(*list_a));
+		list_b = xmalloc(sizeof(*list_b));
 	
-		link_a->link = userlink;
-		link_b->link = userlink;
+		list_a->link = userlink;
+		list_b->link = userlink;
 	
-		link_a->next = a->links.ulink;
-		link_b->next = b->links.ulink;
+		list_a->next = a->links.ulink;
+		list_b->next = b->links.ulink;
 	
 		userlink->a = a;
 		userlink->b = b;
 	
-		a->links.ulink = link_a;
+		a->links.ulink = list_a;
 		(a->links.nlink)++;
 	
-		b->links.ulink = link_b;
+		b->links.ulink = list_b;
 		(b->links.nlink)++;
 	
 		userlink->link_type = 0;
@@ -664,10 +675,59 @@ void make_link(USERS *a, USERS *b)
 
 void destroy_link(USERS *a, USERS *b)
 {
-	struct _users_link *link;
+	struct _users_link *found;
+    struct _link_list *cur, *prev, *list_a, *list_b;
 
-	if ((link = are_linked(a, b)) != NULL) {
-		
+    list_a = list_b = NULL;
+    
+	if ((found = are_linked(a, b)) != NULL) {
+        /*
+         * eliminate out current link_list for a
+         */
+        prev = cur = a->links.ulink;
+        while (cur != NULL) {
+            if (cur->link == found) {
+                a->links.nlink--;
+                list_a = cur;
+                if (cur == prev)
+                    a->links.ulink = cur->next;
+                else
+                    prev->next = cur->next;
+                break;
+            }
+            prev = cur;
+            cur = cur->next;
+        }
+        
+        /*
+         * eliminate out current link_list for b
+         */
+        prev = cur = b->links.ulink;
+        while (cur != NULL) {
+            if (cur->link == found) {
+                b->links.nlink--;
+                list_b = cur;
+                if (cur == prev)
+                    b->links.ulink = cur->next;
+                else
+                    prev->next = cur->next;
+                break;
+            }
+            prev = cur;
+            cur = cur->next;
+        }
+
+        /*
+         * free list
+         * found == list_a->link == list_b->link
+         */
+        free(found);
+        if (list_a != NULL) {
+            free(list_a);
+        }
+        if (list_b != NULL) {
+            free(list_b);
+        }
 	}	
 }
 

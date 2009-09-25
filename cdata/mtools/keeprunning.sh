@@ -1,8 +1,8 @@
 #!/bin/sh
 
 if [ $# -lt 3 ]; then
-	echo "useage: $0 process_absolute_name need_count exec_cmd"
-	echo "example: $0 /data/www/rtds/cgi-bin/cds.cgi 4 '/usr/local/bin/spawn-fcgi -f /data/www/rtds/cgi-bin/cds.cgi -a 192.168.8.53 -p 20010 -F 4'"l
+	echo "useage: $0 process_absolute_name need_count pre_exec exec_cmd"
+	echo "example: $0 /data/www/rtds/cgi-bin/cds.cgi 4 'cd /data/www/rtds/cgi-bin/' ./cds.cgi"
 	exit -1
 fi
 
@@ -10,16 +10,17 @@ TIMENOW=`date +"%F %T"`
 
 FILENAME=$1
 NEEDCOUNT=$2
-EXECCMD=$3
+PREEXEC=$3
+EXECCMD=$4
 PROGNAME=$(basename "$FILENAME")
 
-RUNCOUNT=$[$(ps fax | grep $PROGNAME | wc -l)-2]
+RUNCOUNT=$(ps fax | grep -v grep | grep -v $0 | grep $PROGNAME | wc -l)
+#RUNCOUNT=$[$(ps fax | grep $PROGNAME | wc -l)-2]
 
 if [ $RUNCOUNT -lt $NEEDCOUNT ]; then
 	killall $PROGNAME
-	$EXECCMD
-	ret=$?
-	if [ $ret = "0" ]; then
+    $PREEXEC
+	if $EXECCMD; then
 		echo "$TIMENOW reexec success!"
 	else
 		echo "$TIMENOW reexec $EXECCMD return $ret"

@@ -10,6 +10,7 @@ leader="15111231681"
 
 # $1 ip, $2 msg
 function rpcError {
+    echo $TIMENOW $1 $2 >> $logfile
 	for phonenum in $leader; do
 		/usr/local/mysql/bin/mysql -h 192.168.8.90 -u root -pmysqlroot -P3306 -Dmonitordb -e "INSERT INTO pei5_smssend (smsContent) VALUES ('$phonenum|$1 $2');"
 	done

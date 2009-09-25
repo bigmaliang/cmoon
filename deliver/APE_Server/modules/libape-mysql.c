@@ -46,7 +46,7 @@ int ape_mysql_connect(acetables *g_ape)
 	
 	if (!mysql_real_connect(mysql, READ_CONF("db_server"), READ_CONF("db_user"),
 							READ_CONF("db_password"), READ_CONF("db_name"),
-							0, NULL, CLIENT_FOUND_ROWS)) {
+							atoi(READ_CONF("db_port")), NULL, CLIENT_FOUND_ROWS)) {
 		return 0;
 	}
 	mysql->reconnect = 1;
@@ -54,7 +54,7 @@ int ape_mysql_connect(acetables *g_ape)
 	mysql = mysql_instance(g_ape, "smsalarm");
 	if (!mysql_real_connect(mysql, READ_CONF("smsa_server"), READ_CONF("smsa_user"),
 							READ_CONF("smsa_password"), READ_CONF("smsa_name"),
-							0, NULL, CLIENT_FOUND_ROWS)) {
+							atoi(READ_CONF("db_port")), NULL, CLIENT_FOUND_ROWS)) {
 		return 0;
 	}
 	mysql->reconnect = 1;

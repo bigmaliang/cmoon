@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	char *key, *v;
 	char val[LEN_NMDB_VAL];
 	int increment;
-	int lenkey, lenval;
+	int lenkey;
 	bool dboffered, dmoffered;
 	size_t r;
 	int ret;

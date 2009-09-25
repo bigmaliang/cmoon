@@ -142,7 +142,9 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
 		ext = add_property(&user->properties, "friend", hashtbl_init(),
 						   EXTEND_HTBL, EXTEND_ISPRIVATE);
 		ulist = (HTBL*)ext->val;
-		data_cell_array_iterate(pc, cc) {
+        iterate_data(pc) {
+            cc = pc->v.aval->items[t_rsv_i];
+            
 			if (cc->type != DATA_TYPE_U32) continue;
 			sprintf(val, "%d", cc->v.ival);
 			wlog_dbg("add %s friend %s", uin, cc->key);
@@ -165,18 +167,20 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
 						   EXTEND_HTBL, EXTEND_ISPRIVATE);
 		ulist = (HTBL*)ext->val;
 
-		data_cell_array_iterate(pc, cc) {
+        iterate_data(pc) {
+            cc = pc->v.aval->items[t_rsv_i];
+            
 			if (cc->type != DATA_TYPE_U32) continue;
 			sprintf(val, "%d", cc->v.ival);
-			wlog_dbg("add %s incpet %s", uin, cc->v.sval.val);
+			wlog_dbg("add %s incpet %s", uin, val);
 			hashtbl_append(ulist, (char*)cc->key, strdup(val));
 		}
 	}
 
-	pc = data_cell_search(evt->rcvdata, false, DATA_TYPE_STRING, "msgset");
+	pc = data_cell_search(evt->rcvdata, false, DATA_TYPE_U32, "sitemessage");
 	if (pc != NULL) {
 		sprintf(val, "%d", pc->v.ival);
-		wlog_dbg("add %s msgset %s", uin, val);
+		wlog_dbg("add %s sitemessage %s", uin, val);
 		add_property(&user->properties, "msgset", val, EXTEND_STR, EXTEND_ISPRIVATE);
 	}
 
@@ -348,6 +352,8 @@ static unsigned int push_regpageclass(callbackp *callbacki)
 		size_t num = explode(',', incept, ids, 99);
 		int loopi;
 		for (loopi = 0; loopi <= num; loopi++) {
+            wlog_noise("append %s for %s's %s",
+                       ids[loopi], sub->user->sessid, sub->channel);
 			hashtbl_append(ext->val, ids[loopi], NULL);
 		}
 		free(incept);
@@ -429,6 +435,45 @@ static unsigned int push_friendlist(callbackp *callbacki)
 	post_raw(newraw, callbacki->call_user, callbacki->g_ape);
 
 	return (FOR_NOTHING);
+}
+
+/*
+ * param[0]	USERONLINE
+ * param[1]	14,26  OR 14
+ * return ["raw":"DATA", "time":"1248446278", "datas": ["14": "1", "26": "0"]]
+ */
+static unsigned int push_useronline(callbackp *callbacki)
+{
+	RAW *newraw;
+	json *jlist = NULL;
+    char *users = strdup(callbacki->param[1]);
+    char *uin[100];
+    size_t num = explode(',', users, uin, 99);
+    
+    int loopi;
+    for (loopi = 0; loopi <= num; loopi++) {
+        if (isvaliduin(uin[loopi])) {
+            if (GET_USER_FROM_APE(callbacki->g_ape, uin[loopi])) {
+                set_json(uin[loopi], "1", &jlist);
+            } else {
+                set_json(uin[loopi], "0", &jlist);
+            }
+        }
+    }
+
+    free(users);
+
+    newraw = forge_raw(RAW_DATA, jlist);
+    newraw->priority = 1;
+
+    sendbin(callbacki->fdclient, HEADER, HEADER_LEN, callbacki->g_ape);
+    sendbin(callbacki->fdclient, "[\n", 2, callbacki->g_ape);
+    sendbin(callbacki->fdclient, newraw->data, newraw->len, callbacki->g_ape);
+    sendbin(callbacki->fdclient, "\n]\n", 3, callbacki->g_ape);
+    free(newraw->data);
+    free(newraw);
+    
+	return (FOR_NULL);
 }
 
 /*
@@ -554,6 +599,11 @@ static void push_deluser(USERS *user, acetables *g_ape)
 
     if (user->flags & FLG_VUSER) {
         goto normal_del;
+    } else if (user->links.nlink != 0) {
+        /*
+         * don't del main user while visual user exist 
+         */
+        return;
     }
 
 	chan = getchanf(g_ape, FRIEND_PIP_NAME"%s", uin);
@@ -591,6 +641,17 @@ static void push_deluser(USERS *user, acetables *g_ape)
 	
 	clear_subusers(user);
 
+    if (user->links.nlink != 0 && user->links.ulink) {
+        struct _link_list *cur, *next;
+        cur = user->links.ulink;
+        next = user->links.ulink->next;
+        while (cur) {
+            destroy_link(cur->link->a, cur->link->b);
+            cur = next;
+            if (next) next = next->next;
+        }
+    }
+    
 	hashtbl_erase(g_ape->hSessid, user->sessid);
 	
 	g_ape->nConnected--;
@@ -626,7 +687,7 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 	HTBL *list;
 	HTBL_ITEM *item;
 
-	//wlog_dbg("prepare post %s", raw->data);
+	wlog_noise("prepare post %s", raw->data);
 	
 	/*
 	 * if not a DATA message, post anyway
@@ -703,7 +764,7 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 		sub->rawhead = raw;
 	}
 	(sub->nraw)++;
-	//wlog_dbg("%s done", raw->data);
+	wlog_noise("%s done", raw->data);
 }
 
 static unsigned int push_trustcheck(callbackp *callbacki)
@@ -791,6 +852,7 @@ static void init_module(acetables *g_ape)
 	register_cmd("REGCLASS", 2, push_regpageclass, NEED_SESSID, g_ape);
 	register_cmd("USERLIST", 1, push_userlist, NEED_SESSID, g_ape);
 	register_cmd("FRIENDLIST", 1, push_friendlist, NEED_SESSID, g_ape);
+	register_cmd("USERONLINE", 1, push_useronline, NEED_NOTHING, g_ape);
 	register_cmd("SENDUNIQ", 3, push_senduniq, NEED_SESSID, g_ape);
 	register_cmd("TRUSTCHECK", 1, push_trustcheck, NEED_NOTHING, g_ape);
 	register_cmd("TRUSTSEND", 2, push_trustsend, NEED_NOTHING, g_ape);
