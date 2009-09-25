@@ -159,6 +159,8 @@ mevent_t *mevent_init(void)
 /* Frees a mevent_t structure created with mevent_init(). */
 int mevent_free(mevent_t *evt)
 {
+    if (evt == NULL) return 0;
+    
 	if (evt->servers != NULL) {
 		int i;
 		for (i = 0; i < evt->nservers; i++)
@@ -287,17 +289,19 @@ int mevent_chose_plugin(mevent_t *evt, const char *key,
 	size_t ksize;
 
 	if (key == NULL || evt == NULL ||
-	    ksize == 0 || ksize > MAX_PACKET_LEN-20) return 0;
+	    strlen(key) == 0 || strlen(key) > MAX_PACKET_LEN-20) return 0;
 
 	if (evt->ename == NULL) {
 		evt->ename = strdup(key);
 	}
+
 	ksize = strlen(evt->ename);
-	
 	srv = select_srv(evt, evt->ename, ksize);
+    
 	if (srv == NULL) return 0;
 	unsigned int moff = srv_get_msg_offset(srv);
 
+    ksize = strlen(key);
 	p = evt->payload + moff;
 	* (uint32_t *) p = htonl( (PROTO_VER << 28) | ID_CODE );
 	* ((uint16_t *) p + 2) = htons(cmd);
@@ -359,7 +363,7 @@ int mevent_trigger(mevent_t *evt)
 	}
 
 	uint32_t vtype = * (uint32_t *)(evt->payload+evt->psize); vtype = ntohl(vtype);
-	if (vtype != DATA_TYPE_EOF) {
+	if (vtype != DATA_TYPE_EOF || evt->psize < 17) {
 		* (uint32_t *) (evt->payload+evt->psize) = htonl(DATA_TYPE_EOF);
 		evt->psize += sizeof(uint32_t);
 	}

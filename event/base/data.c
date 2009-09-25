@@ -58,7 +58,7 @@ struct data_cell* data_cell_create_str(const unsigned char *key, size_t ksize,
 	c->v.sval.vsize = vsize+1;
 	c->v.sval.val = malloc(vsize+1);
 	if (c->v.sval.val != NULL) {
-		memcpy(c->v.sval.val, val, vsize);
+        if (vsize > 0) memcpy(c->v.sval.val, val, vsize);
 		*(c->v.sval.val+vsize) = '\0';
 	}
 	return c;
@@ -368,7 +368,8 @@ int data_cell_add_ulong(struct data_cell *dataset, const char *parent,
 int data_cell_add_str(struct data_cell *dataset, const char *parent,
 					  const char *key, const char *val)
 {
-	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY) return 0;
+	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY ||
+        key == NULL || val == NULL) return 0;
 	
 	struct data_cell *pc = data_cell_search(dataset, true, DATA_TYPE_ARRAY, parent);
 	if (pc == NULL && (parent == NULL || !strcmp(parent, ""))) pc = dataset;

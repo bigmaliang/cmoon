@@ -67,4 +67,7 @@ struct data_cell* data_cell_get(struct data_cell *c, int i);
 	for (int t_rsv_i = 0; t_rsv_i < c->v.aval->num; \
 		 childcell = c->v.aval->items[++t_rsv_i])
 
+#define iterate_data(c)   \
+	for (int t_rsv_i = 0; t_rsv_i < c->v.aval->num; t_rsv_i++)
+
 #endif	/* __MDATA_H__ */

@@ -107,13 +107,15 @@ size_t pack_data_ulong(const char *key, unsigned long val, unsigned char *buf)
 size_t pack_data_str(const char *key, const char *val, unsigned char *buf)
 {
 	size_t ksize = strlen(key);
-	size_t vsize = strlen(val);
+	size_t vsize = 0;
+
+    if (val) vsize = strlen(val);
 	
 	* (uint32_t *) buf = htonl(DATA_TYPE_STRING);
 	* ((uint32_t *) buf + 1) = htonl(ksize);
 	memcpy(buf+8, key, ksize);
 	* ((uint32_t *) (buf + 8 + ksize)) = htonl(vsize);
-	memcpy(buf+8+ksize+4, val, vsize);
+    if (vsize > 0) memcpy(buf+8+ksize+4, val, vsize);
 
 	return (8 + ksize + 4 + vsize);
 }
