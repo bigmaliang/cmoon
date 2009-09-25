@@ -36,6 +36,7 @@ static void skeleton2_process_driver(struct event_entry *entry, struct queue_ent
 	
 	dtc_dbg(fp, "process cmd %u", q->operation);
 	switch (q->operation) {
+        CASE_SYS_CMD(q->operation, q, cd, db, fp, ret);
 	case REQ_CMD_STATS:
 		st->msg_stats++;
 		ret = REP_OK;

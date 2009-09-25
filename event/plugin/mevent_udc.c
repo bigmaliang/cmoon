@@ -35,42 +35,37 @@ static int udc_cmd_getbonus(struct queue_entry *q, struct cache *cd,
 	size_t vsize = 0;
 	int uin, hit;
 	
-	c = data_cell_search(q->dataset, false, DATA_TYPE_U32, "uin");
-	if (c != NULL) {
-		uin = c->v.ival;
-		reply_add_u32(q, NULL, "bonus", 0);
-		hit = cache_getf(cd, &val, &vsize, PREFIX_BONUS"%d", uin);
-		if (hit == 0) {
-			snprintf(db->sql, sizeof(db->sql), "SELECT bonus FROM user_info "
-					 " WHERE userid=%d;", uin);
-			if (fdb_exec(db) != RET_DBOP_OK) {
-				dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
-				return REP_ERR_DB;
-			}
-			if (fdb_fetch_row(db) == RET_DBOP_OK) {
-				reply_add_u32(q, NULL, "bonus", atoi(db->row[0]));
-			}
-			val = calloc(1, MAX_PACKET_LEN);
-			if (val == NULL) {
-				return REP_ERR_MEM;
-			}
-			vsize = pack_data_array(NULL, q->replydata, val,
-									MAX_PACKET_LEN - RESERVE_SIZE);
-			if (vsize == 0) {
-				free(val);
-				return REP_ERR_PACK;
-			}
-			* (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
-			vsize += sizeof(uint32_t);
-			cache_setf(cd, val, vsize, PREFIX_BONUS"%d", uin);
-			free(val);
-		} else {
-			unpack_data("root", val, vsize, &q->replydata);
-		}
-	} else {
-		dtc_err(fp, "get uin param failure");
-		return REP_ERR_BADPARAM;
-	}
+    REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+    
+    reply_add_u32(q, NULL, "bonus", 0);
+    hit = cache_getf(cd, &val, &vsize, PREFIX_BONUS"%d", uin);
+    if (hit == 0) {
+        snprintf(db->sql, sizeof(db->sql), "SELECT bonus FROM user_info "
+                 " WHERE userid=%d;", uin);
+        if (fdb_exec(db) != RET_DBOP_OK) {
+            dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+            return REP_ERR_DB;
+        }
+        if (fdb_fetch_row(db) == RET_DBOP_OK) {
+            reply_add_u32(q, NULL, "bonus", atoi(db->row[0]));
+        }
+        val = calloc(1, MAX_PACKET_LEN);
+        if (val == NULL) {
+            return REP_ERR_MEM;
+        }
+        vsize = pack_data_array(NULL, q->replydata, val,
+                                MAX_PACKET_LEN - RESERVE_SIZE);
+        if (vsize == 0) {
+            free(val);
+            return REP_ERR_PACK;
+        }
+        * (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
+        vsize += sizeof(uint32_t);
+        cache_setf(cd, val, vsize, PREFIX_BONUS"%d", uin);
+        free(val);
+    } else {
+        unpack_data("root", val, vsize, &q->replydata);
+    }
 
 	return REP_OK;
 }
@@ -86,15 +81,8 @@ static int udc_cmd_setbonus(struct queue_entry *q, struct cache *cd,
 	struct data_cell *c;
 	int uin, bonus;
 
-	c = data_cell_search(q->dataset, false, DATA_TYPE_U32, "uin");
-	if (c == NULL)
-		return REP_ERR_BADPARAM;
-	uin = c->v.ival;
-
-	c = data_cell_search(q->dataset, false, DATA_TYPE_U32, "bonus");
-	if (c == NULL)
-		return REP_ERR_BADPARAM;
-	bonus = c->v.ival;
+    REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+    REQ_GET_PARAM_U32(c, q, false, "bonus", bonus);
 
 	snprintf(db->sql, sizeof(db->sql), "UPDATE user_info SET bonus=bonus+%d "
 			 " WHERE userid=%d;", bonus, uin);
@@ -111,7 +99,7 @@ static int udc_cmd_setbonus(struct queue_entry *q, struct cache *cd,
 /*
  * input : uin(UINT)
  * return: NORMAL
- * reply : ["exp": 1234] OR ["exp": 0]
+ * reply : ["exp": 1234, "level": 1] OR ["exp": 0, "level": 1]
  */
 static int udc_cmd_getexp(struct queue_entry *q, struct cache *cd,
 						  fdb_t *db, FILE *fp)
@@ -121,42 +109,39 @@ static int udc_cmd_getexp(struct queue_entry *q, struct cache *cd,
 	size_t vsize = 0;
 	int uin, hit;
 	
-	c = data_cell_search(q->dataset, false, DATA_TYPE_U32, "uin");
-	if (c != NULL) {
-		uin = c->v.ival;
-		reply_add_u32(q, NULL, "exp", 0);
-		hit = cache_getf(cd, &val, &vsize, PREFIX_EXP"%d", uin);
-		if (hit == 0) {
-			snprintf(db->sql, sizeof(db->sql), "SELECT experience FROM user_info "
-					 " WHERE userid=%d;", uin);
-			if (fdb_exec(db) != RET_DBOP_OK) {
-				dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
-				return REP_ERR_DB;
-			}
-			if (fdb_fetch_row(db) == RET_DBOP_OK) {
-				reply_add_u32(q, NULL, "exp", atoi(db->row[0]));
-			}
-			val = calloc(1, MAX_PACKET_LEN);
-			if (val == NULL) {
-				return REP_ERR_MEM;
-			}
-			vsize = pack_data_array(NULL, q->replydata, val,
-									MAX_PACKET_LEN - RESERVE_SIZE);
-			if (vsize == 0) {
-				free(val);
-				return REP_ERR_PACK;
-			}
-			* (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
-			vsize += sizeof(uint32_t);
-			cache_setf(cd, val, vsize, PREFIX_EXP"%d", uin);
-			free(val);
-		} else {
-			unpack_data("root", val, vsize, &q->replydata);
-		}
-	} else {
-		dtc_err(fp, "get uin param failure");
-		return REP_ERR_BADPARAM;
-	}
+    REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+
+    reply_add_u32(q, NULL, "exp", 0);
+    reply_add_u32(q, NULL, "level", 1);
+    hit = cache_getf(cd, &val, &vsize, PREFIX_EXP"%d", uin);
+    if (hit == 0) {
+        snprintf(db->sql, sizeof(db->sql), "SELECT experience, level FROM "
+                 " user_info WHERE userid=%d;", uin);
+        if (fdb_exec(db) != RET_DBOP_OK) {
+            dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+            return REP_ERR_DB;
+        }
+        if (fdb_fetch_row(db) == RET_DBOP_OK) {
+            reply_add_u32(q, NULL, "exp", atoi(db->row[0]));
+            reply_add_u32(q, NULL, "level", atoi(db->row[1]));
+        }
+        val = calloc(1, MAX_PACKET_LEN);
+        if (val == NULL) {
+            return REP_ERR_MEM;
+        }
+        vsize = pack_data_array(NULL, q->replydata, val,
+                                MAX_PACKET_LEN - RESERVE_SIZE);
+        if (vsize == 0) {
+            free(val);
+            return REP_ERR_PACK;
+        }
+        * (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
+        vsize += sizeof(uint32_t);
+        cache_setf(cd, val, vsize, PREFIX_EXP"%d", uin);
+        free(val);
+    } else {
+        unpack_data("root", val, vsize, &q->replydata);
+    }
 
 	return REP_OK;
 }
@@ -164,7 +149,8 @@ static int udc_cmd_getexp(struct queue_entry *q, struct cache *cd,
 /*
  * input : uin(UINT) exp(UINT)
  * return: NORMAL
- * reply : ["exp": 1234] OR ["exp": 0]
+ * reply : ["exp": 34, "level": 1]  OR ["exp": 1234, "level": 3, "levelup": 2]
+ * OR ["exp": 0, "level": 1]
  */
 static int udc_cmd_setexp(struct queue_entry *q, struct cache *cd,
 						  fdb_t *db, FILE *fp)
@@ -172,15 +158,8 @@ static int udc_cmd_setexp(struct queue_entry *q, struct cache *cd,
 	struct data_cell *c;
 	int uin, exp;
 
-	c = data_cell_search(q->dataset, false, DATA_TYPE_U32, "uin");
-	if (c == NULL)
-		return REP_ERR_BADPARAM;
-	uin = c->v.ival;
-
-	c = data_cell_search(q->dataset, false, DATA_TYPE_U32, "exp");
-	if (c == NULL)
-		return REP_ERR_BADPARAM;
-	exp = c->v.ival;
+    REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+    REQ_GET_PARAM_U32(c, q, false, "exp", exp);
 
 	snprintf(db->sql, sizeof(db->sql), "UPDATE user_info SET "
 			 " experience=experience+%d WHERE userid=%d;", exp, uin);
@@ -190,8 +169,29 @@ static int udc_cmd_setexp(struct queue_entry *q, struct cache *cd,
 	}
 
 	cache_delf(cd, PREFIX_EXP"%d", uin);
+    udc_cmd_getexp(q, cd, db, fp);
 
-	return udc_cmd_getexp(q, cd, db, fp);
+    exp = 0;
+    int level = 1, uped = 0;
+    char tok[64];
+    REQ_FETCH_REPLY_U32(c, q, false, "exp", exp);
+    REQ_FETCH_REPLY_U32(c, q, false, "level", level);
+
+    sprintf(tok, CONFIG_PATH".exp_level.%d", level);
+    while (exp >= hdf_get_int_value(g_cfg, tok, -1) &&
+           hdf_get_int_value(g_cfg, tok, -1) != -1) {
+        level = level + 1;
+        snprintf(db->sql, sizeof(db->sql), "UPDATE user_info SET "
+                 " level=%d WHERE userid=%d;", level, uin);
+        if (fdb_exec(db) != RET_DBOP_OK) {
+            dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+        }
+        reply_add_u32(q, NULL, "levelup", ++uped);
+        sprintf(tok, CONFIG_PATH".exp_level.%d", level);
+    }
+    
+	cache_delf(cd, PREFIX_EXP"%d", uin);
+	return REP_OK;
 }
 
 static void udc_process_driver(struct event_entry *entry, struct queue_entry *q)
@@ -208,6 +208,7 @@ static void udc_process_driver(struct event_entry *entry, struct queue_entry *q)
 	
 	dtc_dbg(fp, "process cmd %u", q->operation);
 	switch (q->operation) {
+        CASE_SYS_CMD(q->operation, q, cd, db, fp, ret);
 	case REQ_CMD_GETBONUS:
 		ret = udc_cmd_getbonus(q, cd, db, fp);
 		break;
@@ -242,7 +243,7 @@ static void udc_process_driver(struct event_entry *entry, struct queue_entry *q)
 		dtc_err(fp, "process %u failed %d\n", q->operation, ret);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
-			reply_trigger(q, ret);
+        reply_trigger(q, ret);
 	}
 }
 

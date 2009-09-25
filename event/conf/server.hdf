@@ -2,9 +2,8 @@ Mevent {
 	trace_level = 6
 	plugins {
 		0 = skeleton
-		1 = db_community
-		2 = uic
-		3 = udc
+		1 = uic
+		2 = udc
 	}
 	smsalarm {
 		db {
@@ -21,20 +20,23 @@ Mevent {
 }
 
 Plugin {
-	db_community {
-		logfile = /data/logs/mevent/db_community
-		ip = 192.168.8.84
-		user = root
-		pass = hifly1234
-		name = eventcenter
-	}
 	uic {
 		logfile = /data/logs/mevent/uic
 		numobjs = 102400
-		ip = 192.168.8.84
-		user = root
-		pass = hifly1234
-		name = relation
+        relation {
+			ip = 192.168.8.84
+			user = root
+			pass = hifly1234
+			name = relation
+            port = 3306
+        }
+        home {
+			ip = 192.168.8.84
+			user = root
+			pass = hifly1234
+			name = relation
+            port = 3306
+        }
 	}
 	udc {
 		logfile = /data/logs/mevent/udc
@@ -43,6 +45,15 @@ Plugin {
 		user = root
 		pass = hifly1234
 		name = home
+        port = 3306
+        exp_level {
+        	1 = 100
+            2 = 300
+            3 = 600
+            4 = 1000
+            5 = 2000
+            6 = 10000
+        }
 	}
 }
 

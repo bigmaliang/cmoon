@@ -17,7 +17,8 @@ struct uic_stats {
 struct uic_entry {
 	struct event_entry base;
 	FILE *logf;
-	fdb_t *db;
+	fdb_t *dbrl;               /* relation db*/
+    fdb_t *dbhome;             /* home db */
 	struct cache *cd;
 	struct uic_stats st;
 };
@@ -254,7 +255,7 @@ static int uic_cmd_rejectapply(struct queue_entry *q, struct cache *cd,
  * reply : NULL
  */
 static int uic_cmd_confirmfriend(struct queue_entry *q, struct cache *cd,
-								 fdb_t *db, FILE *fp)
+								 fdb_t *dbrl, fdb_t *dbhome, FILE *fp)
 {
 	struct data_cell *c;
 	int uin, fuin, gid;
@@ -265,7 +266,7 @@ static int uic_cmd_confirmfriend(struct queue_entry *q, struct cache *cd,
     REQ_GET_PARAM_U32(c, q, false, "frienduin", fuin);
     REQ_GET_PARAM_U32(c, q, false, "groupid", gid);
 
-	ret = uic_cmd_isfriend(q, cd, db, fp);
+	ret = uic_cmd_isfriend(q, cd, dbrl, fp);
 	if (PROCESS_NOK(ret)) {
 		dtc_err(fp, "judge friendship failure %d", ret);
 		return ret;
@@ -276,47 +277,47 @@ static int uic_cmd_confirmfriend(struct queue_entry *q, struct cache *cd,
 		return REP_ERR_ALREADYFRIEND;
 	}
 
-    if (!uic_friend_applied(db, fp, fuin, uin, &fgid))
+    if (!uic_friend_applied(dbrl, fp, fuin, uin, &fgid))
 		return REP_ERR_NOTAPPLY;
 
-	snprintf(db->sql, sizeof(db->sql), "UPDATE user_friends SET beok=1 "
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends SET beok=1 "
 			 " WHERE userid=%d AND friend_userid=%d;", fuin, uin);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 		return REP_ERR_DB;
 	}
 
-    if (uic_friend_applied(db, fp, uin, fuin, NULL)) {
-		snprintf(db->sql, sizeof(db->sql), "UPDATE user_friends SET beok=1 "
+    if (uic_friend_applied(dbrl, fp, uin, fuin, NULL)) {
+		snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends SET beok=1 "
 				 " WHERE userid=%d AND friend_userid=%d;", uin, fuin);
 		res = REP_OK_UPDATE;
     } else {
-		snprintf(db->sql, sizeof(db->sql), "INSERT INTO user_friends "
+		snprintf(dbrl->sql, sizeof(dbrl->sql), "INSERT INTO user_friends "
 				 " (userid, friend_userid, groupid, createtime, beok) "
 				 " VALUES (%d, %d, %d, UNIX_TIMESTAMP(), 1);",
 				 uin, fuin, gid);
 		res = REP_OK_INSERT;
     }
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 		return REP_ERR_DB;
 	}
 	
-	snprintf(db->sql, sizeof(db->sql), "UPDATE user_friends_group SET "
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends_group SET "
 			 " friendnum=friendnum+1 WHERE userid=%d AND fgroupid=%d", uin, gid);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 	}
-	snprintf(db->sql, sizeof(db->sql), "UPDATE user_friends_group SET "
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends_group SET "
 			 " friendnum=friendnum+1 WHERE userid=%d AND fgroupid=%d", fuin, fgid);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 	}
 	
-	snprintf(db->sql, sizeof(db->sql), "UPDATE home.user_info SET "
+	snprintf(dbhome->sql, sizeof(dbhome->sql), "UPDATE home.user_info SET "
 			 " friendnum=friendnum+1 WHERE userid=%d OR userid=%d", uin, fuin);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbhome) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbhome->sql, fdb_error(dbhome));
 	}
 
 	cache_delf(cd, PREFIX_FRIEND"%d", uin);
@@ -386,7 +387,7 @@ static int uic_cmd_movefriend(struct queue_entry *q, struct cache *cd,
  * reply : NULL
  */
 static int uic_cmd_delfriend(struct queue_entry *q, struct cache *cd,
-							 fdb_t *db, FILE *fp)
+							 fdb_t *dbrl, fdb_t *dbhome, FILE *fp)
 {
 	struct data_cell *c;
 	int uin, fuin, gid, fgid;
@@ -395,7 +396,7 @@ static int uic_cmd_delfriend(struct queue_entry *q, struct cache *cd,
     REQ_GET_PARAM_U32(c, q, false, "uin", uin);
     REQ_GET_PARAM_U32(c, q, false, "frienduin", fuin);
 
-	ret = uic_cmd_isfriend(q, cd, db, fp);
+	ret = uic_cmd_isfriend(q, cd, dbrl, fp);
     c = data_cell_search(q->replydata, false, DATA_TYPE_U32, "groupid");
 	if (PROCESS_NOK(ret)) {
 		dtc_err(fp, "judge friendship failure %d", ret);
@@ -410,7 +411,7 @@ static int uic_cmd_delfriend(struct queue_entry *q, struct cache *cd,
 	data_cell_add_u32(q->dataset, NULL, "uin", fuin);
     data_cell_add_u32(q->dataset, NULL, "frienduin", uin);
     
-	ret = uic_cmd_isfriend(q, cd, db, fp);
+	ret = uic_cmd_isfriend(q, cd, dbrl, fp);
     c = data_cell_search(q->replydata, false, DATA_TYPE_U32, "groupid");
 	if (PROCESS_NOK(ret)) {
 		dtc_err(fp, "judge friendship failure %d", ret);
@@ -422,37 +423,37 @@ static int uic_cmd_delfriend(struct queue_entry *q, struct cache *cd,
 	}
     fgid = c->v.ival;
 
-	snprintf(db->sql, sizeof(db->sql), "DELETE FROM user_friends WHERE "
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "DELETE FROM user_friends WHERE "
 			 " userid=%d AND friend_userid=%d;", uin, fuin);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 		return REP_ERR_DB;
 	}
-	snprintf(db->sql, sizeof(db->sql), "DELETE FROM user_friends WHERE "
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "DELETE FROM user_friends WHERE "
 			 " userid=%d AND friend_userid=%d;", fuin, uin);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 		return REP_ERR_DB;
 	}
 	
-	snprintf(db->sql, sizeof(db->sql), "UPDATE user_friends_group SET "
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends_group SET "
 			 " friendnum=friendnum-1 WHERE friendnum > 0 "
              " AND userid=%d AND fgroupid=%d;", uin, gid);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 	}
-	snprintf(db->sql, sizeof(db->sql), "UPDATE user_friends_group SET "
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends_group SET "
 			 " friendnum=friendnum-1 WHERE friendnum > 0 "
              " AND userid=%d AND fgroupid=%d;", fuin, fgid);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 	}
 
-	snprintf(db->sql, sizeof(db->sql), "UPDATE home.user_info SET "
+	snprintf(dbhome->sql, sizeof(dbhome->sql), "UPDATE home.user_info SET "
 			 " friendnum=friendnum-1 WHERE friendnum > 0 "
              " AND (userid=%d OR userid=%d);", uin, fuin);
-	if (fdb_exec(db) != RET_DBOP_OK) {
-		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	if (fdb_exec(dbhome) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbhome->sql, fdb_error(dbhome));
 	}
 	
 	cache_delf(cd, PREFIX_FRIEND"%d", uin);
@@ -606,7 +607,9 @@ static int uic_cmd_delgroup(struct queue_entry *q, struct cache *cd,
 /*
  * input : uin(UINT)
  * return: NORMAL
- * reply : ["incept": ["1": 1, "2": 2...], "msgset": 1/2/3] OR ["incept": []]
+ * reply : ["incept": ["1": 1, "2": 2...], "friendapply": 1,
+            "leavemessage": 2, "sitemessage": 1, "searchme", 0]
+ *      OR ["incept": []]
  */
 static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
 							 fdb_t *db, FILE *fp)
@@ -621,7 +624,9 @@ static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
     reply_add_array(q, NULL, "incept");
     hit = cache_getf(cd, &val, &vsize, PREFIX_SETTING"%d", uin);
     if (hit == 0) {
-        snprintf(db->sql, sizeof(db->sql), "SELECT incept_dynamic, receive_msg "
+        snprintf(db->sql, sizeof(db->sql), "SELECT incept_dynamic, "
+                 " receive_friend_invite, receive_comment, "
+                 " receive_msg, receive_search "
                  " FROM home.user_info WHERE userid=%d;", uin);
         ret = fdb_exec(db);
         if (ret != RET_DBOP_OK) {
@@ -631,13 +636,16 @@ static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
         if (fdb_fetch_row(db) == RET_DBOP_OK) {
             if (strcmp(db->row[0], "")) {
                 char *ids[MAX_INCEPT_NUM];
-                size_t num = explode(',', db->row[0], ids, MAX_INCEPT_NUM-1);
+                size_t num = explode('|', db->row[0], ids, MAX_INCEPT_NUM-1);
                 int loopi = 0;
                 for (loopi = 0; loopi <= num; loopi++) {
                     reply_add_u32(q, "incept", ids[loopi], atoi(ids[loopi]));
                 }
             }
-            reply_add_u32(q, NULL, "msgset", atoi(db->row[1]));
+            reply_add_u32(q, NULL, "friendapply", atoi(db->row[1]));
+            reply_add_u32(q, NULL, "leavemessage", atoi(db->row[2]));
+            reply_add_u32(q, NULL, "sitemessage", atoi(db->row[3]));
+            reply_add_u32(q, NULL, "searchme", atoi(db->row[4]));
         }
         val = calloc(1, MAX_PACKET_LEN);
         if (val == NULL) return REP_ERR_MEM;
@@ -658,13 +666,90 @@ static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
 	return REP_OK;
 }
 
+/*
+ * input : uin(UINT) [incept(STRING) '2|3|4|5'
+           friendapply(UINT) leavemessage(UINT) sitemessage(UINT) searchme(UINT)]
+           [] at least one
+ * return: NORMAL
+ * reply : NULL
+ */
+static int uic_cmd_upmysetting(struct queue_entry *q, struct cache *cd,
+                               fdb_t *db, FILE *fp)
+{
+    struct data_cell *c;
+    int uin, frdaply, lvmsg, stmsg, scm, ret;
+    unsigned char *stmp;
+    char *incept;
+
+    uin = frdaply = lvmsg = stmsg = scm = -1;
+    stmp = NULL; incept = NULL;
+    
+    REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+    REQ_FETCH_PARAM_U32(c, q, false, "friendapply", frdaply);
+    REQ_FETCH_PARAM_U32(c, q, false, "leavemessage", lvmsg);
+    REQ_FETCH_PARAM_U32(c, q, false, "sitemessage", stmsg);
+    REQ_FETCH_PARAM_U32(c, q, false, "searchme", scm);
+    REQ_FETCH_PARAM_STR(c, q, false, "incept", stmp);
+    if (stmp != NULL) {
+        incept = fdb_escape_string(db, (char*)stmp);
+        if (incept == NULL) return REP_ERR_MEM;
+    }
+
+    char cols[1024], tok[64];
+    strcpy(cols, "");
+    if (incept != NULL) {
+        snprintf(tok, sizeof(tok), " incept_dynamic='%s', ", incept);
+        strcat(cols, tok);
+    }
+    if (frdaply != -1) {
+        snprintf(tok, sizeof(tok), " receive_friend_invite=%d, ", frdaply);
+        strcat(cols, tok);
+    }
+    if (lvmsg != -1) {
+        snprintf(tok, sizeof(tok), " receive_comment=%d, ", lvmsg);
+        strcat(cols, tok);
+    }
+    if (stmsg != -1) {
+        snprintf(tok, sizeof(tok), " receive_msg=%d, ", stmsg);
+        strcat(cols, tok);
+    }
+    if (scm != -1) {
+        snprintf(tok, sizeof(tok), " receive_search=%d, ", scm);
+        strcat(cols, tok);
+    }
+
+    if (!strcmp(cols, "")) {
+        ret = REP_ERR_BADPARAM;
+        goto done;
+    }
+
+    strcat(cols, " stature=stature ");
+
+    snprintf(db->sql, sizeof(db->sql), "UPDATE home.user_info SET %s WHERE "
+             " userid=%d;", cols, uin);
+	if (fdb_exec(db) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+		ret = REP_ERR_DB;
+		goto done;
+	}
+
+    cache_delf(cd, PREFIX_SETTING"%d", uin);
+
+    ret = REP_OK;
+    
+ done:
+	if (incept) free(incept);
+	return ret;
+}
+
 static void uic_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct uic_entry *e = (struct uic_entry*)entry;
 	int ret = REP_OK;
 	
 	FILE *fp = e->logf;
-	fdb_t *db = e->db;
+	fdb_t *dbrl = e->dbrl;
+    fdb_t *dbhome = e->dbhome;
 	struct cache *cd = e->cd;
 	struct uic_stats *st = &(e->st);
 
@@ -672,39 +757,42 @@ static void uic_process_driver(struct event_entry *entry, struct queue_entry *q)
 
 	dtc_dbg(fp, "process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, db, fp, ret);
+        CASE_SYS_CMD(q->operation, q, cd, dbrl, fp, ret);
 	case REQ_CMD_FRIENDLIST:
-		ret = uic_cmd_friendlist(q, cd, db, fp);
+		ret = uic_cmd_friendlist(q, cd, dbrl, fp);
 		break;
 	case REQ_CMD_ISFRIEND:
-		ret = uic_cmd_isfriend(q, cd, db, fp);
+		ret = uic_cmd_isfriend(q, cd, dbrl, fp);
 		break;
 	case REQ_CMD_APPLYFRIEND:
-		ret = uic_cmd_applyfriend(q, cd, db, fp);
+		ret = uic_cmd_applyfriend(q, cd, dbrl, fp);
 		break;
 	case REQ_CMD_REJECTAPPLY:
-		ret = uic_cmd_rejectapply(q, cd, db, fp);
+		ret = uic_cmd_rejectapply(q, cd, dbrl, fp);
 		break;
 	case REQ_CMD_CONFIRMFRIEND:
-		ret = uic_cmd_confirmfriend(q, cd, db, fp);
+		ret = uic_cmd_confirmfriend(q, cd, dbrl, dbhome, fp);
 		break;
 	case REQ_CMD_MOVEFRIEND:
-		ret = uic_cmd_movefriend(q, cd, db, fp);
+		ret = uic_cmd_movefriend(q, cd, dbrl, fp);
 		break;
 	case REQ_CMD_DELFRIEND:
-		ret = uic_cmd_delfriend(q, cd, db, fp);
+		ret = uic_cmd_delfriend(q, cd, dbrl, dbhome, fp);
 		break;
 	case REQ_CMD_ADDGROUP:
-		ret = uic_cmd_addgroup(q, cd, db, fp);
+		ret = uic_cmd_addgroup(q, cd, dbrl, fp);
 		break;
 	case REQ_CMD_MODGROUP:
-		ret = uic_cmd_modgroup(q, cd, db, fp);
+		ret = uic_cmd_modgroup(q, cd, dbrl, fp);
 		break;
 	case REQ_CMD_DELGROUP:
-		ret = uic_cmd_delgroup(q, cd, db, fp);
+		ret = uic_cmd_delgroup(q, cd, dbrl, fp);
 		break;
 	case REQ_CMD_MYSETTING:
-		ret = uic_cmd_mysetting(q, cd, db, fp);
+		ret = uic_cmd_mysetting(q, cd, dbhome, fp);
+		break;
+	case REQ_CMD_UPMYSETTING:
+		ret = uic_cmd_upmysetting(q, cd, dbhome, fp);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
@@ -715,6 +803,7 @@ static void uic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		reply_add_ulong(q, NULL, "msg_stats", st->msg_stats);
 		reply_add_ulong(q, NULL, "proc_suc", st->proc_suc);
 		reply_add_ulong(q, NULL, "proc_fai", st->proc_fai);
+        break;
 	default:
 		st->msg_unrec++;
 		ret = REP_ERR_UNKREQ;
@@ -739,7 +828,8 @@ static void uic_stop_driver(struct event_entry *entry)
 	 * e->base.name, e->base will free by mevent_stop_driver() 
 	 */
 	dtc_leave(e->logf);
-	fdb_free(&e->db);
+	fdb_free(&e->dbrl);
+	fdb_free(&e->dbhome);
 	cache_free(e->cd);
 }
 
@@ -762,16 +852,30 @@ static struct event_entry* uic_init_driver(void)
 		goto error;
 	}
 	
-	if (fdb_init_long(&e->db, hdf_get_value(g_cfg, CONFIG_PATH".ip", "127.0.0.1"),
-					  hdf_get_value(g_cfg, CONFIG_PATH".user", "test"),
-					  hdf_get_value(g_cfg, CONFIG_PATH".pass", "test"),
-					  hdf_get_value(g_cfg, CONFIG_PATH".name", "user_info"),
-					  (unsigned int)hdf_get_int_value(g_cfg, CONFIG_PATH".port", 0))
+	if (fdb_init_long(&e->dbrl,
+                      hdf_get_value(g_cfg, CONFIG_PATH".relation.ip", "127.0.0.1"),
+					  hdf_get_value(g_cfg, CONFIG_PATH".relation.user", "test"),
+					  hdf_get_value(g_cfg, CONFIG_PATH".relation.pass", "test"),
+					  hdf_get_value(g_cfg, CONFIG_PATH".relation.name", "user_info"),
+					  (unsigned int)
+                      hdf_get_int_value(g_cfg, CONFIG_PATH".relation.port", 0))
 		!= RET_DBOP_OK) {
-		wlog("init %s failure %s\n", PLUGIN_NAME, fdb_error(e->db));
+		wlog("init %s failure %s\n", PLUGIN_NAME, fdb_error(e->dbrl));
 		goto error;
 	}
 
+	if (fdb_init_long(&e->dbhome,
+                      hdf_get_value(g_cfg, CONFIG_PATH".home.ip", "127.0.0.1"),
+					  hdf_get_value(g_cfg, CONFIG_PATH".home.user", "test"),
+					  hdf_get_value(g_cfg, CONFIG_PATH".home.pass", "test"),
+					  hdf_get_value(g_cfg, CONFIG_PATH".home.name", "user_info"),
+					  (unsigned int)
+                      hdf_get_int_value(g_cfg, CONFIG_PATH".home.port", 0))
+		!= RET_DBOP_OK) {
+		wlog("init %s failure %s\n", PLUGIN_NAME, fdb_error(e->dbhome));
+		goto error;
+	}
+    
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
 	if (e->cd == NULL) {
 		wlog("init cache failure");
@@ -783,7 +887,8 @@ static struct event_entry* uic_init_driver(void)
  error:
 	if (e->base.name) free(e->base.name);
 	if (e->logf) dtc_leave(e->logf);
-	if (e->db) fdb_free(&e->db);
+	if (e->dbrl) fdb_free(&e->dbrl);
+	if (e->dbhome) fdb_free(&e->dbhome);
 	if (e->cd) cache_free(e->cd);
 	free(e);
 	return NULL;
