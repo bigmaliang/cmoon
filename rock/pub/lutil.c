@@ -99,9 +99,9 @@ int lutil_fill_layout_by_file(mdb_conn *conn, file_t *file, HDF *hdf)
 }
 
 /* make sure result has enough capacity */
-int lutil_image_accept(FILE *fp, char *outpath, unsigned char *result)
+int lutil_image_accept(FILE *fp, char *path, unsigned char *result)
 {
-	if (fp == NULL || result == NULL || outpath == NULL)
+	if (fp == NULL || result == NULL || path == NULL)
 		return RET_RBTOP_INPUTE;
 
     md5_ctx my_md5;
@@ -122,7 +122,7 @@ int lutil_image_accept(FILE *fp, char *outpath, unsigned char *result)
 	mmisc_hex2str(hexres, 16, result);
 
 	char fname[LEN_FN];
-	snprintf(fname, sizeof(fname), "%s/%s.jpg", outpath, result);
+	snprintf(fname, sizeof(fname), IMG_ROOT"%s/%s/%s.jpg", path, IMG_ORI, result);
 	FILE *fpout = fopen(fname, "w+");
 	if (fpout == NULL) {
 		mtc_err("open %s for write failure", fname);
@@ -133,6 +133,21 @@ int lutil_image_accept(FILE *fp, char *outpath, unsigned char *result)
 	while ((bytes = fread(data, 1, 4096, fp)) != 0)
 		fwrite(data, 1, bytes, fpout);
 	fclose(fpout);
+
+    /*
+     * take sooo long time, so, process it backend later async
+     */
+#if 0
+    char tok[LEN_FN];
+    int ret;
+    snprintf(tok, sizeof(tok), PATH_MTLS"imagemagick.sh %s %s.jpg >> /tmp/imagemagick.log 2>&1",
+             path, result);
+    ret = system(tok);
+    if (ret != 0) {
+        mtc_err("process %s failure %d", result, ret);
+        return RET_RBTOP_IMGPROE;
+    }
+#endif
 
 	return RET_RBTOP_OK;
 }

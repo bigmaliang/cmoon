@@ -25,6 +25,9 @@ static void get_errmsg(int ret, char *res)
 	case RET_RBTOP_EXISTE:
 		strcpy(res, "资源已存在");
 		break;
+	case RET_RBTOP_IMGPROE:
+		strcpy(res, "处理图片失败");
+		break;
 	default:
 		strcpy(res, "数据库操作错误");
 		break;

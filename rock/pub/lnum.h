@@ -76,5 +76,7 @@ enum limit_type {
 #define RET_RBTOP_NEXIST	2040
 #define RET_RBTOP_EXISTE	2041
 
+#define RET_RBTOP_IMGPROE	2050
+
 __END_DECLS
 #endif	/* __LNUM_H__ */

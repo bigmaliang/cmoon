@@ -6,7 +6,18 @@
 __BEGIN_DECLS
 
 #define SITE_DOMAIN	"eol.com"
+#define IMG_DOMAIN	"http://img.eol.com"
 #define TC_ROOT		"/var/log/moon/rock/"
+#define IMG_ROOT	"/data/pic/"
+
+#define IMG_ORI	"ori"
+#define IMG_XXS	"24x24"
+#define IMG_XS	"48x48"
+#define IMG_S	"120x120"
+#define IMG_M	"250x250"
+#define IMG_L	"800X600"
+#define IMG_XL	"1024X768"
+#define IMG_XXL	"1440x900"
 
 #ifdef RELEASE
 #define PATH_SITE	"/usr/local/moon/rock/"

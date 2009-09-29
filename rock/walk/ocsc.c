@@ -16,13 +16,14 @@ int csc_add_image(CGI *cgi, mdb_conn *conn, session_t *ses)
 		return RET_RBTOP_INPUTE;
 	}
 
-	ret = lutil_image_accept(fp, "/data/pic/csc/", hash);
+	ret = lutil_image_accept(fp, "csc", hash);
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("accept image failure %d", ret);
 		return ret;
 	}
 	
-	hdf_set_valuef(cgi->hdf, PRE_OUTPUT".imageurl=/pic/%s.jpg", hash);
+	hdf_set_valuef(cgi->hdf, PRE_OUTPUT".imageurl=%s/%s/%s/%s.jpg",
+                   IMG_DOMAIN, IMG_PATH, IMG_ORI, hash);
 	return RET_RBTOP_OK;
 }
 
