@@ -11,9 +11,10 @@
     <button type="button" rel="#fileappend">add</button>
     <div class="overlay" id="fileappend">
 	  <button type="button" id="imageadder">upload</button>
-      <span><img id="addimage" src="http://img.eol.com/csc/ori/default.jpg" height="250" width="250"/></span>
-	  <textarea name="filedesc" rows="7" cols="10">
-	  </textarea>
+      <span><img id="addimage" src="http://img.eol.com/csc/ori/default.jpg" width="250"/></span>
+      <input type="hidden" id="fileimg" value="" />
+	  <textarea id="filedesc" class="VAL_APPEND vrequire" vmax="1024" rows="7" cols="10"></textarea>
+      <input id="addfile" type="button" value="提交" />
     </div>
   <?cs /if ?>
 
