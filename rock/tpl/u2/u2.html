@@ -9,14 +9,25 @@
 
   <?cs if:Output.appendable == 1 ?>
     <button type="button" rel="#appendoverlay">add</button>
-    <div class="overlay" id="appendoverlay">
-	  <button type="button" id="imageadder">upload</button>
-      <span><img id="previewimg" src="http://img.eol.com/csc/ori/default.jpg" width="250"/></span>
-      
-      <input id="fileimg" type="hidden" value="" />
-	  <textarea id="filedesc" class="VAL_APPEND vrequire" vmax="1024" rows="7" cols="10"></textarea>
-      
-      <input id="addfile" type="button" value="提交" />
+	<div class="overlay infoform" id="appendoverlay">
+	  <div class="overlaytitle">添加商品</div>
+	  <input id="fileimg" type="hidden" value="" />
+	  <ul>
+		<li>
+		  <div class="leftitem">商品图片:</div>
+		  <img id="previewimg" src="http://img.eol.com/csc/ori/default.jpg" width="150"/>
+		</li>
+
+		<li>
+		  <div class="leftitem">商品描述:</div>
+		  <textarea id="filedesc" class="VAL_APPEND vrequire" vmax="1024" rows="5" cols="20"></textarea>
+		</li>
+
+		<li>
+		  <div class="leftitem"> &nbsp; </div>
+		  <input id="addfile" type="button" class="submitbtn" value="提交" />
+		</li>
+	  </ul>
     </div>
   <?cs /if ?>
 

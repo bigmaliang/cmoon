@@ -1,3 +1,10 @@
+div.overlaytitle {
+	text-align: left;
+	font-size: 14px;
+	font-weight: bold;
+	margin: 0 0 10px 0;
+}
+
 .infoform {
 	padding: 10px 0;
 }
@@ -22,7 +29,7 @@
 	margin: 0 18px 0 0;
     text-align: right;
 }
-.infoform .submitbtn {
+input.submitbtn {
 	width: auto;
 	height: auto;
 	margin-top: 10px;
@@ -33,7 +40,7 @@
 	
 	background-color: #653a08;
 }
-.infoform .submitbtn:hover {
+input.submitbtn:hover {
 	background-color: #ba7729;
 	cursor: pointer;
 }

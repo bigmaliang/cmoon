@@ -1,12 +1,15 @@
 $(document).ready(function()
 {
 	var overlay_append = $("button[rel=#appendoverlay]").overlay(
-    {
-        api: true,
-        closeOnClick: false
-    });
-    
-	var uploader = new AjaxUpload("#imageadder",
+	{
+		api: true,
+		closeOnClick: false,
+		// TODO continue here start.width don't make sense
+		start: {width: 430}
+	});
+
+	var button = $("#previewimg");
+	var uploader = new AjaxUpload(button,
 	{
 		action: '<?cs var: Output.tpl.uri ?>',
 		name: 'imagename',
@@ -14,12 +17,12 @@ $(document).ready(function()
 		responseType: "json",
 		autoSubmit: true,
 		onChange: replaceImage,
-        onComplete: function(file, resp) {
-            if (jsonCbkSuc(resp)) {
-                $("#previewimg").attr("src", resp.imageurl);
-                $("#fileimg").val(resp.imagename);
-            }
-        }
+		onComplete: function(file, resp) {
+			if (jsonCbkSuc(resp, {suctip: false})) {
+				$("#previewimg").attr("src", resp.imageurl);
+				$("#fileimg").val(resp.imagename);
+			}
+		}
 	});
 
 	function replaceImage(file, ext) {
@@ -32,15 +35,19 @@ $(document).ready(function()
 
 	$("#addfile").click(function()
 	{
-        if (!$(".VAL_APPEND").inputval()) {
-            return;
-        }
-        
-        $.post("<?cs var: Output.tpl.uri ?>",
-               {filedesc: $("#filedesc").val(), fileimg: $("#fileimg").val()},
-               function(data) {
-                   if (jsonCbksuc(data, {rurl: "<?cs var: Output.tpl.uri ?>"}))
-                       overlay_append.close();
-               }, "json");
+		if (!$(".VAL_APPEND").inputval()) {
+			return;
+		}
+
+		$.post("<?cs var: Output.tpl.uri ?>",
+			   {
+				   filedesc: $("#filedesc").val(),
+				   fileimg: $("#fileimg").val(),
+				   op: 'add'
+			   },
+			   function(data) {
+				   if (jsonCbkSuc(data, {rurl: "<?cs var: Output.tpl.uri ?>"}))
+					   overlay_append.close();
+			   }, "json");
 	});
 });

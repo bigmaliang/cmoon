@@ -47,6 +47,10 @@ config-avilable
 +  $HTTP["host"] == "www.eol.com" {
 +    server.document-root = "/var/www/www.eol.com/fly/"
 +  }
++
++  $HTTP["host"] == "img.eol.com" {
++    server.document-root = "/data/pic/"
++  }
 
 10-cgi.conf:
 
