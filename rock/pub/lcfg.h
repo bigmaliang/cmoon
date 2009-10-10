@@ -36,6 +36,8 @@ __BEGIN_DECLS
 #define CGI_RUN_DIR		"run"
 #define URI_SPLITER		"/"
 
+#define PRE_OUT_TPL		PRE_OUTPUT".tpl" /* ltpl_prepare_rend() */
+
 #define PRE_REQ_URI		PRE_CGI".ScriptName" 		/* lutil_file_access() */
 #define PRE_REQ_URI_RW	PRE_QUERY".ScriptName"		/* lutil_file_access_rewrited() */
 #define PRE_REQ_AJAX_FN	PRE_QUERY".JsonCallback"

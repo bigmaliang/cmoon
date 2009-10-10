@@ -1,34 +1,25 @@
 $(document).ready(function()
 {
-	$("button[rel=#fileappend]").overlay({closeOnClick: false});
-	$("#addfile").click(function()
-	{
-        if (!$(".VAL_APPEND").inputval()) {
-            return;
-        }
-        var data = {
-            filedesc: $("#filedesc").val()
-        };
-        if ($("#fileimg").val().length != 0) {
-            data.fileimg = $("#fileimg").val();
-        }
-        
-        $.post("/csc", data, successAdd, "json");
-	});
-
-    function successAdd(data) {
-        // TODO continue here
-        alert("添加成功");
-    }
-	
+	var overlay_append = $("button[rel=#appendoverlay]").overlay(
+    {
+        api: true,
+        closeOnClick: false
+    });
+    
 	var uploader = new AjaxUpload("#imageadder",
 	{
-		action: '/csc',
+		action: '<?cs var: Output.tpl.uri ?>',
 		name: 'imagename',
 		data: {op: 'add', tp: 'imageadd'},
 		responseType: "json",
 		autoSubmit: true,
-		onChange: replaceImage
+		onChange: replaceImage,
+        onComplete: function(file, resp) {
+            if (jsonCbkSuc(resp)) {
+                $("#previewimg").attr("src", resp.imageurl);
+                $("#fileimg").val(resp.imagename);
+            }
+        }
 	});
 
 	function replaceImage(file, ext) {
@@ -38,4 +29,18 @@ $(document).ready(function()
 		}
 		return true;
 	}
+
+	$("#addfile").click(function()
+	{
+        if (!$(".VAL_APPEND").inputval()) {
+            return;
+        }
+        
+        $.post("<?cs var: Output.tpl.uri ?>",
+               {filedesc: $("#filedesc").val(), fileimg: $("#fileimg").val()},
+               function(data) {
+                   if (jsonCbksuc(data, {rurl: "<?cs var: Output.tpl.uri ?>"}))
+                       overlay_append.close();
+               }, "json");
+	});
 });

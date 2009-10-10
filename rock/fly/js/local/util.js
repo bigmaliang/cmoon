@@ -67,37 +67,31 @@ function jumpToRurl()
 	}
 }
 
-function jsonCbkSuc(data, errmsg)
+function jsonCbkSuc(data, opts)
 {
+    opts = $.extend(
+    {
+        suctip: true,
+        errmsg: "操作失败",
+        rurl: "/index.html"
+    }, opts||{});
+    
 	if (data.success != "1") {
 		if (data.errmsg == "敏感操作, 请先登录") {
-			document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
+			document.loginopts = {title: data.errmsg, rurl: opts.rurl};
 			overlay_login.load();
 		} else {
-			alert(data.errmsg || errmsg || "操作失败!");
+			alert(data.errmsg || opts.errmsg);
 		}
 		return false;
 	}
-	alert("操作成功!");
+
+    if (opts.suctip)
+        alert("操作成功!");
     return true;
 }
 
-function jsonCbkErr(errmsg)
+function jsonCbkErr(XMLHttpRequest, textStatus, errorThrown)
 {
-    alert(errmsg || "操作失败!");
+    alert(textStatus || "操作失败!");
 }
-
-$(document).ready(function()
-{
-        $("#userlogout").click(function()
-        {
-                logoutEol();
-        });
-        $("ul.sf-menu").superfish(
-        {
-                animation: {height: 'slow'},
-                delay: 1200
-        });
-        sayHi();
-        loginCheck();
-});

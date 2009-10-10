@@ -75,34 +75,11 @@ $(document).ready(function()
 			data: "uid="+optm.uid+"&gid="+optm.gid,
 			dataType: "json",
 			success: function(data) {
-				if (data.success != "1") {
-					if (data.errmsg == "敏感操作, 请先登录") {
-						document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
-						overlay_login.load();
-					} else {
-						alert(data.errmsg || "操作失败!");
-					}
-					return;
-				}
-				alert("操作成功!");
-				optm.callBack(data);
+                if (jsonCbkSuc(data, {rurl: "/admin/group.html"}))
+			        optm.callBack(data);
 			},
-			error: function(){alert("操作失败");}
+			error: jsonCbkErr
 		});
-	}
-
-	function sucMemberadd(data)
-	{
-		if (data.success != "1") {
-			alert(data.errmsg || "操作失败, 请稍后再试");
-			return;
-		}
-		alert("操作成功");
-		overlay_group.close();
-	}
-
-	function errMemberadd() {
-		alert("操作失败");
 	}
 
 	function addMember(group)
@@ -118,8 +95,11 @@ $(document).ready(function()
 		}
 		$("#formgroupadd").FormValidate().ajaxForm(
 		{
-			success: sucMemberadd,
-			error: errMemberadd,
+			success: function(data) {
+                if (jsonCbkSuc(data, {rurl: "/admin/group.html"}))
+	                overlay_group.close();
+            },
+			error: jsonCbkErr,
 			dataType: 'json',
 			validateForm: true,
 			timeout: 5000
@@ -151,32 +131,20 @@ $(document).ready(function()
 			data: "pg="+page,
 			dataType: "json",
 			success: function(data)	{
-				if (type(data.groups) != "Array") {
-					if (data.errmsg == "敏感操作, 请先登录") {
-						document.loginopts = {
-							title: data.errmsg,
-							rurl: "/admin/group.html"
-						};
-						overlay_login.load();
-					} else {
-						alert(data.errmsg || "获取组列表失败");
+                if (jsonCbkSuc(data, {errmsg: "获取组列表失败", rurl: "/admin/group.html"})) {
+					if (typeof mygroup != "undefined") {
+						mygroup.remove();
 					}
-					return;
-				}
-				if (typeof mygroup != "undefined") {
-					mygroup.remove();
-				}
-				mygroup = $(document).mnlist(data.groups, opt_list).appendTo($("#groups"));
-				$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showGroup});
+					mygroup = $(document).mnlist(data.groups, opt_list).appendTo($("#groups"));
+					$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showGroup});
+	            }
 			},
-			error: function() {
-				alert("获取组列表失败");
-			}
+			error: jsonCbkErr
 		});
 	}
 
 	showGroup(1);
-	overlay_group = $("input[rel=#memberadd]").overlay(
+	var overlay_group = $("input[rel=#memberadd]").overlay(
 	{
 		api:true,
 		closeOnClick: false,

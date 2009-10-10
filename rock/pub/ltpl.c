@@ -14,7 +14,12 @@ void ltpl_prepare_rend(HDF *hdf, char *tpl)
 	char key[LEN_ST], *href;
 	HDF *tmphdf; 
 	if (hdf == NULL) return;
-	
+
+	/*
+	 * set template variable
+	 */
+    hdf_set_copy(hdf, PRE_OUT_TPL".uri", PRE_REQ_URI_RW);
+    
 	/*
 	 * merge dataset from g_cfg 
 	 */

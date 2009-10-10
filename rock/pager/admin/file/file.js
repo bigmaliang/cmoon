@@ -56,7 +56,6 @@ $(document).ready(function()
 			optm.enable = $(this).attr("checked");
 			manageRow("modify", optm);
 		});
-
 	}
 	function manageRow(op, optm) {
 		var ptype = "POST";
@@ -83,20 +82,11 @@ $(document).ready(function()
 			cache: false,
 			data: "id="+optm.id+"&area="+optm.area+"&unit="+optm.unit+"&enable="+optm.enable+"&op="+tmpop,
 			dataType: "json",
-			success: function(data) {
-				if (data.success != "1") {
-					if (data.errmsg == "敏感操作, 请先登录") {
-						document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
-						$.facebox({ajax: '/member/login.html'});
-					} else {
-						alert(data.errmsg || "操作失败!");
-					}
-					return;
-				}
-				alert("操作成功!");
-				optm.callBack(data);
+			success: function(data, textStatus) {
+                if (jsonCbkSuc(data, {rurl: "/admin/file.html"}))
+			        optm.callBack(data);
 			},
-			error: function() {alert("操作失败!");}
+			error: jsonCbkErr
 		});
 	}
 	function showFile(page) {
@@ -106,26 +96,16 @@ $(document).ready(function()
 			cache: false,
 			data: "pg="+page+"&pid="+$("#querypid").val(),
 			dataType: "json",
-			success: function(data) {
-				if (type(data.files) != "Array") {
-					if (data.errmsg == "敏感操作, 请先登录") {
-						document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
-						//$.facebox({ajax: '/member/login.html'});
-						overlay_login.load();
-					} else {
-						alert(data.errmsg || "获取文件列表失败!");
+			success: function(data, textStatus) {
+                if (jsonCbkSuc(data, {errmsg: "获取文件列表失败!", rurl: "/admin/file.html"})) {
+					if (typeof myfile != "undefined") {
+						myfile.remove();
 					}
-					return;
-				}
-				if (typeof myfile != "undefined") {
-					myfile.remove();
-				}
-				myfile = $(document).mntable(heads, data.files, opts_mntable).appendTo($("#files"));
-				$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showFile});
+					myfile = $(document).mntable(heads, data.files, opts_mntable).appendTo($("#files"));
+					$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showFile});
+                }
 			},
-			error: function() {
-				alert("获取文件失败");
-			}
+			error: jsonCbkErr
 		});
 	}
 
@@ -136,20 +116,6 @@ $(document).ready(function()
 	});
 
 
-	function sucFileadd(data) {
-		if (data.success != "1") {
-			alert(data.errmsg || "操作失败, 请稍后再试");
-			return;
-		}
-		myfile.makeRows(data.files);
-		$("#mntrow"+data.files[0].id).seekAttention({
-			pulseSpeed: 800
-		});
-		overlay_file.close();
-	}
-	function errFileadd() {
-		alert("操作失败");
-	}
 	function beforeFileaddSerial() {
 		var mode = parseInt($("#modetype").val());
 		$(".ckmode", "#formfileadd").each(function(i, obj) {
@@ -160,16 +126,24 @@ $(document).ready(function()
 		$("#addmode").val(mode);
 	}
 	var opt_fileadd = {
-		success: sucFileadd,
+		success: function (data) {
+            if (jsonCbkSuc(data, {rurl: "/admin/file.html"})) {
+				myfile.makeRows(data.files);
+				$("#mntrow"+data.files[0].id).seekAttention({
+					pulseSpeed: 800
+				});
+				overlay_file.close();
+            }
+        },
 		dataType: 'json',
-		error: errFileadd,
+		error: jsonCbkErr,
 		//clearForm: true,
 		beforeSerialize: beforeFileaddSerial,
 		validateForm: true,
 		timeout: 5000
 	};
 
-	overlay_file = $("a[rel=#fileoverlay]").overlay(
+	var overlay_file = $("a[rel=#fileoverlay]").overlay(
 	{
 		api: true,
 		closeOnClick: false,

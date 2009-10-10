@@ -24,6 +24,8 @@ int csc_add_image(CGI *cgi, mdb_conn *conn, session_t *ses)
 	
 	hdf_set_valuef(cgi->hdf, PRE_OUTPUT".imageurl=%s/%s/%s/%s.jpg",
                    IMG_DOMAIN, IMG_PATH, IMG_ORI, hash);
+	hdf_set_valuef(cgi->hdf, PRE_OUTPUT".imagename=%s/%s/%s.jpg",
+                   IMG_PATH, IMG_ORI, hash);
 	return RET_RBTOP_OK;
 }
 

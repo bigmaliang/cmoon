@@ -30,5 +30,8 @@ u2 {
 			js = u2/u2.js.html
 			content = u2/u2.html
 		}
+        Layout {
+        	js = u2/u2.js
+        }
 	}
 }

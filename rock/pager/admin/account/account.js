@@ -16,28 +16,16 @@ $(document).ready(function()
 			data: "pg="+page,
 			dataType: "json",
 			success: function(data)	{
-				if (type(data.accounts) != "Array") {
-					if (data.errmsg == "敏感操作, 请先登录") {
-						document.loginopts = {
-							title: data.errmsg,
-							rurl: "admin/account.html"
-						};
-						overlay_login.load();
-					} else {
-						alert(data.errmsg || "获取帐号列表失败");
+                if (jsonCbkSuc(data, {errmsg: "获取帐号列表失败", rurl: "/admin/account.html"})) {
+					if (typeof myaccount != "undefined") {
+						myaccount.remove();
 					}
-					return;
-				}
-				if (typeof myaccount != "undefined") {
-					myaccount.remove();
-				}
-				myaccount = $(document).mntable(heads, data.accounts,
-				opts_mntable).appendTo($("#accounts"));
-				$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showAccount});
+					myaccount = $(document).mntable(heads, data.accounts,
+					opts_mntable).appendTo($("#accounts"));
+					$("#pagenav").mnpagenav({ttnum: data.ttnum, callback: showAccount});
+                }
 			},
-			error: function() {
-				alter("获取帐号列表失败");
-			}
+			error: jsonCbkErr
 		});
 	}
 
