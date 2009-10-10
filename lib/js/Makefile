@@ -25,7 +25,7 @@ mtable.js: own/jquery.mntable.js
 
 mpagenav.js: own/jquery.mnpagenav.js
 
-minputval.js: own/jquery.inputval.js
+minputval.js: own/jquery.mninpval.js
 
 %.js:
 	@echo -n > $@
