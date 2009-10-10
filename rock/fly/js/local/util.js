@@ -66,3 +66,38 @@ function jumpToRurl()
 		}
 	}
 }
+
+function jsonCbkSuc(data, errmsg)
+{
+	if (data.success != "1") {
+		if (data.errmsg == "敏感操作, 请先登录") {
+			document.loginopts = {title: data.errmsg, rurl: "/admin/file.html"};
+			overlay_login.load();
+		} else {
+			alert(data.errmsg || errmsg || "操作失败!");
+		}
+		return false;
+	}
+	alert("操作成功!");
+    return true;
+}
+
+function jsonCbkErr(errmsg)
+{
+    alert(errmsg || "操作失败!");
+}
+
+$(document).ready(function()
+{
+        $("#userlogout").click(function()
+        {
+                logoutEol();
+        });
+        $("ul.sf-menu").superfish(
+        {
+                animation: {height: 'slow'},
+                delay: 1200
+        });
+        sayHi();
+        loginCheck();
+});
