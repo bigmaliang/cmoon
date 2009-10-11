@@ -3,9 +3,8 @@ $(document).ready(function()
 	var overlay_append = $("button[rel=#appendoverlay]").overlay(
 	{
 		api: true,
-		closeOnClick: false,
+		closeOnClick: false
 		// TODO continue here start.width don't make sense
-		start: {width: 430}
 	});
 
 	var button = $("#previewimg");
