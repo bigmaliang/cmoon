@@ -94,7 +94,7 @@ postgresql
 		用postgres帐号登录:
 		\c mn_sys
 		CREATE LANGUAGE plpgsql; -- 开启 plpgsql 语言
-		\c csc
+		\c mn_csc
 		CREATE LANGUAGE plpgsql;
 	以后都可以用 $psql -U mner -d mn_sys 登录
 
