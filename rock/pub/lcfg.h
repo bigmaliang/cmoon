@@ -59,6 +59,7 @@ __BEGIN_DECLS
 
 #define EVT_PLUGIN_SYS		"db_sys"
 #define EVT_PLUGIN_USER		"db_user"
+#define EVT_PLUGIN_CSC		"db_csc"
 
 __END_DECLS
 #endif	/* __LCFG_H__ */

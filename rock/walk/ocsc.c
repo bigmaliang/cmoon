@@ -32,6 +32,24 @@ int csc_add_image(CGI *cgi, mdb_conn *conn, session_t *ses)
 int csc_add_item(CGI *cgi, mdb_conn *conn, session_t *ses)
 {
 	PRE_DBOP(cgi->hdf, conn);
-	
+
+    int fid, uid;
+    char *img, *exp;
+    int ret;
+
+    uid = ses->member->uin;
+    fid = ses->file->id;
+    img = hdf_get_value(cgi->hdf, PRE_QUERY".img", "");
+    exp = hdf_get_value(cgi->hdf, PRE_QUERY".exp", "");
+
+    ret = MDATA_SET(conn, EVT_PLUGIN_CSC, NULL, FLAGS_NONE,
+                    "INSERT INTO tjt (fid, uid, img, exp) "
+                    " VALUES (%d, %d, $1, $2)", "ss",
+                    fid, uid, img, exp);
+    if (ret != MDB_ERR_NONE) {
+        mtc_err("add file err %s", mdb_get_errmsg(conn));
+        return RET_RBTOP_INSERTE;
+    }
+    
 	return RET_RBTOP_OK;
 }

@@ -19,7 +19,7 @@ $(document).ready(function()
 		onComplete: function(file, resp) {
 			if (jsonCbkSuc(resp, {suctip: false})) {
 				$("#previewimg").attr("src", resp.imageurl);
-				$("#fileimg").val(resp.imagename);
+				$("#itemimg").val(resp.imagename);
 			}
 		}
 	});
@@ -32,7 +32,7 @@ $(document).ready(function()
 		return true;
 	}
 
-	$("#addfile").click(function()
+	$("#additem").click(function()
 	{
 		if (!$(".VAL_APPEND").inputval()) {
 			return;
@@ -40,8 +40,8 @@ $(document).ready(function()
 
 		$.post("<?cs var: Output.tpl.uri ?>",
 			   {
-				   filedesc: $("#filedesc").val(),
-				   fileimg: $("#fileimg").val(),
+				   img: $("#itemimg").val(),
+				   exp: $("#itemexp").val(),
 				   op: 'add'
 			   },
 			   function(data) {
