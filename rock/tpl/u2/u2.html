@@ -7,8 +7,18 @@
 
 <div id="coltwo">
 
+  <div id="items">
+	<?cs each: item = Output.items ?>
+	<div>
+	  <img src="<?cs var: item.imgurl ?>" width="250" />
+	  <pre><?cs var: item.exp ?></pre>
+	</div>
+	<?cs /each ?>
+  </div>
+  <div class="sep"></div>
+  
   <?cs if:Output.appendable == 1 ?>
-    <button type="button" rel="#appendoverlay">add</button>
+    <button class="submitbtn" type="button" rel="#appendoverlay">货物上架</button>
 	<div class="overlay infoform" id="appendoverlay">
 	  <div class="overlaytitle">添加商品</div>
 	  

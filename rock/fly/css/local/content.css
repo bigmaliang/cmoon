@@ -29,7 +29,7 @@ div.overlaytitle {
 	margin: 0 18px 0 0;
     text-align: right;
 }
-input.submitbtn {
+input.submitbtn, button.submitbtn {
 	width: auto;
 	height: auto;
 	margin-top: 10px;

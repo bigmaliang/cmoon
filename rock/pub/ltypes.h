@@ -49,6 +49,16 @@ typedef struct _group {
 	ULIST *node;
 } group_t;
 
+typedef struct _tjt {
+	int id;
+	int fid;
+	int uid;
+	char *img;
+	char *exp;
+	char *intime;
+	char *uptime;
+} tjt_t;
+
 size_t list_pack(ULIST *list, size_t (*pack)(void *item, char *buf), char *buf);
 char* list_unpack(char *buf, size_t (*unpack)(char *buf, size_t inlen, void **item),
 				  size_t inlen, ULIST *list);

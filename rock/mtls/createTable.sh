@@ -3,6 +3,7 @@
 
 #trigger function for uptime update
 psql -U mner -d mn_sys -c "CREATE FUNCTION update_time() RETURNS TRIGGER AS $$ BEGIN NEW.uptime=now(); RETURN NEW; END; $$ LANGUAGE plpgsql";
+psql -U mner -d mn_csc -c "CREATE FUNCTION update_time() RETURNS TRIGGER AS $$ BEGIN NEW.uptime=now(); RETURN NEW; END; $$ LANGUAGE plpgsql";
 
 for i in `seq 0 99`
 do

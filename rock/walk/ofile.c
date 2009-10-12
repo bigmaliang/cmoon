@@ -7,6 +7,11 @@
 	"remark, uri, dataer, render, to_char(intime, 'YYYY-MM-DD') as intime, " \
 	" to_char(uptime, 'YYYY-MM-DD') as uptime "
 
+/*
+ * condition: should be a snprintfed string(or u can pass them with $xxx)
+ * sfmt: the $xxx format, NULL should be ADD TWO
+ * TODO: improve this, fuck
+ */
 #define FILE_QUERY_RAW(conn, condition, sfmt, ...)						\
 	mdb_exec(conn, NULL, "SELECT "FILE_QUERY_COL" FROM fileinfo WHERE %s;", \
 			 sfmt, condition, ##__VA_ARGS__)

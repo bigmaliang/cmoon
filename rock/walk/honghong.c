@@ -111,23 +111,7 @@ int static_csc_data_get(HDF *hdf, HASH *dbh)
 
 int csc_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
-	int ret;
-	
-	if (ses->file != NULL)
-		lutil_fill_layout_by_file((mdb_conn*)hash_lookup(dbh, "Sys"),
-								  ses->file, cgi->hdf);
-	hdf_set_value(cgi->hdf, PRE_OUTPUT".navtitle", "菜色");
-	file_get_nav_by_uri((mdb_conn*)hash_lookup(dbh, "Sys"),
-						"/csc", PRE_OUTPUT, cgi->hdf);
-
-	ret = file_check_user_power(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Sys"),
-								ses, ses->file, LMT_APPEND);
-	if (ret == RET_RBTOP_OK) {
-		hdf_set_value(cgi->hdf, PRE_OUTPUT".appendable", "1");
-	}
-	return RET_RBTOP_OK;
-	//return csc_get_data(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Csc"));
-
+	return csc_get_data(cgi->hdf, dbh, ses);
 }
 
 int csc_data_add(CGI *cgi, HASH *dbh, session_t *ses)
@@ -138,5 +122,5 @@ int csc_data_add(CGI *cgi, HASH *dbh, session_t *ses)
 		return csc_add_image(cgi, (mdb_conn*)hash_lookup(dbh, "Csc"), ses);
 	}
 
-	return csc_add_item(cgi, (mdb_conn*)hash_lookup(dbh, "Csc"), ses);
+	return csc_add_item(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Csc"), ses);
 }

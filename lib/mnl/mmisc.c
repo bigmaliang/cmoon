@@ -115,7 +115,8 @@ void mmisc_get_offset(HDF *hdf, int *count, int *offset)
 	int i, j;
 	i = hdf_get_int_value(hdf, PRE_QUERY".npp", DFT_NUM_PERPAGE);
 	j = hdf_get_int_value(hdf, PRE_QUERY".pg", DFT_PAGE_NUM);
-	hdf_set_copy(hdf, PRE_OUTPUT".pg", PRE_QUERY".pg");
+	//hdf_set_copy(hdf, PRE_OUTPUT".pg", PRE_QUERY".pg");
+	hdf_set_int_value(hdf, PRE_OUTPUT".pg", j);
 	*count = i;
 	*offset = (j-1)*i;
 }
