@@ -3,11 +3,8 @@
 #include "ofile.h"
 #include "omember.h"
 
-#define GROUP_QUERY_COL " uid, gid, mode, status, " \
-	" to_char(intime, 'YYYY-MM-DD') as intime, to_char(uptime, 'YYYY-MM-DD') as uptime "
-#define GROUP_QUERY_RAW(conn, condition, sfmt, ...)						\
-	mdb_exec(conn, NULL, "SELECT "GROUP_QUERY_COL" FROM groupinfo WHERE %s;", \
-			 sfmt, condition, ##__VA_ARGS__)
+#define GROUP_QUERY_COL " uid, gid, mode, status, to_char(intime, 'YYYY-MM-DD') " \
+    " as intime, to_char(uptime, 'YYYY-MM-DD') as uptime "
 #define GROUP_GET_RAW(conn, gn)									\
 	mdb_get(conn, "iiiiSS", &(gn->uid), &(gn->gid), &(gn->mode), &(gn->status), \
 			&(gn->intime), &(gn->uptime))
@@ -26,11 +23,12 @@ int group_get_node(mdb_conn *conn, int uid, int gid, ULIST *node)
 		return RET_RBTOP_MEMALLOCE;
 
 	if (!UIN_ILLEGAL(uid) && !GID_ILLEGAL(gid))
-		GROUP_QUERY_RAW(conn, "uid=$1 AND gid=$2", "ii", uid, gid);
+		LDB_QUERY_RAW(conn, "groupinfo", GROUP_QUERY_COL,
+                        "uid=%d AND gid=%d", NULL, uid, gid);
 	else if (GID_ILLEGAL(gid))
-		GROUP_QUERY_RAW(conn, "uid=$1", "i", uid);
+		LDB_QUERY_RAW(conn, "groupinfo", GROUP_QUERY_COL, "uid=%d", NULL, uid);
 	else if (UIN_ILLEGAL(uid))
-		GROUP_QUERY_RAW(conn, "gid=$1", "i", gid);
+		LDB_QUERY_RAW(conn, "groupinfo", GROUP_QUERY_COL, "gid=%d", NULL, gid);
 	else {
 		group_del(gn);
 		return RET_RBTOP_INPUTE;
@@ -122,7 +120,7 @@ int group_get_groups(HDF *hdf, mdb_conn *conn, session_t *ses)
 			continue;
 		}
 		sprintf(tok, "%s.groups.%d", PRE_OUTPUT, cnt++);
-		file_store_in_hdf(fl, tok, hdf);
+		file_item2hdf(fl, tok, hdf);
 		file_del(fl);
 	}
 	hdf_set_int_value(hdf, PRE_OUTPUT".ttnum", cnt);
@@ -141,7 +139,7 @@ int group_get_groups(HDF *hdf, mdb_conn *conn, session_t *ses)
 			mtc_warn("get member for group %d failure", id);
 			continue;
 		}
-		group_store_in_hdf(gp, "groupinfo", hdfnode);
+		group_item2hdf(gp, "groupinfo", hdfnode);
 		hdfnode = hdf_obj_next(hdfnode);
 	}
 	

@@ -2,15 +2,12 @@
 #include "lheads.h"
 #include "omember.h"
 
-#define ACCOUNT_QUERY_COL " uin, uname, status, " \
-	" to_char(intime, 'YYYY-MM-DD') as intime, to_char(uptime, 'YYYY-MM-DD') as uptime "
-#define ACCOUNT_QUERY_RAW(conn, condition, sfmt, ...)					\
-	mdb_exec(conn, NULL, "SELECT "ACCOUNT_QUERY_COL" FROM accountinfo WHERE %s;", \
-			 sfmt, condition, ##__VA_ARGS__)
+#define ACCOUNT_QUERY_COL " uin, uname, status, to_char(intime, 'YYYY-MM-DD') " \
+    " as intime, to_char(uptime, 'YYYY-MM-DD') as uptime "
 
 int account_get_accounts(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
-	int count, offset, ret;
+	int count, offset;
 	
 	PRE_DBOP(hdf, conn);
 
@@ -21,11 +18,10 @@ int account_get_accounts(HDF *hdf, mdb_conn *conn, session_t *ses)
 
 	mmisc_get_offset(hdf, &count, &offset);
 	
-	ACCOUNT_QUERY_RAW(conn, "1=1 ORDER BY uptime LIMIT $1 OFFSET $2",
-					  "ii", count, offset);
-	ret = mdb_set_rows(hdf, conn, ACCOUNT_QUERY_COL, PRE_OUTPUT".accounts");
-
-	return ret;
+	LDB_QUERY_RAW(conn, "accountinfo", ACCOUNT_QUERY_COL,
+                  "1=1 ORDER BY uptime LIMIT %d OFFSET %d",
+                  NULL, count, offset);
+	return mdb_set_rows(hdf, conn, ACCOUNT_QUERY_COL, PRE_OUTPUT".accounts");
 }
 
 int account_add_partner(HDF *hdf, mdb_conn *conn, session_t *ses)

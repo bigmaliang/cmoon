@@ -6,6 +6,10 @@ __BEGIN_DECLS
 
 #define TABLE_RLS_USER	(hdf_get_value(g_cfg, "Db.Table.release_user", "rls_user_4"))
 
+#define LDB_QUERY_RAW(conn, table, col, condition, sfmt, ...)           \
+	mdb_exec(conn, NULL, "SELECT " col " FROM " table " WHERE " condition ";", \
+			 sfmt, ##__VA_ARGS__)
+
 void ldb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 				  char *target, char *url, bool header);
 void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn, time_t second);

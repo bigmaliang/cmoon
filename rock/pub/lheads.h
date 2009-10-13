@@ -6,6 +6,7 @@
 #include "ltypes.h"
 #include "lutil.h"
 #include "ldb.h"
+#include "lcs.h"
 #include "ltpl.h"
 #include "lfile.h"
 #include "lglobal.h"

@@ -65,7 +65,8 @@
 /*
  * public tool func
  */
-size_t list_pack(ULIST *list, size_t (*pack)(void *item, char *buf), char *buf)
+size_t list_pack_nalloc(ULIST *list, size_t (*pack)(void *item, char *buf),
+                        char *buf)
 {
 	size_t pos = 0;
 	void *node;
@@ -83,14 +84,48 @@ size_t list_pack(ULIST *list, size_t (*pack)(void *item, char *buf), char *buf)
 	return pos;
 }
 
+int list_pack(ULIST *ul, size_t (*item_len)(void *item),
+              size_t (*pack)(void *item, char *buf),
+              char **res, size_t *outlen)
+{
+    *res = NULL;
+    if (ul == NULL || item_len == NULL || pack == NULL)
+        return RET_RBTOP_INPUTE;
+    
+    char *buf;
+    size_t len = 0;
+
+
+    ITERATE_MLIST(ul) {
+        len += item_len(ul->items[t_rsv_i]);
+    }
+    len += 1;
+
+    buf = (char*)calloc(1, len);
+    if (buf == NULL) {
+        mtc_err("alloc mem for list pack failure");
+        return RET_RBTOP_MEMALLOCE;
+    }
+
+    list_pack_nalloc(ul, pack, buf);
+
+    return RET_RBTOP_OK;
+}
+
 char* list_unpack(char *buf, size_t (*unpack)(char *buf, size_t inlen, void **item),
-				  size_t inlen, ULIST *list)
+				  size_t inlen, ULIST **ul)
 {
 	void *node;
 	size_t len = 0, reslen;
 	
-	if (list == NULL || unpack == NULL || buf == NULL)
+	if (ul == NULL || unpack == NULL || buf == NULL)
 		return buf;
+
+    if (*ul == NULL) {
+        uListInit(ul, 0, 0);
+    }
+
+    ULIST *list = *ul;
 
 	STRUCT_UNPACK_INT(buf, list, flags);
 	STRUCT_UNPACK_INT(buf, list, num);
@@ -194,7 +229,7 @@ int file_unpack(char *buf, size_t inlen, file_t **file)
 	return RET_RBTOP_OK;
 }
 
-void file_store_in_hdf(file_t *fl, char *prefix, HDF *hdf)
+void file_item2hdf(file_t *fl, char *prefix, HDF *hdf)
 {
 	if (fl == NULL || prefix == NULL || hdf == NULL)
 		return;
@@ -295,7 +330,7 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	STRUCT_PACK_STR(member, email);
 	STRUCT_PACK_STR(member, intime);
 	STRUCT_PACK_STR(member, uptime);
-	pos += list_pack(member->gnode, gnode_pack_nalloc, buf);
+	pos += list_pack_nalloc(member->gnode, gnode_pack_nalloc, buf);
 	/*
 	 * oh, fuck, this line will cause SIGABORT (double free)
 	 */
@@ -333,7 +368,7 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 	STRUCT_UNPACK_STR(p, mb, intime);
 	STRUCT_UNPACK_STR(p, mb, uptime);
 
-	p = list_unpack(p, gnode_unpack, inlen-(p-buf), mb->gnode);
+	p = list_unpack(p, gnode_unpack, inlen-(p-buf), &(mb->gnode));
 	
 	*member = mb;
 	
@@ -467,7 +502,7 @@ int group_pack(group_t *gp, char **res, size_t *outlen)
 	memcpy(buf, gp, sizeof(gp));
 	size_t pos = sizeof(group_t);
 
-	pos += list_pack(gp->node, gnode_pack_nalloc, buf);
+	pos += list_pack_nalloc(gp->node, gnode_pack_nalloc, buf);
 
 	*res = buf;
 	*outlen = len;
@@ -490,14 +525,14 @@ int group_unpack(char *buf, size_t inlen, group_t **group)
 	gp->gid = *(int*)buf;
 	p = buf + sizeof(group_t);
 
-	p = list_unpack(p, gnode_unpack, inlen-(p-buf), gp->node);
+	p = list_unpack(p, gnode_unpack, inlen-(p-buf), &(gp->node));
 
 	*group = gp;
 
 	return RET_RBTOP_OK;
 }
 
-void group_store_in_hdf(group_t *gp, char *prekey, HDF *hdf)
+void group_item2hdf(group_t *gp, char *prekey, HDF *hdf)
 {
 	if (gp == NULL || prekey == NULL || hdf == NULL)
 		return;
@@ -530,6 +565,163 @@ void group_del(void *gp)
 	free(lgp);
 }
 
+/*
+ * tjt
+ */
+size_t TJT_LEN(void *item)
+{
+    if (item == NULL)
+        return 0;
+
+    tjt_t *lt = item;
+    size_t len = sizeof(tjt_t);
+
+    if (lt->img != NULL)
+        len += strlen(lt->img) + 1;
+    if (lt->exp != NULL)
+        len += strlen(lt->exp) + 1;
+    if (lt->intime != NULL)
+        len += strlen(lt->intime) + 1;
+    if (lt->uptime != NULL)
+        len += strlen(lt->uptime) + 1;
+
+    return len;
+}
+
+tjt_t* tjt_new()
+{
+    return (tjt_t*)calloc(1, sizeof(tjt_t));
+}
+
+int tjt_pack(tjt_t *tjt, char **res, size_t *outlen)
+{
+	*res = NULL;
+	if (tjt == NULL || res == NULL) {
+		return RET_RBTOP_INPUTE;
+	}
+
+	char *buf;
+	size_t len = sizeof(tjt_t);
+
+	STRUCT_ADD_LEN(len, tjt, img);
+	STRUCT_ADD_LEN(len, tjt, exp);
+	STRUCT_ADD_LEN(len, tjt, intime);
+	STRUCT_ADD_LEN(len, tjt, uptime);
+	len += 1;
+
+	buf = (char*)calloc(1, len);
+	if (buf == NULL) {
+		mtc_err("alloc mem for tjt pack failure");
+		return RET_RBTOP_MEMALLOCE;
+	}
+
+	memcpy(buf, tjt, sizeof(tjt_t));
+	size_t pos = sizeof(tjt_t);
+
+	STRUCT_PACK_STR(tjt, img);
+	STRUCT_PACK_STR(tjt, exp);
+	STRUCT_PACK_STR(tjt, intime);
+	STRUCT_PACK_STR(tjt, uptime);
+
+	*res = buf;
+	*outlen = len;
+	
+	return RET_RBTOP_OK;
+}
+
+size_t tjt_pack_nalloc(void *tjt, char *buf)
+{
+	size_t pos = 0;
+	tjt_t *lt = (tjt_t*)tjt;
+	
+	memcpy(buf, tjt, sizeof(tjt_t));
+	pos += sizeof(tjt_t);
+
+	STRUCT_PACK_STR(lt, img);
+	STRUCT_PACK_STR(lt, exp);
+	STRUCT_PACK_STR(lt, intime);
+	STRUCT_PACK_STR(lt, uptime);
+	
+	return pos;
+}
+
+int tjt_unpack(char *buf, size_t inlen, void **tjt)
+{
+	if (inlen < sizeof(tjt_t)) {
+		return RET_RBTOP_INPUTE;
+	}
+
+	char *p;
+	tjt_t *lt = tjt_new();
+	if (lt == NULL) {
+		mtc_err("alloc mem for tjt unpack failure");
+		return RET_RBTOP_MEMALLOCE;
+	}
+
+	memcpy(lt, buf, sizeof(tjt_t));
+	p = buf+sizeof(tjt_t);
+
+	STRUCT_UNPACK_STR(p, lt, img);
+	STRUCT_UNPACK_STR(p, lt, exp);
+	STRUCT_UNPACK_STR(p, lt, intime);
+	STRUCT_UNPACK_STR(p, lt, uptime);
+	
+	*(tjt_t**)tjt = lt;
+	
+	return RET_RBTOP_OK;
+}
+
+void tjt_hdf2item(HDF *hdf, void **tjt)
+{
+    *tjt = NULL;
+
+    tjt_t *lt = tjt_new();
+    if (lt == NULL) {
+        mtc_err("alloc mem for tjt failure");
+        return;
+    }
+
+    lt->id = hdf_get_int_value(hdf, "id", 0);
+    lt->fid = hdf_get_int_value(hdf, "fid", 0);
+    lt->uid = hdf_get_int_value(hdf, "uid", 0);
+    lt->img = hdf_get_value(hdf, "img", NULL);
+    lt->exp = hdf_get_value(hdf, "exp", NULL);
+    lt->intime = hdf_get_value(hdf, "intime", NULL);
+    lt->uptime = hdf_get_value(hdf, "uptime", NULL);
+
+    *tjt = lt;
+}
+
+void tjt_item2hdf(void *tjt, char *prefix, HDF *hdf)
+{
+	if (tjt == NULL || prefix == NULL || hdf == NULL)
+		return;
+	
+	char key[LEN_ST];
+    tjt_t *lt = tjt;
+	
+	STORE_IN_HDF_INT(lt, id);
+	STORE_IN_HDF_INT(lt, fid);
+	STORE_IN_HDF_INT(lt, uid);
+	STORE_IN_HDF_STR(lt, img);
+	STORE_IN_HDF_STR(lt, exp);
+	STORE_IN_HDF_STR(lt, intime);
+	STORE_IN_HDF_STR(lt, uptime);
+}
+
+void tjt_del(void *tjt)
+{
+	tjt_t *lt = (tjt_t*)tjt;
+
+	if (lt == NULL)
+		return;
+
+	SAFE_FREE(lt->img);
+	SAFE_FREE(lt->exp);
+	SAFE_FREE(lt->intime);
+	SAFE_FREE(lt->uptime);
+	free(lt);
+}
 
 /*
  * session

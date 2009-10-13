@@ -3,12 +3,8 @@
 #include "ocsc.h"
 #include "ofile.h"
 
-#define CSC_QUERY_COL " id, fid, uid, img, exp, to_char(intime, 'YYYY-MM-DD') as intime, " \
-	" to_char(uptime, 'YYYY-MM-DD') as uptime "
-
-#define CSC_QUERY_RAW(conn, condition, sfmt, ...)						\
-	mdb_exec(conn, NULL, "SELECT "CSC_QUERY_COL" FROM tjt WHERE %s;",	\
-			 sfmt, condition, ##__VA_ARGS__)
+#define CSC_QUERY_COL " id, fid, uid, img, exp, to_char(intime, 'YYYY-MM-DD') " \
+    " as intime, to_char(uptime, 'YYYY-MM-DD') as uptime "
 
 #define CSC_GET_RAW(conn, tjt)										\
 	mdb_get(conn, "iiiSSSS", &(tjt->id), &(tjt->fid), &(tjt->uid),		\
@@ -16,6 +12,10 @@
 
 int csc_get_data(HDF *hdf, HASH *dbh, session_t *ses)
 {
+    tjt_t *tjt;
+    char *buf;
+    size_t datalen;
+    ULIST *ul = NULL;
 	int count, offset, fid, ret;
 
 	mdb_conn *dbsys, *dbcsc;
@@ -36,12 +36,40 @@ int csc_get_data(HDF *hdf, HASH *dbh, session_t *ses)
 		hdf_set_value(hdf, PRE_OUTPUT".appendable", "1");
 	}
 
-	/* TODO cache this */
 	mmisc_get_offset(hdf, &count, &offset);
 	fid = ses->file->id;
-	CSC_QUERY_RAW(dbcsc, "fid=$1 ORDER BY uptime LIMIT $2 OFFSET $3",
-				  "iii", fid, count, offset);
-	return mdb_set_rows(hdf, dbcsc, CSC_QUERY_COL, PRE_OUTPUT".items");
+    
+    buf = mmc_getf(&datalen, 0, PRE_MMC_CSC".%d.%d", fid, offset);
+    if (buf == NULL || datalen < sizeof(tjt_t)) {
+        LDB_QUERY_RAW(dbcsc, "tjt", CSC_QUERY_COL, "fid=%d ORDER BY uptime "
+                      " LIMIT %d OFFSET %d", NULL, fid, count, offset);
+        mdb_set_rows(hdf, dbcsc, CSC_QUERY_COL, PRE_OUTPUT".items");
+        lcs_hdf2list(hdf, PRE_OUTPUT".items", tjt_hdf2item, &ul);
+        ret = list_pack(ul, TJT_LEN, tjt_pack_nalloc, &buf, &datalen);
+        if (ret == RET_RBTOP_OK) {
+            mmc_storef(MMC_OP_SET, buf, datalen, HALF_HOUR, 0, PRE_MMC_CSC".%d.%d",
+                       fid, offset);
+        }
+    } else {
+        list_unpack(buf, tjt_unpack, datalen, &ul);
+        ret = lcs_list2hdf(ul, PRE_OUTPUT".items", tjt_item2hdf, hdf);
+        if (ret != RET_RBTOP_OK) {
+            mtc_err("assembly tjt from mmc error");
+            return RET_RBTOP_MMCERR;
+        }
+    }
+    uListDestroyFunc(&ul, tjt_del);
+    free(buf);
+    
+    return ret;
+}
+
+void csc_refresh_info(int fid)
+{
+    /*
+     * we refresh first page only here, next pages should wait timeout 
+     */
+    mmc_deletef(0, PRE_MMC_GROUP".%d.0", fid);
 }
 
 int csc_add_image(CGI *cgi, mdb_conn *conn, session_t *ses)
@@ -91,6 +119,7 @@ int csc_add_item(HDF *hdf, mdb_conn *conn, session_t *ses)
         mtc_err("add file err %s", mdb_get_errmsg(conn));
         return RET_RBTOP_INSERTE;
     }
+    csc_refresh_info(fid);
     
 	return RET_RBTOP_OK;
 }

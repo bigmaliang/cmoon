@@ -59,14 +59,22 @@ typedef struct _tjt {
 	char *uptime;
 } tjt_t;
 
-size_t list_pack(ULIST *list, size_t (*pack)(void *item, char *buf), char *buf);
+/* memory alloced already, e.g. in member's gnode */
+size_t list_pack_nalloc(ULIST *list,
+                        size_t (*pack)(void *item, char *buf),
+                        char *buf);
+/* top level pack, e.g. in tjt's list */
+int list_pack(ULIST *ul, size_t (*item_len)(void *item),
+              size_t (*pack)(void *item, char *buf),
+              char **res, size_t *outlen);
+/* if *ul == NULL, i'll init it */
 char* list_unpack(char *buf, size_t (*unpack)(char *buf, size_t inlen, void **item),
-				  size_t inlen, ULIST *list);
+				  size_t inlen, ULIST **ul);
 
 file_t* file_new();
 int  file_pack(file_t *file, char **res, size_t *outlen);
 int  file_unpack(char *buf, size_t inlen, file_t **file);
-void file_store_in_hdf(file_t *fl, char *prefix, HDF *hdf);
+void file_item2hdf(file_t *fl, char *prefix, HDF *hdf);
 void file_reset(file_t *fl);
 void file_del(void *file);
 
@@ -84,8 +92,19 @@ void   gnode_del(void *gn);
 group_t* group_new();
 int  group_pack(group_t *group, char **res, size_t *outlen);
 int  group_unpack(char *buf, size_t inlen, group_t **group);
-void group_store_in_hdf(group_t *fl, char *prefix, HDF *hdf);
+void group_item2hdf(group_t *fl, char *prefix, HDF *hdf);
 void group_del(void *group);
+
+size_t TJT_LEN(void *node);
+tjt_t* tjt_new();
+/* top level pack, not in list */
+int tjt_pack(tjt_t *tjt, char **res, size_t *outlen);
+/* memory alloced already, e.g. in list mode */
+size_t tjt_pack_nalloc(void *tjt, char *buf);
+int tjt_unpack(char *buf, size_t inlen, void **tjt);
+void tjt_hdf2item(HDF *hdf, void **tjt);
+void tjt_item2hdf(void *tjt, char *prefix, HDF *hdf);
+void tjt_del(void *tjt);
 
 typedef struct _session {
 	member_t *member;

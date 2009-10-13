@@ -7,15 +7,6 @@
 	"remark, uri, dataer, render, to_char(intime, 'YYYY-MM-DD') as intime, " \
 	" to_char(uptime, 'YYYY-MM-DD') as uptime "
 
-/*
- * condition: should be a snprintfed string(or u can pass them with $xxx)
- * sfmt: the $xxx format, NULL should be ADD TWO
- * TODO: improve this, fuck
- */
-#define FILE_QUERY_RAW(conn, condition, sfmt, ...)						\
-	mdb_exec(conn, NULL, "SELECT "FILE_QUERY_COL" FROM fileinfo WHERE %s;", \
-			 sfmt, condition, ##__VA_ARGS__)
-
 #define FILE_GET_RAW(conn, fl)											\
 	mdb_get(conn, "iiiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid), &(fl->gid), \
 			&(fl->mode), &(fl->reqtype), &(fl->lmttype), &(fl->name), &(fl->remark), \
@@ -67,7 +58,7 @@ int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
 
 int file_get_info_by_id(mdb_conn *conn, int id, char *url, int pid, file_t **file)
 {
-	char mmckey[LEN_MMC_KEY], tok[LEN_MD];
+	char mmckey[LEN_MMC_KEY];
 	file_t *fl;
 	size_t datalen;
 	char *buf;
@@ -92,11 +83,11 @@ int file_get_info_by_id(mdb_conn *conn, int id, char *url, int pid, file_t **fil
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
 		if (id <= 0) {
-			snprintf(tok, sizeof(tok), "pid=%d AND name=$1", pid);
-			FILE_QUERY_RAW(conn, tok, "s", url);
+			LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL,
+                          "pid=%d AND name=$1", "s", pid, url);
 		} else {
-			snprintf(tok, sizeof(tok), "id=%d", id);
-			FILE_QUERY_RAW(conn, tok, NULL);
+			LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL,
+                          "id=%d", NULL, id);
 		}
 		ret = FILE_GET_RAW(conn, fl);
 		if (ret != MDB_ERR_NONE) {
@@ -125,7 +116,7 @@ int file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file)
 {
 	file_t *fl;
 	size_t datalen;
-	char *buf, tok[LEN_MD];
+	char *buf;
 	int ret;
 	
 	if (uri == NULL) return RET_RBTOP_INPUTE;
@@ -141,8 +132,7 @@ int file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file)
 		}
 		fl = file_new();
 		if (fl == NULL) return RET_RBTOP_MEMALLOCE;
-		strcpy(tok, "uri=$1");
-		FILE_QUERY_RAW(conn, tok, "s", uri);
+		LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL, "uri=$1", "s", uri);
 		ret = FILE_GET_RAW(conn, fl);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("get %s info failure from db %s", uri, mdb_get_errmsg(conn));
@@ -288,7 +278,7 @@ int file_get_files(HDF *hdf, mdb_conn *conn, session_t *ses)
 			continue;
 		}
 		sprintf(tok, "%s.files.%d", PRE_OUTPUT, cnt++);
-		file_store_in_hdf(fl, tok, hdf);
+		file_item2hdf(fl, tok, hdf);
 		file_del(fl);
 	}
 	hdf_set_int_value(hdf, PRE_OUTPUT".ttnum", cnt);
@@ -463,7 +453,7 @@ int file_add(HDF *hdf, mdb_conn *conn, session_t *ses)
 		mtc_err("get file %d %s failure", pid, name);
 		goto done;
 	}
-	file_store_in_hdf(fl, PRE_OUTPUT".files.0", hdf);
+	file_item2hdf(fl, PRE_OUTPUT".files.0", hdf);
 	file_translate_mode(hdf);
 	hdf_set_copy(hdf, PRE_OUTPUT".files.0.uname", PRE_COOKIE".uname");
 
@@ -543,28 +533,27 @@ static void file_uri_2_anchor(HDF *hdf, char *key)
 
 int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
-	char tok[256];
-	
-	memset(tok, 0x0, sizeof(tok));
-	
 	if (member_is_root(ses->member)) {
-		sprintf(tok, "lmttype >= %d", LMT_TYPE_MEMBER);
+		LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL,
+                      "lmttype >= %d", NULL, LMT_TYPE_MEMBER);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_OWN, GROUP_STAT_OK)) {
-		sprintf(tok, "lmttype >= %d AND lmttype < %d",
-				LMT_TYPE_MEMBER, LMT_TYPE_ROOT);
-		FILE_QUERY_RAW(conn, tok, NULL);
+		LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL,
+                      "lmttype >= %d AND lmttype < %d",
+                      NULL, LMT_TYPE_MEMBER, LMT_TYPE_ROOT);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_ADM, GROUP_STAT_OK)) {
-		sprintf(tok, "lmttype >= %d AND lmttype < %d",
-				LMT_TYPE_MEMBER, LMT_TYPE_GOWN);
+		LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL,
+                      "lmttype >= %d AND lmttype < %d",
+                      NULL, LMT_TYPE_MEMBER, LMT_TYPE_GOWN);
 	} else if (member_has_gmode(ses->member, GROUP_MODE_JOIN, GROUP_STAT_OK)) {
-		sprintf(tok, "lmttype >= %d AND lmttype < %d",
-				LMT_TYPE_MEMBER, LMT_TYPE_GADM);
+		LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL,
+                      "lmttype >= %d AND lmttype < %d",
+                      NULL, LMT_TYPE_MEMBER, LMT_TYPE_GADM);
 	} else {
-		sprintf(tok, "lmttype >= %d AND lmttype < %d",
-				LMT_TYPE_MEMBER, LMT_TYPE_GJOIN);
+		LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL,
+                      "lmttype >= %d AND lmttype < %d",
+                      NULL, LMT_TYPE_MEMBER, LMT_TYPE_GJOIN);
 	}
 
-	FILE_QUERY_RAW(conn, tok, NULL);
 	mdb_set_rows(hdf, conn, FILE_QUERY_COL, PRE_OUTPUT".actions");
 	file_uri_2_anchor(hdf, PRE_OUTPUT".actions");
 
@@ -573,12 +562,11 @@ int file_get_action(HDF *hdf, mdb_conn *conn, session_t *ses)
 
 int file_get_nav_by_id(mdb_conn *conn, int id, char *prefix, HDF *hdf)
 {
-	char tok[LEN_ST];
-
+    char tok[LEN_MD];
+    
 	if (id <= 0) return RET_RBTOP_INPUTE;
 
-	sprintf(tok, "pid=%d AND lmttype=0", id);
-	FILE_QUERY_RAW(conn, tok, NULL);
+	LDB_QUERY_RAW(conn, "fileinfo", FILE_QUERY_COL, "pid=%d AND lmttype=0", NULL, id);
 
 	if (prefix != NULL) {
 		snprintf(tok, sizeof(tok), "%s.navs", prefix);
