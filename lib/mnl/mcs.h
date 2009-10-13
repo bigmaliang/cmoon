@@ -71,6 +71,9 @@ __BEGIN_DECLS
 	item = list->items[0];												\
 	for (int t_rsv_i = 0; t_rsv_i < list->num; item = list->items[++t_rsv_i])
 
+#define ITERATE_MLIST(ul)                                       \
+	for (int t_rsv_i = 0; t_rsv_i < ul->num; t_rsv_i++)
+
 /* because of libneo_cs doesn't have cs_render_stdout */
 NEOERR* mcs_outputcb(void *ctx, char *s);
 /* because of libneo_cs doesn't have cs_render_to_file */
