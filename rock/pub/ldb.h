@@ -9,7 +9,7 @@ __BEGIN_DECLS
 /*
  * col, table, condition MUST be string literal, not variable
  * "tjt_%d" OK
- * table    NOK
+ * char *table NOK
  * e.g.
  * LDB_QUERY_RAW(dbtjt, "tjt_%d", TJT_QUERY_COL, "fid=%d ORDER BY uptime "
  * " LIMIT %d OFFSET %d", NULL, aid, fid, count, offset);
