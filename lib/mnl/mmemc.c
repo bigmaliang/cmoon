@@ -250,17 +250,15 @@ memcached_return mmc_delete(const char *key, time_t exp)
 memcached_return mmc_storef(int op, char *value, size_t len, time_t exp, uint32_t flags,
 							const char *keyfmt, ...)
 {
-	char *key;
+	char key[LEN_MMC_KEY];
 	memcached_return rc;
 	va_list ap;
 
 	va_start(ap, keyfmt);
-	key = vsprintf_alloc(keyfmt, ap);
+	vsnprintf(key, sizeof(key), keyfmt, ap);
 	va_end(ap);
-	if (key == NULL) return MEMCACHED_MEMORY_ALLOCATION_FAILURE;
 
 	rc = mmc_store(op, key, value, len, exp, flags);
-	free(key);
 
 	return rc;
 }
@@ -268,17 +266,15 @@ memcached_return mmc_storef(int op, char *value, size_t len, time_t exp, uint32_
 memcached_return mmc_storef_int(int op, int value, time_t exp, uint32_t flags,
 								const char *keyfmt, ...)
 {
-	char *key;
+	char key[LEN_MMC_KEY];
 	memcached_return rc;
 	va_list ap;
 
 	va_start(ap, keyfmt);
-	key = vsprintf_alloc(keyfmt, ap);
+	vsnprintf(key, sizeof(key), keyfmt, ap);
 	va_end(ap);
-	if (key == NULL) return MEMCACHED_MEMORY_ALLOCATION_FAILURE;
 
 	rc = mmc_store_int(op, key, value, exp, flags);
-	free(key);
 
 	return rc;
 }
@@ -286,68 +282,60 @@ memcached_return mmc_storef_int(int op, int value, time_t exp, uint32_t flags,
 memcached_return mmc_countf(int op, uint32_t offset, uint64_t *value, time_t exp,
 							uint32_t flags,	const char *keyfmt, ...)
 {
-	char *key;
+	char key[LEN_MMC_KEY];
 	memcached_return rc;
 	va_list ap;
 
 	va_start(ap, keyfmt);
-	key = vsprintf_alloc(keyfmt, ap);
+	vsnprintf(key, sizeof(key), keyfmt, ap);
 	va_end(ap);
-	if (key == NULL) return MEMCACHED_MEMORY_ALLOCATION_FAILURE;
 
 	rc = mmc_count(op, key, offset, value, exp, flags);
-	free(key);
 
 	return rc;
 }
 
 char* mmc_getf(size_t *vallen, uint32_t *flags, const char *keyfmt, ...)
 {
-	char *key;
+	char key[LEN_MMC_KEY];
 	char *res;
 	va_list ap;
 
 	va_start(ap, keyfmt);
-	key = vsprintf_alloc(keyfmt, ap);
+	vsnprintf(key, sizeof(key), keyfmt, ap);
 	va_end(ap);
-	if (key == NULL) return NULL;
 
 	res = mmc_get(key, vallen, flags);
-	free(key);
 
 	return res;
 }
 
 bool mmc_getf_int(int *value, uint32_t *flags, const char *keyfmt, ...)
 {
-	char *key;
+	char key[LEN_MMC_KEY];
 	bool res;
 	va_list ap;
 
 	va_start(ap, keyfmt);
-	key = vsprintf_alloc(keyfmt, ap);
+	vsnprintf(key, sizeof(key), keyfmt, ap);
 	va_end(ap);
-	if (key == NULL) return false;
 
 	res = mmc_get_int(key, value, flags);
-	free(key);
 
 	return res;
 }
 
 memcached_return mmc_deletef(time_t exp, const char *keyfmt, ...)
 {
-	char *key;
+	char key[LEN_MMC_KEY];
 	memcached_return rc;
 	va_list ap;
 
 	va_start(ap, keyfmt);
-	key = vsprintf_alloc(keyfmt, ap);
+	vsnprintf(key, sizeof(key), keyfmt, ap);
 	va_end(ap);
-	if (key == NULL) return MEMCACHED_MEMORY_ALLOCATION_FAILURE;
 
 	rc = mmc_delete(key, exp);
-	free(key);
 
 	return rc;
 }

@@ -90,11 +90,11 @@ postgresql
 	用刚建立和配置的 mner 账号登录:
 	$psql -U mner -d postgres (当前还没建立mn_sys库)
 		create database mn_sys encoding='utf8';
-		create database mn_csc encoding='utf8';
+		create database mn_tjt encoding='utf8';
 		用postgres帐号登录:
 		\c mn_sys
 		CREATE LANGUAGE plpgsql; -- 开启 plpgsql 语言
-		\c mn_csc
+		\c mn_tjt
 		CREATE LANGUAGE plpgsql;
 	以后都可以用 $psql -U mner -d mn_sys 登录
 
