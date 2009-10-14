@@ -78,7 +78,7 @@ int group_get_info(mdb_conn *conn, int gid, group_t **group)
 		group_pack(gp, &buf, &datalen);
 		mmc_storef(MMC_OP_SET, buf, datalen, ONE_DAY, 0, PRE_MMC_GROUP".%d", gid);
 	} else {
-		ret = group_unpack(buf, datalen, &gp);
+		ret = group_unpack(buf, datalen, &gp, NULL);
 		if (ret != RET_RBTOP_OK) {
 			mtc_err("assembly group from mmc error %d", ret);
 			return RET_RBTOP_MMCERR;

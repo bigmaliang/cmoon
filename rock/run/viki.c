@@ -57,10 +57,10 @@ int main(int argc, char **argv, char **envp)
 		JUMP_NOK_CGI(err, response);
 
 #ifdef NCGI_MODE
-		hdf_set_value(cgi->hdf, PRE_REQ_URI_RW, "/admin/file");
-		hdf_set_value(cgi->hdf, PRE_COOKIE".uin", "2002");
+		hdf_set_value(cgi->hdf, PRE_REQ_URI_RW, "/csc/hc");
+		hdf_set_value(cgi->hdf, PRE_COOKIE".uin", "1001");
 		hdf_set_value(cgi->hdf, PRE_COOKIE".uname", "bigml");
-		hdf_set_value(cgi->hdf, PRE_COOKIE".musn", "wwLOnz");
+		hdf_set_value(cgi->hdf, PRE_COOKIE".musn", "8Y]u0|v=*MS]U3J");
 #endif
 		
 		ret = session_init(cgi->hdf, dbh, &session);

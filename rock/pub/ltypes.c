@@ -93,7 +93,7 @@ int list_pack(ULIST *ul, size_t (*item_len)(void *item),
         return RET_RBTOP_INPUTE;
     
     char *buf;
-    size_t len = 0;
+    size_t len = sizeof(ULIST);
 
 
     ITERATE_MLIST(ul) {
@@ -108,6 +108,9 @@ int list_pack(ULIST *ul, size_t (*item_len)(void *item),
     }
 
     list_pack_nalloc(ul, pack, buf);
+
+	*res = buf;
+	*outlen = len;
 
     return RET_RBTOP_OK;
 }
@@ -713,10 +716,15 @@ void tjt_hdf2item(HDF *hdf, void **tjt)
     lt->aid = hdf_get_int_value(hdf, "aid", 0);
     lt->fid = hdf_get_int_value(hdf, "fid", 0);
     lt->uid = hdf_get_int_value(hdf, "uid", 0);
-    lt->img = hdf_get_value(hdf, "img", NULL);
-    lt->exp = hdf_get_value(hdf, "exp", NULL);
-    lt->intime = hdf_get_value(hdf, "intime", NULL);
-    lt->uptime = hdf_get_value(hdf, "uptime", NULL);
+	/*
+	 * hdf_get_value here will cause sigv
+	 * because we'll free lt later
+	 * so, use hdf_get_copy
+	 */
+	hdf_get_copy(hdf, "img", &lt->img, NULL);
+    hdf_get_copy(hdf, "exp", &lt->exp, NULL);
+    hdf_get_copy(hdf, "intime", &lt->intime, NULL);
+    hdf_get_copy(hdf, "uptime", &lt->uptime, NULL);
 
     *tjt = lt;
 }

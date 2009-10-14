@@ -102,7 +102,7 @@ int file_get_info_by_id(mdb_conn *conn, int id, char *url, int pid, file_t **fil
 			mmc_store(MMC_OP_SET, mmckey, (void*)buf, datalen, ONE_HOUR, 0);
 		}
 	} else {
-		ret = file_unpack(buf, datalen, &fl);
+		ret = file_unpack(buf, datalen, &fl, NULL);
 		if (ret != RET_RBTOP_OK) {
 			mtc_err("assembly file from mmc error");
 			return RET_RBTOP_MMCERR;
@@ -146,7 +146,7 @@ int file_get_info_by_uri(mdb_conn *conn, char *uri, file_t **file)
 					   PRE_MMC_FILE".%s", uri);
 		}
 	} else {
-		ret = file_unpack(buf, datalen, &fl);
+		ret = file_unpack(buf, datalen, &fl, NULL);
 		if (ret != RET_RBTOP_OK) {
 			mtc_err("assembly file from mmc error");
 			return RET_RBTOP_MMCERR;
@@ -171,7 +171,7 @@ int file_get_infos_by_list(mdb_conn *conn, ULIST *urls, ULIST **files, int *noks
 	int ret;
 
 	listlen = uListLength(urls);
-	if (listlen <= 0 || url == NULL || files == NULL) {
+	if (listlen <= 0 || urls == NULL || files == NULL) {
 		return RET_RBTOP_INPUTE;
 	}
 

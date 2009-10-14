@@ -117,7 +117,7 @@ int tjt_add_item(HDF *hdf, mdb_conn *conn, session_t *ses)
 	PRE_DBOP(hdf, conn);
 
     int aid, fid, uid;
-    char *img, *exp;
+    char *img, *exp, tbl[LEN_TB];
     int ret;
 
     uid = ses->member->uin;
@@ -126,10 +126,12 @@ int tjt_add_item(HDF *hdf, mdb_conn *conn, session_t *ses)
     img = hdf_get_value(hdf, PRE_QUERY".img", "");
     exp = hdf_get_value(hdf, PRE_QUERY".exp", "");
 
+    snprintf(tbl, sizeof(tbl), "tjt_%d", aid);
+
     ret = MDATA_SET(conn, EVT_PLUGIN_TJT, NULL, FLAGS_NONE,
-                    "INSERT INTO tjt (fid, uid, img, exp) "
+                    "INSERT INTO %s (fid, uid, img, exp) "
                     " VALUES (%d, %d, $1, $2)", "ss",
-                    fid, uid, img, exp);
+                    tbl, fid, uid, img, exp);
     if (ret != MDB_ERR_NONE) {
         mtc_err("add file err %s", mdb_get_errmsg(conn));
         return RET_RBTOP_INSERTE;

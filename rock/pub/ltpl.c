@@ -80,6 +80,7 @@ int ltpl_parse_dir(char *dir, HASH *outhash)
 		cs = NULL; node = NULL;
 		memset(fname, 0x0, sizeof(fname));
 		snprintf(fname, sizeof(fname), "%s/%s", dir, eps[i]->d_name);
+		free(eps[i]);
 
 		hdf_init(&node);
 		err = hdf_read_file(node, fname);

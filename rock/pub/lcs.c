@@ -21,6 +21,8 @@ int lcs_hdf2list(HDF *hdf, char *prefix, void (*hdf2item)(HDF *hdf, void **item)
     while (node != NULL) {
         hdf2item(node, &item);
         uListAppend(*ul, item);
+
+		node = hdf_obj_next(node);
     }
 
     return RET_RBTOP_OK;
