@@ -48,7 +48,8 @@ int mdata_exec(char *plugin, int *afrow, unsigned short flag,
 		mtc_err("expand ~ %s %s failure", sql_fmt, fmt);
 		return ret;
 	}
-	
+
+    /* TODO change to mevent_inint_plugin */
 	mevent_chose_plugin(l_evt, plugin, REQ_CMD_SET, flag);
 	mevent_add_str(l_evt, NULL, "sqls", sql);
 	
