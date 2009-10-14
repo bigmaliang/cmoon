@@ -51,6 +51,7 @@ __BEGIN_DECLS
 #define PRE_MMC_MEMBER		"Member"
 #define PRE_MMC_GROUP		"Group"
 #define PRE_MMC_CSC			"Csc"
+#define PRE_MMC_COUNT		"Ttnum"
 
 #define PRE_CFG_OUTPUT		"Output"
 #define PRE_CFG_LAYOUT		"Layout"

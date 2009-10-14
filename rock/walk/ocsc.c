@@ -36,6 +36,7 @@ int csc_get_data(HDF *hdf, HASH *dbh, session_t *ses)
 		hdf_set_value(hdf, PRE_OUTPUT".appendable", "1");
 	}
 
+    lutil_fetch_countf(hdf, dbcsc, "tjt", "fid=%d", fid);
 	mmisc_get_offset(hdf, &count, &offset);
 	fid = ses->file->id;
     
@@ -70,6 +71,8 @@ void csc_refresh_info(int fid)
      * we refresh first page only here, next pages should wait timeout 
      */
     mmc_deletef(0, PRE_MMC_GROUP".%d.0", fid);
+    /* sync with lutil_fetch_countf() */
+    mmc_deletef(0, PRE_MMC_COUNT".tjt.fid=%d", fid);
 }
 
 int csc_add_image(CGI *cgi, mdb_conn *conn, session_t *ses)

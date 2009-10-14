@@ -17,6 +17,8 @@ int CGI_REQ_TYPE(CGI *cgi);
 void* lutil_get_data_handler(void *lib, CGI *cgi);
 int lutil_fill_layout_by_file(mdb_conn *conn, file_t *file, HDF *hdf);
 int lutil_image_accept(FILE *fp, char *path, unsigned char *result);
+int lutil_fetch_count(HDF *hdf, mdb_conn *conn, char *table, char *cond);
+int lutil_fetch_countf(HDF *hdf, mdb_conn *conn, char *table, char *cfmt, ...);
 
 __END_DECLS
 #endif	/* __LUTIL_H__ */
