@@ -4,7 +4,7 @@
 #include "ofile.h"
 #include "ogroup.h"
 #include "oaccount.h"
-#include "ocsc.h"
+#include "otjt.h"
 
 int admin_account_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
@@ -102,6 +102,7 @@ int service_action_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 }
 
 
+/* TOTO csc 2 tjt */
 int static_csc_data_get(HDF *hdf, HASH *dbh)
 {
 	return file_get_nav_by_uri((mdb_conn*)hash_lookup(dbh, "Sys"),
@@ -109,18 +110,18 @@ int static_csc_data_get(HDF *hdf, HASH *dbh)
 }
 
 
-int csc_data_get(CGI *cgi, HASH *dbh, session_t *ses)
+int tjt_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 {
-	return csc_get_data(cgi->hdf, dbh, ses);
+	return tjt_get_data(cgi->hdf, dbh, ses);
 }
 
-int csc_data_add(CGI *cgi, HASH *dbh, session_t *ses)
+int tjt_data_add(CGI *cgi, HASH *dbh, session_t *ses)
 {
 	char *tp = hdf_get_value(cgi->hdf, PRE_QUERY".tp", NULL);
 
 	if (tp != NULL && !strcmp(tp, "imageadd")) {
-		return csc_add_image(cgi, (mdb_conn*)hash_lookup(dbh, "Csc"), ses);
+		return tjt_add_image(cgi, (mdb_conn*)hash_lookup(dbh, "Tjt"), ses);
 	}
 
-	return csc_add_item(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Csc"), ses);
+	return tjt_add_item(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Tjt"), ses);
 }
