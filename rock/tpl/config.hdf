@@ -22,16 +22,16 @@ table {
 	}
 }
 
-u2 {
+tjt {
 	Layout = layout.html
 	Dataset {
 		Include {
-			css = u2/u2.css.html
-			js = u2/u2.js.html
-			content = u2/u2.html
+			css = tjt/tjt.css.html
+			js = tjt/tjt.js.html
+			content = tjt/tjt.html
 		}
         Layout {
-        	js = u2/u2.js
+        	js = tjt/tjt.js
         }
 	}
 }

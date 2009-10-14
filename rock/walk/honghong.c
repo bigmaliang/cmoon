@@ -102,7 +102,6 @@ int service_action_data_get(CGI *cgi, HASH *dbh, session_t *ses)
 }
 
 
-/* TOTO csc 2 tjt */
 int static_csc_data_get(HDF *hdf, HASH *dbh)
 {
 	return file_get_nav_by_uri((mdb_conn*)hash_lookup(dbh, "Sys"),

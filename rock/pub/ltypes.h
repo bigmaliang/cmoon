@@ -16,6 +16,7 @@ typedef struct _gnode {
 
 typedef struct _file {
 	int id;
+    int aid;
 	int pid;
 	int uid;
 	int gid;
@@ -51,6 +52,7 @@ typedef struct _group {
 
 typedef struct _tjt {
 	int id;
+	int aid;
 	int fid;
 	int uid;
 	char *img;
@@ -68,30 +70,32 @@ int list_pack(ULIST *ul, size_t (*item_len)(void *item),
               size_t (*pack)(void *item, char *buf),
               char **res, size_t *outlen);
 /* if *ul == NULL, i'll init it */
-char* list_unpack(char *buf, size_t (*unpack)(char *buf, size_t inlen, void **item),
+char* list_unpack(char *buf,
+                  int (*unpack)(char *buf, size_t inlen, void **item, size_t *outlen),
 				  size_t inlen, ULIST **ul);
 
 file_t* file_new();
 int  file_pack(file_t *file, char **res, size_t *outlen);
-int  file_unpack(char *buf, size_t inlen, file_t **file);
+/* TODO file_t **file ===> void **file for list_unpack */
+int  file_unpack(char *buf, size_t inlen, file_t **file, size_t *outlen);
 void file_item2hdf(file_t *fl, char *prefix, HDF *hdf);
 void file_reset(file_t *fl);
 void file_del(void *file);
 
 member_t* member_new();
 int  member_pack(member_t *member, char **res, size_t *outlen);
-int  member_unpack(char *buf, size_t inlen, member_t **member);
+int  member_unpack(char *buf, size_t inlen, member_t **member, size_t *outlen);
 void member_del(void *member);
 
 size_t GNODE_LEN(gnode_t *node);
 gnode_t* gnode_new();
 size_t gnode_pack_nalloc(void *node, char *buf);
-size_t gnode_unpack(char *buf, size_t inlen, void **gnode);
+int gnode_unpack(char *buf, size_t inlen, void **gnode, size_t *outlen);
 void   gnode_del(void *gn);
 
 group_t* group_new();
 int  group_pack(group_t *group, char **res, size_t *outlen);
-int  group_unpack(char *buf, size_t inlen, group_t **group);
+int  group_unpack(char *buf, size_t inlen, group_t **group, size_t *outlen);
 void group_item2hdf(group_t *fl, char *prefix, HDF *hdf);
 void group_del(void *group);
 
@@ -101,7 +105,7 @@ tjt_t* tjt_new();
 int tjt_pack(tjt_t *tjt, char **res, size_t *outlen);
 /* memory alloced already, e.g. in list mode */
 size_t tjt_pack_nalloc(void *tjt, char *buf);
-int tjt_unpack(char *buf, size_t inlen, void **tjt);
+int tjt_unpack(char *buf, size_t inlen, void **tjt, size_t *outlen);
 void tjt_hdf2item(HDF *hdf, void **tjt);
 void tjt_item2hdf(void *tjt, char *prefix, HDF *hdf);
 void tjt_del(void *tjt);

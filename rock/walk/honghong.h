@@ -31,7 +31,8 @@ int service_action_data_get(CGI *cgi, HASH *dbh, session_t *ses);
 int static_csc_data_get(CGI *cgi, HASH *dbh);
 
 
-int csc_data_get(CGI *cgi, HASH *dbh, session_t *ses);
+int tjt_data_get(CGI *cgi, HASH *dbh, session_t *ses);
+int tjt_data_add(CGI *cgi, HASH *dbh, session_t *ses);
 
 __END_DECLS
 #endif	/* __HONGHONG_H__ */

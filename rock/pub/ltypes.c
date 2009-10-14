@@ -112,11 +112,12 @@ int list_pack(ULIST *ul, size_t (*item_len)(void *item),
     return RET_RBTOP_OK;
 }
 
-char* list_unpack(char *buf, size_t (*unpack)(char *buf, size_t inlen, void **item),
+char* list_unpack(char *buf,
+                  int (*unpack)(char *buf, size_t ilen, void **item, size_t *olen),
 				  size_t inlen, ULIST **ul)
 {
 	void *node;
-	size_t len = 0, reslen;
+	size_t len = 0, reslen = 0;
 	
 	if (ul == NULL || unpack == NULL || buf == NULL)
 		return buf;
@@ -136,10 +137,13 @@ char* list_unpack(char *buf, size_t (*unpack)(char *buf, size_t inlen, void **it
 	for (int i = 0; i <  list->num; i++) {
 		if (len >= inlen)
 			break;
-		reslen = unpack(buf, inlen-len, &node);
-		buf += reslen;
-		len += reslen;
-		uListSet(list, i, node);
+		if (unpack(buf, inlen-len, &node, &reslen) == RET_RBTOP_OK) {
+            buf += reslen;
+            len += reslen;
+            uListSet(list, i, node);
+        } else {
+            break;
+        }
 	}
 	
 	return buf;
@@ -200,9 +204,12 @@ int file_pack(file_t *file, char **res, size_t *outlen)
 	return RET_RBTOP_OK;
 }
 
-int file_unpack(char *buf, size_t inlen, file_t **file)
+int file_unpack(char *buf, size_t inlen, file_t **file, size_t *outlen)
 {
-	if (inlen < sizeof(file_t)) {
+    *file = NULL;
+    if (outlen != NULL) *outlen = 0;
+    
+	if (inlen < sizeof(file_t) || buf == NULL) {
 		return RET_RBTOP_INPUTE;
 	}
 
@@ -225,6 +232,7 @@ int file_unpack(char *buf, size_t inlen, file_t **file)
 	STRUCT_UNPACK_STR(p, fl, uptime);
 	
 	*file = fl;
+    if (outlen != NULL) *outlen = p - buf;
 	
 	return RET_RBTOP_OK;
 }
@@ -237,6 +245,7 @@ void file_item2hdf(file_t *fl, char *prefix, HDF *hdf)
 	char key[LEN_ST];
 	
 	STORE_IN_HDF_INT(fl, id);
+	STORE_IN_HDF_INT(fl, aid);
 	STORE_IN_HDF_INT(fl, pid);
 	STORE_IN_HDF_INT(fl, uid);
 	STORE_IN_HDF_INT(fl, gid);
@@ -342,12 +351,15 @@ int member_pack(member_t *member, char **res, size_t *outlen)
 	return RET_RBTOP_OK;
 }
 
-int member_unpack(char *buf, size_t inlen, member_t **member)
+int member_unpack(char *buf, size_t inlen, member_t **member, size_t *outlen)
 {
+    *member = NULL;
+    if (outlen != NULL) *outlen = 0;
+    
 	STRING str;
 	string_init(&str);
 	
-	if (inlen < sizeof(member_t)) {
+	if (inlen < sizeof(member_t) || buf == NULL) {
 		return RET_RBTOP_INPUTE;
 	}
 
@@ -371,6 +383,7 @@ int member_unpack(char *buf, size_t inlen, member_t **member)
 	p = list_unpack(p, gnode_unpack, inlen-(p-buf), &(mb->gnode));
 	
 	*member = mb;
+    if (outlen != NULL) *outlen = p - buf;
 	
 	return RET_RBTOP_OK;
 }
@@ -431,15 +444,20 @@ size_t gnode_pack_nalloc(void *node, char *buf)
 	return pos;
 }
 
-size_t gnode_unpack(char *buf, size_t inlen, void **gnode)
+int gnode_unpack(char *buf, size_t inlen, void **gnode, size_t *outlen)
 {
-	char *p;
-	*gnode = NULL;
+	*(gnode_t**)gnode = NULL;
+    if (outlen != NULL) *outlen = 0;
 	
+	if (inlen < sizeof(gnode_t) || buf == NULL) {
+		return RET_RBTOP_INPUTE;
+	}
+    
+	char *p;
 	gnode_t *gn = gnode_new();
 	if (gn == NULL) {
 		mtc_err("alloc mem for gnode unpack failure");
-		return 0;
+		return RET_RBTOP_MEMALLOCE;
 	}
 	memcpy(gn, buf, sizeof(gnode_t));
 
@@ -449,7 +467,9 @@ size_t gnode_unpack(char *buf, size_t inlen, void **gnode)
 	STRUCT_UNPACK_STR(p, gn, uptime);
 	
 	*gnode = (void*)gn;
-	return p-buf;
+    if (outlen != NULL) *outlen = p - buf;
+    
+	return RET_RBTOP_OK;
 }
 
 void gnode_del(void *gn)
@@ -509,9 +529,12 @@ int group_pack(group_t *gp, char **res, size_t *outlen)
 	return RET_RBTOP_OK;
 }
 
-int group_unpack(char *buf, size_t inlen, group_t **group)
+int group_unpack(char *buf, size_t inlen, group_t **group, size_t *outlen)
 {
-	if (inlen < sizeof(group_t) + sizeof(ULIST)) {
+    *group = NULL;
+    if (outlen != NULL) *outlen = 0;
+    
+	if (inlen < sizeof(group_t) + sizeof(ULIST) || buf == NULL) {
 		return RET_RBTOP_INPUTE;
 	}
 
@@ -528,6 +551,7 @@ int group_unpack(char *buf, size_t inlen, group_t **group)
 	p = list_unpack(p, gnode_unpack, inlen-(p-buf), &(gp->node));
 
 	*group = gp;
+    if (outlen != NULL) *outlen = p - buf;
 
 	return RET_RBTOP_OK;
 }
@@ -645,9 +669,12 @@ size_t tjt_pack_nalloc(void *tjt, char *buf)
 	return pos;
 }
 
-int tjt_unpack(char *buf, size_t inlen, void **tjt)
+int tjt_unpack(char *buf, size_t inlen, void **tjt, size_t *outlen)
 {
-	if (inlen < sizeof(tjt_t)) {
+    *(tjt_t**)tjt = NULL;
+    if (outlen != NULL) *outlen = 0;
+    
+	if (inlen < sizeof(tjt_t) || buf == NULL) {
 		return RET_RBTOP_INPUTE;
 	}
 
@@ -667,6 +694,7 @@ int tjt_unpack(char *buf, size_t inlen, void **tjt)
 	STRUCT_UNPACK_STR(p, lt, uptime);
 	
 	*(tjt_t**)tjt = lt;
+    if (outlen != NULL) *outlen = p - buf;
 	
 	return RET_RBTOP_OK;
 }
@@ -682,6 +710,7 @@ void tjt_hdf2item(HDF *hdf, void **tjt)
     }
 
     lt->id = hdf_get_int_value(hdf, "id", 0);
+    lt->aid = hdf_get_int_value(hdf, "aid", 0);
     lt->fid = hdf_get_int_value(hdf, "fid", 0);
     lt->uid = hdf_get_int_value(hdf, "uid", 0);
     lt->img = hdf_get_value(hdf, "img", NULL);
@@ -701,6 +730,7 @@ void tjt_item2hdf(void *tjt, char *prefix, HDF *hdf)
     tjt_t *lt = tjt;
 	
 	STORE_IN_HDF_INT(lt, id);
+	STORE_IN_HDF_INT(lt, aid);
 	STORE_IN_HDF_INT(lt, fid);
 	STORE_IN_HDF_INT(lt, uid);
 	STORE_IN_HDF_STR(lt, img);

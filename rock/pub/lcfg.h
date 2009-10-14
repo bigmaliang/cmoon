@@ -50,7 +50,7 @@ __BEGIN_DECLS
 #define PRE_MMC_FILE		"File"
 #define PRE_MMC_MEMBER		"Member"
 #define PRE_MMC_GROUP		"Group"
-#define PRE_MMC_CSC			"Csc"
+#define PRE_MMC_TJT			"Tjt"
 #define PRE_MMC_COUNT		"Ttnum"
 
 #define PRE_CFG_OUTPUT		"Output"
@@ -61,7 +61,7 @@ __BEGIN_DECLS
 
 #define EVT_PLUGIN_SYS		"db_sys"
 #define EVT_PLUGIN_USER		"db_user"
-#define EVT_PLUGIN_CSC		"db_csc"
+#define EVT_PLUGIN_TJT		"db_tjt"
 
 __END_DECLS
 #endif	/* __LCFG_H__ */

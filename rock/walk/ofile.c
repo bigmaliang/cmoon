@@ -3,14 +3,15 @@
 #include "ofile.h"
 #include "omember.h"
 
-#define FILE_QUERY_COL	" id, pid, uid, gid, mode, reqtype, lmttype, name, " \
+#define FILE_QUERY_COL	" id, aid, pid, uid, gid, mode, reqtype, lmttype, name, " \
 	"remark, uri, dataer, render, to_char(intime, 'YYYY-MM-DD') as intime, " \
 	" to_char(uptime, 'YYYY-MM-DD') as uptime "
 
 #define FILE_GET_RAW(conn, fl)											\
-	mdb_get(conn, "iiiiiiiSSSSSSS", &(fl->id), &(fl->pid), &(fl->uid), &(fl->gid), \
-			&(fl->mode), &(fl->reqtype), &(fl->lmttype), &(fl->name), &(fl->remark), \
-			&(fl->uri),	&(fl->dataer), &(fl->render), &(fl->intime), &(fl->uptime))
+	mdb_get(conn, "iiiiiiiiSSSSSSS", &(fl->id), &(fl->aid), &(fl->pid), &(fl->uid), \
+            &(fl->gid), &(fl->mode), &(fl->reqtype), &(fl->lmttype), &(fl->name), \
+            &(fl->remark), &(fl->uri),	&(fl->dataer), &(fl->render), \
+            &(fl->intime), &(fl->uptime))
 
 
 int file_check_user_power(HDF *hdf, mdb_conn *conn, session_t *ses,
