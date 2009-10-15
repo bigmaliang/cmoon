@@ -7,3 +7,4 @@ all: install
 
 install: $(BINARY)
 	@find -name '*.js' -exec $(CPWITHDIR) -p $(PATH_DOC)/js/ {} \;
+	@find -name 'up.*.html' -exec $(CPWITHDIR) -p $(PATH_DOC)/uiplug/ {} \;

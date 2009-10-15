@@ -56,6 +56,7 @@ typedef struct _tjt {
 	int fid;
 	int uid;
 	char *img;
+    char *imgurl;
 	char *exp;
 	char *intime;
 	char *uptime;

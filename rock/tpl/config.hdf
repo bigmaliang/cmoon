@@ -32,6 +32,7 @@ tjt {
 		}
         Layout {
         	js = tjt/tjt.js
+            html = uiplug.html
         }
 	}
 }

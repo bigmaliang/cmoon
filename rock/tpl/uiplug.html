@@ -1,0 +1,12 @@
+<?cs if: ?Output.Uiplug.moles ?>
+  <?cs each: mole = Output.Uiplug.moles ?>
+    $.uiplugMole(mole.name);
+  <?cs /each ?>
+  $("#MOLE_TABS").tabs($("#MOLE_PANES > div", {effect: 'ajax'}));
+<?cs /if ?>
+
+<?cs if: ?Output.Uiplug.atoms ?>
+  <?cs each: atom = Output.Uiplug.atoms ?>
+    $.uiplugAtom(atom.name);
+  <?cs /each ?>
+<?cs /if ?>

@@ -1,7 +1,7 @@
 BASEDIR = ../../
 include $(BASEDIR)Make.env
 
-all: mbase.js mbox.js mflowtools.js mform.js  mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js
+all: mbase.js mbox.js mflowtools.js mform.js  mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js muiplug.js
 
 mbase.js: ref/jquery-1.2.6.js  ref/jquery.cookie.js  own/jquery.mnmisc.js 
 
@@ -27,10 +27,12 @@ mpagenav.js: own/jquery.mnpagenav.js
 
 minputval.js: own/jquery.mninpval.js
 
+muiplug.js: own/jquery.mnuiplug.js
+
 %.js:
 	@echo -n > $@
 	$(JSGLUE) $^ > $@
 
 
 clean:
-	@rm -f mbase.js mbox.js mflowtools.js mform.js mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js
+	@rm -f mbase.js mbox.js mflowtools.js mform.js mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js muiplug.js

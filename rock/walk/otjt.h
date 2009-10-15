@@ -9,7 +9,7 @@ __BEGIN_DECLS
 int tjt_get_data(HDF *hdf, HASH *dbh, session_t *ses);
 void tjt_refresh_info(int aid, int fid);
 int tjt_add_image(CGI *cgi, mdb_conn *conn, session_t *ses);
-int tjt_add_item(HDF *hdf, mdb_conn *conn, session_t *ses);
+int tjt_add_atom(HDF *hdf, mdb_conn *conn, session_t *ses);
 
 __END_DECLS
 #endif /* __OTJT_H__ */

@@ -51,8 +51,9 @@ int tjt_get_data(HDF *hdf, HASH *dbh, session_t *ses)
     if (buf == NULL || datalen < sizeof(tjt_t)) {
         LDB_QUERY_RAW(dbtjt, "tjt_%d", TJT_QUERY_COL, "fid=%d ORDER BY uptime "
                       " LIMIT %d OFFSET %d", NULL, aid, fid, count, offset);
-        mdb_set_rows(hdf, dbtjt, TJT_QUERY_COL, PRE_OUTPUT".items");
-        lcs_hdf2list(hdf, PRE_OUTPUT".items", tjt_hdf2item, &ul);
+        mdb_set_rows(hdf, dbtjt, TJT_QUERY_COL, PRE_OUTPUT".atoms");
+        luti_image_expand(hdf, PRE_OUTPUT".atoms", "img", IMG_PATH, IMG_S, "imgurl");
+        lcs_hdf2list(hdf, PRE_OUTPUT".atoms", tjt_hdf2item, &ul);
         ret = list_pack(ul, TJT_LEN, tjt_pack_nalloc, &buf, &datalen);
         if (ret == RET_RBTOP_OK) {
             mmc_storef(MMC_OP_SET, buf, datalen, HALF_HOUR, 0, PRE_MMC_TJT".%d.%d",
@@ -60,7 +61,7 @@ int tjt_get_data(HDF *hdf, HASH *dbh, session_t *ses)
         }
     } else {
         list_unpack(buf, tjt_unpack, datalen, &ul);
-        ret = lcs_list2hdf(ul, PRE_OUTPUT".items", tjt_item2hdf, hdf);
+        ret = lcs_list2hdf(ul, PRE_OUTPUT".atoms", tjt_item2hdf, hdf);
         if (ret != RET_RBTOP_OK) {
             mtc_err("assembly tjt from mmc error");
             return RET_RBTOP_MMCERR;
@@ -112,7 +113,7 @@ int tjt_add_image(CGI *cgi, mdb_conn *conn, session_t *ses)
 	return RET_RBTOP_OK;
 }
 
-int tjt_add_item(HDF *hdf, mdb_conn *conn, session_t *ses)
+int tjt_add_atom(HDF *hdf, mdb_conn *conn, session_t *ses)
 {
 	PRE_DBOP(hdf, conn);
 

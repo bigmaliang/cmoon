@@ -7,42 +7,18 @@
 
 <div id="coltwo">
 
-  <div id="items">
-	<?cs each: item = Output.items ?>
-	<div>
-	  <img src="<?cs var: item.imgurl ?>" width="250" />
-	  <pre><?cs var: item.exp ?></pre>
+  <div id="UIPLUG_MOLE"></div>
+  <div class="sep"></div>
+
+  <div class="title">商品列表</div>
+  <div id="atoms">
+	<?cs each: atom = Output.atoms ?>
+	<div class="UIPLUG_ATOM" atomid="<?cs var: atom.id ?>">
+	  <img src="<?cs var: atom.imgurl ?>" />
+	  <pre><?cs var: atom.exp ?></pre>
 	</div>
 	<?cs /each ?>
   </div>
   <div id="pagenav"></div>
   <div class="sep"></div>
-  
-  <?cs if:Output.appendable == 1 ?>
-    <button class="submitbtn" type="button" rel="#appendoverlay">货物上架</button>
-	<div class="overlay infoform" id="appendoverlay">
-	  <div class="overlaytitle">添加商品</div>
-	  
-	  <input id="itemimg" type="hidden" value="" />
-	  <ul>
-		<li>
-		  <div class="leftitem">商品图片:</div>
-		  <img id="previewimg" src="http://img.eol.com/tjt/ori/default.jpg" width="150" height="80" />
-		</li>
-
-		<li>
-		  <div class="leftitem">商品描述:</div>
-		  <textarea id="itemexp" class="VAL_APPEND vrequire" vmax="1024" rows="5" cols="20"></textarea>
-		</li>
-
-		<li>
-		  <div class="leftitem"> &nbsp; </div>
-		  <input id="additem" type="button" class="submitbtn" value="提交" />
-		</li>
-	  </ul>
-    </div>
-  <?cs /if ?>
-
-  <div class="sep"></div>
-  <div class="title"></div>
 </div>

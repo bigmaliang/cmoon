@@ -605,6 +605,8 @@ size_t TJT_LEN(void *item)
 
     if (lt->img != NULL)
         len += strlen(lt->img) + 1;
+    if (lt->imgurl != NULL)
+        len += strlen(lt->imgurl) + 1;
     if (lt->exp != NULL)
         len += strlen(lt->exp) + 1;
     if (lt->intime != NULL)
@@ -631,6 +633,7 @@ int tjt_pack(tjt_t *tjt, char **res, size_t *outlen)
 	size_t len = sizeof(tjt_t);
 
 	STRUCT_ADD_LEN(len, tjt, img);
+	STRUCT_ADD_LEN(len, tjt, imgurl);
 	STRUCT_ADD_LEN(len, tjt, exp);
 	STRUCT_ADD_LEN(len, tjt, intime);
 	STRUCT_ADD_LEN(len, tjt, uptime);
@@ -646,6 +649,7 @@ int tjt_pack(tjt_t *tjt, char **res, size_t *outlen)
 	size_t pos = sizeof(tjt_t);
 
 	STRUCT_PACK_STR(tjt, img);
+	STRUCT_PACK_STR(tjt, imgurl);
 	STRUCT_PACK_STR(tjt, exp);
 	STRUCT_PACK_STR(tjt, intime);
 	STRUCT_PACK_STR(tjt, uptime);
@@ -665,6 +669,7 @@ size_t tjt_pack_nalloc(void *tjt, char *buf)
 	pos += sizeof(tjt_t);
 
 	STRUCT_PACK_STR(lt, img);
+	STRUCT_PACK_STR(lt, imgurl);
 	STRUCT_PACK_STR(lt, exp);
 	STRUCT_PACK_STR(lt, intime);
 	STRUCT_PACK_STR(lt, uptime);
@@ -692,6 +697,7 @@ int tjt_unpack(char *buf, size_t inlen, void **tjt, size_t *outlen)
 	p = buf+sizeof(tjt_t);
 
 	STRUCT_UNPACK_STR(p, lt, img);
+	STRUCT_UNPACK_STR(p, lt, imgurl);
 	STRUCT_UNPACK_STR(p, lt, exp);
 	STRUCT_UNPACK_STR(p, lt, intime);
 	STRUCT_UNPACK_STR(p, lt, uptime);
@@ -722,6 +728,7 @@ void tjt_hdf2item(HDF *hdf, void **tjt)
 	 * so, use hdf_get_copy
 	 */
 	hdf_get_copy(hdf, "img", &lt->img, NULL);
+    hdf_get_copy(hdf, "imgurl", &lt->imgurl, NULL);
     hdf_get_copy(hdf, "exp", &lt->exp, NULL);
     hdf_get_copy(hdf, "intime", &lt->intime, NULL);
     hdf_get_copy(hdf, "uptime", &lt->uptime, NULL);
@@ -742,6 +749,7 @@ void tjt_item2hdf(void *tjt, char *prefix, HDF *hdf)
 	STORE_IN_HDF_INT(lt, fid);
 	STORE_IN_HDF_INT(lt, uid);
 	STORE_IN_HDF_STR(lt, img);
+	STORE_IN_HDF_STR(lt, imgurl);
 	STORE_IN_HDF_STR(lt, exp);
 	STORE_IN_HDF_STR(lt, intime);
 	STORE_IN_HDF_STR(lt, uptime);
@@ -755,6 +763,7 @@ void tjt_del(void *tjt)
 		return;
 
 	SAFE_FREE(lt->img);
+	SAFE_FREE(lt->imgurl);
 	SAFE_FREE(lt->exp);
 	SAFE_FREE(lt->intime);
 	SAFE_FREE(lt->uptime);

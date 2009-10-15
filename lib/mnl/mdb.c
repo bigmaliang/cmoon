@@ -209,7 +209,7 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 		strcat(fmt, "s");
 	}
 
-	char hdfkey[LEN_ST];
+	char hdfkey[LEN_HDF_KEY];
 	/* append to last child */
 	int rowsn = 0;
 	snprintf(hdfkey, sizeof(hdfkey)-1, "%s.0", prefix);

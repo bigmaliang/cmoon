@@ -27,6 +27,7 @@ __BEGIN_DECLS
 #define LEN_FN		_POSIX_PATH_MAX		/* LEN_FILENAME */
 #define LEN_LINE	(1024*100)
 #define LEN_SQL		1024
+#define LEN_HDF_KEY	64
 #define LEN_MMC_KEY	256					/* memcached key length */
 #define LEN_NMDB_KEY 256
 #define LEN_NMDB_VAL (1024*64)

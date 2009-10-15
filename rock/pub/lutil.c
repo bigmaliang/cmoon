@@ -152,6 +152,44 @@ int lutil_image_accept(FILE *fp, char *path, unsigned char *result)
 	return RET_RBTOP_OK;
 }
 
+int lutil_image_expand(HDF *hdf, char *prefix, char *name,
+                       char *imgpath, char *imgsize, char *dst)
+{
+    if (hdf == NULL || imgpath == NULL || imgsize == NULL || dst == NULL)
+        return RET_RBTOP_INPUTE;
+
+    HDF *node;
+    char key[LEN_HDF_KEY];
+    char *img;
+
+    if (prefix != NULL && name != NULL) {
+        /* Output.atoms .0 .img */
+        snprintf(key, sizeof(key), "%s.0", prefix);
+        node = hdf_get_obj(hdf, key);
+
+        while (node != NULL) {
+            img = hdf_get_value(node, name, NULL);
+            if (img != NULL) {
+                hdf_set_valuef(node, "%s="IMG_DOMAIN"/%s/%s/%s",
+                               dst, imgpath, imgsize, img);
+            }
+            
+            node = hdf_obj_next();
+        }
+    } else if(prefix == NULL && name != NULL) {
+        /* Output.atom.img */
+        img = hdf_get_value(hdf, name, NULL);
+        if (img != NULL) {
+            hdf_set_valuef(hdf, "%s="IMG_DOMAIN"/%s/%s/%s",
+                           dst, imgpath, imgsize, img);
+        }
+    } else {
+        return RET_RBTOP_INPUTE;
+    }
+
+    return RET_RBTOP_OK;
+}
+
 int lutil_fetch_count(HDF *hdf, mdb_conn *conn, char *table, char *cond)
 {
 	PRE_DBOP(hdf, conn);

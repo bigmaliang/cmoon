@@ -122,5 +122,5 @@ int tjt_data_add(CGI *cgi, HASH *dbh, session_t *ses)
 		return tjt_add_image(cgi, (mdb_conn*)hash_lookup(dbh, "Tjt"), ses);
 	}
 
-	return tjt_add_item(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Tjt"), ses);
+	return tjt_add_atom(cgi->hdf, (mdb_conn*)hash_lookup(dbh, "Tjt"), ses);
 }
