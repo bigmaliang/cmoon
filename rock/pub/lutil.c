@@ -174,7 +174,7 @@ int lutil_image_expand(HDF *hdf, char *prefix, char *name,
                                dst, imgpath, imgsize, img);
             }
             
-            node = hdf_obj_next();
+            node = hdf_obj_next(node);
         }
     } else if(prefix == NULL && name != NULL) {
         /* Output.atom.img */

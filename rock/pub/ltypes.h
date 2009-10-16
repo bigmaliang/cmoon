@@ -111,9 +111,24 @@ void tjt_hdf2item(HDF *hdf, void **tjt);
 void tjt_item2hdf(void *tjt, char *prefix, HDF *hdf);
 void tjt_del(void *tjt);
 
+/*
+ * don't need cache(pack & unpack), so, char* can before int 
+ */
+typedef struct _uiplug {
+    int type;
+	char *name;
+    int gmode;
+} uiplug_t;
+
+uiplug_t *uiplug_new();
+void uiplug_hdf2item(HDF *hdf, void **uiplug);
+void uiplug_item2hdf(void *uiplug, char *prefix, HDF *hdf);
+void uiplug_del(void *up);
+
 typedef struct _session {
 	member_t *member;
 	file_t *file;
+    ULIST *uiplug;
 	time_t tm_cache_browser;
 } session_t;
 

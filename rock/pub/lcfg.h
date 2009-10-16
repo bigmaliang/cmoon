@@ -37,6 +37,7 @@ __BEGIN_DECLS
 #define URI_SPLITER		"/"
 
 #define PRE_OUT_TPL		PRE_OUTPUT".tpl" /* ltpl_prepare_rend() */
+#define PRE_OUT_UIPLUG	PRE_OUTPUT".Uiplug"
 
 #define PRE_REQ_URI		PRE_CGI".ScriptName" 		/* lutil_file_access() */
 #define PRE_REQ_URI_RW	PRE_QUERY".ScriptName"		/* lutil_file_access_rewrited() */
@@ -58,6 +59,7 @@ __BEGIN_DECLS
 #define PRE_CFG_DATASET		"Dataset"
 #define PRE_CFG_DATAER		"data_geter"
 #define PRE_CFG_FILECACHE	"FileCache"
+#define PRE_CFG_UIPLUG		"Uiplug"
 
 #define EVT_PLUGIN_SYS		"db_sys"
 #define EVT_PLUGIN_USER		"db_user"

@@ -52,7 +52,7 @@ int tjt_get_data(HDF *hdf, HASH *dbh, session_t *ses)
         LDB_QUERY_RAW(dbtjt, "tjt_%d", TJT_QUERY_COL, "fid=%d ORDER BY uptime "
                       " LIMIT %d OFFSET %d", NULL, aid, fid, count, offset);
         mdb_set_rows(hdf, dbtjt, TJT_QUERY_COL, PRE_OUTPUT".atoms");
-        luti_image_expand(hdf, PRE_OUTPUT".atoms", "img", IMG_PATH, IMG_S, "imgurl");
+        lutil_image_expand(hdf, PRE_OUTPUT".atoms", "img", IMG_PATH, IMG_S, "imgurl");
         lcs_hdf2list(hdf, PRE_OUTPUT".atoms", tjt_hdf2item, &ul);
         ret = list_pack(ul, TJT_LEN, tjt_pack_nalloc, &buf, &datalen);
         if (ret == RET_RBTOP_OK) {

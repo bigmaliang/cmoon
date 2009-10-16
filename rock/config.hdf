@@ -43,3 +43,21 @@ FileCache {
 		tm_cache = 60
 	}
 }
+
+Uiplug {
+	0 {
+    	uri = ^/csc
+        mole {
+        	0 {
+            	name = tjt_atomadd
+                limit = 3
+            }
+        }
+        atom {
+        	0 {
+            	name = tjt_atommod
+                limit = 3
+            }
+        }
+    }
+}

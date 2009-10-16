@@ -24,7 +24,7 @@ int lutil_image_accept(FILE *fp, char *path, unsigned char *result);
 int lutil_image_expand(HDF *hdf, char *prefix, char *name,
                        char *imgpath, char *imgsize, char *dst);
 int lutil_fetch_count(HDF *hdf, mdb_conn *conn, char *table, char *cond);
-int lutil_fetchcountf(HDF *hdf, mdb_conn *conn, char *table, char *cfmt, ...);
+int lutil_fetch_countf(HDF *hdf, mdb_conn *conn, char *table, char *cfmt, ...);
 
 __END_DECLS
 #endif	/* __LUTIL_H__ */

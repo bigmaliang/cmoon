@@ -1,6 +1,7 @@
 #include "mheads.h"
 #include "lheads.h"
 #include "ofile.h"
+#include "omember.h"
 
 int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri)
 {
@@ -83,8 +84,9 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri)
 	}
 
 	ses->file = file;
-	HDF *node = hdf_get_obj(g_cfg, PRE_CFG_FILECACHE);
-	if (node != NULL) node = hdf_obj_child(node);
+
+    /* process cache */
+	HDF *node = hdf_get_obj(g_cfg, PRE_CFG_FILECACHE".0");
 	while (node != NULL) {
 		if (reg_search(hdf_get_value(node, "uri", "NULL"), file->uri)) {
 			ses->tm_cache_browser = hdf_get_int_value(node, "tm_cache", 0);
@@ -92,6 +94,19 @@ int lfile_check_power(CGI *cgi, mdb_conn *conn, session_t *ses, char *uri)
 		}
 		node = hdf_obj_next(node);
 	}
+
+    /* process uiplug */
+    node = hdf_get_obj(g_cfg, PRE_CFG_UIPLUG".0");
+    while (node != NULL) {
+        if (reg_search(hdf_get_value(node, "uri", "NULL"), file->uri)) {
+            if(lfile_filter_uiplug(node, ses) == RET_RBTOP_OK) {
+                lcs_list2hdf(ses->uiplug, PRE_OUT_UIPLUG, uiplug_item2hdf, cgi->hdf);
+            }
+            break;
+        }
+        node = hdf_obj_next(node);
+    }
+    
 	return RET_RBTOP_OK;
 	
 notpass:
@@ -123,3 +138,43 @@ int lfile_access_rewrited(CGI *cgi, HASH *dbh, session_t *ses)
 	return lfile_check_power(cgi, conn, ses, uri);
 }
 
+int lfile_filter_uiplug(HDF *hdf, session_t *ses)
+{
+    if (hdf == NULL || ses == NULL || ses->member == NULL || ses->file == NULL)
+        return RET_RBTOP_INPUTE;
+    
+    int gmode;
+    uiplug_t *up;
+    HDF *node = hdf_get_obj(hdf, "mole.0");
+    
+    while (node != NULL) {
+        gmode = hdf_get_int_value(node, "gmode", 255);
+        if (member_has_gmode(ses->member, gmode, GROUP_STAT_ALL)) {
+            up = uiplug_new();
+            if (up != NULL) {
+                up->type = UIPLUG_TYPE_MOLE;
+                hdf_get_copy(node, "name", &up->name, NULL);
+                up->gmode = hdf_get_int_value(node, "gmode", 255);
+                uListAppend(ses->uiplug, (void*)up);
+            }
+        }
+        node = hdf_obj_next(node);
+    }
+    
+    node = hdf_get_obj(hdf, "atom.0");
+    while (node != NULL) {
+        gmode = hdf_get_int_value(node, "gmode", 255);
+        if (member_has_gmode(ses->member, gmode, GROUP_STAT_ALL)) {
+            up = uiplug_new();
+            if (up != NULL) {
+                up->type = UIPLUG_TYPE_ATOM;
+                hdf_get_copy(node, "name", &up->name, NULL);
+                up->gmode = hdf_get_int_value(node, "gmode", 255);
+                uListAppend(ses->uiplug, (void*)up);
+            }
+        }
+        node = hdf_obj_next(node);
+    }
+
+    return RET_RBTOP_OK;
+}

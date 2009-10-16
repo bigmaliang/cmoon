@@ -245,7 +245,7 @@ void file_item2hdf(file_t *fl, char *prefix, HDF *hdf)
 	if (fl == NULL || prefix == NULL || hdf == NULL)
 		return;
 	
-	char key[LEN_ST];
+	char key[LEN_HDF_KEY];
 	
 	STORE_IN_HDF_INT(fl, id);
 	STORE_IN_HDF_INT(fl, aid);
@@ -564,7 +564,7 @@ void group_item2hdf(group_t *gp, char *prekey, HDF *hdf)
 	if (gp == NULL || prekey == NULL || hdf == NULL)
 		return;
 
-	char key[LEN_ST], tok[LEN_MD], *prefix = prekey;
+	char key[LEN_HDF_KEY], tok[LEN_MD], *prefix = prekey;
 
 	STORE_IN_HDF_INT(gp, gid);
 
@@ -710,7 +710,7 @@ int tjt_unpack(char *buf, size_t inlen, void **tjt, size_t *outlen)
 
 void tjt_hdf2item(HDF *hdf, void **tjt)
 {
-    *tjt = NULL;
+    *(tjt_t**)tjt = NULL;
 
     tjt_t *lt = tjt_new();
     if (lt == NULL) {
@@ -733,7 +733,7 @@ void tjt_hdf2item(HDF *hdf, void **tjt)
     hdf_get_copy(hdf, "intime", &lt->intime, NULL);
     hdf_get_copy(hdf, "uptime", &lt->uptime, NULL);
 
-    *tjt = lt;
+    *(tjt_t**)tjt = lt;
 }
 
 void tjt_item2hdf(void *tjt, char *prefix, HDF *hdf)
@@ -741,8 +741,8 @@ void tjt_item2hdf(void *tjt, char *prefix, HDF *hdf)
 	if (tjt == NULL || prefix == NULL || hdf == NULL)
 		return;
 	
-	char key[LEN_ST];
-    tjt_t *lt = tjt;
+	char key[LEN_HDF_KEY];
+    tjt_t *lt = (tjt_t*)tjt;
 	
 	STORE_IN_HDF_INT(lt, id);
 	STORE_IN_HDF_INT(lt, aid);
@@ -775,18 +775,66 @@ void tjt_del(void *tjt)
  */
 #include "omember.h"
 
+uiplug_t *uiplug_new()
+{
+    return (uiplug_t*)calloc(1, sizeof(uiplug_t));
+}
+
+void uiplug_hdf2item(HDF *hdf, void **uiplug)
+{
+    *(uiplug_t**)uiplug = NULL;
+
+    uiplug_t *up = uiplug_new();
+    if (up == NULL) {
+        mtc_err("alloc mem for uiplug failure");
+        return;
+    }
+
+    up->type = hdf_get_int_value(hdf, "type", 0);
+    hdf_get_copy(hdf, "name", &up->name, NULL);
+    up->gmode = hdf_get_int_value(hdf, "gmode", 255);
+
+    *(uiplug_t**)uiplug = up;
+}
+
+void uiplug_item2hdf(void *uiplug, char *prefix, HDF *hdf)
+{
+    if (uiplug == NULL || prefix == NULL || hdf == NULL)
+        return;
+
+    char key[LEN_HDF_KEY];
+    uiplug_t *up = (uiplug_t*)uiplug;
+
+    STORE_IN_HDF_INT(up, type);
+    STORE_IN_HDF_STR(up, name);
+    STORE_IN_HDF_INT(up, gmode);
+}
+
+void uiplug_del(void *up)
+{
+    uiplug_t *lup = (uiplug_t*)up;
+    if (lup == NULL)
+        return;
+
+    SAFE_FREE(lup->name);
+    SAFE_FREE(lup);
+}
+
 int session_init(HDF *hdf, HASH *dbh, session_t **ses)
 {
 	int ret;
+	NEOERR *err;
 	session_t *lses;
 	
 	*ses = NULL;
-	
+
 	lses = calloc(1, sizeof(session_t));
 	if (lses == NULL) {
 		mtc_err("calloc memory for session_t failure");
 		return RET_RBTOP_MEMALLOCE;
 	}
+    err = uListInit(&(lses->uiplug), 0, 0);
+    RETURN_V_NOK(err, RET_RBTOP_MEMALLOCE);
 
 	*ses = lses;
 
@@ -823,10 +871,10 @@ void session_destroy(session_t **ses)
 
 	if (lses == NULL) return;
 
-	if (lses->member != NULL)
-		member_del(lses->member);
-	if (lses->file != NULL)
-		file_del(lses->file);
+    SAFE_FREE(lses->member);
+    SAFE_FREE(lses->file);
+    if (lses->uiplug != NULL)
+        uListDestroyFunc(&lses->uiplug, uiplug_del);
 
 	free(lses);
 	lses = NULL;

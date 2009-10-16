@@ -283,7 +283,7 @@ int member_get_info(mdb_conn *conn, int uin, member_t **member)
 		member_pack(mb, &buf, &datalen);
 		mmc_storef(MMC_OP_SET, buf, datalen, ONE_DAY, 0, PRE_MMC_MEMBER".%d", uin);
 	} else {
-		ret = member_unpack(buf, datalen, &mb);
+		ret = member_unpack(buf, datalen, &mb, NULL);
 		if (ret != RET_RBTOP_OK) {
 			mtc_err("assembly member from mmc error");
 			return RET_RBTOP_MMCERR;

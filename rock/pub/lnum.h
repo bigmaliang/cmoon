@@ -45,6 +45,11 @@ enum limit_type {
 	LMT_TYPE_ROOT = 255
 };
 
+enum uiplug_type {
+    UIPLUG_TYPE_MOLE = 0,
+    UIPLUG_TYPE_ATOM
+};
+
 #define MIN_USER_NUM	998
 
 #define LMT_CLI_REGIST	400

@@ -4,9 +4,9 @@
 -- 0001' 0000'0001' 0000'0000 65792
 -- 0101' 0000'0001' 0000'0001 327937
 -- 1111' 0000'0111' 0000'0001 984833
-INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1, 1001, 65792, 0, 0, 'admin', '管理'); -- can't direct access 2
-INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1, 1001, 1, 0, 0, 'member', '用户'); -- can't direct access 3
-INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1, 1001, 1, 0, 0, 'service', '服务'); -- can't direct access 4
+INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1, 1001, 65792, 0, 0, 'admin', '管理'); -- can't direct access, 2
+INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1, 1001, 1, 0, 0, 'member', '用户'); -- can't direct access, 3
+INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1, 1001, 1, 0, 0, 'service', '服务'); -- can't direct access, 4
 INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 1, 1001, 327937, 0, 0, 'csc', '菜市场'); -- 5
 
 INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (2, 2, 1001, 15, 1, 1, 'profile', '信息');
