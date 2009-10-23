@@ -8,7 +8,7 @@
 
 #define MODULE_NAME "push"
 
-#define FRIEND_PIP_NAME	"FriendPipe"
+#define FRIEND_PIP_NAME	"*FriendPipe"
 
 #define SET_USER_FOR_APE(ape, uin, user)								\
 	do {																\

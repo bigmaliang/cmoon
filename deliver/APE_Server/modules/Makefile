@@ -15,8 +15,8 @@ ifdef LINUX_BUILD
 
 CFLAGS=-Wall -g -shared -fPIC -rdynamic
 
-EVENT_BASE = ../../../../event
-CS_BASE = ../../../../lib/cs
+EVENT_BASE = ../../../event
+CS_BASE = ../../../lib/cs
 INC_EVENT = -I $(EVENT_BASE)/api -I $(EVENT_BASE)/base -I $(EVENT_BASE)/plugin -I $(CS_BASE)/include/ClearSilver
 LIB_EVENT = -L $(EVENT_BASE)/api -lmevent -L $(EVENT_BASE)/daemon -lmevent_server -L/usr/local/lib -l neo_utl
 
