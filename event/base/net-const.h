@@ -43,7 +43,7 @@
 #define FLAGS_SYNC		2	/* set, del */
 
 #define PROCESS_OK(ret)	(ret >= REP_OK && ret < REP_ERR)
-#define PROCESS_NOK(ret) (ret < REP_OK && ret >= REP_ERR)
+#define PROCESS_NOK(ret) (ret < REP_OK || ret >= REP_ERR)
 
 enum {
 	DATA_TYPE_EOF = 0,
