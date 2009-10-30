@@ -1,0 +1,53 @@
+数据部分
+=======
+entry.c
+    主程序文件, 可以看出整个服务器的结构, 包括初解析配置文件, 初始化g_ape主数据结构,
+    加载插件, 开启dns服务器, ape服务器, epoll循环等.
+    
+main.h
+    可配置宏, acetables 数据结构(整站全局变量), ape_socket 数据结构(网络通信骨架)
+
+user
+    客户端数据结构封装, USERS 用来封装一个用户, subuser 为具体的某个连接
+    可以大致认为 USERS 为一个帐号的所有连接集合, subuser 为客户端浏览器具体的某个tab页
+    
+pipe
+    管道封装, 通信的底层支持, 每个用户, 包括下面的频道, 都具有一个管道, 用来传送消息
+    pipe 在这里实现的只是一个数据结构(transpipe), 没有实现多少有意义的具体的动作.
+    
+channel
+    频道封装, 频道, 为一群用户的集合, 频道上所有的用户能够收看到该频道的所有消息.
+    
+raw
+    消息传输的具体实现, 定义了整站传输消息的结构RAW, 并实现了往用户, 管道, 频道发送数据的功能
+    
+json(json.h/c, json_parser.h/c)
+    json 数据处理模块, 包括json解析器, 查找, 新加 等具体操作
+    
+hash
+    服务器内部使用的 hash 数据结构和操作方法
+    
+extend
+    用户, 频道等内部的一些便于扩展的数据结构的实现:
+    struct _extend *properties;
+    例如, 为每个用户加一个昵称属性, 就可以放在这里
+    
+config
+    配置文件数据结构和解析模块
+    
+cmd
+    实现了一个简单的聊天室的命令号客户端, 包括 connect, check, join, left, ban, 等
+    
+
+
+网络部分
+=======
+events
+	类似于libevent的功能, 网络模型的底层
+
+sock
+	结合events, tickts 实现整个服务器的网络主循环
+
+ape server(servers.h/c, sock.h/c, http.h/c, transport.h/c) ape 服务器
+dns server(dns.h)
+tickts
