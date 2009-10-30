@@ -79,7 +79,7 @@ void tjt_refresh_info(int aid, int fid)
     snprintf(tbl, sizeof(tbl), "tjt_%d", aid);
     
     /*
-     * we refresh first page only here, next pages should wait timeout 
+     * we only refresh first page here, next pages should wait timeout
      */
     mmc_deletef(0, PRE_MMC_GROUP".%d.0", fid);
     /* sync with lutil_fetch_countf() */

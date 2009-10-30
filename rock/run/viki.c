@@ -137,5 +137,3 @@ int main(int argc, char **argv, char **envp)
 	mconfig_cleanup(&g_cfg);
 	return 0;
 }
-
-
