@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./index && ./kosher && ./process && ./dld && ./query && ./about
+./index && ./kosher && ./process && ./dld && ./query && ./notice && ./about

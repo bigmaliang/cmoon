@@ -36,7 +36,7 @@ int main()
 	mdb_opfinish_json(ret, cgi->hdf, conn);
 	
 	//mdb_destroy(conn);
-	mjson_output_hdf(cgi->hdf);
+	mjson_output_hdf(cgi->hdf, 0);
 
 #ifdef DEBUG_HDF
 	hdf_write_file(cgi->hdf, TC_ROOT"hdf.comment");

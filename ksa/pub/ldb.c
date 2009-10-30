@@ -16,6 +16,6 @@ void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
 	if (conn != NULL) {
 		mdb_destroy(conn);
 	}
-	mjson_output_hdf(hdf);
+	mjson_output_hdf(hdf, 0);
 	exit(ret);
 }

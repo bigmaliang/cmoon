@@ -40,7 +40,13 @@ lcfg.o: lcfg.c ../../lib/mnl/mheads.h \
   ../../lib/memc/include/libmemcached/memcached_string.h \
   ../../lib/memc/include/libmemcached/memcached_result.h \
   ../../lib/memc/include/libmemcached/memcached_storage.h \
-  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/fcgi/include/fcgi_stdio.h ../../lib/fcgi/include/fcgiapp.h \
+  ../../lib/qdbm/include/depot.h ../../lib/nmdb/include/nmdb.h \
+  /usr/include/mysql/mysql.h /usr/include/mysql/mysql_version.h \
+  /usr/include/mysql/mysql_com.h /usr/include/mysql/mysql_time.h \
+  /usr/include/mysql/typelib.h /usr/include/mysql/my_alloc.h \
+  /usr/include/mysql/my_list.h ../../lib/jsonc/include/json/json.h \
+  ../../lib/jsonc/include/json/bits.h \
   ../../lib/jsonc/include/json/debug.h \
   ../../lib/jsonc/include/json/linkhash.h \
   ../../lib/jsonc/include/json/arraylist.h \
@@ -50,7 +56,9 @@ lcfg.o: lcfg.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
   ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
-  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h lcfg.h
+  ../../lib/mnl/md5.h ../../lib/mnl/mdb.h ../../lib/mnl/mdata.h \
+  ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h ../../lib/mnl/mglobal.h \
+  lcfg.h
 lcs.o: lcs.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/ClearSilver.h \
   ../../lib/cs/include/ClearSilver/cs_config.h \
@@ -93,7 +101,13 @@ lcs.o: lcs.c ../../lib/mnl/mheads.h \
   ../../lib/memc/include/libmemcached/memcached_string.h \
   ../../lib/memc/include/libmemcached/memcached_result.h \
   ../../lib/memc/include/libmemcached/memcached_storage.h \
-  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/fcgi/include/fcgi_stdio.h ../../lib/fcgi/include/fcgiapp.h \
+  ../../lib/qdbm/include/depot.h ../../lib/nmdb/include/nmdb.h \
+  /usr/include/mysql/mysql.h /usr/include/mysql/mysql_version.h \
+  /usr/include/mysql/mysql_com.h /usr/include/mysql/mysql_time.h \
+  /usr/include/mysql/typelib.h /usr/include/mysql/my_alloc.h \
+  /usr/include/mysql/my_list.h ../../lib/jsonc/include/json/json.h \
+  ../../lib/jsonc/include/json/bits.h \
   ../../lib/jsonc/include/json/debug.h \
   ../../lib/jsonc/include/json/linkhash.h \
   ../../lib/jsonc/include/json/arraylist.h \
@@ -103,7 +117,9 @@ lcs.o: lcs.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
   ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
-  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h lheads.h lcfg.h ldb.h lcs.h
+  ../../lib/mnl/md5.h ../../lib/mnl/mdb.h ../../lib/mnl/mdata.h \
+  ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h ../../lib/mnl/mglobal.h \
+  lheads.h lcfg.h ldb.h lcs.h
 ldb.o: ldb.c ../../lib/mnl/mheads.h \
   ../../lib/cs/include/ClearSilver/ClearSilver.h \
   ../../lib/cs/include/ClearSilver/cs_config.h \
@@ -146,7 +162,13 @@ ldb.o: ldb.c ../../lib/mnl/mheads.h \
   ../../lib/memc/include/libmemcached/memcached_string.h \
   ../../lib/memc/include/libmemcached/memcached_result.h \
   ../../lib/memc/include/libmemcached/memcached_storage.h \
-  ../../lib/jsonc/include/json/json.h ../../lib/jsonc/include/json/bits.h \
+  ../../lib/fcgi/include/fcgi_stdio.h ../../lib/fcgi/include/fcgiapp.h \
+  ../../lib/qdbm/include/depot.h ../../lib/nmdb/include/nmdb.h \
+  /usr/include/mysql/mysql.h /usr/include/mysql/mysql_version.h \
+  /usr/include/mysql/mysql_com.h /usr/include/mysql/mysql_time.h \
+  /usr/include/mysql/typelib.h /usr/include/mysql/my_alloc.h \
+  /usr/include/mysql/my_list.h ../../lib/jsonc/include/json/json.h \
+  ../../lib/jsonc/include/json/bits.h \
   ../../lib/jsonc/include/json/debug.h \
   ../../lib/jsonc/include/json/linkhash.h \
   ../../lib/jsonc/include/json/arraylist.h \
@@ -156,4 +178,6 @@ ldb.o: ldb.c ../../lib/mnl/mheads.h \
   ../../lib/mnl/mheads.h ../../lib/mnl/mcfg.h ../../lib/mnl/mtypes.h \
   ../../lib/mnl/mconfig.h ../../lib/mnl/mtrace.h ../../lib/mnl/mcs.h \
   ../../lib/mnl/mmemc.h ../../lib/mnl/mjson.h ../../lib/mnl/mutil.h \
-  ../../lib/mnl/mdb.h ../../lib/mnl/mmisc.h lheads.h lcfg.h ldb.h lcs.h
+  ../../lib/mnl/md5.h ../../lib/mnl/mdb.h ../../lib/mnl/mdata.h \
+  ../../lib/mnl/fdb.h ../../lib/mnl/mmisc.h ../../lib/mnl/mglobal.h \
+  lheads.h lcfg.h ldb.h lcs.h

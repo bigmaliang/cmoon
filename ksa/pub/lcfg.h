@@ -26,7 +26,7 @@ __BEGIN_DECLS
 #define PATH_ADM_MTLS	PATH_SITE"admin/mtls/"
 #define F_TPL_LAYOUT	PATH_SITE"ksa/tpl/layout.html"
 
-#define NAV_NUM 6
+#define NAV_NUM 7
 extern anchor_t g_nav[NAV_NUM];
 
 __END_DECLS
