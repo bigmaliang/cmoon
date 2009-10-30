@@ -148,14 +148,15 @@ USERS *init_user(extend *default_props, acetables *g_ape)
 	return nuser;
 }
 
-USERS *adduser(ape_socket *client, char *host, extend *default_props, acetables *g_ape)
+USERS *adduser(ape_socket *client, char *host, extend *default_props, char * ip, acetables *g_ape)
 {
 	USERS *nuser = NULL;
 
 	/* Calling module */
-	FIRE_EVENT(adduser, nuser, client, host, default_props, g_ape);
+	FIRE_EVENT(adduser, nuser, client, host, default_props, ip, g_ape);
 
 	nuser = init_user(default_props, g_ape);
+    strncpy(nuser->ip, ip, 16);
 	
 	nuser->type = (client != NULL ? HUMAN : BOT);
 		
@@ -749,11 +750,8 @@ json_item *get_json_object_user(USERS *user)
 						jprop = json_new_object();
 					}
 					if (eTmp->type == EXTEND_JSON) {
-					/*	json *jcopy = json_copy(eTmp->val);
-						
-						set_json(eTmp->key, NULL, &jprop);
-						
-						json_attach(jprop, jcopy, JSON_OBJECT);*/
+                        json_item *jcopy = json_item_copy(eTmp->val, NULL);
+                        json_set_property_objZ(jprop, eTmp->key, jcopy);
 					} else {
 						json_set_property_strZ(jprop, eTmp->key, eTmp->val);
 

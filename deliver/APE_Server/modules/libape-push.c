@@ -203,7 +203,7 @@ static unsigned int push_connect(callbackp *callbacki)
     ouser = GET_USER_FROM_APE(callbacki->g_ape, uin);
 
 	nuser = adduser(callbacki->client, callbacki->host,
-                    callbacki->properties, callbacki->g_ape);
+                    callbacki->properties, callbacki->ip, callbacki->g_ape);
 	if (nuser == NULL) {
 		jlist = json_new_object();
 		json_set_property_strZ(jlist, "code", "200");
@@ -291,13 +291,15 @@ static unsigned int push_connect(callbackp *callbacki)
 static unsigned int push_send(callbackp *callbacki)
 {
 	json_item *jlist = NULL;
+    RAW *newraw;
     USERS *user, *muser;
     CHANNEL *chan;
-    char *uin, *msg;
+    char *uin;
+    json_item *msg;
 
     user = muser = callbacki->call_user;
     uin = GET_UIN_FROM_USER(user);
-    JNEED_STR(callbacki->param, "msg", msg);
+    JNEED_OBJ(callbacki->param, "msg", msg);
     
     if (user->flags & FLG_VUSER) {
         muser = GET_USER_FROM_APE(callbacki->g_ape, uin);
@@ -320,12 +322,20 @@ static unsigned int push_send(callbackp *callbacki)
     chan = getchanf(callbacki->g_ape, FRIEND_PIP_NAME"%s", uin);
     if (chan == NULL || chan->pipe == NULL ||
         chan->pipe->type != CHANNEL_PIPE) {
+        wlog_warn("channel %s %s not exist", FRIEND_PIP_NAME, uin);
         goto done;
     }
 
     jlist = json_new_object();
-    json_set_property_strZ(jlist, "msg", msg);
+    json_item *jcopy = json_item_copy(msg->father, NULL);
+    //json_set_property_strZ(jlist, "msg", msg);
+    json_set_property_objZ(jlist, "msg", jcopy);
 
+    json_set_property_objZ(jlist, "pipe", get_json_object_channel(chan));
+    newraw = forge_raw(RAW_DATA, jlist);
+    post_raw_channel_restricted(newraw, chan, muser, callbacki->g_ape);
+
+#if 0
     /*
      * 1, we can use post_to_channel here, but comply with ape, post_to_pipe
      * 2, callbacki->param[2] must be same as chan->pipe->pubid
@@ -335,6 +345,7 @@ static unsigned int push_send(callbackp *callbacki)
 	//			 NULL, callbacki->g_ape);
 	post_to_pipe(jlist, RAW_DATA, chan->pipe->pubid,
 				 muser->subuser, callbacki->g_ape);
+#endif
     
  done:
 	//CLOSE(callbacki->fdclient, callbacki->g_ape);
@@ -367,7 +378,7 @@ static unsigned int push_regpageclass(callbackp *callbacki)
 	if (ext != NULL && ext->val != NULL) {
 		char *incept = strdup(apps);
 		char *ids[100];
-		size_t num = explode(',', incept, ids, 99);
+		size_t num = explode('x', incept, ids, 99);
 		int loopi;
 		for (loopi = 0; loopi <= num; loopi++) {
             wlog_noise("append %s for %s's %s",
@@ -531,10 +542,15 @@ static unsigned int push_senduniq(callbackp *callbacki)
         }
     }
 
-	json_item *jlist = json_new_object();
+    json_item *jlist = json_new_object();
+    /* TODO fuck, why should i copy msg->father rather than msg????? */
+    json_item *jcopy = json_item_copy(msg->father, NULL);
 	RAW *newraw;
 
-    json_set_property_objZ(jlist, "msg", msg);
+    //wlog_dbg("jcopy is %s", json_to_string(jcopy, NULL, 0)->jstring);
+    json_set_property_objZ(jlist, "msg", jcopy);
+    //wlog_dbg("jlist is %s", json_to_string(jlist, NULL, 0)->jstring);
+    
 	newraw = forge_raw(RAW_DATA, jlist);
 	post_raw(newraw, user, callbacki->g_ape);
 
@@ -568,11 +584,12 @@ static void push_deluser(USERS *user, acetables *g_ape)
 		HTBL_ITEM *item;
 		USERS *friend;
 		RAW *newraw;
-		json_item *jlist = json_new_object();
+		json_item *jlist;
 		if (ulist != NULL) {
 			for (item = ulist->first; item != NULL; item = item->lnext) {
 				friend = GET_USER_FROM_APE(g_ape, item->key);
 				if (friend != NULL) {
+                    jlist = json_new_object();
                     json_set_property_objZ(jlist, "user", get_json_object_user(user));
 					newraw = forge_raw(RAW_LEFT, jlist);
 					post_raw(newraw, friend, g_ape);
@@ -665,7 +682,7 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 	 * if not a feed message, just check pageclass 
 	 */
     int pageclass;
-    JNEED_INT_VOID(it, "datas.msg.pageclass", pageclass);
+    JNEED_INT_VOID(it, "data.msg.pageclass", pageclass);
     if (pageclass != 3)
 		goto judge_class;
 	
@@ -674,7 +691,7 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 	 * check type
 	 */
     int type;
-    JNEED_INT_VOID(it, "datas.msg.type", type);
+    JNEED_INT_VOID(it, "data.msg.type", type);
 	if (usrp != NULL && usrp->val != NULL) {
 		post = 0;
 		list = usrp->val;

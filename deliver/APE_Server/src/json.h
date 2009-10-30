@@ -109,7 +109,6 @@ struct json *json_copy(struct json *jbase);
 void json_attach(struct json *json_father, struct json *json_child, unsigned int type);
 void json_concat(struct json *json_father, struct json *json_child);
 void json_free(struct json *jbase);
-struct jsontring *jsontr(struct json *jlist, struct jsontring *string);
 json_item *init_json_parser(const char *json_string);
 json_item *json_lookup(json_item *head, char *path);
 void free_json_item(json_item *cx);
@@ -131,7 +130,7 @@ void json_set_element_obj(json_item *obj, json_item *value);
 void json_set_property_intN(json_item *obj, const char *key, int keylen, long int value);
 void json_set_property_intZ(json_item *obj, const char *key, long int value);
 struct jsontring *json_to_string(json_item *head, struct jsontring *string, int free_tree);
-json_item *json_item_copy(json_item *cx);
+json_item *json_item_copy(json_item *cx, json_item *father);
 
 void json_aff(json_item *cx, int depth);
 

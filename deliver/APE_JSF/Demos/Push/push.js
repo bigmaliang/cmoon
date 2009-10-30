@@ -33,7 +33,7 @@ function Push(ape, debug) {
     };
     
     this.start = function() {
-        ape.start({"uin": ape.uin});
+        ape.start({"uin": ape.uin + ""});
     };
     
     //get current pipe
