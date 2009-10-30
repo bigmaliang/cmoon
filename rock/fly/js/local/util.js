@@ -75,7 +75,7 @@ function jsonCbkSuc(data, opts)
         errmsg: "操作失败",
         rurl: "/index.html"
     }, opts||{});
-    
+
 	if (data.success != "1") {
 		if (data.errmsg == "敏感操作, 请先登录") {
 			document.loginopts = {title: data.errmsg, rurl: opts.rurl};

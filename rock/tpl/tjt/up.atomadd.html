@@ -35,7 +35,7 @@
 		onComplete: function(file, resp) {
 			if (jsonCbkSuc(resp, {suctip: false})) {
 				$("#previewimg").attr("src", resp.imageurl);
-				$("#itemimg").val(resp.imagename);
+				$("#atomimg").val(resp.imagename);
 			}
 		}
 	});
@@ -48,7 +48,7 @@
 		return true;
 	}
 
-	$("#additem").click(function()
+	$("#addatom").click(function()
 	{
 		if (!$(".VAL_APPEND").inputval()) {
 			return;
@@ -56,8 +56,8 @@
 
 		$.post(uri,
 			   {
-				   img: $("#itemimg").val(),
-				   exp: $("#itemexp").val(),
+				   img: $("#atomimg").val(),
+				   exp: $("#atomexp").val(),
 				   op: 'add'
 			   },
 			   function(data) {

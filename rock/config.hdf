@@ -46,17 +46,21 @@ FileCache {
 
 Uiplug {
 	0 {
-    	uri = ^/csc
+    	uri = ^/csc.*
         mole {
         	0 {
             	name = tjt_atomadd
-                limit = 3
+                gmode = 3
             }
+			1 {
+				name = tjt_dcadmin
+				gmode = 4
+			}
         }
         atom {
         	0 {
             	name = tjt_atommod
-                limit = 3
+                gmode = 3
             }
         }
     }

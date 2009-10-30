@@ -7,17 +7,18 @@
 
 <div id="coltwo">
 
+  <div class="sep"></div>
   <div id="UIPLUG_MOLE"></div>
   <div class="sep"></div>
 
   <div class="title">商品列表</div>
   <div id="atoms">
-	<?cs each: atom = Output.atoms ?>
-	<div class="UIPLUG_ATOM" atomid="<?cs var: atom.id ?>">
-	  <img src="<?cs var: atom.imgurl ?>" />
-	  <pre><?cs var: atom.exp ?></pre>
-	</div>
-	<?cs /each ?>
+    <?cs each: atom = Output.atoms ?>
+      <img src="<?cs var: atom.imgurl ?>" />
+      <pre><?cs var: atom.exp ?></pre>
+      <div class="UIPLUG_ATOM" atomid="<?cs var: atom.id ?>">
+    </div>
+    <?cs /each ?>
   </div>
   <div id="pagenav"></div>
   <div class="sep"></div>

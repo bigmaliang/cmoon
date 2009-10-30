@@ -47,7 +47,7 @@ $(document).ready(function()
 		timeout: 5000
 	};
 
-	overlay_login = $("a[rel=#loginoverlay]").overlay(
+	var overlay_login = $("a[rel=#loginoverlay]").overlay(
 	{
 		api: true,
 		closeOnClick: false,

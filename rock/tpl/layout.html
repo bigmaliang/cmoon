@@ -12,9 +12,9 @@
     <link rel="stylesheet" type="text/css" href="/css/mflowtools.css" />
     <link rel="stylesheet" type="text/css" href="/css/msuperfish.css" />
     <?cs include:Include.css ?>
-	<style type="text/css">
-	  <?cs include:Layout.css ?>
-	</style>
+    <style type="text/css">
+      <?cs include:Layout.css ?>
+    </style>
 
     <script type="text/javascript" src="/js/pub/mbase.js"></script>
     <script type="text/javascript" src="/js/pub/mform.js"></script>
@@ -23,8 +23,11 @@
     <script type="text/javascript" src="/js/llayout.js"></script>
     <?cs include:Include.js ?>
     <script type="text/javascript">
+      $(document).ready(function()
+      {
       <?cs include:Layout.js ?>
       <?cs include:Layout.html ?>
+      });
     </script>
   </head>
 
@@ -41,9 +44,9 @@
           <li class="last"><a href="/member/reset.html">忘记密码</a></li>
         </ul>
       </div>
-	  <div class="overlay" id="loginoverlay">
-		<div class="wrap"></div>
-	  </div>
+      <div class="overlay" id="loginoverlay">
+        <div class="wrap"></div>
+      </div>
     </div>
 
     <div id="mid">
