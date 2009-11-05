@@ -257,6 +257,7 @@ int main(int argc, char **argv)
 	g_ape->properties = NULL;
 
 	add_ticked(check_timeout, g_ape);
+    add_periodical(1000*1800, 0, tick_static, g_ape, g_ape);
 	
 	do_register(g_ape);
 	
