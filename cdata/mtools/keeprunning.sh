@@ -18,7 +18,7 @@ RUNCOUNT=$(ps fax | grep -v grep | grep -v $0 | grep $PROGNAME | wc -l)
 #RUNCOUNT=$[$(ps fax | grep $PROGNAME | wc -l)-2]
 
 if [ $RUNCOUNT -lt $NEEDCOUNT ]; then
-	killall $PROGNAME
+	#killall $PROGNAME
     $PREEXEC
 	if $EXECCMD; then
 		echo "$TIMENOW reexec success!"
