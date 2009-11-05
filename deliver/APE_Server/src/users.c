@@ -770,3 +770,39 @@ json_item *get_json_object_user(USERS *user)
 	return jstr;
 }
 
+void tick_static(acetables *g_ape, int lastcall)
+{
+    HTBL *ulist = (HTBL*)get_property(g_ape->properties, "userlist")->val;
+    HTBL_ITEM *item;
+    USERS *user;
+    char *uin;
+    int num = 0;
+    char logs[1024];
+
+    memset(logs, 0x0, sizeof(logs));
+    wlog_foo("CURRENT ONLINE USER LIST ... ");
+    if (ulist != NULL) {
+        for (item = ulist->first; item != NULL; item = item->lnext) {
+            user = (USERS*) item->addrs;
+            uin = (char*)get_property(user->properties, "uin")->val;
+            num++;
+            strcat(logs, uin);
+            strcat(logs, " ");
+            if (num % 50 == 0) {
+                wlog_foo("%s", logs);
+                memset(logs, 0x0, sizeof(logs));
+            }
+        }
+
+        if (num % 50 != 0) {
+            wlog_foo("%s", logs);
+        }
+    }
+    wlog_foo("USERLIST FINISH(%d)", num);
+
+    st_push *st = (st_push*)get_property(g_ape->properties, "msgstatic")->val;
+    wlog_foo("MESSAGE STATIC site notice: %lu, feed %lu",
+             st->msg_notice, st->msg_feed);
+    st->msg_notice = 0;
+    st->msg_feed = 0;
+}

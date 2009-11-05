@@ -49,6 +49,12 @@ struct _extend
 	struct _extend *next;
 };
 
+typedef struct {
+    unsigned long msg_notice;
+    unsigned long msg_feed;
+    unsigned long msg_limited;
+} st_push;
+
 extend *get_property(extend *entry, const char *key);
 void clear_properties(extend **entry);
 void del_property(extend **entry, const char *key);

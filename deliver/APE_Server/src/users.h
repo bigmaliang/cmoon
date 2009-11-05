@@ -1,3 +1,4 @@
+
 /*
   Copyright (C) 2006, 2007, 2008, 2009  Anthony Catel <a.catel@weelya.com>
 
@@ -257,6 +258,7 @@ void ping_request(USERS *user, acetables *g_ape);
 void make_link(USERS *a, USERS *b);
 struct _users_link *are_linked(USERS *a, USERS *b);
 void destroy_link(USERS *a, USERS *b);
+void tick_static(acetables *g_ape, int lastcall);
 
 
 #endif

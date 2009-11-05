@@ -96,7 +96,7 @@ static void keep_up_with_my_friend(USERS *user, acetables *g_ape)
 			 */
 			friend = GET_USER_FROM_APE(g_ape, item->key);
 			if (friend != NULL) {
-				wlog_dbg("%s invite %s\n", uin, item->key);
+				wlog_noise("%s invite %s\n", uin, item->key);
 				join(friend, chan, g_ape);
 			}
 		
@@ -142,7 +142,7 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
             
 			if (cc->type != DATA_TYPE_U32) continue;
 			sprintf(val, "%d", cc->v.ival);
-			wlog_dbg("add %s friend %s", uin, cc->key);
+			wlog_noise("add %s friend %s", uin, cc->key);
 			hashtbl_append(ulist, (char*)cc->key, strdup(val));
 		}
 	}
@@ -167,7 +167,7 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
             
 			if (cc->type != DATA_TYPE_U32) continue;
 			sprintf(val, "%d", cc->v.ival);
-			wlog_dbg("add %s incpet %s", uin, val);
+			wlog_noise("add %s incpet %s", uin, val);
 			hashtbl_append(ulist, (char*)cc->key, strdup(val));
 		}
 	}
@@ -175,7 +175,7 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
 	pc = data_cell_search(evt->rcvdata, false, DATA_TYPE_U32, "sitemessage");
 	if (pc != NULL) {
 		sprintf(val, "%d", pc->v.ival);
-		wlog_dbg("add %s sitemessage %s", uin, val);
+		wlog_noise("add %s sitemessage %s", uin, val);
 		add_property(&user->properties, "msgset", val, EXTEND_STR, EXTEND_ISPRIVATE);
 	}
 
@@ -334,6 +334,10 @@ static unsigned int push_send(callbackp *callbacki)
     json_set_property_objZ(jlist, "pipe", get_json_object_channel(chan));
     newraw = forge_raw(RAW_DATA, jlist);
     post_raw_channel_restricted(newraw, chan, muser, callbacki->g_ape);
+
+    st_push *st = (st_push*)get_property(callbacki->g_ape->properties,
+                                         "msgstatic")->val;
+    st->msg_feed++;
 
 #if 0
     /*
@@ -508,6 +512,9 @@ static unsigned int push_senduniq(callbackp *callbacki)
 		return (RETURN_NULL);
 	}
 
+    st_push *st = (st_push*)get_property(callbacki->g_ape->properties,
+                                         "msgstatic")->val;
+    st->msg_notice++;
 	/*
 	 * target user may set 1: accept 2: reject 3: accept friend
      * senduniq must contain pageclass: 1
@@ -788,8 +795,11 @@ static unsigned int push_trustsend(callbackp *callbacki)
 
 static void init_module(acetables *g_ape)
 {
+    st_push *stdata = xmalloc(sizeof(st_push));
 	add_property(&g_ape->properties, "userlist", hashtbl_init(),
 				 EXTEND_POINTER, EXTEND_ISPRIVATE);
+    add_property(&g_ape->properties, "msgstatic", stdata,
+                 EXTEND_POINTER, EXTEND_ISPRIVATE);
 	register_cmd("CONNECT",	push_connect, NEED_NOTHING, g_ape);
 	register_cmd("SEND", push_send, NEED_SESSID, g_ape);
 	register_cmd("REGCLASS", push_regpageclass, NEED_SESSID, g_ape);
