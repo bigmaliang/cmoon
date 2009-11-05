@@ -1,4 +1,5 @@
 --mn_sys
+CREATE FUNCTION update_time() RETURNS TRIGGER AS $$ BEGIN NEW.uptime=now(); RETURN NEW; END; $$ LANGUAGE plpgsql;
 
 CREATE TABLE fileinfo (
 	   id SERIAL,
@@ -39,7 +40,7 @@ CREATE TABLE accountinfo (
 );
 
 -- insert root row before trigger create
-INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (0, 0, 1001, 1, 0, 0, '/', '首页'); -- can't direct access
+INSERT INTO fileinfo (aid, pid, uid, mode, reqtype, lmttype, name, remark) VALUES (1, 0, 1001, 1, 0, 0, '/', '首页'); -- can't direct access
 
 CREATE INDEX file_index ON fileinfo (aid, pid, uid, gid, mode, name);
 --done in after_file_insert()
@@ -55,7 +56,7 @@ CREATE OR REPLACE FUNCTION after_file_insert() RETURNS TRIGGER AS $file_insert$
 
 		IF NEW.pid = 1 THEN
 			UPDATE fileinfo SET
-			dataer = NEW.name, render = NEW.name, aid = 1 WHERE id=NEW.id;
+			dataer = NEW.name, render = NEW.name, aid = NEW.id WHERE id=NEW.id;
 		ELSE
 			UPDATE fileinfo SET
 			--dataer = SUBSTRING((SELECT dataer FROM fileinfo WHERE id=NEW.pid) || '_' || NEW.name FROM '^[^_]*_[^_]*')
@@ -79,20 +80,3 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tg_suf_fileinfo_insert AFTER INSERT ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_insert();
 CREATE TRIGGER tg_suf_fileinfo_delete AFTER DELETE ON fileinfo FOR EACH ROW EXECUTE PROCEDURE after_file_delete();
-
-
--- mn_tjt (the joshua tree)
--- csc's id=5, and all of it's childs's aid is 5 too, so, we put all csc's tjt item in tjt_5
--- you can create tjt_x for any other tjt_like item as you wish
-CREATE TABLE tjt_5 (
-	   id SERIAL,
-       aid int NOT NULL DEFAULT 1, --anchor file's id
-       fid int NOT NULL DEFAULT 1, --which file this item belongs to
-	   uid int NOT NULL DEFAULT 0, --who created this item
-	   img varchar(256) NOT NULL DEFAULT '', --image file name, without path
-	   exp text NOT NULL DEFAULT '', --explanation text, present by <pre></pre>
-	   intime timestamp DEFAULT now(),
-	   uptime timestamp DEFAULT now(),
-	   PRIMARY KEY (id)
-);
-CREATE TRIGGER tg_uptime_tjt_5 BEFORE UPDATE ON tjt_5 FOR EACH ROW EXECUTE PROCEDURE update_time();

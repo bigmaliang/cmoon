@@ -30,16 +30,31 @@ void ltpl_prepare_rend(HDF *hdf, char *tpl)
 	/*
 	 * set classes
 	 */
+    bool selected = false;
 	href = hdf_get_value(hdf, "Layout.crumbs.0.href", NULL);
 	if (href != NULL) {
 		tmphdf = hdf_get_obj(hdf, "Layout.tabs.0");
 		while (tmphdf != NULL) {
 			if (!strcmp(hdf_get_value(tmphdf, "href", "NULL"), href)) {
 				hdf_set_value(tmphdf, "class", "selected");
+                selected = true;
 				break;
 			}
 			tmphdf = hdf_obj_next(tmphdf);
 		}
+        if (!selected) {
+            char hhref[LEN_ST];
+            snprintf(hhref, sizeof(hhref), "%s.html", href);
+            tmphdf = hdf_get_obj(hdf, "Layout.tabs.0");
+            while (tmphdf != NULL) {
+                if (!strcmp(hdf_get_value(tmphdf, "href", "NULL"), hhref)) {
+                    hdf_set_value(tmphdf, "class", "selected");
+                    selected = true;
+                    break;
+                }
+                tmphdf = hdf_obj_next(tmphdf);
+            }
+        }
 	}
 
 

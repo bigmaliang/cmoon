@@ -2,8 +2,7 @@
 #-- mn_sys
 
 #trigger function for uptime update
-psql -U mner -d mn_sys -c "CREATE FUNCTION update_time() RETURNS TRIGGER AS $$ BEGIN NEW.uptime=now(); RETURN NEW; END; $$ LANGUAGE plpgsql";
-psql -U mner -d mn_tjt -c "CREATE FUNCTION update_time() RETURNS TRIGGER AS $$ BEGIN NEW.uptime=now(); RETURN NEW; END; $$ LANGUAGE plpgsql";
+#psql -U mner -d mn_sys -c "CREATE FUNCTION update_time() RETURNS TRIGGER AS $$ BEGIN NEW.uptime=now(); RETURN NEW; END; $$ LANGUAGE plpgsql";
 
 for i in `seq 0 99`
 do
@@ -47,7 +46,9 @@ do
 done
 
 for i in `seq 998 999`; do psql -U mner -d mn_sys -c "INSERT INTO rls_user_3 (uin) VALUES ($i);"; done
-for i in `seq 1000 9999`; do psql -U mner -d mn_sys -c "INSERT INTO rls_user_4 (uin) VALUES ($i);"; done
+for i in `seq 1000 1500`; do psql -U mner -d mn_sys -c "INSERT INTO rls_user_4 (uin) VALUES ($i);"; done
+#for i in `seq 1000 9999`; do psql -U mner -d mn_sys -c "INSERT INTO rls_user_4 (uin) VALUES ($i);"; done
+
 #for i in `seq 10000 99999`; do psql -U mner -d mn_sys -c "INSERT INTO rls_user_5 (uin) VALUES ($i);"; done
 #for i in `seq 100000 999999`; do psql -U mner -d mn_sys -c "INSERT INTO rls_user_6 (uin) VALUES ($i);"; done
 #for i in `seq 1000000 9999999`; do psql -U mner -d mn_sys -c "INSERT INTO rls_user_7 (uin) VALUES ($i);"; done

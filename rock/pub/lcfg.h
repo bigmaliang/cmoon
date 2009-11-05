@@ -6,7 +6,7 @@
 __BEGIN_DECLS
 
 #define SITE_DOMAIN	"eol.com"
-#define IMG_DOMAIN	"http://img.eol.com"
+#define IMG_DOMAIN	"http://img.eol.com:26040"
 #define TC_ROOT		"/var/log/moon/rock/"
 #define IMG_ROOT	"/data/pic/"
 

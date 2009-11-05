@@ -65,6 +65,21 @@ config-avilable
 postgresql
 ==========
 
+0, post-installation setup
+	LD_LIBRARY_PATH=/usr/local/pgsql/lib
+	export LD_LIBRARY_PATH
+
+    export PATH=/usr/local/pgsql/bin:$PATH
+
+	root# mkdir /usr/local/pgsql/data
+	root# chown postgres /usr/local/pgsql/data
+    root# useradd postgres
+	root# su postgres
+	postgres$ initdb -D /usr/local/pgsql/data
+    修改 /usr/local/pgsql/*.conf
+    postgres -D /usr/local/pgsql/data
+    pg_ctl -D /usr/local/pgsql/data -l logfile start
+
 1, 建立 postgresql 账号
 	用 postgres 用户登录psql,	执行
 	CREATE USER mner CREATEDB password 'loveu';
@@ -94,8 +109,10 @@ postgresql
 		用postgres帐号登录:
 		\c mn_sys
 		CREATE LANGUAGE plpgsql; -- 开启 plpgsql 语言
+        CREATE FUNCTION update_time() RETURNS TRIGGER AS $$ BEGIN NEW.uptime=now(); RETURN NEW; END; $$ LANGUAGE plpgsql
 		\c mn_tjt
 		CREATE LANGUAGE plpgsql;
+        CREATE FUNCTION update_time() RETURNS TRIGGER AS $$ BEGIN NEW.uptime=now(); RETURN NEW; END; $$ LANGUAGE plpgsql
 	以后都可以用 $psql -U mner -d mn_sys 登录
 
 4, 修改postgresql可选配置
@@ -110,7 +127,8 @@ postgresql
 
 5, 建立mn表
 	$moon/rock/mtls/createTable.sh
-	mn_sys=> \i .../moon/rock/mtls/table.sql
+	mn_sys=> \i .../moon/rock/mtls/tables.sql
+    mn_tjt=> \i .../moon/rock/mtls/table_tjt.sql
 
 6, mn表初始化
 	mn_sys=> \i .../moon/rock/mtls/data.sql

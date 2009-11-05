@@ -5,6 +5,6 @@ include $(LOCALBASE)Make.env
 
 all: install
 
-install: $(BINARY)
+install:
 	@find -name '*.js' -exec $(CPWITHDIR) -p $(PATH_DOC)/js/ {} \;
 	@find -name 'up.*.html' -exec $(CPWITHDIR) -p $(PATH_DOC)/uiplug/ {} \;

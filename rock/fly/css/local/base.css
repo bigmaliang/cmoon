@@ -10,7 +10,7 @@ body {
 }
 
 a {
-    color: #943131;
+    color: #791212;
     text-decoration: none;
 }
 a:hover {color: white !important;}
@@ -24,6 +24,9 @@ a:hover {color: white !important;}
 input.middle {width: 45px;}
 input.short {width: 25px;}
 input.bordless {border: 0 none;}
+:focus {
+outline-style:none;
+}
 
 #top, #bot {
     height: 100px;
