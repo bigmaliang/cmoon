@@ -1,4 +1,5 @@
 /*
+ * 社区消息推送类
 	<script type="text/javaScript" src="../../Clients/JavaScript.js"></script>
 	<script type="text/javaScript" src="../config.js"></script>
 	<script type="text/javaScript" src="push.js"></script>
@@ -25,11 +26,10 @@ function Push(ape, debug) {
         ape.friendPipe = null;
         ape.loading = 1;
     
-        ape.addEvent("data", this.rawData);
-        ape.addEvent("multiPipeCreate", this.pipeCreate);
+        ape.onRaw("data", this.rawData);
         ape.onRaw("regclass", this.rawClass);
-        
 		ape.addEvent('load', this.start);
+        ape.addEvent("multiPipeCreate", this.pipeCreate);
     };
     
     this.start = function() {
@@ -44,9 +44,9 @@ function Push(ape, debug) {
             //接收哪些消息块
             var classes = "";
             if (ape.isDesktop)
-                classes = "1,2,3";
+                classes = "1x2x3";
             else
-                classes="1,2";
+                classes="1x2";
             ape.friendPipe.request.send("REGCLASS", {'apps': classes});
         } else {
             if(ape.loading) return;
@@ -65,8 +65,9 @@ function Push(ape, debug) {
 
     //show message of receive
 	this.rawData = function(raw, pipe) {
-        var msg_str = unescape(raw.datas.msg);
-        var msg_JSON = eval('('+msg_str+')'); //string to JSON
+        //var msg_str = unescape(raw.datas.msg);
+        //var msg_JSON = eval('('+msg_str+')'); //string to JSON
+        var msg_JSON = raw.data.msg;
         if(msg_JSON.pageclass == 1) {//站内信提示
             var message_num = $("#message_num");
             var msgCount = message_num.html();
