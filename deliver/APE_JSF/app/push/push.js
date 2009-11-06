@@ -1,23 +1,6 @@
-/*
+/**
  * 社区消息推送类
-	<script type="text/javaScript" src="../../Clients/JavaScript.js"></script>
-	<script type="text/javaScript" src="../config.js"></script>
-	<script type="text/javaScript" src="push.js"></script>
-...
-	var debug = true;  
-	var client = new APE.Client();
-	client.load({
-		'domain': APE.Config.domain,
-		'server': APE.Config.server,
-		complete: function(ape) {
- 			new Push(ape, debug).initialize(opts);
- 		},
-		'scripts': APE.Config.scripts
-	});
-</body>
- </html>
  */
-
 function Push(ape, debug) {
     this.initialize = function(opts) {
 	    ape.uin = opts.uin || 0;
@@ -28,6 +11,7 @@ function Push(ape, debug) {
     
         ape.onRaw("data", this.rawData);
         ape.onRaw("regclass", this.rawClass);
+
 		ape.addEvent('load', this.start);
         ape.addEvent("multiPipeCreate", this.pipeCreate);
     };
@@ -65,7 +49,6 @@ function Push(ape, debug) {
 
     //show message of receive
 	this.rawData = function(raw, pipe) {
-        //var msg_str = unescape(raw.datas.msg);
         //var msg_JSON = eval('('+msg_str+')'); //string to JSON
         var msg_JSON = raw.data.msg;
         if(msg_JSON.pageclass == 1) {//站内信提示
