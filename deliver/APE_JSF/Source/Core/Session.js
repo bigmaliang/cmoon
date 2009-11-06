@@ -72,7 +72,7 @@ APE.Core = new Class({
 	 * @return 	Boolean	false if application identifier isn't found or an object with the instance and the cookie
 	 */
 	getInstance: function(identifier) {
-		var	tmp = Cookie.read('APE_Cookie');
+		var	tmp = Cookie.read('MPS');
 		identifier = identifier || this.options.identifier;
 		if (!tmp) return false;
 
@@ -154,7 +154,7 @@ APE.Core = new Class({
 	},
 
 	saveCookie: function(){
-		Cookie.write('APE_Cookie', JSON.encode(this.cookie), {'path': '/', domain:this.options.domain});
+		Cookie.write('MPS', JSON.encode(this.cookie), {'path': '/', domain:this.options.domain});
 	},
 
 	clearSession: function(){
@@ -164,6 +164,6 @@ APE.Core = new Class({
 	},
 
 	removeCookie: function(){
-		Cookie.dispose('APE_Cookie', {domain:this.options.domain});
+		Cookie.dispose('MPS', {domain:this.options.domain});
 	}
 });

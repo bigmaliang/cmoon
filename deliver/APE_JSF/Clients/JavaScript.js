@@ -78,7 +78,7 @@ APE.Client.prototype.load = function(config){
 	document.domain = config.domain;
 
 	//Get APE cookie
-	var cookie = unescape(this.readCookie('APE_Cookie'));
+	var cookie = unescape(this.readCookie('MPS'));
 	var tmp = eval('(' + cookie + ')');
 
 	if (tmp) {
@@ -90,7 +90,7 @@ APE.Client.prototype.load = function(config){
 
 	var reg = new RegExp("'frequency':([ 0-9]+)", "g")
 	cookie = cookie.replace(reg, "'frequency': " + config.frequency + "");
-	this.writeCookie('APE_Cookie', cookie);
+	this.writeCookie('MPS', cookie);
 
 	var iframe = document.createElement('iframe');
 	iframe.setAttribute('id','ape_' + config.identifier);
