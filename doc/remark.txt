@@ -1,0 +1,33 @@
+HTML & JS
+=========
+
+获取表单中的输入控件, 及其点击状态
+-------------
+$("input[name=permittype]") 或者$("input:radio")
+$("input:[name=permittype]:checked").val()
+
+
+日期格式
+-------
+Date() 对象是 js 里处理日期的对象, 用以下方式申明:
+可加参数: 秒数, 日期字符串...
+
+Date() 返回如下格式字符串
+"Fri Nov 13 2009 15:51:05 GMT+0800"
+
+new Date() 返回日期对象
+
+
+获取指定格式的日期:
+
+方法1
+var dt  = new Date(eval(raw.time));
+var y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDay();
+var h = dt.getHours(), mt = dt.getMinutes(), s = dt.getSeconds();
+var tm = h+":"+mt+":"+s;
+这里的hour 不是本地时间的小时
+
+方法2
+var tm = Date(eval(raw.time)).match(/\d{1,2}:\d{1,2}:\d{1,2}/)[0];
+
+

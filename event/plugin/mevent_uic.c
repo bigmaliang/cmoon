@@ -608,7 +608,8 @@ static int uic_cmd_delgroup(struct queue_entry *q, struct cache *cd,
  * input : uin(UINT)
  * return: NORMAL
  * reply : ["incept": ["1": 1, "2": 2...], "friendapply": 1,
-            "leavemessage": 2, "sitemessage": 1, "searchme", 0]
+            "leavemessage": 2, "sitemessage": 1, "searchme", 0,
+            "fangkequn": 0]
  *      OR ["incept": []]
  */
 static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
@@ -646,6 +647,7 @@ static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
             reply_add_u32(q, NULL, "leavemessage", atoi(db->row[2]));
             reply_add_u32(q, NULL, "sitemessage", atoi(db->row[3]));
             reply_add_u32(q, NULL, "searchme", atoi(db->row[4]));
+            reply_add_u32(q, NULL, "fangkequn", 1);
         }
         val = calloc(1, MAX_PACKET_LEN);
         if (val == NULL) return REP_ERR_MEM;
