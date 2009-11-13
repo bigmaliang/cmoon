@@ -59,6 +59,7 @@ void unfire(ace_plugins *plug)
 {
 	plug->fire.c_adduser = 0;
 	plug->fire.c_deluser = 0;
+	plug->fire.c_delsubuser = 0;
 	
 	plug->fire.c_mkchan = 0;
 	plug->fire.c_rmchan = 0;

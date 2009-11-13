@@ -62,6 +62,7 @@ struct _ace_plugins
 	struct {
 		unsigned int c_adduser;
 		unsigned int c_deluser;
+        unsigned int c_delsubuser;
 		unsigned int c_mkchan;
 		unsigned int c_rmchan;
 		unsigned int c_join;

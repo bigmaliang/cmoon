@@ -188,7 +188,7 @@ void deluser(USERS *user, acetables *g_ape)
 	
 	/* kill all users connections */
 	
-	clear_subusers(user);
+	clear_subusers(user, g_ape);
 
     if (user->links.nlink != 0 && user->links.ulink) {
         struct _link_list *cur, *next;
@@ -257,7 +257,7 @@ void check_timeout(acetables *g_ape, int last)
 			{
 				if ((ctime - (*n)->idle) >= TIMEOUT_SEC)
 				{
-					delsubuser(n);
+					delsubuser(n, g_ape);
 					continue;
 				}
 				if ((*n)->state == ALIVE && (*n)->raw_pools.nraw && !(*n)->need_update) {
@@ -506,7 +506,7 @@ void subuser_restor(subuser *sub, acetables *g_ape)
 
 	while (chanl != NULL) {
 		jlist = json_new_object();
-		
+        
 		chan = chanl->chaninfo;
 		
 		if (chan->interactive && chan->head != NULL) {
@@ -563,17 +563,24 @@ subuser *getsubuser(USERS *user, const char *channel)
 	return NULL;
 }
 
-void delsubuser(subuser **current)
+void delsubuser(subuser **current, acetables *g_ape)
 {
 	subuser *del = *current;
 	
 	((*current)->user->nsub)--;
 	
 	*current = (*current)->next;
+
+	FIRE_EVENT_NULL(delsubuser, del, g_ape);
+
 	clear_properties(&del->properties);
 	
 	destroy_raw_pool(del->raw_pools.low.rawhead);
 	destroy_raw_pool(del->raw_pools.high.rawhead);
+    del->raw_pools.low.rawhead = NULL;
+    del->raw_pools.low.rawfoot = NULL;
+    del->raw_pools.high.rawhead = NULL;
+    del->raw_pools.high.rawfoot = NULL;
 
 	if (del->state == ALIVE) {
 		del->wait_for_free = 1;
@@ -581,13 +588,12 @@ void delsubuser(subuser **current)
 	} else {
 		free(del);
 	}
-	
 }
 
-void clear_subusers(USERS *user)
+void clear_subusers(USERS *user, acetables *g_ape)
 {
 	while (user->subuser != NULL) {
-		delsubuser(&(user->subuser));
+		delsubuser(&(user->subuser), g_ape);
 	}
 }
 

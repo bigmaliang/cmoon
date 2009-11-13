@@ -55,6 +55,13 @@ typedef struct {
     unsigned long msg_limited;
 } st_push;
 
+/* TODO mod this */
+typedef struct {
+    unsigned long msg_notice;
+    unsigned long msg_feed;
+    unsigned long msg_limited;
+} st_fkq;
+
 extend *get_property(extend *entry, const char *key);
 void clear_properties(extend **entry);
 void del_property(extend **entry, const char *key);

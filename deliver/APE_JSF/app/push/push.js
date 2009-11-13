@@ -4,16 +4,16 @@
 function Push(ape, debug) {
     this.initialize = function(opts) {
 	    ape.uin = opts.uin || 0;
-	    ape.friendPipeName = "*friendpipe"+opts.uin || "";
+	    ape.friendPipeName = "*friendpipe"+ opts.uin || "";
 	    ape.isDesktop = opts.isDesktop;
         ape.friendPipe = null;
         ape.loading = 1;
     
         ape.onRaw("data", this.rawData);
         ape.onRaw("regclass", this.rawClass);
-
-		ape.addEvent('load', this.start);
         ape.addEvent("multiPipeCreate", this.pipeCreate);
+        
+		ape.addEvent('load', this.start);
     };
     
     this.start = function() {
@@ -22,7 +22,7 @@ function Push(ape, debug) {
     
     //get current pipe
 	this.pipeCreate = function(pipe, options) {
-	    if (pipe.pipe.properties.name.toLowerCase() == ape.friendPipeName) {
+	    if (pipe.properties.name.toLowerCase() == ape.friendPipeName) {
             ape.friendPipe = pipe;
             
             //接收哪些消息块
@@ -31,18 +31,18 @@ function Push(ape, debug) {
                 classes = "1x2x3";
             else
                 classes="1x2";
-            ape.friendPipe.request.send("REGCLASS", {'apps': classes});
-        } else {
+            ape.friendPipe.request.send("REGCLASS", {'apps': classes}, true);
+        } else if(pipe.properties.name.toLowerCase().search(/friendpipe/)) {
             if(ape.loading) return;
             
-            var userid=pipe.pipe.properties.name;
+            var userid=pipe.properties.name;
             userid=userid.split('*friendpipe');
             $.getJSON("http://home.hunantv.com/home/home/getUserById",
                       {userid:userid[1]},
                       friendOnline);
         }
     };
-    
+
     this.rawClass = function(raw) {
         ape.loading = 0; //APE初始化结束
     };

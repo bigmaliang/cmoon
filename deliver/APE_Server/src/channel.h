@@ -63,6 +63,7 @@ CHANNEL *getchan(const char *chan, acetables *g_ape);
 CHANNEL *getchanf(acetables *g_ape, const char *fmt, ...);
 
 BANNED *getban(CHANNEL *chan, const char *ip);
+CHANNEL *getchanbypubid(const char *pubid, acetables *g_ape);
 
 int mkallchan(acetables *g_ape);
 

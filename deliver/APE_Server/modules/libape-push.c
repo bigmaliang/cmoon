@@ -48,33 +48,6 @@ static ace_plugin_infos infos_module = {
 /*
  * file range 
  */
-static void send_err(callbackp *callbacki, char *code, char *msg)
-{
-    if (callbacki == NULL || code == NULL || msg == NULL)
-        return;
-    
-    RAW *raw;
-    json_item *ej = json_new_object();
-    json_set_property_strZ(ej, "code", code);
-    json_set_property_strZ(ej, "value", msg);
-    raw = forge_raw(RAW_ERR, ej);
-    send_raw_inline(callbacki->client, callbacki->transport, raw, callbacki->g_ape);
-}
-
-static int isvaliduin(char *uin)
-{
-	if (uin == NULL)
-		return 0;
-        
-	char *p = uin;
-	while (*p != '\0') {
-		if (!isdigit((int)*p))
-			return 0;
-		p++;
-	}
-	return 1;
-}
-
 static void keep_up_with_my_friend(USERS *user, acetables *g_ape)
 {
 	HTBL_ITEM *item;
@@ -122,7 +95,7 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
 	
 	int ret;
 
-	if (!isvaliduin(uin) || user == NULL || g_ape == NULL) return;
+	if (!hn_isvaliduin(uin) || user == NULL || g_ape == NULL) return;
 	
 	evt = mevent_init_plugin("uic", REQ_CMD_FRIENDLIST, FLAGS_SYNC);
 	mevent_add_u32(evt, NULL, "uin", atoi(uin));
@@ -197,7 +170,7 @@ static unsigned int push_connect(callbackp *callbacki)
 
     JNEED_STR(callbacki->param, "uin", uin);
     
-	if (!isvaliduin(uin)) {
+	if (!hn_isvaliduin(uin)) {
 		return (RETURN_BAD_PARAMS);
 	}
     ouser = GET_USER_FROM_APE(callbacki->g_ape, uin);
@@ -267,7 +240,7 @@ static unsigned int push_connect(callbackp *callbacki)
 		if (chan == NULL) {
             wlog_err("make channel %s failure", uin);
 			//smsalarm_msgf(callbacki->g_ape, "make channel %s failed", uin);
-            send_err(callbacki, "007", "ERR_MAKE_CHANNEL");
+            hn_senderr(callbacki, "007", "ERR_MAKE_CHANNEL");
 			return (RETURN_NOTHING);
 		}
 	}
@@ -366,7 +339,7 @@ static unsigned int push_regpageclass(callbackp *callbacki)
 	subuser *sub = getsubuser(callbacki->call_user, callbacki->host);
 	if (sub == NULL) {
 		wlog_warn("get subuser failuer for %s", callbacki->host);
-        send_err(callbacki, "008", "ERR_REG_APP");
+        hn_senderr(callbacki, "008", "ERR_REG_APP");
 		return (RETURN_NOTHING);
 	}
 
@@ -406,7 +379,7 @@ static unsigned int push_regpageclass(callbackp *callbacki)
 		post_raw_sub(newraw, sub, callbacki->g_ape);
 	} else {
 		wlog_err("add property error");
-        send_err(callbacki, "008", "ERR_REG_APP");
+        hn_senderr(callbacki, "008", "ERR_REG_APP");
 	}
 	
 	return (RETURN_NOTHING);
@@ -479,7 +452,7 @@ static unsigned int push_useronline(callbackp *callbacki)
     
     int loopi;
     for (loopi = 0; loopi <= num; loopi++) {
-        if (isvaliduin(uin[loopi])) {
+        if (hn_isvaliduin(uin[loopi])) {
             if (GET_USER_FROM_APE(callbacki->g_ape, uin[loopi])) {
                 json_set_property_strZ(jlist, uin[loopi], "1");
             } else {
@@ -508,7 +481,7 @@ static unsigned int push_senduniq(callbackp *callbacki)
 
 	if (user == NULL) {
 		wlog_info("get user failuer %s", dstuin);
-        send_err(callbacki, "009", "ERR_UIN_NEXIST");
+        hn_senderr(callbacki, "009", "ERR_UIN_NEXIST");
 		return (RETURN_NULL);
 	}
 
@@ -525,7 +498,7 @@ static unsigned int push_senduniq(callbackp *callbacki)
         ext != NULL && ext->val != NULL) {
         if (!strcmp(ext->val, "2")) {
             wlog_info("%s reject message", dstuin);
-            send_err(callbacki, "010", "ERR_USER_REFUSE");
+            hn_senderr(callbacki, "010", "ERR_USER_REFUSE");
             return (RETURN_NULL);
         } else if (!strcmp(ext->val, "3")) {
             wlog_info("user %s just rcv friend's message", dstuin);
@@ -534,15 +507,15 @@ static unsigned int push_senduniq(callbackp *callbacki)
                 HTBL *list = GET_USER_FRIEND_TBL(user);
                 if (list != NULL) {
                     if (hashtbl_seek(list, sender) == NULL) {
-                        send_err(callbacki, "012", "ERR_NOT_FRIEND");
+                        hn_senderr(callbacki, "012", "ERR_NOT_FRIEND");
                         return (RETURN_NULL);
                     }
                 } else {
-                    send_err(callbacki, "012", "ERR_NOT_FRIEND");
+                    hn_senderr(callbacki, "012", "ERR_NOT_FRIEND");
                     return (RETURN_NULL);
                 }
             } else {
-                send_err(callbacki, "009", "ERR_UIN_NEXIST");
+                hn_senderr(callbacki, "009", "ERR_UIN_NEXIST");
                 return (RETURN_NULL);
             }
             wlog_warn("user %s not exist", dstuin);
@@ -616,7 +589,7 @@ static void push_deluser(USERS *user, acetables *g_ape)
 	
 	/* kill all users connections */
 	
-	clear_subusers(user);
+	clear_subusers(user, g_ape);
 
     if (user->links.nlink != 0 && user->links.ulink) {
         struct _link_list *cur, *next;
@@ -772,7 +745,7 @@ static unsigned int push_trustsend(callbackp *callbacki)
 	USERS *user = GET_USER_FROM_APE(callbacki->g_ape, dstuin);
 
 	if (user == NULL) {
-        send_err(callbacki, "009", "ERR_UIN_NEXIST");
+        hn_senderr(callbacki, "009", "ERR_UIN_NEXIST");
 		return (RETURN_NULL);
 	}
 
@@ -815,6 +788,7 @@ static void init_module(acetables *g_ape)
 static ace_callbacks callbacks = {
 	NULL,				/* Called when new user is added */
 	push_deluser,		/* Called when a user is disconnected */
+    NULL,               /* Called when a subuser is disconnected */
 	NULL,				/* Called when new chan is created */
     NULL,               /* Called when a chan removed */
 	NULL,				/* Called when a user join a channel */

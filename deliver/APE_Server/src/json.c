@@ -381,9 +381,11 @@ json_item *json_item_copy(json_item *cx, json_item *father)
 		
 		if (cx->jchild.child != NULL) {
             new_item->jchild.child = json_item_copy(cx->jchild.child, new_item);
-			new_item->jchild.head = new_item->jchild.child;
+			//new_item->jchild.head = new_item->jchild.child;
 		}
-		
+		if (new_item->father != NULL) {
+			new_item->father->jchild.head = new_item;
+		}
 		temp_item = new_item;
 		
 		cx = cx->next;
@@ -423,6 +425,8 @@ void json_set_property_objN(json_item *obj, const char *key, int keylen, json_it
 	if (obj->jchild.child == NULL) {
 		obj->jchild.child = new_item;
 	} else {
+        //new_item->next = obj->jchild.child;
+        //obj->jchild.child = new_item;
 		obj->jchild.head->next = new_item;
 	}
 	
