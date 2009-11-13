@@ -11,11 +11,13 @@ ul.tabs li {
 	float:left;	 
 	padding:0;
 	margin:0 !important;
+    margin-right: 5px;
 	list-style-type:none !important; 
 }
 
 ul.tabs li.folder {
     float: right;
+    margin-right: 0px;
 }
 
 /* link inside the tab. uses a background image */
@@ -29,7 +31,6 @@ ul.tabs a {
     border-bottom: 0px;
     height: 18px;
     background-color: #2f4f4f;
-    margin-right: 5px;
 	-moz-border-radius-topleft: 4px;
 	-moz-border-radius-topright:4px;
 	position:relative;
