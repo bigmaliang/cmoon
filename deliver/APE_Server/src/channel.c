@@ -99,6 +99,20 @@ CHANNEL *getchan(const char *chan, acetables *g_ape)
 	return (CHANNEL *)hashtbl_seek(g_ape->hLusers, chan);	
 }
 
+CHANNEL *getchanbypubid(const char *pubid, acetables *g_ape)
+{
+    transpipe *gpipe;
+ 
+    gpipe = get_pipe(pubid, g_ape);
+ 
+    if (gpipe == NULL || gpipe->type != CHANNEL_PIPE) {
+        return NULL;
+    }
+ 
+    return gpipe->pipe;
+ 
+}
+
 CHANNEL *getchanf(acetables *g_ape, const char *fmt, ...)
 {
     char name[MAX_TOPIC_LEN];

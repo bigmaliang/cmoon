@@ -32,6 +32,7 @@
 #include "../src/extend.h"
 #include "../src/users.h"
 #include "../src/utils.h"
+#include "../src/hnpub.h"
 #include "../src/plugins.h"
 #include "../src/ticks.h"
 #include "../src/pipe.h"
@@ -52,6 +53,7 @@ struct _ace_callbacks
 {		
 	USERS *(*c_adduser)(ape_socket *, char *, extend *, char *, acetables *);
 	void (*c_deluser)(USERS *, acetables *);
+    void (*c_delsubuser)(subuser *, acetables *);
 	CHANNEL *(*c_mkchan)(char *, acetables *);
 	void (*c_rmchan)(CHANNEL *, acetables *);
 	void (*c_join)(USERS *, CHANNEL *, acetables *);

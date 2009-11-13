@@ -73,6 +73,7 @@ int register_hook_cmd(const char *cmd, unsigned int (*func)(callbackp *), void *
 	hook->next = g_ape->cmd_hook;
 	hook->func = func;
 	hook->data = data;
+    hook->next = NULL;
 	g_ape->cmd_hook = hook;
 	return 1;
 }
@@ -180,7 +181,7 @@ unsigned int checkcmd(clientget *cget, transport_t transport, subuser **iuser, a
 								newraw = forge_raw("CLOSE", jlist);
 
 								send_raw_inline((retval.client_close->fd == cget->client->fd ? cget->client : sub->client), transport, newraw, g_ape);
-								
+
 								shutdown(retval.client_close->fd, 2);
 							}
 							sub->client = cp.client = retval.client_listener;

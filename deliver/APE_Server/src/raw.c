@@ -63,8 +63,11 @@ RAW *forge_raw(const char *raw, json_item *jlist)
 
 int free_raw(RAW *fraw)
 {
-	if (--(fraw->refcount) <= 0) {
+    if (fraw == NULL) return 0;
+    
+	if (--(fraw->refcount) == 0) {
 		free(fraw->data);
+        fraw->data = NULL;
 		free(fraw);
 		return 0;
 	}
@@ -331,7 +334,9 @@ int send_raws(subuser *user, acetables *g_ape)
 	if (user->raw_pools.nraw == 0) {
 		return 1;
 	}
-	
+
+    PACK_TCP(user->client->fd); /* Activate TCP_CORK */
+    
 	properties = transport_get_properties(user->user->transport, g_ape);
 	
 	if (!user->headers.sent) {
@@ -380,7 +385,11 @@ int send_raws(subuser *user, acetables *g_ape)
 		}
 		
 		free_raw(pool->raw);
-		pool->raw = NULL;
+        /*
+         * after raw sended, we must set the pool's raw point to null
+         * or, check timeout->delsubuser->destroy_raw_pool->free_raw'll core dump
+         */
+        pool->raw = NULL;
 		
 		pool = pool_next;
 		
@@ -393,10 +402,23 @@ int send_raws(subuser *user, acetables *g_ape)
 	user->raw_pools.high.nraw = 0;
 	user->raw_pools.low.nraw = 0;
 	user->raw_pools.nraw = 0;
+
+    pool = user->raw_pools.high.rawhead;
+    while (pool != NULL) {
+        pool->raw = NULL;
+        pool = pool->next;
+    }
+    pool = user->raw_pools.low.rawhead;
+    while (pool != NULL) {
+        pool->raw = NULL;
+        pool = pool->next;
+    }
 	
 	user->raw_pools.high.rawfoot = user->raw_pools.high.rawhead;
 	user->raw_pools.low.rawfoot = user->raw_pools.low.rawhead;
-	
+
+    FLUSH_TCP(user->client->fd);
+    
 	return finish;
 }
 
@@ -432,6 +454,7 @@ void destroy_raw_pool(struct _raw_pool *ptr)
 	while (pool != NULL) {
 		if (pool->raw != NULL) {
 			free_raw(pool->raw);
+            pool->raw = NULL;
 		}
 		if (pool->start) {
 			if (tpool != NULL) {

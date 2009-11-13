@@ -27,6 +27,7 @@
 #include "handle_http.h"
 #include "transports.h"
 #include "main.h"
+#include "log.h"
 
 static void ape_read(ape_socket *co, ape_buffer *buffer, size_t offset, acetables *g_ape)
 {
@@ -59,12 +60,12 @@ static void ape_disconnect(ape_socket *co, acetables *g_ape)
 			((subuser *)(co->attach))->state = ADIED;
 			
 			http_headers_free(((subuser *)(co->attach))->headers.content);
-			((subuser *)(co->attach))->headers.content = NULL;			
+			((subuser *)(co->attach))->headers.content = NULL;
 		}
 		if (((subuser *)(co->attach))->wait_for_free == 1) {
 			free(co->attach);
-			co->attach = NULL;						
-		}		
+			co->attach = NULL;
+		}
 	}
 }
 

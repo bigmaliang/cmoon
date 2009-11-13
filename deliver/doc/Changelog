@@ -20,3 +20,69 @@ raw.c post_raw() 信息加上会发给他的 linked 的 user, users.h 加了 #de
 make_link 函数有修改
 
 channel.c 新增 getchanf 函数
+
+(2009-10-27)last updateED: ec785210537e740c660e39959faf595acd82da57
+
+
+double free's core dump
+=======================
+
+raw.c
+------
+	if (--(fraw->refcount) <= 0) {
+free_raw() CHANGE TO
+        if (fraw == NULL) return 0;
+	if (--(fraw->refcount) == 0) {
+
+send_raws() ADD
+        /*
+         * after raw sended, we must set the pool's raw point to null
+         * or, check timeout->delsubuser->destroy_raw_pool->free_raw'll core dump
+         */
+
+	user->raw_pools.high.nraw = 0;
+	user->raw_pools.low.nraw = 0;
+	user->raw_pools.nraw = 0;
+CHANGED TO
+	user->raw_pools.high.nraw = 0;
+	user->raw_pools.low.nraw = 0;
+	user->raw_pools.nraw = 0;
+
+        pool = user->raw_pools.high.rawhead;
+        while (pool != NULL) {
+            pool->raw = NULL;
+            pool = pool->next;
+        }
+        pool = user->raw_pools.low.rawhead;
+        while (pool != NULL) {
+            pool->raw = NULL;
+            pool = pool->next;
+        }
+
+	    free_raw(pool->raw);
+destroy_raw_pool() CHANGED TO
+	    free_raw(pool->raw);
+            pool->raw = NULL;
+
+users.c
+--------
+	destroy_raw_pool(del->raw_pools.low.rawhead);
+	destroy_raw_pool(del->raw_pools.high.rawhead);
+delsubuser() CHANGED TO
+	destroy_raw_pool(del->raw_pools.low.rawhead);
+	destroy_raw_pool(del->raw_pools.high.rawhead);
+        del->raw_pools.low.rawhead = NULL;
+        del->raw_pools.low.rawfoot = NULL;
+        del->raw_pools.high.rawhead = NULL;
+        del->raw_pools.high.rawfoot = NULL;
+
+
+callbacks 添加了delsubuser.
+
+json_item_copy()
+	obj->jchild.head->next = new_item;
+CHANGED TO
+        new_item->next = obj->jchild.child;
+        obj->jchild.child = new_item;
+	//obj->jchild.head->next = new_item;
+
