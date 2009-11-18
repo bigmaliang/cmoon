@@ -31,3 +31,25 @@ var tm = h+":"+mt+":"+s;
 var tm = Date(eval(raw.time)).match(/\d{1,2}:\d{1,2}:\d{1,2}/)[0];
 
 
+键盘事件
+-------
+    function bindEnter(type) {
+        $("#" + type + "pass").keyup(function(e) {
+            if (e.which == 13) {
+                $("#" + type + "Grab").click();
+            }
+        });
+    }
+
+    bindEnter("mail");
+    bindEnter("msn");
+
+
+PHP, JS
+-------
+php 有for, foreach, js 只有for, jQuery有 $.each(obj, xxx)
+js 中 for 效率远大于 $.each(), 但 for 只能用于数组, $.each()
+中不能用 continue, break之类跳出循环, 可用 return false类似break,
+return true类似continue.
+
+div 没有focus, blur 事件, 只有mouseover mouseout 事件

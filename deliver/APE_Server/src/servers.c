@@ -62,7 +62,8 @@ static void ape_disconnect(ape_socket *co, acetables *g_ape)
 			http_headers_free(((subuser *)(co->attach))->headers.content);
 			((subuser *)(co->attach))->headers.content = NULL;
 		}
-		if (((subuser *)(co->attach))->wait_for_free == 1) {
+		//if (((subuser *)(co->attach))->wait_for_free == 1) {
+        if (co->attach != NULL && ((subuser *)(co->attach))->wait_for_free == 1) {
 			free(co->attach);
 			co->attach = NULL;
 		}
