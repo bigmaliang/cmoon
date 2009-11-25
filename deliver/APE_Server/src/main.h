@@ -76,14 +76,15 @@ struct _ape_transports {
 typedef struct _http_state http_state;
 struct _http_state
 {
-	unsigned short int step;
-	unsigned short int type; /* HTTP_GET or HTTP_POST */
+	struct _http_header_line *hlines;
+    
 	int pos;
 	int contentlength;
 	int read;
+	unsigned short int step;
+	unsigned short int type; /* HTTP_GET or HTTP_POST */
 	unsigned short int error;
 	unsigned short int ready;
-	struct _http_header_line *hlines;
 };
 
 typedef enum {
@@ -101,10 +102,10 @@ typedef enum {
 typedef struct _ape_buffer ape_buffer;
 struct _ape_buffer {
 	char *data;
+	void *slot;
 	unsigned int size;
 	unsigned int length;
 	
-	void *slot;
 	int islot;
 };
 
@@ -112,61 +113,42 @@ struct _ape_buffer {
 
 typedef struct _acetables
 {
-	HTBL *hLogin;
-	HTBL *hSessid;
-	HTBL *hLusers;
-	HTBL *hCallback;
-
-	HTBL *hPubid;
-
-	struct apeconfig *srv;
-	
 	struct _callback_hook *cmd_hook;
-	
-	struct _ape_transports transports;
-	
-	struct USERS *uHead;
-	
-	struct {
-		struct _ticks_callback *timers;
-		unsigned int ntimers;
-	} timers;
-	
-	struct _socks_bufout *bufout;
-
-	struct _ace_plugins *plugins;
-	
-	struct _fdevent *events;
-	
-	int basemem;
-	unsigned int nConnected;
-	
-	struct _ape_socket *co;
-	
+    
 	struct {
 		struct _ape_proxy *list;
 		struct _ape_proxy_cache *hosts;
 	} proxy;
+    
+	struct {
+		struct _ticks_callback *timers;
+		unsigned int ntimers;
+	} timers;
+    
+	struct _ape_transports transports;
 	
+	HTBL *hLogin;
+	HTBL *hSessid;
+	HTBL *hLusers;
+	HTBL *hCallback;
+	HTBL *hPubid;
+
+	struct apeconfig *srv;
+	
+	
+	struct USERS *uHead;
+	struct _socks_bufout *bufout;
+	struct _ace_plugins *plugins;
+	struct _fdevent *events;
+	struct _ape_socket *co;
 	struct _extend *properties;
+	
+	int basemem;
+	unsigned int nConnected;
 } acetables;
 
 typedef struct _ape_socket ape_socket;
 struct _ape_socket {
-	char ip_client[16];
-
-	http_state http;
-
-	int fd;
-	ape_socket_state_t state;
-	
-	ape_socket_t stream_type;
-	
-	long int idle;
-
-	ape_buffer buffer_in;
-	ape_buffer buffer_out;
-
 	struct {
 		void (*on_accept)(struct _ape_socket *client, acetables *g_ape);
 		void (*on_connect)(struct _ape_socket *client, acetables *g_ape); /* ajouter in/out ? ou faire un onaccept */
@@ -176,10 +158,20 @@ struct _ape_socket {
 		void (*on_data_completly_sent)(struct _ape_socket *client, acetables *g_ape);
 		void (*on_write)(struct _ape_socket *client, acetables *g_ape);
 	} callbacks;
+    
+	ape_buffer buffer_in;
+	ape_buffer buffer_out;
+    
+	http_state http;
+	char ip_client[16];
+	long int idle;
 
 	void *attach;
-	
 	void *data;
+    
+	int fd;
+	ape_socket_state_t state;
+	ape_socket_t stream_type;
 };
 
 #define HEADER_DEFAULT "HTTP/1.1 200 OK\r\nPragma: no-cache\r\nCache-Control: no-cache, must-revalidate\r\nExpires: Thu, 27 Dec 1986 07:30:00 GMT\r\nContent-Type: text/html\r\n\r\n"

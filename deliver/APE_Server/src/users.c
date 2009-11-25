@@ -40,6 +40,9 @@
 #include "transports.h"
 #include "log.h"
 
+#include "mevent.h"
+#include "mevent_db_community.h"
+
 /* Checking whether the user is in a channel */
 unsigned int isonchannel(USERS *user, CHANNEL *chan)
 {
@@ -190,16 +193,16 @@ void deluser(USERS *user, acetables *g_ape)
 	
 	clear_subusers(user, g_ape);
 
-    if (user->links.nlink != 0 && user->links.ulink) {
-        struct _link_list *cur, *next;
-        cur = user->links.ulink;
-        next = user->links.ulink->next;
-        while (cur) {
-            destroy_link(cur->link->a, cur->link->b);
-            cur = next;
-            if (next) next = next->next;
-        }
-    }
+	if (user->links.nlink != 0 && user->links.ulink) {
+		struct _link_list *cur, *next;
+		cur = user->links.ulink;
+		next = user->links.ulink->next;
+		while (cur) {
+			destroy_link(cur->link->a, cur->link->b);
+			cur = next;
+			if (next) next = next->next;
+		}
+	}
 
 	hashtbl_erase(g_ape->hSessid, user->sessid);
 
@@ -223,8 +226,6 @@ void deluser(USERS *user, acetables *g_ape)
 	user->pipe = NULL;
 	
 	free(user);
-
-	user = NULL;
 }
 
 void do_died(subuser *sub)
@@ -582,6 +583,10 @@ void delsubuser(subuser **current, acetables *g_ape)
     del->raw_pools.high.rawhead = NULL;
     del->raw_pools.high.rawfoot = NULL;
 
+    del->raw_pools.low.nraw = 0;
+    del->raw_pools.high.nraw = 0;
+    del->raw_pools.nraw = 0;
+
 	if (del->state == ALIVE) {
 		del->wait_for_free = 1;
 		do_died(del);
@@ -645,8 +650,8 @@ void make_link(USERS *a, USERS *b)
 	struct _users_link *userlink = NULL;
 	struct _link_list *list_a, *list_b;
 
-    userlink = are_linked(a, b);
-    
+	userlink = are_linked(a, b);
+	
 	if (userlink == NULL) {	
 		userlink = xmalloc(sizeof(*userlink));
 	
@@ -678,58 +683,58 @@ void make_link(USERS *a, USERS *b)
 void destroy_link(USERS *a, USERS *b)
 {
 	struct _users_link *found;
-    struct _link_list *cur, *prev, *list_a, *list_b;
+	struct _link_list *cur, *prev, *list_a, *list_b;
 
-    list_a = list_b = NULL;
-    
+	list_a = list_b = NULL;
+	
 	if ((found = are_linked(a, b)) != NULL) {
-        /*
-         * eliminate out current link_list for a
-         */
-        prev = cur = a->links.ulink;
-        while (cur != NULL) {
-            if (cur->link == found) {
-                a->links.nlink--;
-                list_a = cur;
-                if (cur == prev)
-                    a->links.ulink = cur->next;
-                else
-                    prev->next = cur->next;
-                break;
-            }
-            prev = cur;
-            cur = cur->next;
-        }
-        
-        /*
-         * eliminate out current link_list for b
-         */
-        prev = cur = b->links.ulink;
-        while (cur != NULL) {
-            if (cur->link == found) {
-                b->links.nlink--;
-                list_b = cur;
-                if (cur == prev)
-                    b->links.ulink = cur->next;
-                else
-                    prev->next = cur->next;
-                break;
-            }
-            prev = cur;
-            cur = cur->next;
-        }
+		/*
+		 * eliminate out current link_list for a
+		 */
+		prev = cur = a->links.ulink;
+		while (cur != NULL) {
+			if (cur->link == found) {
+				a->links.nlink--;
+				list_a = cur;
+				if (cur == prev)
+					a->links.ulink = cur->next;
+				else
+					prev->next = cur->next;
+				break;
+			}
+			prev = cur;
+			cur = cur->next;
+		}
+		
+		/*
+		 * eliminate out current link_list for b
+		 */
+		prev = cur = b->links.ulink;
+		while (cur != NULL) {
+			if (cur->link == found) {
+				b->links.nlink--;
+				list_b = cur;
+				if (cur == prev)
+					b->links.ulink = cur->next;
+				else
+					prev->next = cur->next;
+				break;
+			}
+			prev = cur;
+			cur = cur->next;
+		}
 
-        /*
-         * free list
-         * found == list_a->link == list_b->link
-         */
-        free(found);
-        if (list_a != NULL) {
-            free(list_a);
-        }
-        if (list_b != NULL) {
-            free(list_b);
-        }
+		/*
+		 * free list
+		 * found == list_a->link == list_b->link
+		 */
+		free(found);
+		if (list_a != NULL) {
+			free(list_a);
+		}
+		if (list_b != NULL) {
+			free(list_b);
+		}
 	}	
 }
 
@@ -776,39 +781,61 @@ json_item *get_json_object_user(USERS *user)
 	return jstr;
 }
 
+enum {
+    ST_ONLINE = 0,
+    ST_NOTICE,
+    ST_FEED
+} stastic_type;
 void tick_static(acetables *g_ape, int lastcall)
 {
     HTBL *ulist = (HTBL*)get_property(g_ape->properties, "userlist")->val;
     HTBL_ITEM *item;
     USERS *user;
     char *uin;
-    int num = 0;
-    char logs[1024];
+    int num = 0, ret;
+    char sql[1024], usrlist[512];
 
-    memset(logs, 0x0, sizeof(logs));
-    wlog_foo("CURRENT ONLINE USER LIST ... ");
+    st_push *st = (st_push*)get_property(g_ape->properties, "msgstatic")->val;
+    
+    mevent_t *evt;
+    evt = mevent_init_plugin("db_community", REQ_CMD_STAT, FLAGS_NONE);
+    if (evt == NULL) {
+        wlog_err("init mevent db_community failure");
+        return;
+    }
+    mevent_add_array(evt, NULL, "sqls");
+    
+    memset(sql, 0x0, sizeof(sql));
+    memset(usrlist, 0x0, sizeof(usrlist));
     if (ulist != NULL) {
         for (item = ulist->first; item != NULL; item = item->lnext) {
             user = (USERS*) item->addrs;
             uin = (char*)get_property(user->properties, "uin")->val;
             num++;
-            strcat(logs, uin);
-            strcat(logs, " ");
-            if (num % 50 == 0) {
-                wlog_foo("%s", logs);
-                memset(logs, 0x0, sizeof(logs));
+            strcat(usrlist, uin);
+            strcat(usrlist, " ");
+            if (num > 20) {
+                break;
             }
         }
-
-        if (num % 50 != 0) {
-            wlog_foo("%s", logs);
-        }
     }
-    wlog_foo("USERLIST FINISH(%d)", num);
+    snprintf(sql, sizeof(sql), "INSERT INTO mps (type, count, remark) "
+             " VALUES (%d, %u, '%s');", ST_ONLINE, g_ape->nConnected, usrlist);
+    mevent_add_str(evt, "sqls", "1", sql);
 
-    st_push *st = (st_push*)get_property(g_ape->properties, "msgstatic")->val;
-    wlog_foo("MESSAGE STATIC site notice: %lu, feed %lu",
-             st->msg_notice, st->msg_feed);
+    sprintf(sql, "INSERT INTO mps (type, count) VALUES (%d, %lu);",
+            ST_NOTICE, st->msg_notice);
+    mevent_add_str(evt, "sqls", "2", sql);
     st->msg_notice = 0;
+
+    sprintf(sql, "INSERT INTO mps (type, count) VALUES (%d, %lu);",
+            ST_FEED, st->msg_feed);
+    mevent_add_str(evt, "sqls", "3", sql);
     st->msg_feed = 0;
+
+    ret = mevent_trigger(evt);
+    if (PROCESS_NOK(ret)) {
+        wlog_err("trigger statistic event failure %d", ret);
+    }
+	mevent_free(evt);
 }

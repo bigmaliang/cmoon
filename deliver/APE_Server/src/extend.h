@@ -40,13 +40,13 @@ typedef struct _extend extend;
 
 struct _extend
 {
-	char key[EXTEND_KEY_LENGTH+1];
 	void *val;
 	
 	EXTEND_TYPE type;
 	EXTEND_PUBLIC visibility;
 	
 	struct _extend *next;
+	char key[EXTEND_KEY_LENGTH+1];
 };
 
 typedef struct {

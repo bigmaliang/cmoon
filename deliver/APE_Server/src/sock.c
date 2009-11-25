@@ -91,7 +91,7 @@ ape_socket *ape_listen(unsigned int port, char *listen_ip, acetables *g_ape)
 	}
 	
 	setnonblocking(sock);
-	if (sock + 4 == g_ape->basemem) {
+	if (sock + 4 >= g_ape->basemem) {
 		/* Increase connection & events size */
 		growup(&g_ape->basemem, &g_ape->co, g_ape->events, &g_ape->bufout);
 		co = g_ape->co;
@@ -142,14 +142,14 @@ ape_socket *ape_connect(char *ip, int port, acetables *g_ape)
 		return NULL;
 	}
 	
-	ret = events_add(g_ape->events, sock, EVENT_READ|EVENT_WRITE);
-
-	if (sock + 4 == g_ape->basemem) {
+	if (sock + 4 >= g_ape->basemem) {
 		/* Increase connection & events size */
 		growup(&g_ape->basemem, &g_ape->co, g_ape->events, &g_ape->bufout);
 		co = g_ape->co;
 	}
 	
+	ret = events_add(g_ape->events, sock, EVENT_READ|EVENT_WRITE);
+
 	co[sock].buffer_in.data = xmalloc(sizeof(char) * (DEFAULT_BUFFER_SIZE + 1));
 	co[sock].buffer_in.size = DEFAULT_BUFFER_SIZE;
 	co[sock].buffer_in.length = 0;
@@ -290,10 +290,11 @@ unsigned int sockroutine(acetables *g_ape)
 	add_periodical(5, 0, check_idle, &sl, g_ape);
 	#endif
 	
-	while (1) {
 	//	int timeout_to_hang = MAX((1000/TICKS_RATE)-ticks, 1);
-		/* Linux 2.6.25 provides a fd-driven timer system. It could be usefull to implement */
-		gettimeofday(&t_start, NULL);
+    /* Linux 2.6.25 provides a fd-driven timer system. It could be usefull to implement */
+    gettimeofday(&t_start, NULL);
+    
+	while (1) {
 
 		nfds = events_poll(g_ape->events, 1);
 		
@@ -310,7 +311,7 @@ unsigned int sockroutine(acetables *g_ape)
 				
 					while (1) {
 
-						http_state http = {0, HTTP_NULL, 0, -1, 0, 0, 0, NULL};
+                        http_state http = {NULL, 0, -1, 0, 0, HTTP_NULL, 0, 0};
 					
 						new_fd = accept(active_fd, 
 							(struct sockaddr *)&their_addr,
@@ -320,7 +321,7 @@ unsigned int sockroutine(acetables *g_ape)
 							break;
 						}
 						
-						if (new_fd + 4 == g_ape->basemem) {
+						if (new_fd + 4 >= g_ape->basemem) {
 							/* Increase connection & events size */
 							growup(&g_ape->basemem, &g_ape->co, g_ape->events, &g_ape->bufout);
 							co = g_ape->co;
@@ -562,53 +563,17 @@ unsigned int sockroutine(acetables *g_ape)
 		gettimeofday(&t_end, NULL);
 
 		ticks = 0;
-		
-		uticks = 1000000 * (t_end.tv_sec - t_start.tv_sec);
+
+        uticks = 1000000L * (t_end.tv_sec - t_start.tv_sec);
 		uticks += (t_end.tv_usec - t_start.tv_usec);
-		
+        t_start = t_end;
 		lticks += uticks;
-
+        
 		/* Tic tac, tic tac :-) */
-		{
-			unsigned long int nticks;
-			ape_proxy *proxy = g_ape->proxy.list;
-			int psock;
-
-			while (proxy != NULL) {
-
-				if (proxy->state == PROXY_NOT_CONNECTED && ((psock = proxy_connect(proxy, g_ape)) != 0)) {
-					http_state http_s = {0, HTTP_NULL, 0, -1, 0, 0, 0, NULL};
-					if (psock + 4 == g_ape->basemem) {
-						growup(&g_ape->basemem, &g_ape->co, g_ape->events, &g_ape->bufout);
-						co = g_ape->co;
-					}
-					co[psock].ip_client[0] = '\0';
-					co[psock].buffer_in.data = xmalloc(sizeof(char) * (DEFAULT_BUFFER_SIZE + 1));
-					co[psock].buffer_in.size = DEFAULT_BUFFER_SIZE;
-					co[psock].buffer_in.length = 0;
-					co[psock].buffer_in.slot = NULL;
-					co[psock].buffer_in.islot = 0;
-					
-					co[psock].idle = time(NULL);
-					co[psock].http = http_s;
-					co[psock].attach = proxy;
-					co[psock].stream_type = STREAM_OUT;
-					co[psock].fd = psock;
-					
-					tfd++;
-				}
-
-				proxy = proxy->next;
-			}
-			
-			while (lticks > 1000) {
-				ticks++;
-				lticks -= 1000;
-			}
-			for (nticks = 0; nticks < ticks; nticks++) {
-				process_tick(g_ape);
-			}
-		}
+        while (lticks >= 1000) {
+            lticks -= 1000;
+            process_tick(g_ape);
+        }
 	}
 
 	return 0;
@@ -676,7 +641,7 @@ int sendbin(int sock, char *bin, int len, acetables *g_ape)
 	int t_bytes = 0, r_bytes, n = 0;
 
 	r_bytes = len;
-	
+
 	if (sock != 0) {
 		while(t_bytes < len) {
 			n = write(sock, bin + t_bytes, r_bytes);
