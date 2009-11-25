@@ -70,14 +70,11 @@ unsigned int sockroutine(acetables *g_ape);
 	sendbin(x, y, strlen(y), g_ape)
 
 
-#define QUIT(x, g_ape) \
-	sendbin(x, HEADER_DEFAULT, HEADER_DEFAULT_LEN, g_ape);\
+#define QUIT(x, g_ape)                                      \
+	sendbin(x, HEADER_DEFAULT, HEADER_DEFAULT_LEN, g_ape);  \
 	sendbin(x, "QUIT", 4, g_ape)
 
-#ifndef TCP_CORK
-#define TCP_CORK TCP_NOPUSH
-#endif
- 
+#ifdef TCP_CORK
 #define PACK_TCP(fd)                                                    \
     do {                                                                \
         int __state = 1;                                                \
@@ -89,5 +86,9 @@ unsigned int sockroutine(acetables *g_ape);
         int __state = 0;                                                \
         setsockopt(fd, IPPROTO_TCP, TCP_CORK, &__state, sizeof(__state)); \
     } while(0)
+#else
+	#define PACK_TCP(fd)
+	#define FLUSH_TCP(fd)
+#endif
 
 #endif

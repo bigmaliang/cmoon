@@ -2,6 +2,10 @@ prefix		= /usr/local
 bindir		= $(prefix)/bin
 libdir		= $(prefix)/lib
 
+EVENT_BASE = ../../event
+CS_BASE = ../../lib/cs
+INC_EVENT = -I $(EVENT_BASE)/api -I $(EVENT_BASE)/base -I $(EVENT_BASE)/plugin -I $(CS_BASE)/include/ClearSilver
+LIB_EVENT = -L $(EVENT_BASE)/api -lmevent -L $(EVENT_BASE)/daemon -lmevent_server -L/usr/local/lib -l neo_utl -lpthread -levent
 
 SRC_LIB = src/sock.c src/hash.c src/handle_http.c src/cmd.c src/users.c src/channel.c src/config.c src/json.c src/json_parser.c src/plugins.c src/http.c src/extend.c src/utils.c src/hnpub.c src/ticks.c src/proxy.c src/base64.c src/pipe.c src/raw.c src/events.c src/event_kqueue.c src/event_epoll.c src/transports.c src/servers.c src/log.c src/adb.c src/smsalarm.c
 SRC_BIN = src/entry.c  src/dns.c
@@ -12,7 +16,7 @@ OBJ_BIN = $(patsubst %.c, %.o, $(SRC_BIN))
 LIB_APE = libaped.so
 EXEC=bin/aped
 
-CFLAGS=-Wall -g -D_GNU_SOURCE -minline-all-stringops -rdynamic -I/usr/local/mysql/include -I ./libs/udns-0.0.9/
+CFLAGS=-Wall -g -DTCP_CORK -D_GNU_SOURCE -minline-all-stringops -rdynamic -I/usr/local/mysql/include -I ./libs/udns-0.0.9/ $(INC_EVENT)
 LFLAGS=-ldl -lm
 CC=gcc -std=c99
 RM=rm -f
@@ -26,7 +30,7 @@ libaped: $(OBJ_LIB)
 	$(CC) $(CFLAGS) -fPIC -shared $(OBJ_LIB) -o $(LIB_APE) $(LFLAGS) -L/usr/local/mysql/lib/mysql -lmysqlclient
 
 aped: libaped $(SRC_BIN)
-	$(CC) $(CFLAGS) $(SRC_BIN) -o $(EXEC) -L./ -laped $(LFLAGS) ./libs/udns-0.0.9/libudns.a
+	$(CC) $(CFLAGS) $(SRC_BIN) -o $(EXEC) -L./ -laped $(LFLAGS) ./libs/udns-0.0.9/libudns.a $(LIB_EVENT)
 
 install: 
 	install -d $(bindir)

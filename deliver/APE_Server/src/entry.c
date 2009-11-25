@@ -151,7 +151,6 @@ int main(int argc, char **argv)
 	printf("Author  : Weelya (contact@weelya.com)\n\n");
 
 	signal(SIGINT, &signal_handler);
-	signal(SIGPIPE, SIG_IGN);
 	
 	if (TICKS_RATE < 1) {
 		printf("[ERR] TICKS_RATE cant be less than 1\n");
@@ -235,6 +234,10 @@ int main(int argc, char **argv)
 	if (strcmp(CONFIG_VAL(Server, daemon, srv), "yes") == 0) {
 		ape_daemon();
 	}
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sigaction(SIGPIPE, &sa, 0);
+	//signal(SIGPIPE, SIG_IGN);
 	
 	g_ape->cmd_hook = NULL;
 	
@@ -257,7 +260,8 @@ int main(int argc, char **argv)
 	g_ape->properties = NULL;
 
 	add_ticked(check_timeout, g_ape);
-    add_periodical(1000*1800, 0, tick_static, g_ape, g_ape);
+    //add_periodical((1000*10), 0, check_timeout, g_ape, g_ape);
+    add_periodical((1000*60*30), 0, tick_static, g_ape, g_ape);
 	
 	do_register(g_ape);
 	

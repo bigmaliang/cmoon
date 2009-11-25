@@ -79,13 +79,14 @@ void hashtbl_free(HTBL *htbl)
 
 void hashtbl_append(HTBL *htbl, const char *key, void *structaddr)
 {
-	unsigned int key_hash;
+	unsigned int key_hash, key_len;
 	HTBL_ITEM *hTmp, *hDbl;
 	
 	if (key == NULL) {
 		return;
 	}
-	
+
+    key_len = strlen(key);
 	key_hash = hach_string(key);
 	
 	hTmp = (HTBL_ITEM *)xmalloc(sizeof(*hTmp));
@@ -98,19 +99,20 @@ void hashtbl_append(HTBL *htbl, const char *key, void *structaddr)
 		htbl->first->lprev = hTmp;
 	}
 	
-	hTmp->key = xmalloc(sizeof(char) * (strlen(key)+1));
+	hTmp->key = xmalloc(sizeof(char) * (key_len+1));
 	
 	htbl->first = hTmp;
 	
 	hTmp->addrs = (void *)structaddr;
 	
-	memcpy(hTmp->key, key, strlen(key)+1);
+	memcpy(hTmp->key, key, key_len+1);
 	
 	if (htbl->table[key_hash] != NULL) {
 		hDbl = htbl->table[key_hash];
 		
 		while (hDbl != NULL) {
 			if (strcasecmp(hDbl->key, key) == 0) {
+                htbl->first = hTmp->lnext;
 				free(hTmp->key);
 				free(hTmp);
 				hDbl->addrs = (void *)structaddr;

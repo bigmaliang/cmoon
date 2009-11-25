@@ -683,6 +683,7 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 		}
 		if (post == 0) {
             wlog_dbg("data's type %d not in my setting", type);
+            free_json_item(oit);
             return;
         }
 	}
@@ -695,6 +696,7 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 		if (pageclass == 1) {
 			if (!strcmp(msgp->val, "2")) {
                 wlog_dbg("user set don't accept pageclass=1");
+                free_json_item(oit);
 				return;
 			}
 		}
@@ -714,12 +716,13 @@ static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)
 		}
 		if (post == 0) {
             wlog_dbg("pageclass %d not in my properties(sub)", pageclass);
+            free_json_item(oit);
             return;
         }
 	}
 
  do_post:
-    //free_json_item(oit);
+    free_json_item(oit);
     pool = (raw->priority == RAW_PRI_LO ?
             &sub->raw_pools.low : &sub->raw_pools.high);
     
@@ -768,7 +771,7 @@ static unsigned int push_trustsend(callbackp *callbacki)
 
 static void init_module(acetables *g_ape)
 {
-    st_push *stdata = xmalloc(sizeof(st_push));
+    st_push *stdata = calloc(1, sizeof(st_push));
 	add_property(&g_ape->properties, "userlist", hashtbl_init(),
 				 EXTEND_POINTER, EXTEND_ISPRIVATE);
     add_property(&g_ape->properties, "msgstatic", stdata,

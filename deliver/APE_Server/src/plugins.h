@@ -45,20 +45,6 @@ struct _ace_plugin_infos
 
 struct _ace_plugins
 {
-	/* Module Handle */
-	void *hPlug;
-	
-	const char *modulename;
-	
-	/* Module info */
-	ace_plugin_infos *infos;
-	
-	/* Init function */
-	void (*loader)(acetables *g_ape);
-
-	/* Module callback entry point */
-	struct _ace_callbacks *cb;
-	
 	struct {
 		unsigned int c_adduser;
 		unsigned int c_deluser;
@@ -71,7 +57,16 @@ struct _ace_plugins
 		unsigned int c_post_raw_sub;
 
 	} fire;
-
+    
+	/* Module Handle */
+	void *hPlug;
+	void (*loader)(acetables *g_ape);
+	
+	const char *modulename;
+    
+	struct _ace_callbacks *cb;
+	/* Module info */
+	ace_plugin_infos *infos;
 	ace_plugins *next;
 };
 

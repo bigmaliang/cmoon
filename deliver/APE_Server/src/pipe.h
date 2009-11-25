@@ -45,17 +45,16 @@ typedef struct _transpipe transpipe;
 struct _transpipe
 {
 	void *pipe;
-	struct _pipe_link *link;
-	
-	int type;
-	
-	char pubid[33];
-	
 	void *data;
-	
+
+	struct _pipe_link *link;
 	struct _extend *properties;
 	
 	void (*on_send)(struct _transpipe *, struct USERS *, json_item *, acetables *);
+    
+	int type;
+	
+	char pubid[33];
 };
 
 transpipe *init_pipe(void *pipe, int type, acetables *g_ape);

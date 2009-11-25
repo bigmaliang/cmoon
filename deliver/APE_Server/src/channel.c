@@ -154,12 +154,12 @@ void join(USERS *user, CHANNEL *chan, acetables *g_ape)
 	
 	FIRE_EVENT_NULL(join, user, chan, g_ape);
 	
-	RAW *newraw;
-	json_item *jlist = json_new_object();
-	
 	if (isonchannel(user, chan)) {
 		return;
 	}
+
+	RAW *newraw;
+	json_item *jlist = json_new_object();
 	
 	list = xmalloc(sizeof(*list)); // TODO is it free ?
 	list->userinfo = user;
@@ -175,14 +175,18 @@ void join(USERS *user, CHANNEL *chan, acetables *g_ape)
 	user->chan_foot = chanl;
 
 	if (chan->interactive) {
-		json_item *user_list = json_new_array();
-		json_item *uinfo = json_new_object();
-		
-		json_set_property_objN(uinfo, "user", 4, get_json_object_user(user));
-		json_set_property_objN(uinfo, "pipe", 4, get_json_object_channel(chan));
+		json_item *user_list, *uinfo;
+        user_list = json_new_array();
 
-		newraw = forge_raw(RAW_JOIN, uinfo);
-		post_raw_channel_restricted(newraw, chan, user, g_ape);
+        if (list->next != NULL) {
+            uinfo = json_new_object();
+		
+            json_set_property_objN(uinfo, "user", 4, get_json_object_user(user));
+            json_set_property_objN(uinfo, "pipe", 4, get_json_object_channel(chan));
+
+            newraw = forge_raw(RAW_JOIN, uinfo);
+            post_raw_channel_restricted(newraw, chan, user, g_ape);
+        }
 		
 		ulist = chan->head;
 		while (ulist != NULL) {

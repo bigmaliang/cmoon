@@ -70,24 +70,25 @@ struct _callbackp
 	json_item *param;
 
 	struct USERS *call_user;
+	struct _extend *properties;
 	
-	transport_t transport;
-
 	char *ip;
 	char *host;
-	subuser *call_subuser;
-	int chl;
 	char *cmd;
 	void *data;
+    
+	subuser *call_subuser;
 	acetables *g_ape;
-	struct _extend *properties;
+    
+	transport_t transport;
+	int chl;
 };
 
 
 typedef struct callback
 {
-	unsigned int need; /* Need SESSID ? */
 	unsigned int (*func)(struct _callbackp *); /* Callback func */
+	unsigned int need; /* Need SESSID ? */
 } callback;
 
 typedef struct _callback_hook

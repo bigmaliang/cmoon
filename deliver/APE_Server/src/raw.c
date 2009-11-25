@@ -65,10 +65,10 @@ int free_raw(RAW *fraw)
 {
     if (fraw == NULL) return 0;
     
-	if (--(fraw->refcount) == 0) {
+	if (--(fraw->refcount) <= 0) {
 		free(fraw->data);
-        fraw->data = NULL;
 		free(fraw);
+        
 		return 0;
 	}
 	return fraw->refcount;
@@ -254,33 +254,34 @@ int post_to_pipe(json_item *jlist, const char *rawname, const char *pipe, subuse
 
 	}
 
-    jlist_copy = json_item_copy(jlist, NULL);
-	
+    if (from != NULL && from->next != NULL) {
+        jlist_copy = json_item_copy(jlist, NULL);
+ 
+        json_set_property_objN(jlist_copy, "pipe", 4, get_json_object_pipe(recver));
+        newraw = forge_raw(rawname, jlist_copy);
+        post_raw_restricted(newraw, sender, from, g_ape);
+    }
+    
 	switch(recver->type) {
-		case USER_PIPE:
-			json_set_property_objN(jlist, "pipe", 4, get_json_object_user(sender));
-			newraw = forge_raw(rawname, jlist);
-			post_raw(newraw, recver->pipe, g_ape);
-			break;
-		case CHANNEL_PIPE:
-			json_set_property_objN(jlist, "pipe", 4, get_json_object_channel(recver->pipe));
-			newraw = forge_raw(rawname, jlist);
-			post_raw_channel_restricted(newraw, recver->pipe, sender, g_ape);
-			break;
-		case CUSTOM_PIPE:
-			json_set_property_objN(jlist, "pipe", 4, get_json_object_user(sender));
-			post_json_custom(jlist, sender, recver, g_ape);
-			break;
-		default:
-			break;
+    case USER_PIPE:
+        json_set_property_objN(jlist, "pipe", 4, get_json_object_user(sender));
+        newraw = forge_raw(rawname, jlist);
+        post_raw(newraw, recver->pipe, g_ape);
+        break;
+    case CHANNEL_PIPE:
+        if (((CHANNEL*)recver->pipe)->head != NULL && ((CHANNEL*)recver->pipe)->head->next != NULL) {
+            json_set_property_objN(jlist, "pipe", 4, get_json_object_channel(recver->pipe));
+            newraw = forge_raw(rawname, jlist);
+            post_raw_channel_restricted(newraw, recver->pipe, sender, g_ape);
+        }
+        break;
+    case CUSTOM_PIPE:
+        json_set_property_objN(jlist, "pipe", 4, get_json_object_user(sender));
+        post_json_custom(jlist, sender, recver, g_ape);
+        break;
+    default:
+        break;
 	}
-	
-	
-	json_set_property_objN(jlist_copy, "pipe", 4, get_json_object_pipe(recver));
-
-	newraw = forge_raw(rawname, jlist_copy);
-	
-	post_raw_restricted(newraw, sender, from, g_ape);
 	
 	return 1;
 }
@@ -317,7 +318,9 @@ int send_raw_inline(ape_socket *client, transport_t transport, RAW *raw, acetabl
 	
 	if (properties != NULL && properties->padding.right.val != NULL) {
 		finish &= sendbin(client->fd, properties->padding.right.val, properties->padding.right.len, g_ape);
-	}	
+	}
+
+    free_raw(raw);
 	
 	return finish;
 }
@@ -399,8 +402,8 @@ int send_raws(subuser *user, acetables *g_ape)
 		}
 	}
 	
-	user->raw_pools.high.nraw = 0;
 	user->raw_pools.low.nraw = 0;
+	user->raw_pools.high.nraw = 0;
 	user->raw_pools.nraw = 0;
 
     pool = user->raw_pools.high.rawhead;

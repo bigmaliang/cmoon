@@ -315,7 +315,6 @@ unsigned int cmd_connect(callbackp *callbacki)
 	nuser = adduser(callbacki->client, callbacki->host, callbacki->properties, callbacki->ip, callbacki->g_ape);
 	
 	if (nuser == NULL) {
-		RAW *newraw;
 		json_item *jlist = json_new_object();
 
 		json_set_property_strZ(jlist, "code", "200");
