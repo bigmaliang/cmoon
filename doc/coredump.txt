@@ -1,6 +1,8 @@
 程序生成 core dump
 =================
 
+0, $export MALLOC_CHECK_=0 再执行程序可以取消double_free() 之类错误的 core dump
+
 1, 普通程序可以通过以下两种方式 之一 确保生成 core 文件
 	a, ulimit -S -c unlimit
     
