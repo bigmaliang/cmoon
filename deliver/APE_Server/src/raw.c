@@ -152,6 +152,8 @@ void post_raw_restricted(RAW *raw, USERS *user, subuser *sub, acetables *g_ape)
 	subuser *tSub = user->subuser;
 	
 	if (sub == NULL) {
+        wlog_warn("sub null %s", raw->data);
+        free_raw(raw);
 		return;
 	}
 	while (tSub != NULL) {
@@ -171,6 +173,11 @@ void post_raw_channel(RAW *raw, struct CHANNEL *chan, acetables *g_ape)
 	userslist *list;
 	
 	if (chan == NULL || raw == NULL || chan->head == NULL) {
+        wlog_warn("post_raw_channel null %s %s", chan, raw);
+        if (raw != NULL) {
+            wlog_warn("%s", raw->data);
+        }
+        free_raw(raw);
 		return;
 	}
 	list = chan->head;
@@ -187,6 +194,11 @@ void post_raw_channel_restricted(RAW *raw, struct CHANNEL *chan, USERS *ruser, a
 	userslist *list;
 	
 	if (chan == NULL || raw == NULL || chan->head == NULL) {
+        wlog_warn("post_raw_channel null %s %s", chan, raw);
+        if (raw != NULL) {
+            wlog_warn("%s", raw->data);
+        }
+        free_raw(raw);
 		return;
 	}
 	list = chan->head;

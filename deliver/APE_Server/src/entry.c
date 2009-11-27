@@ -75,15 +75,16 @@ static void ape_daemon()
 	if (0 != fork()) { 
 		exit(0);
 	}
+    close(0);
 	if (-1 == setsid()) {
 		
 		exit(0);
 	}
 	signal(SIGHUP, SIG_IGN);
 	
-	if (0 != fork()) {
-		exit(0);
-	}
+	//if (0 != fork()) {
+	//	exit(0);
+	//}
 	printf("Starting daemon.... pid : %i\n\n", getpid());
 }
 
@@ -237,7 +238,7 @@ int main(int argc, char **argv)
     struct sigaction sa;
     sa.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sa, 0);
-	//signal(SIGPIPE, SIG_IGN);
+	signal(SIGPIPE, SIG_IGN);
 	
 	g_ape->cmd_hook = NULL;
 	
