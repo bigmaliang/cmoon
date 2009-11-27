@@ -4,11 +4,6 @@ db_community {
 		ip = 192.168.8.54
 		port = 26000
 	}
-	1 {
-		type = udp
-		ip = 192.168.8.53
-		port = 26010
-	}
 }
 
 uic {

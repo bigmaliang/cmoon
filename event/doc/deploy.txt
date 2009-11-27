@@ -24,6 +24,12 @@ PHP 扩展编译环境安装:
 ------------------
     cd / &&	tar zcvf libmevent.tar.gz usr/local/include/mevent.h usr/local/include/data.h usr/local/include/net-const.h usr/local/lib/libmevent.a usr/local/lib/libneo_utl.so usr/local/include/ClearSilver.h usr/local/include/cs_config.h usr/local/include/cgi/ usr/local/include/cs/ usr/local/include/util/ etc/mevent/
 
+/usr/local/src/php-5.xx/ext/ext_skel --extname=mevent
+cd mevent
+(recover config.m4, mevent.c, php_mevent.h)
+/usr/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config
+
 
 扩展
 ====

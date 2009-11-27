@@ -56,6 +56,9 @@ static void skeleton2_process_driver(struct event_entry *entry, struct queue_ent
 		st->proc_suc++;
 	} else {
 		st->proc_fai++;
+        if (ret == REP_ERR_BADPARAM) {
+            st->msg_badparam++;
+        }
 		dtc_err(fp, "process %u failed %d\n", q->operation, ret);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
