@@ -256,7 +256,8 @@ void check_timeout(acetables *g_ape, int last)
 			subuser **n = &(list->subuser);
 			while (*n != NULL)
 			{
-				if ((ctime - (*n)->idle) >= TIMEOUT_SEC)
+                /* TODO avoid double delsubuser &&... */
+				if ((ctime - (*n)->idle) >= TIMEOUT_SEC && (*n)->)
 				{
 					delsubuser(n, g_ape);
 					continue;
