@@ -116,3 +116,23 @@ ul.uc-menu {
     color: #112222;
     background-color: #eeeeee;
 }
+
+/* ck means chunk */
+#coltwo .ckhalf {width: 345px;}
+#coltwo .ckthird {width: 230px;}
+#coltwo .ckquarter {width: 175px;}
+#coltwo .ckfifth {width: 135px;}
+#coltwo .cksixth, #coltwo .ck4em {width: 100px;}
+#coltwo .ck2em {width: 2em;}
+
+#coltwo .ckleft {
+    float: left;
+    margin: 0 10px 0 0;
+    text-align: left;
+}
+
+#coltwo .ckright {
+    float: right;
+    margin: 0 0 0 10px;
+    text-align: right;
+}

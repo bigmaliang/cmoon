@@ -4,6 +4,7 @@ Mevent {
 		0 = skeleton
 		1 = uic
 		2 = udc
+        3 = db_community
 	}
 	smsalarm {
 		db {
@@ -55,4 +56,21 @@ Plugin {
 			6 = 10000
 		}
 	}
+    db_community {
+        logfile = /data/logs/mevent/db_community
+        home {
+            ip = 192.168.8.84
+            user = root
+            pass = hifly1234
+            name = home
+            port = 3306
+        }
+        stat {
+            ip = 192.168.8.84
+            user = root
+            pass = hifly1234
+            name = stat
+            port = 3306
+        }
+    }
 }
