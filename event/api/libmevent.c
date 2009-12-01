@@ -352,7 +352,7 @@ int mevent_trigger(mevent_t *evt)
 	    (evt->psize+4) > MAX_PACKET_LEN) return 0;
 	
 	ksize = strlen(evt->ename);
-	if (ksize == 0) return 0;
+	//if (ksize == 0) return 0;
 
 	if (!evt->packed) {
 		vsize = pack_data_array(NULL, evt->dataset, evt->payload + evt->psize,
