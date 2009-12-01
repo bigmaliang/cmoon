@@ -64,8 +64,8 @@ RAW *forge_raw(const char *raw, json_item *jlist)
 int free_raw(RAW *fraw)
 {
     if (fraw == NULL) return 0;
-    
-	if (--(fraw->refcount) <= 0) {
+
+	if (--(fraw->refcount) == 0) {
 		free(fraw->data);
 		free(fraw);
         
@@ -84,7 +84,7 @@ RAW *copy_raw(RAW *input)
 	new_raw->priority = input->priority;
 	new_raw->refcount = 0;
     new_raw->data = xmalloc(sizeof(char) * (new_raw->len + 1));
-    memcpy(new_raw->data, input->data, new_raw->len + 1);	
+    memcpy(new_raw->data, input->data, new_raw->len + 1);
 	
 	return new_raw;	
 }
@@ -332,7 +332,8 @@ int send_raw_inline(ape_socket *client, transport_t transport, RAW *raw, acetabl
 		finish &= sendbin(client->fd, properties->padding.right.val, properties->padding.right.len, g_ape);
 	}
 
-    free_raw(raw);
+    /* send_raw_inline just forged a new raw, and posted it */
+    free_raw(copy_raw_z(raw));
 	
 	return finish;
 }

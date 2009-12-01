@@ -32,6 +32,14 @@ hashtbl_append() CHANGE TO
         		htbl->first = hTmp->lnext;
 			free(hTmp->key);
 
+users.c
+	check_timeout() 改变了删除超时/关闭 subusers 的方式, delsubuser() 参数变化, clear_subuusers()等发生变化
+
+    free_raw(raw);
+send_raw_inline() CHANGED TO
+    /* send_raw_inline just forged a new raw, and posted it */
+    free_raw(copy_raw_z(raw));
+
 double free's core dump
 =======================
 
