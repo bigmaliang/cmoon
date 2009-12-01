@@ -16,7 +16,7 @@ OBJ_BIN = $(patsubst %.c, %.o, $(SRC_BIN))
 LIB_APE = libaped.so
 EXEC=bin/aped
 
-CFLAGS=-Wall -g -DTCP_CORK -D_GNU_SOURCE -minline-all-stringops -rdynamic -I/usr/local/mysql/include -I ./libs/udns-0.0.9/ $(INC_EVENT)
+CFLAGS=-O0 -g -Wall -DTCP_CORK -D_GNU_SOURCE -minline-all-stringops -rdynamic -I/usr/local/mysql/include -I ./libs/udns-0.0.9/ $(INC_EVENT)
 LFLAGS=-ldl -lm
 CC=gcc -std=c99
 RM=rm -f

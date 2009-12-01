@@ -243,6 +243,7 @@ void do_died(subuser *sub)
 void check_timeout(acetables *g_ape, int last)
 {
 	USERS *list, *wait;
+    subuser *cur, *prev, *del;
 	long int ctime = time(NULL);
 	
 	list = g_ape->uHead;
@@ -253,29 +254,37 @@ void check_timeout(acetables *g_ape, int last)
 		if ((ctime - list->idle) >= TIMEOUT_SEC && list->type == HUMAN) {
 			deluser(list, g_ape);
 		} else if (list->type == HUMAN) {
-			subuser **n = &(list->subuser);
-			while (*n != NULL)
-			{
-                /* TODO avoid double delsubuser &&... */
-				if ((ctime - (*n)->idle) >= TIMEOUT_SEC && (*n)->)
-				{
-					delsubuser(n, g_ape);
-					continue;
-				}
-				if ((*n)->state == ALIVE && (*n)->raw_pools.nraw && !(*n)->need_update) {
+            cur = prev = list->subuser;
+            while(cur != NULL) {
+                
+                while ( (cur != NULL) && (ctime - cur->idle) >= TIMEOUT_SEC ) {
+                    if (cur == list->subuser)
+                        list->subuser = cur->next;
+                    
+                    prev->next = cur->next;
+                    
+                    del = cur;
+                    cur = cur->next;
+                    
+                    delsubuser(del, g_ape);
+                }
 
-					/* Data completetly sent => closed */
-					if (send_raws(*n, g_ape)) {
-						transport_data_completly_sent(*n, (*n)->user->transport); // todo : hook
-					} else {
+                if (cur == NULL) break;
+                
+                if (cur->state == ALIVE && cur->raw_pools.nraw && !cur->need_update) {
+                    if (send_raws(cur, g_ape)) {
+                        transport_data_completly_sent(cur, cur->user->transport);
+                    } else {
+                        wlog_err("send_raws() error");
+                        cur->burn_after_writing = 1;
+                    }
+                }
+                
+                FIRE_EVENT_NONSTOP(tickuser, cur, g_ape);
 
-						(*n)->burn_after_writing = 1;
-					}
-				} else {
-					FIRE_EVENT_NONSTOP(tickuser, *n, g_ape);
-				}
-				n = &(*n)->next;
-			}
+                prev = cur;
+                cur = cur->next;
+            }
 		}
 		
 		list = wait;
@@ -565,14 +574,8 @@ subuser *getsubuser(USERS *user, const char *channel)
 	return NULL;
 }
 
-void delsubuser(subuser **current, acetables *g_ape)
+void delsubuser(subuser *del, acetables *g_ape)
 {
-	subuser *del = *current;
-	
-	((*current)->user->nsub)--;
-	
-	*current = (*current)->next;
-
 	FIRE_EVENT_NULL(delsubuser, del, g_ape);
 
 	clear_properties(&del->properties);
@@ -598,9 +601,15 @@ void delsubuser(subuser **current, acetables *g_ape)
 
 void clear_subusers(USERS *user, acetables *g_ape)
 {
-	while (user->subuser != NULL) {
-		delsubuser(&(user->subuser), g_ape);
+    subuser *cur, *next;
+    cur = next = user->subuser;
+	while (cur != NULL) {
+        next = cur->next;
+        
+		delsubuser(cur, g_ape);
+        cur = next;
 	}
+    user->subuser = NULL;
 }
 
 #if 0
@@ -675,7 +684,7 @@ void make_link(USERS *a, USERS *b)
 		(b->links.nlink)++;
 	
 		userlink->link_type = 0;
-		wlog_info("Link etablished between %s and %s\n", a->pipe->pubid, b->pipe->pubid);
+		wlog_dbg("Link etablished between %s and %s\n", a->pipe->pubid, b->pipe->pubid);
 	} else {
 		wlog_warn("%s and %s are already linked\n", a->pipe->pubid, b->pipe->pubid);
 	}

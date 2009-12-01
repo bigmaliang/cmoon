@@ -116,7 +116,7 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
 			if (cc->type != DATA_TYPE_U32) continue;
 			sprintf(val, "%d", cc->v.ival);
 			wlog_noise("add %s friend %s", uin, cc->key);
-			hashtbl_append(ulist, (char*)cc->key, strdup(val));
+			hashtbl_append(ulist, (char*)cc->key, NULL);
 		}
 	}
 
@@ -141,7 +141,7 @@ static void get_user_info(char *uin, USERS *user, acetables *g_ape)
 			if (cc->type != DATA_TYPE_U32) continue;
 			sprintf(val, "%d", cc->v.ival);
 			wlog_noise("add %s incpet %s", uin, val);
-			hashtbl_append(ulist, (char*)cc->key, strdup(val));
+			hashtbl_append(ulist, (char*)cc->key, NULL);
 		}
 	}
 
@@ -480,7 +480,7 @@ static unsigned int push_senduniq(callbackp *callbacki)
 	USERS *user = GET_USER_FROM_APE(callbacki->g_ape, dstuin);
 
 	if (user == NULL) {
-		wlog_info("get user failuer %s", dstuin);
+		wlog_noise("get user failuer %s", dstuin);
         hn_senderr(callbacki, "009", "ERR_UIN_NEXIST");
 		return (RETURN_NULL);
 	}
@@ -623,6 +623,11 @@ static void push_deluser(USERS *user, acetables *g_ape)
 	free(user);
 
 	user = NULL;
+}
+
+static void push_tickuser(subuser *sub, acetables *g_ape)
+{
+    wlog_noise("%s %s", GET_UIN_FROM_USER(sub->user), sub->channel);
 }
 
 static void push_post_raw_sub(RAW *raw, subuser *sub, acetables *g_ape)

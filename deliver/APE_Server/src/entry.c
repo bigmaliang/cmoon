@@ -168,7 +168,7 @@ int main(int argc, char **argv)
 	close(random);
 	
 	g_ape = xmalloc(sizeof(*g_ape));
-	g_ape->basemem = 512;
+	g_ape->basemem = 512000;
 	
 	#ifdef USE_EPOLL_HANDLER
 	fdev.handler = EVENT_EPOLL;
@@ -235,10 +235,12 @@ int main(int argc, char **argv)
 	if (strcmp(CONFIG_VAL(Server, daemon, srv), "yes") == 0) {
 		ape_daemon();
 	}
+	signal(SIGPIPE, SIG_IGN);
+#if 0
     struct sigaction sa;
     sa.sa_handler = SIG_IGN;
     sigaction(SIGPIPE, &sa, 0);
-	signal(SIGPIPE, SIG_IGN);
+#endif
 	
 	g_ape->cmd_hook = NULL;
 	
