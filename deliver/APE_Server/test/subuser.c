@@ -48,7 +48,9 @@ int main()
 	printf("\n\n");
 	
 	node = list->next;
-	del_sub(&node);
+	//del_sub(&node);
+    subuser **n = &list->next;
+    del_sub(n);
 	
 	node = list;
 	while (node != NULL) {
