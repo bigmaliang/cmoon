@@ -41,5 +41,3 @@ void wlog(const char *func, const char *file, long line,
 		  int level, const char *fmt, ...);
 
 #endif
-
-

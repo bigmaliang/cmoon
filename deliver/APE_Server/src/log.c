@@ -12,9 +12,9 @@
 #include "log.h"
 
 
-/* Logging file descriptor, -1 if logging is disabled */
 static char *trace_level[TC_LEVELS] = {"DIE", "MESSAGE", "ERROR", "WARNING", "INFO", "DEBUG", "NOISE"};
 static int dftlv = TC_ERROR;
+/* Logging file descriptor, -1 if logging is disabled */
 static int logfd = -1;
 
 int log_init(char *logfname)
