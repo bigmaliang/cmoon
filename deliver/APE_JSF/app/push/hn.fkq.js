@@ -193,10 +193,10 @@
     userAway: function(uins) {
         if (typeof uins == "object") {
             $.each(uins, function(key, uin) {
-                $("#eins_usrbox_usr_"+uin).remove();
+                $("#eins_usrbox_usr_a_"+uin).remove();
             });
         } else {
-            $("#eins_usrbox_usr_"+uins).remove();
+            $("#eins_usrbox_usr_a_"+uins).remove();
         }
     }
 };
