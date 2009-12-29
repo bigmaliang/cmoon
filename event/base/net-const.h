@@ -51,7 +51,7 @@ enum {
 	DATA_TYPE_ULONG,
 	DATA_TYPE_STRING,
 	DATA_TYPE_ARRAY,
-    DATA_TYPE_ANY               /* used in data_cell_search, include all type */
+	DATA_TYPE_ANY				/* used in data_cell_search, include all type */
 };
 
 /* Network requests */
@@ -60,24 +60,24 @@ enum {
 	REQ_CMD_CACHE_GET = 100,
 	REQ_CMD_CACHE_SET,
 	REQ_CMD_CACHE_DEL,
-    REQ_CMD_CACHE_EMPTY,
-	REQ_CMD_STATS = 1000        /* MAX system command is 1000 */
+	REQ_CMD_CACHE_EMPTY,
+	REQ_CMD_STATS = 1000		/* MAX system command is 1000 */
 } req_cmd_sys;
 
 enum {
-    REP_OK = 0x64,              /* 100 */
-	REP_ERR = 0x200,            /* 512 */
+	REP_OK = 0x64,				/* 100 */
+	REP_ERR = 0x200,			/* 512 */
 	REP_ERR_VER,
-	REP_ERR_SEND,               /* Error sending data */
-	REP_ERR_BROKEN,             /* Broken request */
-	REP_ERR_UNKREQ,             /* Unknown request */
-	REP_ERR_MEM,                /* Memory allocation error */
-	REP_ERR_DB,                 /* Database error */
-	REP_ERR_BUSY,               /* queue full */
-	REP_ERR_PACK,               /* packet data failure */
-	REP_ERR_BADPARAM,           /* parameter error */
-	REP_ERR_CACHE_MISS,         /* req_cmd_cache_get miss */
-    REP_ERR_APP = 0x400       /* application error start point 1024 */
+	REP_ERR_SEND,				/* Error sending data */
+	REP_ERR_BROKEN,				/* Broken request */
+	REP_ERR_UNKREQ,				/* Unknown request */
+	REP_ERR_MEM,				/* Memory allocation error */
+	REP_ERR_DB,					/* Database error */
+	REP_ERR_BUSY,				/* queue full */
+	REP_ERR_PACK,				/* packet data failure */
+	REP_ERR_BADPARAM,			/* parameter error */
+	REP_ERR_CACHE_MISS,			/* req_cmd_cache_get miss */
+	REP_ERR_APP = 0x400		  /* application error start point 1024 */
 } rep_code_sys;
 
 #endif

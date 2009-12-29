@@ -9,11 +9,11 @@ enum {
 	REQ_CMD_SETBONUS,
 	REQ_CMD_GETEXP,
 	REQ_CMD_SETEXP
-} req_cmd;
+} req_cmd_udc;
 
 enum {
 	REP_ERR_NOBONUS = 0x401, 	/* 1025 */
 	REP_ERR_NOEXP
-} rep_code;
+} rep_code_udc;
 
 #endif	/* __MEVENT_UDC_H__ */
