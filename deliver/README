@@ -1,14 +1,9 @@
 deliver
 =======
 
-
-
-
 APE Server
-
-git://github.com/APE-Project/APE_Server.git
+git://github.com/bigml/APE_Server.git
 
 APE JavaScript Framework
-
 git://github.com/APE-Project/APE_JSF.git
 
