@@ -1,0 +1,5 @@
+Basically, here is what I've tuned on my kernel :
+
+- /proc/sys/net/core/somaxconn
+- /proc/sys/net/netfilter/nf_conntrack_max
+- /proc/sys/net/ipv4/tcp_*
