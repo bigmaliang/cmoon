@@ -53,3 +53,14 @@ js 中 for 效率远大于 $.each(), 但 for 只能用于数组, $.each()
 return true类似continue.
 
 div 没有focus, blur 事件, 只有mouseover mouseout 事件
+
+form 的 submit button 可绑定事件onclick="return sendSubmit();",
+然后再函数内return false取消提交.
+
+css
+position
+	absolute
+	relative
+display
+	inline <span>
+	block <div>
