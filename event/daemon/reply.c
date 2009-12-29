@@ -9,10 +9,10 @@
 #include "packet.h"
 #include "queue.h"
 
-int reply_add_u32(struct queue_entry *q, const char *parent,
-				  const char *key, uint32_t val)
+struct data_cell* reply_add_u32(struct queue_entry *q, const char *parent,
+								const char *key, uint32_t val)
 {
-	if (q == NULL || key == NULL) return 0;
+	if (q == NULL || key == NULL) return NULL;
 
 	if (q->replydata == NULL)
 		q->replydata = data_cell_alloc_array("root");
@@ -20,10 +20,10 @@ int reply_add_u32(struct queue_entry *q, const char *parent,
 	return data_cell_add_u32(q->replydata, parent, key, val);
 }
 
-int reply_add_ulong(struct queue_entry *q, const char *parent,
-					const char *key, unsigned long val)
+struct data_cell* reply_add_ulong(struct queue_entry *q, const char *parent,
+								  const char *key, unsigned long val)
 {
-	if (q == NULL || key == NULL) return 0;
+	if (q == NULL || key == NULL) return NULL;
 
 	if (q->replydata == NULL)
 		q->replydata = data_cell_alloc_array("root");
@@ -31,10 +31,10 @@ int reply_add_ulong(struct queue_entry *q, const char *parent,
 	return data_cell_add_ulong(q->replydata, parent, key, val);
 }
 
-int reply_add_str(struct queue_entry *q, const char *parent,
-				  const char *key, const char *val)
+struct data_cell* reply_add_str(struct queue_entry *q, const char *parent,
+								const char *key, const char *val)
 {
-	if (q == NULL || key == NULL) return 0;
+	if (q == NULL || key == NULL) return NULL;
 
 	if (q->replydata == NULL)
 		q->replydata = data_cell_alloc_array("root");
@@ -42,9 +42,9 @@ int reply_add_str(struct queue_entry *q, const char *parent,
 	return data_cell_add_str(q->replydata, parent, key, val);
 }
 
-int reply_add_array(struct queue_entry *q, const char *parent, const char *key)
+struct data_cell* reply_add_array(struct queue_entry *q, const char *parent, const char *key)
 {
-	if (q == NULL || key == NULL) return 0;
+	if (q == NULL || key == NULL) return NULL;
 
 	if (q->replydata == NULL)
 		q->replydata = data_cell_alloc_array("root");

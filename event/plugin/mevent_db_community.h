@@ -3,6 +3,6 @@
 
 enum {
 	REQ_CMD_STAT = 1001
-} req_cmd;
+} req_cmd_dbcm;
 
 #endif	/* __MEVENT_DBCM_H__ */

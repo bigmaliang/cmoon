@@ -320,25 +320,37 @@ int mevent_chose_plugin(mevent_t *evt, const char *key,
 int mevent_add_u32(mevent_t *evt, const char *parent, const char *key, uint32_t val)
 {
 	if (evt == NULL || key == NULL) return 0;
-	return data_cell_add_u32(evt->dataset, parent, key, val);
+	if (data_cell_add_u32(evt->dataset, parent, key, val)) {
+		return 1;
+	}
+	return 0;
 }
 
 int mevent_add_ulong(mevent_t *evt, const char *parent, const char *key, unsigned long val)
 {
 	if (evt == NULL || key == NULL) return 0;
-	return data_cell_add_ulong(evt->dataset, parent, key, val);
+	if (data_cell_add_ulong(evt->dataset, parent, key, val)) {
+		return 1;
+	}
+	return 0;
 }
 
 int mevent_add_str(mevent_t *evt, const char *parent, const char *key, const char *val)
 {
 	if (evt == NULL || key == NULL) return 0;
-	return data_cell_add_str(evt->dataset, parent, key, val);
+	if (data_cell_add_str(evt->dataset, parent, key, val)) {
+		return 1;
+	}
+	return 0;
 }
 
 int mevent_add_array(mevent_t *evt, const char *parent, const char *key)
 {
 	if (evt == NULL || key == NULL) return 0;
-	return data_cell_add_array(evt->dataset, parent, key);
+	if (data_cell_add_array(evt->dataset, parent, key)) {
+		return 1;
+	}
+	return 0;
 }
 
 int mevent_trigger(mevent_t *evt)

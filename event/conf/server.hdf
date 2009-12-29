@@ -26,16 +26,16 @@ Plugin {
 		numobjs = 102400
 		relation {
 			ip = 192.168.8.84
-			user = root
-			pass = hifly1234
+			user = root1
+			pass = 123
 			name = relation
 			port = 3306
 		}
 		home {
 			ip = 192.168.8.84
-			user = root
-			pass = hifly1234
-			name = home
+			user = root1
+			pass = 123
+			name = hcclwok
 			port = 3306
 		}
 	}
@@ -43,9 +43,9 @@ Plugin {
 		logfile = /data/logs/mevent/udc
 		numobjs = 10240
 		ip = 192.168.8.84
-		user = root
-		pass = hifly1234
-		name = home
+		user = root1
+		pass = 123
+		name = hcclwok
 		port = 3306
 		exp_level {
 			1 = 100
@@ -60,15 +60,15 @@ Plugin {
         logfile = /data/logs/mevent/db_community
         home {
             ip = 192.168.8.84
-            user = root
-            pass = hifly1234
-            name = home
+            user = root1
+            pass = 123
+            name = hcclwok
             port = 3306
         }
         stat {
             ip = 192.168.8.84
-            user = root
-            pass = hifly1234
+            user = root1
+            pass = 123
             name = stat
             port = 3306
         }

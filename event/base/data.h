@@ -47,14 +47,14 @@ int data_cell_compare(const void *pa, const void *pb);
 struct data_cell* data_cell_search(struct data_cell *dataset, bool recursive,
 								   unsigned int type, const char *key);
 
-int data_cell_add_u32(struct data_cell *dataset, const char *parent,
-					  const char *key, uint32_t val);
-int data_cell_add_ulong(struct data_cell *dataset, const char *parent,
-						const char *key, unsigned long val);
-int data_cell_add_str(struct data_cell *dataset, const char *parent,
-					  const char *key, const char *val);
-int data_cell_add_array(struct data_cell *dataset, const char *parent,
-						const char *key);
+struct data_cell* data_cell_add_u32(struct data_cell *dataset, const char *parent,
+									const char *key, uint32_t val);
+struct data_cell* data_cell_add_ulong(struct data_cell *dataset, const char *parent,
+									  const char *key, unsigned long val);
+struct data_cell* data_cell_add_str(struct data_cell *dataset, const char *parent,
+									const char *key, const char *val);
+struct data_cell* data_cell_add_array(struct data_cell *dataset, const char *parent,
+									  const char *key);
 
 /*
  * data_cell_get is Bureaucratic, use data_cell_array_iterate instead 
@@ -62,12 +62,12 @@ int data_cell_add_array(struct data_cell *dataset, const char *parent,
 int data_cell_length(struct data_cell *c);
 struct data_cell* data_cell_get(struct data_cell *c, int i);
 
-#define data_cell_array_iterate(c, childcell) \
-	childcell = c->v.aval->items[0]; \
+#define data_cell_array_iterate(c, childcell)		\
+	childcell = c->v.aval->items[0];				\
 	for (int t_rsv_i = 0; t_rsv_i < c->v.aval->num; \
 		 childcell = c->v.aval->items[++t_rsv_i])
 
-#define iterate_data(c)   \
+#define iterate_data(c)											\
 	for (int t_rsv_i = 0; t_rsv_i < c->v.aval->num; t_rsv_i++)
 
 #endif	/* __MDATA_H__ */
