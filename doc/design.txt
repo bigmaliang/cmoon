@@ -12,3 +12,7 @@ http://www.yeeyan.com/articles/view/pestwave/51250
 
 http://www.yeeyan.com/articles/tag/logo
 logo 设计
+
+
+产品的业务模式同样需要从用户出发，针对于用户的需求设计业务模式，比针对于系统架构设计业务模式更合理。
+当然，产品设计也不能只围绕着固有的业务模式展开思路，还需要回归到用户的原始需求
