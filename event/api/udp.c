@@ -13,6 +13,7 @@
 
 #include <netinet/udp.h>	/* UDP stuff */
 #include <netdb.h>		/* gethostbyname() */
+#include <fcntl.h>
 
 #include "mevent.h"
 #include "net-const.h"
@@ -21,7 +22,8 @@
 
 
 /* Used internally to really add the server once we have an IP address. */
-static int add_udp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port)
+static int add_udp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port,
+							   const char *nblock, struct timeval tv)
 {
 	int fd;
 	struct mevent_srv *newsrv, *newarray;
@@ -30,13 +32,18 @@ static int add_udp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port)
 	if (fd < 0)
 		return 0;
 
-	struct timeval tv;
-	tv.tv_sec = 3;
-	tv.tv_usec = 0;
-	setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv));
+	if (nblock && !strcmp(nblock, "yes")) {
+		int x = fcntl(fd, F_GETFL, 0);
+		fcntl(fd, F_SETFL, x | O_NONBLOCK);
+	} else {
+		if (tv.tv_sec != 0 || tv.tv_usec != 0) {
+			setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv));
+			setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
+		}
+	}
 
 	newarray = realloc(evt->servers,
-			   sizeof(struct mevent_srv) * (evt->nservers + 1));
+					   sizeof(struct mevent_srv) * (evt->nservers + 1));
 	if (newarray == NULL) {
 		close(fd);
 		return 0;
@@ -60,13 +67,14 @@ static int add_udp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port)
 
 	/* keep the list sorted by port, so we can do a reliable selection */
 	qsort(evt->servers, evt->nservers, sizeof(struct mevent_srv),
-	      compare_servers);
+		  compare_servers);
 
 	return 1;
 }
 
 /* Same as mevent_add_tcp_server() but for UDP. */
-int mevent_add_udp_server(mevent_t *evt, const char *addr, int port)
+int mevent_add_udp_server(mevent_t *evt, const char *addr, int port,
+						  const char *nblock, struct timeval tv)
 {
 	int rv;
 	struct hostent *he;
@@ -82,15 +90,15 @@ int mevent_add_udp_server(mevent_t *evt, const char *addr, int port)
 		ia.s_addr = *( (in_addr_t *) (he->h_addr_list[0]) );
 	}
 
-	return add_udp_server_addr(evt, &(ia.s_addr), port);
+	return add_udp_server_addr(evt, &(ia.s_addr), port, nblock, tv);
 }
 
 int udp_srv_send(struct mevent_srv *srv, unsigned char *buf, size_t bsize)
 {
 	ssize_t rv;
 	rv = sendto(srv->fd, buf, bsize, 0,
-		    (struct sockaddr *) &(srv->info.in.srvsa),
-		    srv->info.in.srvlen);
+				(struct sockaddr *) &(srv->info.in.srvsa),
+				srv->info.in.srvlen);
 	if (rv <= 0)
 		return 0;
 	return 1;
@@ -98,8 +106,8 @@ int udp_srv_send(struct mevent_srv *srv, unsigned char *buf, size_t bsize)
 
 /* Used internally to get and parse replies from the server. */
 uint32_t udp_get_rep(struct mevent_srv *srv,
-		     unsigned char *buf, size_t bsize,
-		     unsigned char **payload, size_t *psize)
+					 unsigned char *buf, size_t bsize,
+					 unsigned char **payload, size_t *psize)
 {
 	ssize_t rv;
 	uint32_t id, reply;
@@ -143,8 +151,8 @@ int udp_srv_send(struct mevent_srv *srv, unsigned char *buf, size_t bsize)
 }
 
 uint32_t udp_get_rep(struct mevent_srv *srv,
-		     unsigned char *buf, size_t bsize,
-		     unsigned char **payload, size_t *psize)
+					 unsigned char *buf, size_t bsize,
+					 unsigned char **payload, size_t *psize)
 {
 	return -1;
 }

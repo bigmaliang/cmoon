@@ -11,6 +11,7 @@
 
 #include <netinet/tcp.h>	/* TCP stuff */
 #include <netdb.h>		/* gethostbyname() */
+#include <fcntl.h>
 
 #include "mevent.h"
 #include "net-const.h"
@@ -19,7 +20,8 @@
 
 
 /* Used internally to really add the server once we have an IP address. */
-static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port)
+static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port,
+							   const char *nblock, struct timeval tv)
 {
 	int rv, fd;
 	struct mevent_srv *newsrv, *newarray;
@@ -28,6 +30,16 @@ static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port)
 	if (fd < 0)
 		return 0;
 
+	if (nblock && !strcmp(nblock, "yes")) {
+		int x = fcntl(fd, F_GETFL, 0);
+		fcntl(fd, F_SETFL, x | O_NONBLOCK);
+	} else {
+		if (tv.tv_sec != 0 || tv.tv_usec != 0) {
+			setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv));
+			setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
+		}
+	}
+	
 	newarray = realloc(evt->servers,
 			   sizeof(struct mevent_srv) * (evt->nservers + 1));
 	if (newarray == NULL) {
@@ -84,7 +96,8 @@ static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port)
 }
 
 /* Same as mevent_add_tipc_server() but for TCP connections. */
-int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port)
+int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port,
+						  const char *nblock, struct timeval tv)
 {
 	int rv;
 	struct hostent *he;
@@ -100,7 +113,7 @@ int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port)
 		ia.s_addr = *( (in_addr_t *) (he->h_addr_list[0]) );
 	}
 
-	return add_tcp_server_addr(evt, &(ia.s_addr), port);
+	return add_tcp_server_addr(evt, &(ia.s_addr), port, nblock, tv);
 }
 
 int tcp_srv_send(struct mevent_srv *srv, unsigned char *buf, size_t bsize)

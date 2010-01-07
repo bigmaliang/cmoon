@@ -3,6 +3,8 @@ db_community {
 		type = udp
 		ip = 192.168.8.54
 		port = 26000
+		net_timeout_s = 0
+		net_timeout_u = 800000
 	}
 }
 
@@ -11,6 +13,8 @@ uic {
 		type = udp
 		ip = 192.168.8.54
 		port = 26000
+		net_timeout_s = 0
+		net_timeout_u = 800000
 	}
 }
 
@@ -19,5 +23,7 @@ udc {
 		type = udp
 		ip = 192.168.8.54
 		port = 26000
+		net_timeout_s = 0
+		net_timeout_u = 800000
 	}
 }

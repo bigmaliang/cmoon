@@ -771,7 +771,7 @@ static int uic_cmd_upmysetting(struct queue_entry *q, struct cache *cd,
 		if (incept == NULL) return REP_ERR_MEM;
 	}
 
-	char cols[1024], tok[64];
+	char cols[1024], tok[128];
 	strcpy(cols, "");
 	if (incept != NULL) {
 		snprintf(tok, sizeof(tok), " incept_dynamic='%s', ", incept);
