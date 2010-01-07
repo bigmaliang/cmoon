@@ -9,7 +9,24 @@
 
 说明
 ----
-1, 所有命令的 操作返回值 都具有以下可能, 业务端数据存储在 evt->rcvdata 结构体中
+1, 命令列表
+enum {
+	REQ_CMD_FRIENDLIST = 1001,
+	REQ_CMD_ISFRIEND,
+	REQ_CMD_APPLYFRIEND,
+	REQ_CMD_REJECTAPPLY,
+	REQ_CMD_CONFIRMFRIEND,
+	REQ_CMD_MOVEFRIEND,
+	REQ_CMD_DELFRIEND,
+	REQ_CMD_APPFRIEND,
+	REQ_CMD_ADDGROUP = 2001,
+	REQ_CMD_MODGROUP,
+	REQ_CMD_DELGROUP,
+	REQ_CMD_MYSETTING = 3001,
+	REQ_CMD_UPMYSETTING
+} req_cmd_uic;
+
+2, 所有命令的 操作返回值 都具有以下可能(业务端数据存储在 evt->rcvdata 结构体中)
 	NORMAL 可能的取值:
 	100  操作成功
 	514  发送数据失败
@@ -30,7 +47,6 @@ enum {
 	REP_ERR_GROUPNAMEEXIST,
 	REP_ERR_NOTOWNER
 } rep_code;
-
 
 功能
 ----

@@ -43,6 +43,7 @@ static int load_config()
 		return 0;
 	}
 
+	loaded = true;
 	return 1;
 }
 
@@ -69,17 +70,21 @@ mevent_t* mevent_init_plugin(char *ename, unsigned short cmd,
 
 	node = hdf_obj_child(node);
 
-	char *type, *ip;
+	char *type, *ip, *nblock;
 	int port;
+	struct timeval tv;
 	while (node != NULL) {
 		type = hdf_get_value(node, "type", "unknown");
 		ip = hdf_get_value(node, "ip", "127.0.0.1") ;
 		port = hdf_get_int_value(node, "port", 26010);
+		nblock = hdf_get_value(node, "non_block", NULL);
+		tv.tv_sec = hdf_get_int_value(node, "net_timeout_s", 0);
+		tv.tv_usec = hdf_get_int_value(node, "net_timeout_u", 0);
 			
 		if (!strcmp(type, "tcp")) {
-			mevent_add_tcp_server(evt, ip, port);
+			mevent_add_tcp_server(evt, ip, port, nblock, tv);
 		} else if (!strcmp(type, "udp")) {
-			mevent_add_udp_server(evt, ip, port);
+			mevent_add_udp_server(evt, ip, port, nblock, tv);
 		} else if (!strcmp(type, "tipc")) {
 			mevent_add_tipc_server(evt, port);
 		} else if (!strcmp(type, "sctp")) {

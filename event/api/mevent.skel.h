@@ -78,8 +78,10 @@ int mevent_free(mevent_t *evt);
  * 添加后端通信服务器。对evt结构体添加数据，触发事件等操作之前必须调用此函数。
  */
 int mevent_add_tipc_server(mevent_t *evt, int port);
-int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port);
-int mevent_add_udp_server(mevent_t *evt, const char *addr, int port);
+int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port,
+						  const char *nblock, struct timeval tv);
+int mevent_add_udp_server(mevent_t *evt, const char *addr, int port,
+						  const char *nblock, struct timeval tv);
 int mevent_add_sctp_server(mevent_t *evt, const char *addr, int port);
 
 /*
