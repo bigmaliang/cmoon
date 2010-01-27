@@ -50,14 +50,14 @@ void wlog(const char *fmt, ...)
 	char str[MAX_LOG_STR];
 	char timestr[MAX_LOG_STR];
 	time_t t;
-	struct tm *tmp;
+	struct tm tmp;
 
 	if (logfd == -1)
 		return;
 
 	t = time(NULL);
-	tmp = localtime(&t);
-	tr = strftime(timestr, MAX_LOG_STR, "%F %H:%M:%S ", tmp);
+	localtime_r(&t, &tmp);
+	tr = strftime(timestr, MAX_LOG_STR, "%F %H:%M:%S ", &tmp);
 
 	va_start(ap, fmt);
 	r = vsnprintf(str, MAX_LOG_STR, fmt, ap);
