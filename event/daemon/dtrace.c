@@ -49,7 +49,7 @@ static bool dtc_getdatetime(char *res, int len, const char *fmt, time_t second)
 	memset(res, 0x0, len);
 	time_t tm = time(NULL) + second;
 	struct tm stm;
-	localtime(&tm, &stm);
+	localtime_r(&tm, &stm);
 	if (strftime(res, len, fmt, &stm) == 0)
 		return false;
 	return true;
