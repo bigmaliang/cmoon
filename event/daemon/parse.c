@@ -95,12 +95,6 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 	}
 	
 
-#if 0
-	if (entry->op_queue->size > QUEUE_SIZE_INFO) {
-		wlog("plugin %s size exceed %d\n",
-		     entry->name, entry->op_queue->size);
-	}
-#endif
 	if (entry->op_queue->size > QUEUE_SIZE_WARNING &&
 		entry->op_queue->size % 100 == 0) {
 		SMS_ALARM("plugin %s size exceed %d\n",
