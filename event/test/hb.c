@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	}
 
 	settings.smsalarm = 1;
-	settings.logfname = "-";
+	//settings.logfname = "-";
 	log_init();
 	if (config_parse_file(argv[4], &g_cfg) != 1) {
 		printf("parse config file %s failure", argv[3]);
@@ -40,8 +40,12 @@ int main(int argc, char *argv[])
 		SMS_ALARM("mevent_init error");
 		return 1;
 	}
+
+	struct timeval tv;
+	tv.tv_sec = 0;
+	tv.tv_usec = 800000;
 	
-	mevent_add_udp_server(evt, argv[1], atoi(argv[2]));
+	mevent_add_udp_server(evt, argv[1], atoi(argv[2]), NULL, tv);
 	mevent_chose_plugin(evt, argv[3], REQ_CMD_STATS, FLAGS_SYNC);
 	ret = mevent_trigger(evt);
 	if (PROCESS_OK(ret)) {

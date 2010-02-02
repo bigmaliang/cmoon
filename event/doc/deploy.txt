@@ -7,42 +7,32 @@
 	libmysqlclient
 
 
-库文件
-	libneo_utl.so
-	libmevent_server.so
-	plugin/*.so
+daemon 执行文件安装
+-----------------
+从开发环境 192.168.8.54 上:
+	cd / && tar zcvf mevent.tar.gz etc/mevent/ usr/local/bin/mevent usr/local/bin/hb usr/local/lib/libmevent_server.so usr/local/lib/mevent_*.so usr/local/lib/libneo_utl.so usr/local/lib/libevent*
+	拷贝 mevent.tar.gz 到新部署机器 /，解压, 修改/etc/mevent/server.hdf配置文件。
+	midir -p /data/logs/mevent/ 初始化日志目录
 
-	以上so文件拷贝至 /usr/local/lib
 
-daemon 执行文件
---------------
-	拷贝这些文件到新部署机器， 修改/etc/mevent/server.hdf配置文件。
-	cd / && tar zcvf mevent.tar.gz etc/mevent/ usr/local/bin/mevent usr/local/lib/libmevent_server.so usr/local/lib/mevent_*.so usr/local/lib/libneo_utl.so usr/local/lib/libevent*
+daemon 执行文件启动方法
+--------------------
+/usr/local/bin/mevent -c /etc/mevent/server.hdf -o /data/logs/mevent/mevent.log
+
+
+daemon 执行文件监控
+------------------
+定时执行(每10分钟) /usr/local/bin/hb 192.168.1.28 26000 uic /etc/mevent/server.hdf >> /tmp/meventhb.log  该程序会往 1.28:26000 端口发送一条业务请求, 业务失败时会往 server.hdf 中配置的告警表中插一条报警短信(需要跟安岗确认短信猫已经开启)
 
 
 PHP 扩展编译环境安装:
 ------------------
+从开发环境 192.168.8.54 上:
     cd / &&	tar zcvf libmevent.tar.gz usr/local/include/mevent.h usr/local/include/data.h usr/local/include/net-const.h usr/local/lib/libmevent.a usr/local/lib/libneo_utl.so usr/local/include/ClearSilver.h usr/local/include/cs_config.h usr/local/include/cgi/ usr/local/include/cs/ usr/local/include/util/ etc/mevent/
+	拷贝 libmevent.tar.gz 到运维环境的 /, 解压, 然后:
 
-/usr/local/src/php-5.xx/ext/ext_skel --extname=mevent
-cd mevent
-(recover config.m4, mevent.c, php_mevent.h)
-/usr/local/php/bin/phpize
-./configure --with-php-config=/usr/local/php/bin/php-config
-
-
-扩展
-====
-	当前事件中心 支持 不同的后台插件放到不同的机器上处理, 只需要在调用层通过 add_xxx_server 添加多台处理后台.
-	进行平行扩展, 达到分担处理压力的目的.
-
-    /*
-	但, 因为当前是对事件中心的名字(如 "db_community")进行 校验和 来选择后台处理服务器,
-	所以当前事件中心的前台与后台的处理只支持 多对一 的模式, 不支持 一对多 的模式,
-	即一个或多个前端的事件只能选择一个后台服务器来处理(mevent_chose_plugin),
-	不能将一种事件请求分发到不同的后端服务器上, 无法实现针对某个特定的事件逻辑进行扩展.
-
-	之后可以考虑对这方面进行改动, 达到能对单一事件, 多台后台处理的效果.
-    */
-
-    
+		/usr/local/src/php-5.xx/ext/ext_skel --extname=mevent
+		cd mevent
+		(recover config.m4, mevent.c, php_mevent.h)
+		/usr/local/php/bin/phpize
+		./configure --with-php-config=/usr/local/php/bin/php-config
