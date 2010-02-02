@@ -314,7 +314,7 @@ static int uic_cmd_confirmfriend(struct queue_entry *q, struct cache *cd,
 		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 	}
 	
-	snprintf(dbhome->sql, sizeof(dbhome->sql), "UPDATE home.user_info SET "
+	snprintf(dbhome->sql, sizeof(dbhome->sql), "UPDATE user_info SET "
 			 " friendnum=friendnum+1 WHERE userid=%d OR userid=%d", uin, fuin);
 	if (fdb_exec(dbhome) != RET_DBOP_OK) {
 		dtc_err(fp, "exec %s failure %s", dbhome->sql, fdb_error(dbhome));
@@ -452,7 +452,7 @@ static int uic_cmd_delfriend(struct queue_entry *q, struct cache *cd,
 		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
 	}
 
-	snprintf(dbhome->sql, sizeof(dbhome->sql), "UPDATE home.user_info SET "
+	snprintf(dbhome->sql, sizeof(dbhome->sql), "UPDATE user_info SET "
 			 " friendnum=friendnum-1 WHERE friendnum > 0 "
 			 " AND (userid=%d OR userid=%d);", uin, fuin);
 	if (fdb_exec(dbhome) != RET_DBOP_OK) {
@@ -480,7 +480,7 @@ static int uic_cmd_appfriend(struct queue_entry *q, struct cache *cd,
 	struct data_cell *c, *cc;
 	unsigned char *val = NULL;
 	size_t vsize = 0;
-	int uin, appid, hit, ret;
+	int uin, hit, ret;
 	char *fuin;
 
 	REQ_GET_PARAM_U32(c, q, false, "uin", uin);
@@ -682,8 +682,8 @@ static int uic_cmd_delgroup(struct queue_entry *q, struct cache *cd,
  * input : uin(UINT)
  * return: NORMAL
  * reply : ["incept": ["1": 1, "2": 2...], "friendapply": 1,
-			"leavemessage": 2, "sitemessage": 1, "searchme", 0,
-			"fangkequn": 0]
+ "leavemessage": 2, "sitemessage": 1, "searchme", 0,
+ "fkqstat": 1, "fkqlevel": 0]
  *		OR ["incept": []]
  */
 static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
@@ -701,8 +701,8 @@ static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
 	if (hit == 0) {
 		snprintf(db->sql, sizeof(db->sql), "SELECT incept_dynamic, "
 				 " receive_friend_invite, receive_comment, "
-				 " receive_msg, receive_search "
-				 " FROM home.user_info WHERE userid=%d;", uin);
+				 " receive_msg, receive_search, fkq_stat, fkq_level "
+				 " FROM user_info WHERE userid=%d;", uin);
 		ret = fdb_exec(db);
 		if (ret != RET_DBOP_OK) {
 			dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
@@ -721,7 +721,8 @@ static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
 			reply_add_u32(q, NULL, "leavemessage", atoi(db->row[2]));
 			reply_add_u32(q, NULL, "sitemessage", atoi(db->row[3]));
 			reply_add_u32(q, NULL, "searchme", atoi(db->row[4]));
-			reply_add_u32(q, NULL, "fangkequn", 1);
+			reply_add_u32(q, NULL, "fkqstat", atoi(db->row[5]));
+			reply_add_u32(q, NULL, "fkqlevel", atoi(db->row[6]));
 		}
 		val = calloc(1, MAX_PACKET_LEN);
 		if (val == NULL) return REP_ERR_MEM;
@@ -744,8 +745,9 @@ static int uic_cmd_mysetting(struct queue_entry *q, struct cache *cd,
 
 /*
  * input : uin(UINT) [incept(STRING) '2|3|4|5'
-		   friendapply(UINT) leavemessage(UINT) sitemessage(UINT) searchme(UINT)]
-		   [] at least one
+ friendapply(UINT) leavemessage(UINT) sitemessage(UINT) searchme(UINT)
+ fkqstat(UINT) fkqlevel(UINT)]
+ [] at least one
  * return: NORMAL
  * reply : NULL
  */
@@ -753,11 +755,11 @@ static int uic_cmd_upmysetting(struct queue_entry *q, struct cache *cd,
 							   fdb_t *db, FILE *fp)
 {
 	struct data_cell *c;
-	int uin, frdaply, lvmsg, stmsg, scm, ret;
+	int uin, frdaply, lvmsg, stmsg, scm, fkqstat, fkqlevel, ret;
 	unsigned char *stmp;
 	char *incept;
 
-	uin = frdaply = lvmsg = stmsg = scm = -1;
+	uin = frdaply = lvmsg = stmsg = scm = fkqstat = fkqlevel = -1;
 	stmp = NULL; incept = NULL;
 	
 	REQ_GET_PARAM_U32(c, q, false, "uin", uin);
@@ -765,6 +767,8 @@ static int uic_cmd_upmysetting(struct queue_entry *q, struct cache *cd,
 	REQ_FETCH_PARAM_U32(c, q, false, "leavemessage", lvmsg);
 	REQ_FETCH_PARAM_U32(c, q, false, "sitemessage", stmsg);
 	REQ_FETCH_PARAM_U32(c, q, false, "searchme", scm);
+	REQ_FETCH_PARAM_U32(c, q, false, "fkqstat", fkqstat);
+	REQ_FETCH_PARAM_U32(c, q, false, "fkqlevel", fkqlevel);
 	REQ_FETCH_PARAM_STR(c, q, false, "incept", stmp);
 	if (stmp != NULL) {
 		incept = fdb_escape_string(db, (char*)stmp);
@@ -774,8 +778,9 @@ static int uic_cmd_upmysetting(struct queue_entry *q, struct cache *cd,
 	char cols[1024], tok[128];
 	strcpy(cols, "");
 	if (incept != NULL) {
-		snprintf(tok, sizeof(tok), " incept_dynamic='%s', ", incept);
+		snprintf(tok, sizeof(tok), " incept_dynamic='%s", incept);
 		strcat(cols, tok);
+		strcat(cols, "', ");
 	}
 	if (frdaply != -1) {
 		snprintf(tok, sizeof(tok), " receive_friend_invite=%d, ", frdaply);
@@ -793,6 +798,14 @@ static int uic_cmd_upmysetting(struct queue_entry *q, struct cache *cd,
 		snprintf(tok, sizeof(tok), " receive_search=%d, ", scm);
 		strcat(cols, tok);
 	}
+	if (fkqstat != -1) {
+		snprintf(tok, sizeof(tok), " fkq_stat=%d, ", fkqstat);
+		strcat(cols, tok);
+	}
+	if (fkqlevel != -1) {
+		snprintf(tok, sizeof(tok), " fkq_level=%d, ", fkqlevel);
+		strcat(cols, tok);
+	}
 
 	if (!strcmp(cols, "")) {
 		ret = REP_ERR_BADPARAM;
@@ -801,7 +814,7 @@ static int uic_cmd_upmysetting(struct queue_entry *q, struct cache *cd,
 
 	strcat(cols, " stature=stature ");
 
-	snprintf(db->sql, sizeof(db->sql), "UPDATE home.user_info SET %s WHERE "
+	snprintf(db->sql, sizeof(db->sql), "UPDATE user_info SET %s WHERE "
 			 " userid=%d;", cols, uin);
 	if (fdb_exec(db) != RET_DBOP_OK) {
 		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
@@ -816,6 +829,174 @@ static int uic_cmd_upmysetting(struct queue_entry *q, struct cache *cd,
  done:
 	if (incept) free(incept);
 	return ret;
+}
+
+/*
+ * input : uin(UINT)
+ * return: NORMAL
+ * reply : ["black": [ "100": 2, "200": 3, ...]] OR ["black":[]]
+ */
+static int uic_cmd_blacklist(struct queue_entry *q, struct cache *cd,
+							 fdb_t *db, FILE *fp)
+{
+	struct data_cell *c;
+	unsigned char *val = NULL;
+	size_t vsize = 0;
+	int uin, hit, ret;
+
+	REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+	
+	reply_add_array(q, NULL, "black");
+	hit = cache_getf(cd, &val, &vsize, PREFIX_BLACK"%d", uin);
+	if (hit == 0) {
+		snprintf(db->sql, sizeof(db->sql), "SELECT black_userid, type FROM "
+				 " user_blacklist WHERE userid=%d;", uin);
+		ret = fdb_exec(db);
+		if (ret != RET_DBOP_OK) {
+			dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+			return REP_ERR_DB;
+		}
+		while (fdb_fetch_row(db) == RET_DBOP_OK) {
+			reply_add_u32(q, "black", db->row[0], atoi(db->row[1]));
+		}
+		val = calloc(1, MAX_PACKET_LEN);
+		if (val == NULL) {
+			return REP_ERR_MEM;
+		}
+		vsize = pack_data_array(NULL, q->replydata, val,
+								MAX_PACKET_LEN - RESERVE_SIZE);
+		if (vsize == 0) {
+			free(val);
+			return REP_ERR_PACK;
+		}
+		* (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
+		vsize += sizeof(uint32_t);
+		cache_setf(cd, val, vsize, PREFIX_BLACK"%d", uin);
+		free(val);
+	} else {
+		unpack_data("root", val, vsize, &q->replydata);
+	}
+
+	return REP_OK;
+}
+
+/*
+ * input : uin(UINT) blackuin(UINT) [blacktype(UINT)]
+ * return: NORMAL REP_OK_ISBLACK REP_OK_NOTBLACK
+ * reply : ["blacktype": 2]
+ */
+static int uic_cmd_isblack(struct queue_entry *q, struct cache *cd,
+						   fdb_t *db, FILE *fp)
+{
+	struct data_cell *c;
+	char key[64];
+	int buin, btype = -1, ret;
+
+	REQ_GET_PARAM_U32(c, q, false, "blackuin", buin);
+	REQ_FETCH_PARAM_U32(c, q, false, "blacktype", btype);
+	
+	ret = uic_cmd_blacklist(q, cd, db, fp);
+	if (PROCESS_OK(ret)) {
+		c = data_cell_search(q->replydata, false, DATA_TYPE_ARRAY, "black");
+		if (c != NULL) {
+			sprintf(key, "%d", buin);
+			c = data_cell_search(c, false, DATA_TYPE_U32, key);
+			if (c != NULL) {
+				data_cell_free(q->replydata);
+				q->replydata = NULL;
+				if (btype == -1 || btype == c->v.ival) {
+					reply_add_u32(q, NULL, "blacktype", c->v.ival);
+					return REP_OK_ISBLACK;
+				}
+			}
+		}
+		data_cell_free(q->replydata);
+		q->replydata = NULL;
+		return REP_OK_NOTBLACK;
+	}
+	return ret;
+}
+
+/*
+ * input : uin(UINT) blackuin(UINT) blacktype(UINT)
+ * return: NORMAL REP_OK REP_ERR_ALREADYBLACK
+ * reply : NULL
+ */
+static int uic_cmd_addblack(struct queue_entry *q, struct cache *cd,
+							fdb_t *db, FILE *fp)
+{
+	struct data_cell *c;
+	int uin, buin, btype;
+	int ret;
+
+	REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+	REQ_GET_PARAM_U32(c, q, false, "blackuin", buin);
+	REQ_GET_PARAM_U32(c, q, false, "blacktype", btype);
+
+	ret = uic_cmd_isblack(q, cd, db, fp);
+	if (PROCESS_NOK(ret)) {
+		dtc_err(fp, "judge blackship failure %d", ret);
+		return ret;
+	}
+	
+	if (ret == REP_OK_ISBLACK) {
+		dtc_warn(fp, "%d %d already blackship", uin, buin);
+		return REP_ERR_ALREADYBLACK;
+	}
+
+	snprintf(db->sql, sizeof(db->sql), "INSERT INTO user_blacklist (userid, "
+			 " black_userid, type, createtime) VALUES "
+			 "(%d, %d, %d, UNIX_TIMESTAMP())", uin, buin, btype);
+	if (fdb_exec(db) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	}
+
+	cache_delf(cd, PREFIX_BLACK"%d", uin);
+	
+	return REP_OK;
+}
+
+/*
+ * input : uin(UINT) blackuin(UINT) [blacktype(UINT)]
+ * return: NORMAL REP_ERR_NOTBLACK
+ * reply : NULL
+ */
+static int uic_cmd_delblack(struct queue_entry *q, struct cache *cd,
+							fdb_t *db, FILE *fp)
+{
+	struct data_cell *c;
+	int uin, buin, btype = -1;
+	int ret;
+
+	REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+	REQ_GET_PARAM_U32(c, q, false, "blackuin", buin);
+	REQ_FETCH_PARAM_U32(c, q, false, "blacktype", btype);
+
+	ret = uic_cmd_isblack(q, cd, db, fp);
+	if (PROCESS_NOK(ret)) {
+		dtc_err(fp, "judge blackship failure %d", ret);
+		return ret;
+	}
+	
+	if (ret == REP_OK_NOTBLACK) {
+		dtc_warn(fp, "%d %d not blackship", uin, buin);
+		return REP_ERR_NOTBLACK;
+	}
+	
+	snprintf(db->sql, sizeof(db->sql), "DELETE FROM user_blacklist WHERE "
+			 " userid=%d AND black_userid=%d", uin, buin);
+	if (btype != -1) {
+		char tok[64];
+		sprintf(tok, " AND type=%d;", btype);
+		strcat(db->sql, tok);
+	} else { strcat(db->sql, ";"); }
+	if (fdb_exec(db) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+	}
+	
+	cache_delf(cd, PREFIX_BLACK"%d", uin);
+	
+	return REP_OK;
 }
 
 static void uic_process_driver(struct event_entry *entry, struct queue_entry *q)
@@ -873,6 +1054,18 @@ static void uic_process_driver(struct event_entry *entry, struct queue_entry *q)
 	case REQ_CMD_UPMYSETTING:
 		ret = uic_cmd_upmysetting(q, cd, dbhome, fp);
 		break;
+	case REQ_CMD_BLACKLIST:
+		ret = uic_cmd_blacklist(q, cd, dbrl, fp);
+		break;
+	case REQ_CMD_ISBLACK:
+		ret = uic_cmd_isblack(q, cd, dbrl, fp);
+		break;
+	case REQ_CMD_ADDBLACK:
+		ret = uic_cmd_addblack(q, cd, dbrl, fp);
+		break;
+	case REQ_CMD_DELBLACK:
+		ret = uic_cmd_delblack(q, cd, dbrl, fp);
+		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
 		ret = REP_OK;
@@ -898,7 +1091,7 @@ static void uic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		dtc_err(fp, "process %u failed %d\n", q->operation, ret);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
-			reply_trigger(q, ret);
+		reply_trigger(q, ret);
 	}
 }
 

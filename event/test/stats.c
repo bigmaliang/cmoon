@@ -16,7 +16,11 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	mevent_add_udp_server(evt, "127.0.0.1", 26010);
+	struct timeval tv;
+	tv.tv_sec = 0;
+	tv.tv_usec = 800000;
+	
+	mevent_add_udp_server(evt, "127.0.0.1", 26010, NULL, tv);
 	mevent_chose_plugin(evt, "Reserve.Status", REQ_CMD_STATS, FLAGS_NONE);
 	ret = mevent_trigger(evt);
 	if (ret != 0 && ret < REP_ERR) {
