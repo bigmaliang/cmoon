@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS = -g
 
 INCS	= -I ../api -I../base -I../daemon $(INC_CS)
-LIBS	= -L ../api -lmevent -L../daemon/ -lmevent_server -levent -lpthread -lrt -ldl  $(LIB_MYSQL) $(LIB_NEOUTL_DYN)
+LIBS	= -L ../api -lmevent -levent -lpthread -lrt -ldl  $(LIB_MYSQL) $(LIB_NEOUTL_DYN)
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))

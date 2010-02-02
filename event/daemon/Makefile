@@ -41,7 +41,8 @@ PLUGIN_SOURCES = $(wildcard ../plugin/*.c)
 
 OBJS = mevent.o queue.o log.o dtrace.o net.o parse.o reply.o stats.o config.o common.o cache.o fdb.o syscmd.o
 OBJS += $(patsubst %.c, %.o, $(BASE_SOURCES))
-OBJS_BIN = main.o
+OBJS_MAIN = main.o
+OBJS_HB = hb.o
 
 ifeq ($(ENABLE_TIPC), 1)
 	OBJS += tipc.o
@@ -68,28 +69,29 @@ else
 endif
 
 
-LIB_SERVER = libmevent_server.so
 LIB_PLUGIN = $(patsubst %.c, %.so, $(PLUGIN_SOURCES))
 default: all
 
-all: $(LIB_SERVER) $(LIB_PLUGIN) mevent install-lib
+all: $(LIB_PLUGIN) mevent hb install-lib
 
 .c.o:
 	$(NICE_CC) $(ALL_CFLAGS) -fPIC -c $< -o $@
 
-$(LIB_SERVER): $(OBJS)
-	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC -o $@ $(OBJS)
-
-mevent_%.so: ../plugin/mevent_%.c $(LIB_SERVER)
+mevent_%.so: ../plugin/mevent_%.c
 	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC -o $@ $< -L./ -lmevent_server
 
-mevent: $(OBJS_BIN) $(LIB_SERVER)
-	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_BIN) -o mevent $(LIBS) -L./ -lmevent_server
+mevent: $(OBJS_MAIN) $(OBJS)
+	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_MAIN) $(OBJS) -o mevent $(LIBS)
+
+hb: $(OBJS_HB) $(OBJS)
+	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_HB) $(OBJS) -o hb $(LIBS) -L../api -lmevent
+
 
 
 install-bin: mevent
 	sudo install -d $(PREFIX)/bin
 	sudo install -m 0755 mevent $(PREFIX)/bin/
+	sudo install -m 0755 hb $(PREFIX)/bin/
 
 install-man:
 	sudo install -d $(PREFIX)/man/man1
@@ -97,7 +99,6 @@ install-man:
 
 install-lib:
 	sudo install -d $(PREFIX)/lib
-	sudo install -m 0644 $(LIB_SERVER) $(PREFIX)/lib/
 	sudo install -m 0644 $(LIB_PLUGIN) $(PREFIX)/lib/
 
 install: install-bin install-man install-lib
@@ -105,13 +106,12 @@ install: install-bin install-man install-lib
 uninstall:
 	sudo rm -f $(PREFIX)/bin/mevent
 	sudo rm -f $(PREFIX)/man/man1/mevent.1
-	sudo rm -f $(PREFIX)/lib/$(LIB_SERVER)
 	sudo rm -f $(PREFIX)/lib/$(LIB_PLUGIN)
 
 clean: clean-build clean-prof
 
 clean-build:
-	sudo rm -f $(OBJS) $(OBJS_BIN) $(LIB_PLUGIN) $(LIB_SERVER) mevent
+	sudo rm -f $(OBJS) $(OBJS_MAIN) $(OBJS_HB) $(LIB_PLUGIN) mevent
 
 clean-prof:
 	sudo rm -f *.bb *.bbg *.da *.gcov *.gcda *.gcno gmon.out
