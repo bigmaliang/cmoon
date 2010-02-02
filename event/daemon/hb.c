@@ -7,15 +7,25 @@
  * 处理错误 0x800 时 短信上报
  * 网络,客户端错误时  短信上报 trigger return
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
+#include <stdio.h>		/* printf() */
+#include <unistd.h>		/* malloc(), fork() and getopt() */
+#include <stdlib.h>		/* atoi() */
+#include <sys/types.h>		/* for pid_t */
+#include <string.h>		/* for strcpy() and strlen() */
+#include <pthread.h>		/* for pthread_t */
 
-#include "mevent.h"
-#include "timer.h"
+#include "net.h"
 #include "common.h"
+#include "net-const.h"
+#include "log.h"
+#include "stats.h"
+#include "config.h"
+#include "data.h"
 #include "smsalarm.h"
+
+#include "ClearSilver.h"
+
+#include "../api/mevent.h"
 
 int main(int argc, char *argv[])
 {

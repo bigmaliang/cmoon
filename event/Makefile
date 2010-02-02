@@ -1,7 +1,7 @@
 BASEDIR = ../
 include ../Make.env
 
-SUBDIR = daemon api conf test
+SUBDIR = api daemon conf test
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
