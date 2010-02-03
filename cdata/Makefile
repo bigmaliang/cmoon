@@ -9,8 +9,10 @@ all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
 
 install: $(SUBDIR)
-	@$(MULTIMAKE) -m install $(SUBDIR)
-	@cp -f config.hdf $(PATH_DOC)
+	@$(MULTIMAKE) -m install cgi mtools
+	@mkdir -p -m 775 $(PATH_RPC)
+	@cp -f config.hdf $(PATH_RPC)
+	@cp -f lighttpd.conf $(PATH_RPC)
 
 clean:
 	@$(MULTIMAKE) -m clean $(SUBDIR)

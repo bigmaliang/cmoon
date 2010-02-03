@@ -1,0 +1,55 @@
+即时数据部署
+==========
+
+系统要求
+-------
+	Linux 2.6 以上内核
+	libevent
+	libmysqlclient
+	lighttpd
+
+
+程序安装
+-------
+0, 准备工作:
+	即时数据模块需要 nmdb 程序作为暂存数据的后台, 所以需先确认这两台机器上有nmdb后台在跑:
+	(nmdb 是开源程序, http://blitiri.com.ar/p/nmdb/ 上搞下来装上即可)
+	192.168.1.8
+	#mkdir -p /data/qdbm/
+	#/usr/local/bin/nmdb -d /data/qdbm/user -t 26010 -u 26010 -c 30720 -o /var/log/nmdb.user
+	#/usr/local/bin/nmdb -d /data/qdbm/photo -t 26020 -u 26020 -c 30720 -o /var/log/nmdb.photo
+
+	192.168.1.9
+	#mkdir -p /data/qdbm/
+	#/usr/local/bin/nmdb -d /data/qdbm/video -t 26030 -u 26030 -c 30720 -o /var/log/nmdb.video
+	#/usr/local/bin/nmdb -d /data/qdbm/blog -t 26040 -u 26040 -c 30720 -o /var/log/nmdb.blog
+
+
+1, 从开发机 192.168.8.54 上:
+	cd / && tar zcvf rtds.tar.gz data/www/rtds/ && tar zcvf rpc.tar.gz usr/local/rpc/
+	拷贝 rtds.tar.gz, rpc.tar.gz 到运维环境的 /, 解压, 然后:
+
+	加执行权限
+	chmod +x /data/www/rtds/cgi-bin/cds.cgi
+	初始化日志目录
+	mkdir -p /data/logs/cgi/ && chmod 777 /data/logs/cgi/
+
+
+	
+程序启动
+-------
+lighttpd -f /usr/local/rpc/lighttpd.conf
+
+
+程序监控
+-------
+加入crontab 定时判断接口是否正常
+*/10 * * * * /usr/local/rpc/mtools/hb.sh >> /dev/null
+
+
+数据同步
+-------
+12 1 * * *      /usr/local/rpc/mtools/storedb_8.sh >> /tmp/storedb.log
+12 1 * * *      /usr/local/rpc/mtools/storedb_9.sh >> /tmp/storedb.log
+
+1.8 上开_8.sh 脚本, 1.9 上开 _9.sh 脚本, 每天半夜将即时数据同步到社区的数据库

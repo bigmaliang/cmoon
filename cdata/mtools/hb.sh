@@ -5,7 +5,7 @@ PATH=/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/sbin
 TIMENOW=`date +"%F %T"`
 outfile=/tmp/cds.out
 logfile=/tmp/cds.log
-rtds="192.168.8.53"
+rtds="192.168.1.8 192.168.1.9"
 leader="15111231681"
 
 # $1 ip, $2 msg

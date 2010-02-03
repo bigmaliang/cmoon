@@ -17,7 +17,7 @@
 #ifdef RELEASE
 #define PATH_SITE	"/data/www/rtds/"
 #else
-#define PATH_SITE	"/usr/local/moon/cdata/"
+#define PATH_SITE	"/usr/local/rpc/"
 #endif
 
 #define CONFIG_FILE PATH_SITE"config.hdf"

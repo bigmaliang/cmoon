@@ -8,7 +8,7 @@ LIBS	= $(LIB_LPUB) $(LIB_DB) $(LIB_MNL) $(LIB_MEMC) $(LIB_CS) $(LIB_JSON) $(LIB_
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))
-SCRIPTS = keeprunning.sh
+SCRIPTS = keeprunning.sh storedb.sh storedb_8.sh storedb_9.sh hb.sh
 DEPEND = .depend
 
 all:preload $(BINARY)
@@ -34,6 +34,7 @@ cflag:
 	@echo "=== "$(INCS)
 install:all
 	@mkdir -p -m 775 $(PATH_MTLS)
+	@mkdir -p -m 775 $(PATH_MTLS)/dbs/
 	@strip $(BINARY)
 	@cp $(BINARY) $(SCRIPTS) $(PATH_MTLS)/
 	@chmod a+x $(PATH_MTLS)/$(BINARY) $(PATH_MTLS)/$(SCRIPTS)
