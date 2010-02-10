@@ -3,3 +3,12 @@ Basically, here is what I've tuned on my kernel :
 - /proc/sys/net/core/somaxconn
 - /proc/sys/net/netfilter/nf_conntrack_max
 - /proc/sys/net/ipv4/tcp_*
+
+RECEIVE SOCKET TIMEOUT
+The recv call is used to receive messages from a socket, and may be used to receive data on a socket whether or not it is connection-oriented.The recv() function shall return the length of the message written to the buffer pointed to by the buffer argument.
+If no messages are available at the socket and O_NONBLOCK is not set on the socket’s file descriptor, recv() shall block until a message arrives.
+However sometimes application needs its thread to timeout on a socket that blocks when reading. We can set timeout for a blocking rcv ( ) call using setscokopt function call.
+setsockopt (connfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof tv);
+Here SO_RCVTIMEO allow us to place a timeout on socket receives. Timeout value can be specified in timeval structure, this let us specify the timeout in seconds and microseconds. We can disable timeout by setting its value to 0 seconds and 0 microsecond. Both timeout are disabled by default. The receive timeout affects the five input functions.read, readv,rcv,recvfrom,recvmsg.
+RETURN VALUE of rcv ()
+Upon successful completion, recv() shall return the length of the message in bytes. If no messages are available to be received and the peer has performed an orderly shutdown, recv() shall return 0. Otherwise, -1 shall be returned and errno set to indicate the error.

@@ -5,6 +5,7 @@ HTML & JS
 -------------
 $("input[name=permittype]") 或者$("input:radio")
 $("input:[name=permittype]:checked").val()
+http://visualjquery.com/
 
 
 日期格式
@@ -64,3 +65,8 @@ position
 display
 	inline <span>
 	block <div>
+
+
+C
+=
+struct 放到.c中能隐藏其中数据结构, 防止非法访问其成员.
