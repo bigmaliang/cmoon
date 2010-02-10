@@ -6,13 +6,13 @@ TIMENOW=`date +"%F %T"`
 outfile=/tmp/cds.out
 logfile=/tmp/cds.log
 rtds="192.168.1.8 192.168.1.9"
-leader="15111231681"
+leader="13973178767 13574867947 15111231681"
 
 # $1 ip, $2 msg
 function rpcError {
     echo $TIMENOW $1 $2 >> $logfile
 	for phonenum in $leader; do
-		/usr/local/mysql/bin/mysql -h 192.168.8.90 -u root -pmysqlroot -P3306 -Dmonitordb -e "INSERT INTO pei5_smssend (smsContent) VALUES ('$phonenum|$1 $2');"
+		/usr/local/mysql/bin/mysql -h 222.240.139.132 -u root -pmysqlroot -P3306 -Dmonitordb -e "INSERT INTO monitor_smssend (smsSendTo, smsContent) VALUES ('$phonenum', '$1 $2');"
 	done
 }
 

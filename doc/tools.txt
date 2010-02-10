@@ -32,6 +32,9 @@ Algorithms
 	http://eternallyconfuzzled.com/jsw_home.aspx
 	Data Structure, Algorithms, Languages
 
+	http://c-algorithms.sourceforge.net/
+	Implementations of many common data structures and algorithms.
+
 
 http://tools.mozilla.com
 ========================
@@ -89,6 +92,7 @@ Visual Event
 jsondiff
 --------
 	http://tlrobinson.net/projects/js/jsondiff/
+	http://json.parser.online.fr/
 	展现 json 格式数据, 可查看区别.
 
 
