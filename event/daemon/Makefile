@@ -18,6 +18,7 @@ ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
 ALL_CFLAGS = $(CFLAGS)
+ALL_CFLAGS += -rdynamic
 ALL_CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 		-DENABLE_TCP=$(ENABLE_TCP) \
 		-DENABLE_UDP=$(ENABLE_UDP) \
@@ -78,7 +79,7 @@ all: $(LIB_PLUGIN) mevent hb install-lib
 	$(NICE_CC) $(ALL_CFLAGS) -fPIC -c $< -o $@
 
 mevent_%.so: ../plugin/mevent_%.c
-	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC -o $@ $< -L./ -lmevent_server
+	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC -o $@ $<
 
 mevent: $(OBJS_MAIN) $(OBJS)
 	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_MAIN) $(OBJS) -o mevent $(LIBS)

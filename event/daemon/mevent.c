@@ -186,7 +186,8 @@ struct mevent* mevent_start(void)
 		lib = NULL; driver = NULL; memset(tbuf, 0x0, sizeof(tbuf));
 		
 		snprintf(tbuf, sizeof(tbuf), "%smevent_%s.so", PLUGIN_PATH, hdf_obj_value(res));
-		lib = dlopen(tbuf, RTLD_NOW|RTLD_GLOBAL);
+		//lib = dlopen(tbuf, RTLD_NOW|RTLD_GLOBAL);
+		lib = dlopen(tbuf, RTLD_LAZY);
 		if (lib == NULL) {
 			wlog("open driver %s failure %s\n", tbuf, dlerror());
 			res = hdf_obj_next(res);
