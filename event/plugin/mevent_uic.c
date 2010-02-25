@@ -196,8 +196,10 @@ static int uic_cmd_applyfriend(struct queue_entry *q, struct cache *cd,
 		return REP_ERR_ALREADYFRIEND;
 	}
 
-	if (uic_friend_applied(db, fp, uin, fuin, NULL))
+	if (uic_friend_applied(db, fp, uin, fuin, NULL)) {
+		dtc_warn(fp, "%d %d already applied", uin, fuin);
 		return REP_ERR_ALREADYAPPLYED;
+	}
 	
 	snprintf(db->sql, sizeof(db->sql), "INSERT INTO user_friends "
 			 " (userid, friend_userid, groupid, createtime, beok) "
@@ -277,8 +279,10 @@ static int uic_cmd_confirmfriend(struct queue_entry *q, struct cache *cd,
 		return REP_ERR_ALREADYFRIEND;
 	}
 
-	if (!uic_friend_applied(dbrl, fp, fuin, uin, &fgid))
+	if (!uic_friend_applied(dbrl, fp, fuin, uin, &fgid)) {
+		dtc_warn(fp, "%d %d hasn't apply", uin, fuin);
 		return REP_ERR_NOTAPPLY;
+	}
 
 	snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends SET beok=1 "
 			 " WHERE userid=%d AND friend_userid=%d;", fuin, uin);

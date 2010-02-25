@@ -1,5 +1,5 @@
 Mevent {
-	trace_level = 6
+	trace_level = 2
 	plugins {
 		0 = skeleton
 		1 = uic
