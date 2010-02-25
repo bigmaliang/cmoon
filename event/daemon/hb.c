@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
 	} else {
 		printf("process failure %d\n", ret);
 		SMS_ALARM("process failure %d", ret);
+		system("killall mevent && sleep 2 && /usr/local/bin/mevent -c /etc/mevent/server.hdf");
 	}
 
 	mevent_free(evt);
