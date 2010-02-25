@@ -75,6 +75,7 @@ size_t unpack_data(const char *key, unsigned char *buf, size_t len,
 
 		vtype = * (uint32_t *) pos; vtype = ntohl(vtype);
 	}
+	if (*dataset) data_cell_free(*dataset);
 	*dataset = rcell;
 
 	return ttsize;
