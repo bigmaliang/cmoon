@@ -278,6 +278,7 @@ int main(int argc, char **argv, char **envp)
 					hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "设置失败");
 					ret = -1; goto opfinish;
 				}
+				incr = 1;
 			} else if (r == 1) {
 				mtc_warn("%s unincrementable", key);
 				hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "值不可加");
