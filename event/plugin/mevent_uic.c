@@ -1092,7 +1092,7 @@ static void uic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		if (ret == REP_ERR_BADPARAM) {
 			st->msg_badparam++;
 		}
-		dtc_err(fp, "process %u failed %d\n", q->operation, ret);
+		dtc_err(fp, "process %u failed %d", q->operation, ret);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 		reply_trigger(q, ret);
