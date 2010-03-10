@@ -46,7 +46,7 @@ int fdb_init_long(fdb_t **fdb, char *ip, char *user, char *pass,
 char *fdb_escape_string(fdb_t *fdb, const char *str)
 {
 	size_t n = strlen(str);
-	char *buf = calloc(1, n);
+	char *buf = calloc(1, n*2+1);
 	if (buf == NULL) return NULL;
 
 	mysql_real_escape_string(fdb->conn, buf, str, n);

@@ -147,7 +147,7 @@ static int uic_cmd_isfriend(struct queue_entry *q, struct cache *cd,
 {
 	struct data_cell *c;
 	char key[64];
-	int fuin, ret;
+	int fuin, gid, ret;
 
 	REQ_GET_PARAM_U32(c, q, false, "frienduin", fuin);
 	
@@ -158,9 +158,10 @@ static int uic_cmd_isfriend(struct queue_entry *q, struct cache *cd,
 			sprintf(key, "%d", fuin);
 			c = data_cell_search(c, false, DATA_TYPE_U32, key);
 			if (c != NULL) {
+				gid = c->v.ival;
 				data_cell_free(q->replydata);
 				q->replydata = NULL;
-				reply_add_u32(q, NULL, "groupid", c->v.ival);
+				reply_add_u32(q, NULL, "groupid", gid);
 				return REP_OK_ISFRIEND;
 			}
 		}
