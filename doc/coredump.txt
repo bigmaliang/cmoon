@@ -43,3 +43,7 @@
 	%e - insert coredumping executable name into filename 添加命令名
 
 5, 调试命令 gdb [exec file] [core file]
+
+
+6, screen 可以用来调试长期才出错的程序
+http://www.ibm.com/developerworks/cn/linux/l-cn-screen/
