@@ -60,13 +60,24 @@ int main(int argc, char *argv[])
 	ret = mevent_trigger(evt);
 	if (PROCESS_OK(ret)) {
 		data_cell_dump(evt->rcvdata);
-	} else if (ret == REP_ERR_BUSY) {
-		printf("process busy!\n");
-		SMS_ALARM("process busy");
 	} else {
-		printf("process failure %d\n", ret);
-		SMS_ALARM("process failure %d", ret);
-		system("killall mevent && sleep 2 && /usr/local/bin/mevent -c /etc/mevent/server.hdf");
+		int try = 0;
+		
+	redo:
+		sleep(10);
+		ret = mevent_trigger(evt);
+		if (PROCESS_NOK(ret) && try < 3) {
+			try++;
+			goto redo;
+		}
+
+		if (PROCESS_NOK(ret) && try >= 3) {
+			printf("process failure %d\n", ret);
+			SMS_ALARM("process failure %d, restarted", ret);
+			system("killall -9 mevent && sleep 2 && /usr/local/bin/mevent -c /etc/mevent/server.hdf");
+		} else {
+			printf("process temproray error %d, %d", ret, try);
+		}
 	}
 
 	mevent_free(evt);
