@@ -123,7 +123,7 @@ int cds_get_data(HDF *hdf, char *key, char *domain, char *hdfkey, fdb_t *fdb)
 	return RET_DBOP_OK;
 }
 
-int cds_store_increment(fdb_t *fdb, char *key, char *val)
+int cds_store_increment(fdb_t *fdb, char *key, char *val, int inc)
 {
 	char domain[LEN_NMDB_KEY];
 	int id;
@@ -155,8 +155,8 @@ int cds_store_increment(fdb_t *fdb, char *key, char *val)
 	keyc = hdf_get_value(node, "keycol", "bid");
 	valc = hdf_get_value(node, "valcol", "view_num");
 
-	snprintf(fdb->sql, sizeof(fdb->sql), "UPDATE %s SET %s=%s WHERE %s=%d;",
-			 table, valc, val, keyc, id);
+	snprintf(fdb->sql, sizeof(fdb->sql), "UPDATE %s SET %s=%s WHERE %s=%d AND %s<%s;",
+			 table, valc, val, keyc, id, valc, val);
 	ret = fdb_exec(fdb);
 	if (ret != RET_DBOP_OK) {
 		mtc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
@@ -164,8 +164,41 @@ int cds_store_increment(fdb_t *fdb, char *key, char *val)
 	}
 	if (fdb_affect_rows(fdb) <= 0) {
 		mtc_err("exec %s, key not exist", fdb->sql);
-		return RET_DBOP_ERROR;
+		return RET_DBOP_NEXIST;
 	}
 
+	if (inc > 0) {
+		snprintf(fdb->sql, sizeof(fdb->sql),
+				 "UPDATE %s SET view_num_week=view_num_week+%d WHERE %s=%d;",
+				 table, inc, keyc, id);
+		fdb_exec(fdb);
+	}
+
+	mtc_info("%s - %s %d updated to %s", table, keyc, id, val);
+
+	return RET_DBOP_OK;
+}
+
+int cds_reset_increment(fdb_t *fdb, char *key)
+{
+	char *table;
+
+	if (!fdb || !key) {
+		return RET_DBOP_INPUTE;
+	}
+
+	HDF *node = hdf_get_child(g_cfg, CFG_CDS_TABLE);
+	while (node != NULL) {
+		table = hdf_get_value(node, "table", "null.blog");
+
+		mtc_warn("reset table %s - %s", table, key);
+		snprintf(fdb->sql, sizeof(fdb->sql), "UPDATE %s SET %s=0;", table, key);
+		if (fdb_exec(fdb) != RET_DBOP_OK) {
+			mtc_err("exec %s error: %s", fdb->sql, fdb_error(fdb));
+		}
+		
+		node = hdf_obj_next(node);
+	}
+	
 	return RET_DBOP_OK;
 }

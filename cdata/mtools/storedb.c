@@ -125,21 +125,6 @@ int main(int argc, char *argv[])
 	time_t timenow = time(NULL);
 	while ((key = dpiternext(qdb, &lenkey)) != NULL) {
 		if (lutil_is_userdata_key(key)) {
-#if 0
-			r = nmdb_get(nmdb, (unsigned char*)key, strlen(key), (unsigned char*)val, LEN_NMDB_VAL);
-			if ((int)r <= 0) {
-				mtc_err("%s data not found, cleanup...", key);
-				goto doclean;
-			}
-			*(val+r) = '\0';
-			v = neos_strip(val);
-			ret = cds_store_increment(fdb, key, v);
-			if (ret != RET_DBOP_OK) {
-				mtc_err("store %s for %s to db failure", v, key);
-				free(key);
-				continue;
-			}
-#endif
 			snprintf(tkey, sizeof(tkey), "%s_"POST_INCREMENT, key);
 			r = nmdb_get(nmdb, (unsigned char*)tkey, strlen(tkey), (unsigned char*)val, LEN_NMDB_VAL);
 			if ((int)r <= 0) {
@@ -149,8 +134,7 @@ int main(int argc, char *argv[])
 			*(val+r) = '\0';
 			v = neos_strip(val);
 			increment = atoi(v);
-			/* 将increment > 阀值的key写入mysql，并设置key_POST_INCREMENT 0 */
-			if (increment >= 0) {
+			if (increment > 0) {
 				r = nmdb_get(nmdb, (unsigned char*)key, strlen(key), (unsigned char*)val, LEN_NMDB_VAL);
 				if ((int)r <= 0) {
 					mtc_err("%s increment found, but data not found, cleanup...", key);
@@ -158,21 +142,24 @@ int main(int argc, char *argv[])
 				}
 				*(val+r) = '\0';
 				v = neos_strip(val);
-				ret = cds_store_increment(fdb, key, v);
+				if (atoi(v) <= 0) {
+					mtc_err("%s increment %d, but value %s", key, increment, v);
+					goto doclean;
+				}
+				ret = cds_store_increment(fdb, key, v, increment);
 				if (ret != RET_DBOP_OK) {
-					mtc_err("store %s for %s to db failure", v, key);
+					mtc_err("store %s for %s to db failure %d", v, key, ret);
+					if (ret == RET_DBOP_NEXIST) {
+						nmdb_del(nmdb, (unsigned char*)key, lenkey);
+						nmdb_del(nmdb, (unsigned char*)tkey, strlen(tkey));
+						snprintf(tkey, sizeof(tkey), "%s_"POST_TIMESTAMP, key);
+						nmdb_del(nmdb, (unsigned char*)tkey, strlen(tkey));
+					}
 					free(key);
 					continue;
 				}
 				strcpy(val, "0");
 				r =  nmdb_set(nmdb, (unsigned char*)tkey, strlen(tkey), (unsigned char*)val, strlen(val)+1);
-			} else if (increment > 0) {
-				/*
-				 * 有增量但增量没满阀值的key不删除
-				 * 这种key永远不会从nmdb中清除掉。。。
-				 */
-				free(key);
-				continue;
 			}
 
 		doclean:

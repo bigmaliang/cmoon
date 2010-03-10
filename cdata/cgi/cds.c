@@ -59,7 +59,7 @@ HDF *g_cfg = NULL;
 
 int main(int argc, char **argv, char **envp)
 {
-	char key[LEN_NMDB_KEY], val[LEN_NMDB_VAL], tkey[LEN_NMDB_KEY], hdfkey[LEN_ST], thdfkey[LEN_ST];
+	char key[LEN_NMDB_KEY], val[LEN_NMDB_VAL], tkey[LEN_NMDB_KEY], hdfkey[LEN_ST], thdfkey[LEN_ST], tok[64];
 	ULIST *keylist = NULL, *domainlist = NULL;
 	char *k, *v, *p, *user, *pass;
 	char timenow[LEN_LONG];
@@ -261,7 +261,7 @@ int main(int argc, char **argv, char **envp)
 		case CGI_REQ_PUT:
 			/*
 			 * 增加操作，同时设置key_POST_INCREMENT
-			 * 当nmdb中没有相关key时，设值为inc，后续同步时能写入mysql
+			 * 当nmdb中没有相关key时，从 mysql 中读入
 			 */
 			v = hdf_get_value(cgi->hdf, PRE_QUERY".incNEXIST", "1");
 			//inc = (int64_t)hdf_get_int_value(cgi->hdf, PRE_QUERY".inc", 1);
@@ -272,13 +272,19 @@ int main(int argc, char **argv, char **envp)
 				mtc_warn("%s not match", key);
 				//hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "无匹配资源");
 				//goto opfinish;
-				r = nmdb_set(db, (unsigned char*)key, strlen(key), (unsigned char*)v, strlen(v)+1);
+				uListGet(keylist, 0, (void**)&p);
+				snprintf(hdfkey, sizeof(hdfkey), "%s.value.%s", PRE_OUTPUT, key);
+				if (cds_get_data(cgi->hdf, p, domain, hdfkey, fdb) == RET_DBOP_OK) {
+					v = hdf_get_valuef(cgi->hdf, "%s.value", hdfkey);
+				}
+				incr = atoi(v)+1;
+				snprintf(tok, sizeof(tok), "%lu", incr);
+				r = nmdb_set(db, (unsigned char*)key, strlen(key), (unsigned char*)tok, strlen(tok)+1);
 				if (r < 0) {
 					mtc_err("set into nmdb failure!");
 					hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "设置失败");
 					ret = -1; goto opfinish;
 				}
-				incr = 1;
 			} else if (r == 1) {
 				mtc_warn("%s unincrementable", key);
 				hdf_set_value(cgi->hdf, PRE_OUTPUT".errmsg", "值不可加");
@@ -297,7 +303,8 @@ int main(int argc, char **argv, char **envp)
 			r = nmdb_incr(db, (unsigned char*)tkey, strlen(tkey), inc, &incr);
 			if (r == 0) {
 				mtc_warn("%s not match", tkey);
-				nmdb_set(db, (unsigned char*)tkey, strlen(tkey), (unsigned char*)v, strlen(v)+1);
+				strcpy(tok, "1");
+				nmdb_set(db, (unsigned char*)tkey, strlen(tkey), (unsigned char*)tok, strlen(tok)+1);
 			}
 			break;
 		default:
@@ -330,7 +337,7 @@ int main(int argc, char **argv, char **envp)
 #endif
 			cgi_destroy(&cgi);
 		}
- 	}
+ 	} /* FCGI_Accept() */
  
 	fdb_free(&fdb);
 	mconfig_cleanup(&g_cfg);

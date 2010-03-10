@@ -22,10 +22,48 @@ Nmdb {
 }
 
 Db {
-	ip = 127.0.0.1
-	user = test
-	pass = test
-	name = test
+	ip = 192.168.8.84
+	user = root1
+	pass = 123
+	name = hcclwok
+}
+
+CdsTable {
+	n_user_space {
+		table = hcclwok.user_info 
+		keycol = userid
+		valcol = view_num
+	}
+	n_photo {
+		table = hcclwok.myphoto_photo
+		keycol = pid
+		valcol = view_num
+	}
+	n_photo_album {
+		table = hcclwok.myphoto_album
+		keycol = aid
+		valcol = view_num
+	}
+	n_video {
+		table = hcclwok.myvideo_video
+		keycol = vid
+		valcol = view_num
+	}
+	n_video_d {
+		table = hcclwok.myvideo_video
+		keycol = vid
+		valcol = up_num
+	}
+	n_video_album {
+		table = hcclwok.myvideo_album
+		keycol = aid
+		valcol = view_num
+	}
+	n_blog {
+		table = hcclwok.myblog_blog
+		keycol = bid
+		valcol = view_num
+	}
 }
 
 Tables {

@@ -9,7 +9,8 @@ int cds_parse_key(char *key, ULIST **list);
 int cds_parse_domain(char *domain, ULIST **list);
 int cds_add_udp_server(nmdb_t *db, char *domain);
 int cds_get_data(HDF *hdf, char *key, char *domain, char *hdfkey, fdb_t *fdb);
-int cds_store_increment(fdb_t *fdb, char *key, char *val);
+int cds_store_increment(fdb_t *fdb, char *key, char *val, int inc);
+int cds_reset_increment(fdb_t *fdb, char *key);
 
 __END_DECLS
 #endif	/* __OCDS_H__ */
