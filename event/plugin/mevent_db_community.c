@@ -64,7 +64,8 @@ static int dbcm_cmd_updatedb(struct queue_entry *q, fdb_t *db, FILE *fp)
     }
 
     if (c->type == DATA_TYPE_ARRAY) {
-        data_cell_array_iterate(c, cc) {
+		iterate_data(c) {
+			cc = c->v.aval->items[t_rsv_i];
             if (cc == NULL) continue;
             if (cc->type == DATA_TYPE_STRING) {
                 dtc_dbg(fp, "exec %s ...\n", cc->v.sval.val);
@@ -79,7 +80,7 @@ static int dbcm_cmd_updatedb(struct queue_entry *q, fdb_t *db, FILE *fp)
                     }
                 }
             }
-        }
+		}
     }
     
     return REP_OK;

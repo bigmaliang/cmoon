@@ -612,8 +612,10 @@ static int uic_cmd_modgroup(struct queue_entry *q, struct cache *cd,
 	gname = fdb_escape_string(db, (char*)stmp);
 	if (gname == NULL) return REP_ERR_MEM;
 
-	if (gid == DEFAULT_GROUP_ID)
-		return REP_ERR_GROUPREADONLY;
+	if (gid == DEFAULT_GROUP_ID) {
+		ret = REP_ERR_GROUPREADONLY;
+		goto done;
+	}
 
 	if (uic_group_exist(db, fp, uin, gname)) {
 		ret = REP_ERR_GROUPNAMEEXIST;
@@ -910,7 +912,7 @@ static int uic_cmd_isblack(struct queue_entry *q, struct cache *cd,
 				data_cell_free(q->replydata);
 				q->replydata = NULL;
 				if (btype == -1 || btype == c->v.ival) {
-					reply_add_u32(q, NULL, "blacktype", c->v.ival);
+					reply_add_u32(q, NULL, "blacktype", btype);
 					return REP_OK_ISBLACK;
 				}
 			}
