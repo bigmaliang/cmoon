@@ -1,0 +1,96 @@
+用户关注接口
+==========
+
+用途
+----
+	为社区提供网络socket方式 修改 和 获取用户关注功能 (协议格式参考protocol.txt),
+	以供应用模块使用(当前提供 C, PHP 接口).
+
+	该扩展名为 "fans"
+
+
+说明
+----
+1, 命令列表
+enum {
+	REQ_CMD_FANSLIST = 1001,
+	REQ_CMD_IDOLLIST,
+	REQ_CMD_FOLLOWTYPE,
+	REQ_CMD_FOLLOW,
+	REQ_CMD_UNFOLLOW
+} req_cmd_fans;
+
+2, 所有命令的 操作返回值 都具有以下可能(业务端数据存储在 evt->rcvdata 结构体中)
+	NORMAL 可能的取值:
+	100  操作成功
+	514  发送数据失败
+	518  数据库操作失败
+	519  后端处理繁忙
+	521  输入参数错误
+
+enum {
+	REP_OK_CLEAN = 0x65,	/* 101 */
+	REP_OK_ISFANS,
+	REP_OK_ISIDOL,
+	REP_OK_ISFANSEO,
+	REP_ERR_ALREADYFANS = 0x401, /* 1025 */
+	REP_ERR_NOTFANS
+} rep_code_fans;
+
+功能
+----
+
+获取粉丝列表
+命令号	1001
+/*
+ * input : uin(UINT)
+ * return: NORMAL
+ * reply : ["fans": [ "100": 1269485819, "3": 1269485824, ...]] OR ["fans":[]]
+ */
+返回该用户的所有粉丝列表, 后面是加关注的时间戳
+
+
+获取偶像列表
+命令号	1002
+/*
+ * input : uin(UINT)
+ * return: NORMAL
+ * reply : ["idols": [ "100": 1269485819, "3": 1269485824, ...]] OR ["idols":[]]
+ */
+返回该用户的所有偶像列表, 后面是加关注的时间戳
+
+			
+判断关注关系
+命令号  1003
+/*
+ * input : uin(UINT) otheruin(UINT)
+ * return: NORMAL REP_OK_CLEAN REP_OK_ISFANS REP_OK_ISIDOL REP_OK_ISFANSEO
+ * reply : ["attention_time": 1269485819]] OR ["attention_time":[]]
+ */
+REP_OK_CLEAN	两者没关系
+REP_OK_ISFANS	uin 是 otheruin 的粉丝
+REP_OK_ISIDOL	uin 是 otheruin 的偶像
+REP_OK_ISFANSEO	uin 与 otheruin 互为粉丝
+
+
+添加关注
+命令号  1004
+/*
+ * input : uin(UINT) otheruin(UINT)
+ * return: NORMAL REP_OK_ISFANSEO REP_ERR_ALREADYFANS
+ * reply : NULL
+ */
+REP_OK_ISFANSEO	两人互为粉丝
+[REP_ERR_ALREADYIDOL	添加关注失败, 已经是我的偶像]
+REP_ERR_ALREADYFANS	添加关注失败, 我已是他粉丝
+
+取消关注
+命令号  1005
+/*
+ * input : uin(UINT) otheruin(UINT)
+ * return: NORMAL REP_OK_ISIDOL REP_ERR_NOTFANS
+ * reply : NULL
+ */
+REP_OK_ISIDOL	成功取消关注, 且我还是他的偶像
+[REP_ERR_NOTIDOL	取消关注失败, 还不是我的偶像]
+REP_ERR_NOTFANS	取消关注失败, 我还不是他的粉丝

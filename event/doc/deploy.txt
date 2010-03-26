@@ -37,7 +37,7 @@ PHP 扩展编译环境安装:
 		/usr/local/php/bin/phpize
 		./configure --with-php-config=/usr/local/php/bin/php-config
 
-PHP 扩展环境复制(一样的环境)
+PHP 扩展环境复制(一样的环境 8.194, 1.10)
 -------------------------
 1, 拷贝如下文件:
 /usr/local/php/lib/php/extensions/no-debug-non-zts-20060613/mevent.so
