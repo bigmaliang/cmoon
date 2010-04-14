@@ -125,7 +125,7 @@ size_t pack_data_array(const char *key, struct data_cell *dataset,
 					   unsigned char *buf, size_t maxsize)
 {
 	struct data_cell *cell;
-	size_t psize;
+	size_t psize, ksize;
 	int len, i;
 
 	if (dataset == NULL || dataset->type != DATA_TYPE_ARRAY ||
@@ -133,10 +133,10 @@ size_t pack_data_array(const char *key, struct data_cell *dataset,
 	
 	len = data_cell_length(dataset);
 
-	psize = 0;
+	psize = ksize = 0;
 
 	if (key != NULL) {
-		size_t ksize = strlen(key);
+		ksize = strlen(key);
 		
 		* (uint32_t *) buf = htonl(DATA_TYPE_ARRAY);
 		* ((uint32_t *) buf + 1) = htonl(ksize);
@@ -152,27 +152,30 @@ size_t pack_data_array(const char *key, struct data_cell *dataset,
 		switch (cell->type) {
 		case DATA_TYPE_U32:
 			psize += pack_data_u32((const char*)cell->key,
-					       cell->v.ival, buf+psize);
+								   cell->v.ival, buf+psize);
 			break;
 		case DATA_TYPE_ULONG:
 			psize += pack_data_ulong((const char*)cell->key,
-						 cell->v.lval, buf+psize);
+									 cell->v.lval, buf+psize);
 			break;
 		case DATA_TYPE_STRING:
 			psize += pack_data_str((const char*)cell->key,
-					       (const char*)cell->v.sval.val, buf+psize);
+								   (const char*)cell->v.sval.val, buf+psize);
 			break;
 		case DATA_TYPE_ARRAY:
 			psize += pack_data_array((const char*)cell->key,
-						 cell, buf+psize, maxsize-psize);
+									 cell, buf+psize, maxsize-psize);
 			break;
 		default:
 			break;
 		}
+		if (psize + RESERVE_SIZE > maxsize) break;
+	}
+
+	if (ksize != 0 && i < len) {
+		* ((uint32_t *) (buf + 8 + ksize)) = htonl(--i);
 	}
 	
-	if (psize + RESERVE_SIZE > maxsize) return 0;
-
 	return psize;
 }
 

@@ -1,6 +1,7 @@
 #ifndef __MEVENT_FANS_H__
 #define __MEVENT_FANS_H__
 
+#define	MAX_FANS_NUM	1000
 #define PREFIX_FANS		"Fans"
 #define PREFIX_IDOLS	"Idols"
 
