@@ -541,6 +541,93 @@ static int uic_cmd_appfriend(struct queue_entry *q, struct cache *cd,
 }
 
 /*
+ * input : uin(UINT) frienduin(UINT) [groupid(UINT)]
+ * return: NORMAL REP_ERR_ALREADYFRIEND
+ * reply: NULL
+ */
+static int uic_cmd_addfriend(struct queue_entry *q, struct cache *cd,
+							 fdb_t *dbrl, fdb_t *dbhome, FILE *fp)
+{
+	struct data_cell *c;
+	int uin, fuin, gid = 0, ret;
+
+	REQ_GET_PARAM_U32(c, q, false, "uin", uin);
+	REQ_GET_PARAM_U32(c, q, false, "frienduin", fuin);
+	REQ_FETCH_PARAM_U32(c, q, false, "groupid", gid);
+
+	ret = uic_cmd_isfriend(q, cd, dbrl, fp);
+	if (PROCESS_NOK(ret)) {
+		dtc_err(fp, "judge friendship failure %d", ret);
+		return ret;
+	}
+	if (ret == REP_OK_ISFRIEND) {
+		dtc_warn(fp, "%d %d already friendship", uin, fuin);
+		return REP_ERR_ALREADYFRIEND;
+	}
+
+	/*
+	 * cleanup apply
+	 */
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "DELETE FROM user_friends WHERE "
+			 " userid=%d AND friend_userid=%d;", uin, fuin);
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
+		return REP_ERR_DB;
+	}
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "DELETE FROM user_friends WHERE "
+			 " userid=%d AND friend_userid=%d;", fuin, uin);
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
+		return REP_ERR_DB;
+	}
+
+	/*
+	 * insert friend
+	 */
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "INSERT INTO user_friends "
+			 " (userid, friend_userid, groupid, createtime, beok) "
+			 " VALUES (%d, %d, %d, UNIX_TIMESTAMP(), 1);", uin, fuin, gid);
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
+		return REP_ERR_DB;
+	}
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "INSERT INTO user_friends "
+			 " (userid, friend_userid, groupid, createtime, beok) "
+			 " VALUES (%d, %d, 0, UNIX_TIMESTAMP(), 1);", fuin, uin);
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
+		return REP_ERR_DB;
+	}
+
+	/*
+	 * update friend number
+	 */
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends_group SET "
+			 " friendnum=friendnum+1 WHERE userid=%d AND fgroupid=%d", uin, gid);
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
+	}
+	snprintf(dbrl->sql, sizeof(dbrl->sql), "UPDATE user_friends_group SET "
+			 " friendnum=friendnum+1 WHERE userid=%d AND fgroupid=0", fuin);
+	if (fdb_exec(dbrl) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbrl->sql, fdb_error(dbrl));
+	}
+	
+	snprintf(dbhome->sql, sizeof(dbhome->sql), "UPDATE user_info SET "
+			 " friendnum=friendnum+1 WHERE userid=%d OR userid=%d", uin, fuin);
+	if (fdb_exec(dbhome) != RET_DBOP_OK) {
+		dtc_err(fp, "exec %s failure %s", dbhome->sql, fdb_error(dbhome));
+	}
+
+	cache_delf(cd, PREFIX_FRIEND"%d", uin);
+	cache_delf(cd, PREFIX_FRIEND"%d", fuin);
+	cache_delf(cd, PREFIX_APPFRIEND"%d", uin);
+	cache_delf(cd, PREFIX_APPFRIEND"%d", fuin);
+	
+	return REP_OK;
+}
+
+/*
  * input : uin(UINT) maxnum(UINT) groupname(STRING)
  * return: NORMAL REP_ERR_MAXGROUPLIMIT REP_ERR_GROUPNAMEEXIST
  * reply : ["groupid": 22] OR ["groupid": 0]
@@ -897,7 +984,7 @@ static int uic_cmd_isblack(struct queue_entry *q, struct cache *cd,
 {
 	struct data_cell *c;
 	char key[64];
-	int buin, btype = -1, ret;
+	int buin, btype = -1, btypedb, ret;
 
 	REQ_GET_PARAM_U32(c, q, false, "blackuin", buin);
 	REQ_FETCH_PARAM_U32(c, q, false, "blacktype", btype);
@@ -909,9 +996,10 @@ static int uic_cmd_isblack(struct queue_entry *q, struct cache *cd,
 			sprintf(key, "%d", buin);
 			c = data_cell_search(c, false, DATA_TYPE_U32, key);
 			if (c != NULL) {
+				btypedb = c->v.ival;
 				data_cell_free(q->replydata);
 				q->replydata = NULL;
-				if (btype == -1 || btype == c->v.ival) {
+				if (btype == -1 || btype == btypedb) {
 					reply_add_u32(q, NULL, "blacktype", btype);
 					return REP_OK_ISBLACK;
 				}
@@ -1045,6 +1133,9 @@ static void uic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_APPFRIEND:
 		ret = uic_cmd_appfriend(q, cd, dbrl, dbhome, fp);
+		break;
+	case REQ_CMD_ADDFRIEND:
+		ret = uic_cmd_addfriend(q, cd, dbrl, dbhome, fp);
 		break;
 	case REQ_CMD_ADDGROUP:
 		ret = uic_cmd_addgroup(q, cd, dbrl, fp);

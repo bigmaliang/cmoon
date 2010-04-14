@@ -33,7 +33,7 @@ static int fans_cmd_fanslist(struct queue_entry *q, struct cache *cd,
 	struct data_cell *c;
 	unsigned char *val = NULL;
 	size_t vsize = 0;
-	int uin, hit, ret;
+	int uin, hit, count = 0, ret;
 
 	REQ_GET_PARAM_U32(c, q, false, "uin", uin);
 	
@@ -47,8 +47,9 @@ static int fans_cmd_fanslist(struct queue_entry *q, struct cache *cd,
 			dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
 			return REP_ERR_DB;
 		}
-		while (fdb_fetch_row(db) == RET_DBOP_OK) {
+		while (count < MAX_FANS_NUM && (fdb_fetch_row(db) == RET_DBOP_OK)) {
 			reply_add_u32(q, "fans", db->row[0], atoi(db->row[1]));
+			count++;
 		}
 		val = calloc(1, MAX_PACKET_LEN);
 		if (val == NULL) {
@@ -131,7 +132,7 @@ static int fans_cmd_followtype(struct queue_entry *q, struct cache *cd,
 	struct data_cell *c;
 	char key[64];
 	bool isfans, isidol;
-	int ouin, time, ret;
+	int ouin, time = 0, ret;
 
 	REQ_GET_PARAM_U32(c, q, false, "otheruin", ouin);
 	
@@ -321,7 +322,7 @@ static void fans_process_driver(struct event_entry *entry, struct queue_entry *q
         if (ret == REP_ERR_BADPARAM) {
             st->msg_badparam++;
         }
-		dtc_err(fp, "process %u failed %d\n", q->operation, ret);
+		dtc_err(fp, "process %u failed %d", q->operation, ret);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 		reply_trigger(q, ret);
