@@ -3,20 +3,52 @@
 
 moon/
 |-- maketool	编译辅助工具
-|-- doc			文档目录
-|-- lib			库文件目录
-|-- cdata		类似浏览量, 点击量等更新频繁的数值型数据的存取接口, 详情请参考该目录文档和代码
-|-- event		支持扩展的长时间处理缓冲层, 详情请参考该目录文档和代码
-|-- ksa			kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
-|-- rock		主程序内容
 |-- Make.env	编译相关宏定义
-`-- Makefile	编译文件
+|-- Makefile	编译文件
+|-- mtools		常用管理脚本
+|-- doc			文档目录
+|
+|-- event		支持插件的高并发处理缓冲层, 详情请参考该目录文档和代码
+|-- lib			库文件目录
+|
+|-- rock		应用一: 主程序内容
+|-- cdata		应用二: 类似浏览量, 点击量等更新频繁的数值型数据的存取接口, 详情请参考该目录文档和代码
+|-- ksa			应用三: kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
+|
+|-- deliver		Web IM 解决方案 (deliver代码放到 github 上, 参考 deliver/README)
+`-- grabber		获取邮件, msn, qq 好友方案
+
+
+
+
+依赖
+===
+
+整个程序依赖如下软件包(可参考 /mtools/prepare_lib.sh 脚本)：
+
+开发库
+-----
+clearsilver-dev
+libfcgi-dev
+libjson0-dev
+libmemcached-dev
+libqdbm-dev	(仅 cdata 依赖)
+libnmdb 	(仅 cdata 依赖. Debian 没有此包,
+			 需要手动安装: http://blitiri.com.ar/p/nmdb/files/0.22/nmdb-0.22.tar.gz)
+
+数据库(可选, Make.env 中可配置)
+--------------------------
+libmysqlclient-dev
+libpq-dev
+libsqlite3-dev
+
+依赖路径写在 Make.env 中, 如果装好上面软件后还出现编译错误, 请自行修改 Make.env 之 DEPEND LIBRARY 部分.
+
 
 
 
 注:
-====
+==
 
 1. set tab 4 space width please
-2. 编译安装, 请参考 doc/build.txt
 

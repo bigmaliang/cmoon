@@ -70,12 +70,8 @@ struct _mdb_driver
 
 extern mdb_driver mysql_driver;
 extern mdb_driver sqlite_driver;
-#ifndef DROP_PG
 extern mdb_driver pgsql_driver;
 #define MDB_DV_NUM	3
-#else
-#define MDB_DV_NUM	2
-#endif
 
 mdb_conn* mdb_connect(const char* dsn);
 void mdb_disconnect(mdb_conn* conn);

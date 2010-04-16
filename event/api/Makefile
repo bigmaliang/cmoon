@@ -1,8 +1,6 @@
-BASEDIR = ../../
-include $(BASEDIR)Make.env
-
 # prefix for installing the binaries
 PREFIX=/usr/local
+NEOUTL=/usr/lib/libneo_utl.a
 
 # cc command line
 ifneq ($(V), 1)
@@ -17,7 +15,7 @@ ENABLE_TCP = 1
 ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
-CFLAGS += -pedantic
+CFLAGS = -std=c99 -D_GNU_SOURCE
 ALL_CFLAGS = -fPIC $(CFLAGS)
 ALL_CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 		-DENABLE_TCP=$(ENABLE_TCP) \
@@ -29,7 +27,7 @@ ALL_CFLAGS += -g -pg -fprofile-arcs -ftest-coverage
 endif
 
 
-ALL_CFLAGS += -I../base -I../daemon $(INC_CS) $(INC_MYSQL)
+ALL_CFLAGS += -I../daemon -I../base -I/usr/include/ClearSilver -lneo_utl  -I/usr/include/mysql -lmysqlclient
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)

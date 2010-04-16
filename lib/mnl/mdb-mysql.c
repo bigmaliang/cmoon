@@ -1,5 +1,8 @@
 #include "mdb-priv.h"
 
+#ifndef DROP_MYSQL
+#include <mysql.h>
+
 struct _mdb_conn_mysql
 {
 	mdb_conn base;
@@ -427,3 +430,7 @@ mdb_driver mysql_driver =
 	.query_get_affect_rows = mysql_mdb_query_get_affect_rows,
 	.query_get_last_id = mysql_mdb_query_get_last_id,
 };
+
+#else
+mdb_driver mysql_driver = {};
+#endif	/* DROP_MYSQL */

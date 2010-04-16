@@ -1,11 +1,8 @@
-#include <stdlib.h>
-#include <string.h>
-#include <sqlite3.h>
-#include <ctype.h>
-
 #include "mdb-priv.h"
-#include "ClearSilver.h"
-#include "mtrace.h"
+#include "mheads.h"
+
+#ifndef DROP_SQLITE
+#include <sqlite3.h>
 
 struct _mdb_conn_sqlite
 {
@@ -386,3 +383,7 @@ mdb_driver sqlite_driver =
 	.query_get_affect_rows = sqlite_mdb_query_get_affect_rows,
 	.query_get_last_id = sqlite_mdb_query_get_last_id,
 };
+
+#else
+mdb_driver sqlite_driver = {};
+#endif	/* DROP_SQLITE */

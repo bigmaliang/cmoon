@@ -1,5 +1,9 @@
 #ifndef __FDB_H__
 #define __FDB_H__
+
+#ifndef DROP_MYSQL
+#include <mysql.h>
+
 #include "mheads.h"
 
 __BEGIN_DECLS
@@ -46,4 +50,5 @@ void fdb_opfinish(int ret, HDF *hdf, fdb_t *fdb,
 void fdb_opfinish_json(int ret, HDF *hdf, fdb_t *fdb);
 
 __END_DECLS
+#endif	/* DROP_MYSQL */
 #endif	/* __FDB_H__ */

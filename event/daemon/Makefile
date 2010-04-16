@@ -1,6 +1,3 @@
-BASEDIR = ../../
-include $(BASEDIR)Make.env
-
 # prefix for installing the binaries
 PREFIX=/usr/local
 
@@ -17,6 +14,7 @@ ENABLE_TCP = 1
 ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
+CFLAGS = -std=c99 -D_GNU_SOURCE
 ALL_CFLAGS = $(CFLAGS)
 ALL_CFLAGS += -rdynamic
 ALL_CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
@@ -33,8 +31,8 @@ ALL_CFLAGS += -fprofile-use
 endif
 
 
-ALL_CFLAGS += -I../daemon -I../base $(INC_CS) $(INC_MYSQL)
-LIBS = -levent -lpthread -lrt -ldl  $(LIB_MYSQL) $(LIB_NEOUTL_DYN)
+ALL_CFLAGS += -I../daemon -I../base -I/usr/include/ClearSilver -I/usr/include/mysql
+LIBS = -levent -lpthread -lrt -ldl -lmysqlclient -lneo_utl
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)

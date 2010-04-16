@@ -4,6 +4,7 @@
 #ifndef _MEVENT_H
 #define _MEVENT_H
 
+#include <time.h>
 #include "net-const.h"
 
 /* Defined to 0 or 1 at libmevent build time according the build configuration,
@@ -79,9 +80,9 @@ int mevent_free(mevent_t *evt);
  */
 int mevent_add_tipc_server(mevent_t *evt, int port);
 int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port,
-						  const char *nblock, struct timeval tv);
+						  const char *nblock, void *tv);
 int mevent_add_udp_server(mevent_t *evt, const char *addr, int port,
-						  const char *nblock, struct timeval tv);
+						  const char *nblock, void *tv);
 int mevent_add_sctp_server(mevent_t *evt, const char *addr, int port);
 
 /*
