@@ -7,13 +7,12 @@ moon/
 |-- Makefile	编译文件
 |-- mtools		常用管理脚本
 |-- doc			文档目录
-|
 |-- lib			库文件目录
 |
 |-- rock		应用一: 主程序内容
-|-- event		支持插件的高并发处理缓冲层, 详情请参考该目录文档和代码
-|-- cdata		应用二: 类似浏览量, 点击量等更新频繁的数值型数据的存取接口, 详情请参考该目录文档和代码
-|-- ksa			应用三: kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
+|-- event		应用二: 支持插件的高并发处理缓冲层, 详情请参考该目录文档和代码
+|-- cdata		应用三: 类似浏览量, 点击量等更新频繁的数值型数据的存取接口, 详情请参考该目录文档和代码
+|-- ksa			应用四: kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
 |
 |-- deliver		Web IM 解决方案 (deliver代码放到 github 上, 参考 deliver/README)
 `-- grabber		获取邮件, msn, qq 好友方案
