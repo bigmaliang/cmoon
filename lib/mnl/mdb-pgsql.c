@@ -1,8 +1,7 @@
-#include <stdlib.h>
-#include <string.h>
-#include <libpq-fe.h>
-
 #include "mdb-priv.h"
+
+#ifndef DROP_PG
+#include <libpq-fe.h>
 
 struct _mdb_conn_pgsql
 {
@@ -313,3 +312,7 @@ mdb_driver pgsql_driver =
 	.query_get_affect_rows = pgsql_mdb_query_get_affect_rows,
 	.query_get_last_id = pgsql_mdb_query_get_last_id,
 };
+
+#else
+mdb_driver pgsql_driver = {};
+#endif	/* DROP_MYSQL */

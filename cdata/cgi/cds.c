@@ -96,8 +96,10 @@ int main(int argc, char **argv, char **envp)
 		printf("{errmsg: \"初始化数据库失败\"}");
 		return 1;
 	}
-	
+
+#ifndef DROP_FCGI
 	while (FCGI_Accept() >= 0) {
+#endif
 		/*
 		 * 获取参数
 		 */
@@ -337,7 +339,9 @@ int main(int argc, char **argv, char **envp)
 #endif
 			cgi_destroy(&cgi);
 		}
+#ifndef DROP_FCGI
  	} /* FCGI_Accept() */
+#endif
  
 	fdb_free(&fdb);
 	mconfig_cleanup(&g_cfg);

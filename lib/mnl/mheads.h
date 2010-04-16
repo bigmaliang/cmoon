@@ -23,16 +23,13 @@
 /* includes for cs, memc */
 #include "ClearSilver.h"
 #include "libmemcached/memcached.h"
-#ifndef NFCGI
-#include "fcgi_stdio.h"
-#endif
-#include "depot.h"
-#include "nmdb.h"
-#include "mysql.h"
-
-#ifdef USE_EVENT
+#ifndef DROP_MEVENT
 #include "mevent.h"
 #endif
+#ifndef DROP_FCGI
+#include "fcgi_stdio.h"
+#endif
+
 
 /* Fix Up for systems that don't define these standard things */
 #ifndef __BEGIN_DECLS

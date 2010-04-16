@@ -48,7 +48,7 @@ int main(int argc, char **argv, char **envp)
 		return 1;
 	}
 	
-#ifndef NFCGI
+#ifndef DROP_FCGI
 	while (FCGI_Accept() >= 0) {
 #endif
 		err = cgi_init(&cgi, NULL);
@@ -128,7 +128,7 @@ int main(int argc, char **argv, char **envp)
 			cgi_destroy(&cgi);
 			session_destroy(&session);
 		}
-#ifndef NFCGI
+#ifndef DROP_FCGI
 	}
 #endif
 

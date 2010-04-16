@@ -21,6 +21,8 @@
  *    有increment且没有写入mysql的key不会删除。
  */
 #define NFCGI
+#include <depot.h>
+
 #include "mheads.h"
 #include "lheads.h"
 #include "ocds.h"

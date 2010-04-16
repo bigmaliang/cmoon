@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	tv.tv_sec = 0;
 	tv.tv_usec = 800000;
 	
-	mevent_add_tcp_server(evt, host, 26011, NULL, tv);
+	mevent_add_tcp_server(evt, host, 26011, NULL, &tv);
 #if 1
 	mevent_chose_plugin(evt, "db_community", REQ_CMD_NONE, FLAGS_NONE);
 	mevent_add_array(evt, NULL, "sqls");

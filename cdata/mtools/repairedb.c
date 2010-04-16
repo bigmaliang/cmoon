@@ -18,6 +18,8 @@
  * 根据该key的 value 和数据库中的 value 进行比对, 如果大于后者, 将值写入数据库
  */
 #define NFCGI
+#include <depot.h>
+
 #include "mheads.h"
 #include "lheads.h"
 #include "ocds.h"

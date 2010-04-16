@@ -350,7 +350,7 @@ int mutil_expand_strf(char **outstr, const char *sql_fmt, const char *fmt, ...)
 	return ret;
 }
 
-#ifdef NFCGI
+#ifdef DROP_FCGI
 int read_cb(void *ptr, char *data, int size) {return 0;}
 int writef_cb(void *ptr, const char *format, va_list ap) {return 0;}
 int write_cb(void *ptr, const char *data, int size) {return 0;}

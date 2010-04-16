@@ -21,7 +21,7 @@
 
 /* Used internally to really add the server once we have an IP address. */
 static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port,
-							   const char *nblock, struct timeval tv)
+							   const char *nblock, struct timeval *tv)
 {
 	int rv, fd;
 	struct mevent_srv *newsrv, *newarray;
@@ -34,9 +34,9 @@ static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port,
 		int x = fcntl(fd, F_GETFL, 0);
 		fcntl(fd, F_SETFL, x | O_NONBLOCK);
 	} else {
-		if (tv.tv_sec != 0 || tv.tv_usec != 0) {
-			setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv, sizeof(tv));
-			setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&tv, sizeof(tv));
+		if (tv->tv_sec != 0 || tv->tv_usec != 0) {
+			setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char*)tv, sizeof(*tv));
+			setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char*)tv, sizeof(*tv));
 		}
 	}
 	
@@ -97,7 +97,7 @@ static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port,
 
 /* Same as mevent_add_tipc_server() but for TCP connections. */
 int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port,
-						  const char *nblock, struct timeval tv)
+						  const char *nblock, void *tv)
 {
 	int rv;
 	struct hostent *he;
@@ -113,7 +113,7 @@ int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port,
 		ia.s_addr = *( (in_addr_t *) (he->h_addr_list[0]) );
 	}
 
-	return add_tcp_server_addr(evt, &(ia.s_addr), port, nblock, tv);
+	return add_tcp_server_addr(evt, &(ia.s_addr), port, nblock, (struct timeval*)tv);
 }
 
 int tcp_srv_send(struct mevent_srv *srv, unsigned char *buf, size_t bsize)
