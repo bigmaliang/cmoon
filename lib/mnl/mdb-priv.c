@@ -17,7 +17,7 @@ mdb_conn* mdb_connect(const char* dsn)
   
 	for (i = 0; i < MDB_DV_NUM; i++) {
 		const char* name = drivers[i]->name;
-		if (!strncmp(dsn, name, strlen(name)) && dsn[strlen(name)] == ':') {
+		if (name && !strncmp(dsn, name, strlen(name)) && dsn[strlen(name)] == ':') {
 			const char* drv_dsn = strchr(dsn, ':') + 1;
 			conn = drivers[i]->connect(drv_dsn);
 			if (conn) {
