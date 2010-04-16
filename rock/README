@@ -1,0 +1,14 @@
+Yet another dispensable life info website written in C.
+=======================================================
+
+moon/rock
+|-- doc		文档目录
+|-- mtls	运维工具及脚本目录
+|-- pub		mnl只上的一尘 rock 相关封装
+|
+|-- walk	数据库 底尘封装
+|-- run		控制器封装, 当前仅一 viki 主脑
+|-- pager	静态页面生成工具, 当前仅一 dog
+|
+|-- tpl		run 的模板文件目录
+`-- fly		静态页面, 图片, css, js. HTML 目录
