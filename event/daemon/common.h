@@ -6,7 +6,7 @@
 
 /* The queue for database operations */
 #include "queue.h"
-#include "mevent.h"
+#include "meventd.h"
 
 extern struct mevent *mevent;
 

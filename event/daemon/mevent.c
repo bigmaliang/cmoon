@@ -7,7 +7,6 @@
 #include <string.h>		/* for memcpy()/memcmp() */
 #include <stdio.h>		/* snprintf() */
 #include <dlfcn.h>
-#include "mevent.h"
 #include "log.h"
 
 #include "net-const.h"

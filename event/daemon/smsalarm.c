@@ -5,7 +5,6 @@
 #include <string.h>		/* for memcpy()/memcmp() */
 #include <stdio.h>		/* snprintf() */
 #include <unistd.h>		/* usleep() */
-#include "mevent.h"
 #include "net-const.h"
 #include "common.h"
 #include "data.h"
