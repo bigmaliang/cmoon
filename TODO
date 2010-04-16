@@ -1,1 +1,3 @@
 2010-04-16 ClearSilver library need to be hack, see lib/modified_3rdlib
+		   cdata, event - fdbxxx NEED to be remove, move depend on mnl, so, NMYSQL make sense
+		   event - according to efficiency, data pack NEED change to pack hdf -_-!

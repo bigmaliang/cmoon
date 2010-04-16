@@ -4,8 +4,8 @@ include $(BASEDIR)Make.env
 CC = gcc
 CFLAGS = -g
 
-INCS	= -I ../api -I../base -I../daemon $(INC_CS)
-LIBS	= -L ../api -lmevent -levent -lpthread -lrt -ldl  $(LIB_MYSQL) $(LIB_NEOUTL_DYN)
+INCS	= -I../daemon $(PKG_MEVENT)
+LIBS	= -levent -lpthread -lrt -ldl
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))
