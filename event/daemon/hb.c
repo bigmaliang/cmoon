@@ -10,22 +10,20 @@
 #include <stdio.h>		/* printf() */
 #include <unistd.h>		/* malloc(), fork() and getopt() */
 #include <stdlib.h>		/* atoi() */
-#include <sys/types.h>		/* for pid_t */
+#include <sys/types.h>	/* for pid_t */
 #include <string.h>		/* for strcpy() and strlen() */
-#include <pthread.h>		/* for pthread_t */
+#include <pthread.h>	/* for pthread_t */
 
-#include "net.h"
+#include "mevent.h"		/* api's mevent.h */
+
 #include "common.h"
+#include "net.h"
 #include "net-const.h"
 #include "log.h"
 #include "stats.h"
 #include "config.h"
 #include "data.h"
 #include "smsalarm.h"
-
-#include "ClearSilver.h"
-
-#include "../api/mevent.h"
 
 int main(int argc, char *argv[])
 {

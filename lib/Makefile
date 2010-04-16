@@ -1,7 +1,7 @@
 BASEDIR = ../
 include $(BASEDIR)Make.env
 
-SUBDIR = mnl js
+SUBDIR = mevent mnl js
 
 all: $(subdir)
 	@$(MULTIMAKE) $(SUBDIR)

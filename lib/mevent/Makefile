@@ -1,6 +1,8 @@
+BASEDIR = ../../
+include $(BASEDIR)Make.env
+
 # prefix for installing the binaries
 PREFIX=/usr/local
-NEOUTL=/usr/lib/libneo_utl.a
 
 # cc command line
 ifneq ($(V), 1)
@@ -15,7 +17,6 @@ ENABLE_TCP = 1
 ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
-CFLAGS = -std=c99 -D_GNU_SOURCE
 ALL_CFLAGS = -fPIC $(CFLAGS)
 ALL_CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 		-DENABLE_TCP=$(ENABLE_TCP) \
@@ -27,14 +28,11 @@ ALL_CFLAGS += -g -pg -fprofile-arcs -ftest-coverage
 endif
 
 
-ALL_CFLAGS += -I../daemon -I../base -I/usr/include/ClearSilver -lneo_utl  -I/usr/include/mysql -lmysqlclient
+ALL_CFLAGS += $(PKG_CS)
 
 
-BASE_SOURCES = $(wildcard ../base/*.c)
-
-OBJS = libmevent.o tcp.o tipc.o udp.o sctp.o wrapper.o
-OBJS += $(patsubst %.c, %.o, $(BASE_SOURCES))
-
+SOURCES = $(wildcard *.c)
+OBJS = $(patsubst %.c, %.o, $(SOURCES))
 
 
 default: all
@@ -59,15 +57,12 @@ libmevent.pc: libmevent.skel.pc
 .c.o:
 	$(NICE_CC) $(ALL_CFLAGS) -fPIC -c $< -o $@
 
-#libs: libmevent.a libmevent.so
 libs: libmevent.a
 
 libmevent.so: mevent.h $(OBJS)
 	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC $(OBJS) -o libmevent.so
 
 libmevent.a: mevent.h $(OBJS)
-#	for php use, only linke with libmevent
-	@cp $(NEOUTL) libmevent.a
 	$(AR) cr libmevent.a $(OBJS)
 
 
@@ -77,8 +72,8 @@ install-lib: libs libmevent.pc
 	install -m 0755 libmevent.a $(PREFIX)/lib
 	install -d $(PREFIX)/include
 	install -m 0644 mevent.h $(PREFIX)/include
-	install -m 0644 ../base/net-const.h $(PREFIX)/include
-	install -m 0644 ../base/data.h $(PREFIX)/include
+	install -m 0644 net-const.h $(PREFIX)/include
+	install -m 0644 data.h $(PREFIX)/include
 	install -d $(PREFIX)/lib/pkgconfig
 	install -m 644 libmevent.pc $(PREFIX)/lib/pkgconfig
 	@echo

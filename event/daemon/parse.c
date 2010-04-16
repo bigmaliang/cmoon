@@ -11,7 +11,6 @@
 #include "net-const.h"
 #include "common.h"
 #include "netutils.h"
-#include "mevent.h"
 #include "data.h"
 #include "packet.h"
 #include "smsalarm.h"

@@ -1,3 +1,6 @@
+BASEDIR = ../../
+include $(BASEDIR)Make.env
+
 # prefix for installing the binaries
 PREFIX=/usr/local
 
@@ -31,14 +34,14 @@ ALL_CFLAGS += -fprofile-use
 endif
 
 
-ALL_CFLAGS += -I../daemon -I../base -I/usr/include/ClearSilver -I/usr/include/mysql
-LIBS = -levent -lpthread -lrt -ldl -lmysqlclient -lneo_utl
+ALL_CFLAGS += -I./ $(PKG_MEVENT) $(PKG_MYSQL)
+LIBS = -levent -lpthread -lrt -ldl $(PKG_MEVENT)
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)
 PLUGIN_SOURCES = $(wildcard ../plugin/*.c)
 
-OBJS = mevent.o queue.o log.o dtrace.o net.o parse.o reply.o stats.o config.o common.o cache.o fdb.o syscmd.o
+OBJS = mevent.o queue.o log.o dtrace.o net.o parse.o reply.o stats.o config.o common.o cache.o fdb.o syscmd.o smsalarm.o
 OBJS += $(patsubst %.c, %.o, $(BASE_SOURCES))
 OBJS_MAIN = main.o
 OBJS_HB = hb.o
@@ -83,7 +86,7 @@ mevent: $(OBJS_MAIN) $(OBJS)
 	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_MAIN) $(OBJS) -o mevent $(LIBS)
 
 hb: $(OBJS_HB) $(OBJS)
-	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_HB) $(OBJS) -o hb $(LIBS) -L../api -lmevent
+	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_HB) $(OBJS) -o hb $(LIBS)
 
 
 
