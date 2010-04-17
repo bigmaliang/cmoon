@@ -75,7 +75,6 @@ void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn, time_t second)
 	hdf_remove_tree(hdf, PRE_SUCCESS);
 	get_errmsg(ret, msg);
 	hdf_set_value(hdf, PRE_ERRMSG, msg);
-	mjson_output_hdf(hdf, second);
 	
 	if (conn != NULL) {
 		mdb_destroy(conn);

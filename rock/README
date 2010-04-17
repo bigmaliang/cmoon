@@ -12,3 +12,7 @@ moon/rock
 |
 |-- tpl		run 的模板文件目录
 `-- fly		静态页面, 图片, css, js. HTML 目录
+
+
+
+系统, Web 服务器 及 数据库 配置 请参考 doc/system.txt
