@@ -41,7 +41,7 @@ static int fans_cmd_fanslist(struct queue_entry *q, struct cache *cd,
 	hit = cache_getf(cd, &val, &vsize, PREFIX_FANS"%d", uin);
 	if (hit == 0) {
 		snprintf(db->sql, sizeof(db->sql), "SELECT userid, attention_time FROM "
-				 " user_attention WHERE attention_userid=%d;", uin);
+				 " user_attention WHERE attention_userid=%d ORDER BY uaid DESC;", uin);
 		ret = fdb_exec(db);
 		if (ret != RET_DBOP_OK) {
 			dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
@@ -91,7 +91,7 @@ static int fans_cmd_idollist(struct queue_entry *q, struct cache *cd,
 	hit = cache_getf(cd, &val, &vsize, PREFIX_IDOLS"%d", uin);
 	if (hit == 0) {
 		snprintf(db->sql, sizeof(db->sql), "SELECT attention_userid, attention_time "
-				 " FROM user_attention WHERE userid=%d;", uin);
+				 " FROM user_attention WHERE userid=%d ORDER BY uaid DESC;", uin);
 		ret = fdb_exec(db);
 		if (ret != RET_DBOP_OK) {
 			dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
