@@ -4,8 +4,8 @@ include $(BASEDIR)Make.env
 CC = gcc
 CFLAGS = -g
 
-INCS	= -I../daemon $(PKG_MEVENT)
-LIBS	= -levent -lpthread -lrt -ldl
+INCS	= -I../daemon $(INC_MEVENT)
+LIBS	= -levent -lpthread -lrt -ldl $(LIB_MEVENT)
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))

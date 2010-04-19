@@ -3,7 +3,7 @@ include $(BASEDIR)Make.env
 
 CFLAGS += -fPIC
 
-DEPS	= $(PKG_MEVENT) $(PKG_MEMC) $(PKG_CS) $(PKG_JSON) $(PKG_FCGI) $(PKG_SYSTEM) 
+DEPS	= $(INC_MEVENT) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM) 
 
 SOURCE1 = mconfig.c
 SOURCES = mconfig.c mcs.c md5c.c mdata.c mdb.c mdb-priv.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mjson.c mmemc.c mmisc.c mtrace.c mtypes.c mutil.c
