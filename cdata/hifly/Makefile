@@ -3,7 +3,7 @@ include $(BASEDIR)Make.env
 LOCALBASE = ../
 include $(LOCALBASE)Make.env
 
-INCS	= $(PKG_MEVENT) $(PKG_MNL) $(PKG_MEMC) $(PKG_CS) $(PKG_JSON) $(PKG_FCGI) $(PKG_SYSTEM) $(PKG_NMDB) $(INC_LPUB)
+INCS	= $(INC_MEVENT) $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM) $(INC_NMDB) $(INC_LPUB)
 
 SOURCES = $(wildcard *.c)
 OBJS	= $(patsubst %.c, %.o, $(SOURCES))

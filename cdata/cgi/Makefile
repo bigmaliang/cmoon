@@ -3,8 +3,8 @@ include $(BASEDIR)Make.env
 LOCALBASE = ../
 include $(LOCALBASE)Make.env
 
-INCS	= $(INC_LPUB) $(INC_DB) $(PKG_NMDB)
-LIBS	= $(LIB_LPUB) $(LIB_DB) $(PKG_MEVENT) $(PKG_MNL) $(PKG_MEMC) $(PKG_CS) $(PKG_JSON) $(PKG_FCGI) $(PKG_SYSTEM)
+INCS	= $(INC_LPUB) $(INC_DB) $(INC_NMDB) $(INC_MEVENT) $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM)
+LIBS	= $(LIB_LPUB) $(LIB_DB) $(LIB_NMDB) $(LIB_MEVENT) $(LIB_MNL) $(LIB_MEMC) $(LIB_CS) $(LIB_JSON) $(LIB_FCGI) $(LIB_SYSTEM)
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %.cgi, $(SOURCES))

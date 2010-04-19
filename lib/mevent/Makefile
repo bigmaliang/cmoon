@@ -28,7 +28,7 @@ ALL_CFLAGS += -g -pg -fprofile-arcs -ftest-coverage
 endif
 
 
-ALL_CFLAGS += $(PKG_CS)
+ALL_CFLAGS += $(INC_CS)
 
 
 SOURCES = $(wildcard *.c)

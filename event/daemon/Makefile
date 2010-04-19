@@ -34,8 +34,8 @@ ALL_CFLAGS += -fprofile-use
 endif
 
 
-ALL_CFLAGS += -I./ $(PKG_MEVENT) $(PKG_MYSQL)
-LIBS = -levent -lpthread -lrt -ldl $(PKG_MEVENT)
+ALL_CFLAGS += -I./ $(INC_MEVENT) $(INC_MYSQL)
+LIBS = -levent -lpthread -lrt -ldl $(LIB_MEVENT)
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)
