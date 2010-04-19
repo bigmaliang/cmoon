@@ -35,7 +35,7 @@ endif
 
 
 ALL_CFLAGS += -I./ $(INC_MEVENT) $(INC_MYSQL)
-LIBS = -levent -lpthread -lrt -ldl $(LIB_MEVENT)
+LIBS = -levent -lpthread -lrt -ldl $(LIB_MEVENT) $(LIB_MYSQL)
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)
