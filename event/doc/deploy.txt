@@ -10,7 +10,7 @@
 daemon 执行文件安装
 -----------------
 从开发环境 192.168.8.54 上:
-	cd / && tar zcvf mevent.tar.gz etc/mevent/ usr/local/bin/mevent usr/local/bin/hb usr/local/lib/mevent_*.so usr/local/lib/libneo_utl.so usr/local/lib/libevent*
+	cd / && tar zcvf mevent.tar.gz etc/mevent/ usr/local/bin/mevent usr/local/bin/hb usr/local/lib/mevent_*.so usr/local/lib/libevent*
 	拷贝 mevent.tar.gz 到新部署机器 /，解压, 修改/etc/mevent/server.hdf配置文件。
 	midir -p /data/logs/mevent/ 初始化日志目录
 
