@@ -147,6 +147,17 @@ input, textarea {
     border: solid 1px #666666;
     color: #112222;
 }
+#coltwo pre.light {
+    width: 90%;
+    padding: 0.5em;
+    /*background-color: #aa6e70;*/
+    background-color: #eeeeee;
+    border: solid 1px #666666;
+    color: #aaaaaa;
+}
+#coltwo pre.light a {
+	color: #aaaaaa;
+}
 
 .valid{border:2px solid green !important;}
 .invalid{border:2px solid #800 !important;}

@@ -1,0 +1,36 @@
+Config {
+	trace_level = 7
+}
+
+Layout {
+	tabs {
+		0 {
+			name = 首页
+			page = index
+		}
+		1 {
+			name = Kosher知识
+			page = kosher
+		}
+		2 {
+			name = 申请流程
+			page = process
+		}
+		3 {
+			name = 获取申请表
+			page = dld
+		}
+		4 {
+			name = 已认证产品
+			page = query
+		}
+		5 {
+			name = 已认证企业
+			page = notice
+		}
+		6 {
+			name = 联系我们
+			page = about
+		}
+	}
+}

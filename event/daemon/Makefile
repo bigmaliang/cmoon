@@ -34,7 +34,7 @@ ALL_CFLAGS += -fprofile-use
 endif
 
 
-ALL_CFLAGS += -I./ $(INC_MEVENT) $(INC_MYSQL)
+ALL_CFLAGS += -I./ $(INC_MEVENT) $(INC_CS) $(INC_MYSQL)
 LIBS = -levent -lpthread -lrt -ldl $(LIB_MEVENT) $(LIB_MYSQL)
 
 
