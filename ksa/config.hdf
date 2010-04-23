@@ -25,7 +25,7 @@ Layout {
 			page = query
 		}
 		5 {
-			name = 获证企业
+			name = 获证企业名单
 			page = com_pass
 		}
 		6 {
