@@ -26,6 +26,14 @@ a:hover {
 ul.none {
     list-style:none;
 }
+ul.clean {
+	margin: 0;
+	padding: 0;
+	list-style:none;
+}
+ul.clean li {
+    padding: 15px;
+}
 input, textarea {
     border: 1px solid #666666;
 }
@@ -152,7 +160,8 @@ input, textarea {
     padding: 0.5em;
     /*background-color: #aa6e70;*/
     background-color: #eeeeee;
-    border: solid 1px #666666;
+    border: solid 1px #bbbbbb;
+    /*border: none;*/
     color: #aaaaaa;
 }
 #coltwo pre.light a {
