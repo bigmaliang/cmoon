@@ -21,7 +21,7 @@ Layout {
 			page = dld
 		}
 		4 {
-			name = 已认证产品
+			name = 已认证产品和公司查询
 			page = query
 		}
 		5 {
