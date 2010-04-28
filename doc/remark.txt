@@ -74,3 +74,8 @@ struct 放到.c中能隐藏其中数据结构, 防止非法访问其成员.
 typedef struct 新类型, 以驼峰命名 chatNum *cnum, anchor
 函数名 下划线命名 chatnum_new()
 宏  大写 SFREE
+
+JS
+==
+函数名 functionName
+类    ClassName
