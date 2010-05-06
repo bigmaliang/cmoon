@@ -10,25 +10,22 @@
 #include "data.h"
 #include "packet.h"
 #include "log.h"
-#include "dtrace.h"
 #include "queue.h"
 #include "reply.h"
 
+#include "mheads.h"
 #include "ClearSilver.h"
 
-#include "fdb.h"
 #include "smsalarm.h"
 
 void smsalarm_msg(char *msg)
 {
-	fdb_t *db;
+	mdb_conn *db;
 	//char content[100];
 	int ret;
-	
-	ret = fdb_init_long(&db, SMSA_CFG_IP, SMSA_CFG_USER,
-						SMSA_CFG_PASS, SMSA_CFG_NAME, SMSA_CFG_PORT);
-	if (ret != RET_DBOP_OK) {
-		wlog("init alarm db err %s\n", fdb_error(db));
+
+	if (mdb_init(&db, SMSA_DB_SN) != RET_RBTOP_OK) {
+		wlog("init alarm db err %s\n", mdb_get_errmsg(db));
 		return;
 	}
 
@@ -37,15 +34,11 @@ void smsalarm_msg(char *msg)
 
 	while (node != NULL) {
 		//memset(content, 0x0, sizeof(content));
-		memset(db->sql, 0x0, sizeof(db->sql));
-		
-		//snprintf(content, sizeof(content), "%s|%s", hdf_obj_value(node), msg);
-		snprintf(db->sql, sizeof(db->sql),
-				 "INSERT INTO monitor_smssend (smsSendTo, smsContent) VALUES ('%s', '%s')",
-				 hdf_obj_value(node), msg);
-		ret = fdb_exec(db);
-		if (ret != RET_DBOP_OK) {
-			wlog("exec %s failure %s\n", msg, fdb_error(db));
+		ret = mdb_exec(db, NULL,
+					   "INSERT INTO monitor_smssend (smsSendTo, smsContent) VALUES ('%s', '%s')",
+					   NULL, hdf_obj_value(node), msg);
+		if (ret != MDB_ERR_NONE) {
+			wlog("exec %s failure %s\n", msg, mdb_get_errmsg(db));
 		} else {
 			wlog("%s alarm ok\n", msg);
 		}
@@ -53,7 +46,7 @@ void smsalarm_msg(char *msg)
 		node = hdf_obj_next(node);
 	}
 
-	fdb_free(&db);
+	mdb_destroy(db);
 }
 
 void smsalarm_msgf(char *fmt, ...)

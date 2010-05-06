@@ -4,6 +4,7 @@
 
 #define SMSA_CFG_PATH	"Mevent.smsalarm"
 
+#define SMSA_DB_SN		"todo"
 #define SMSA_CFG_IP		hdf_get_value(g_cfg, SMSA_CFG_PATH".db.ip", "127.0.0.1")
 #define SMSA_CFG_USER	hdf_get_value(g_cfg, SMSA_CFG_PATH".db.user", "test")
 #define SMSA_CFG_PASS	hdf_get_value(g_cfg, SMSA_CFG_PATH".db.pass", "test")
