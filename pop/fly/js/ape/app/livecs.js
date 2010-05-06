@@ -4,13 +4,13 @@
 
 function liveCS(ape, debug) {
     this.initialize = function(opts) {
-		ape.lcscid = Cookie.read("lcs_cid");
-		if (ape.lcscid == null) {
-			ape.lcscid = bmoon.utl.randomWord(8);
-			Cookie.write("lcs_cid", ape.lcscid, {'path': '/', 'duration': 365});
+		ape.lcsuname = Cookie.read("lcs_uname");
+		if (ape.lcsuname == null) {
+			ape.lcsuname = bmoon.utl.randomWord(8);
+			Cookie.write("lcs_uname", ape.lcsuname, {'path': '/', 'duration': 365});
 		}
-        ape.lcsappid = opts.appid || document.domain;
-        ape.lcsPipeName = "livecspipe_" + ape.lcsappid;
+        ape.lcsaname = opts.aname || document.domain;
+        ape.lcsPipeName = "livecspipe_" + ape.lcsaname;
         ape.lcsPipe = null;
 
         ape.onRaw("lcsdata", this.rawLcsData);
@@ -23,11 +23,11 @@ function liveCS(ape, debug) {
     };
 
     this.start = function() {
-		ape.start({'uin': ape.lcscid});
+		ape.start({'uin': ape.lcsuname});
     };
 
 	this.rawIdent = function() {
-        ape.request.send("LCS_JOIN", {'appid': ape.lcsappid}, true);
+        ape.request.send("LCS_JOIN", {'aname': ape.lcsaname}, true);
 	};
 
     this.pipeCreate = function(pipe, options) {

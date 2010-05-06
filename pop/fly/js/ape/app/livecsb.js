@@ -4,10 +4,10 @@
 
 function liveCS(ape, debug) {
     this.initialize = function(opts) {
-		ape.lcsuin = opts.lcsuin;
-		ape.lcspass = opts.lcspass;
-        ape.appid = opts.appid;
-        ape.lcsPipeName = "livecspipe_" + ape.appid;
+		ape.lcsuname = opts.uname;
+		ape.lcspass = opts.pass;
+        ape.lcsaname = opts.aname;
+        ape.lcsPipeName = "livecspipe_" + ape.lcsaname;
         ape.lcsPipe = null;
 
         ape.onRaw("lcsdata", this.rawLcsData);
@@ -20,11 +20,11 @@ function liveCS(ape, debug) {
     };
 
     this.start = function() {
-		ape.start({'uin': ape.lcsuin});
+		ape.start({'uin': ape.lcsuname});
     };
 
 	this.rawIdent = function() {
-        ape.request.send("LCS_JOIN_B", {'appid': ape.appid, 'uin': ape.lcsuin, 'pass': ape.lcspass}, true);
+        ape.request.send("LCS_JOIN_B", {'aname': ape.lcsaname, 'uname': ape.lcsuname, 'pass': ape.lcspass}, true);
 	};
 
     this.pipeCreate = function(pipe, options) {
@@ -35,22 +35,22 @@ function liveCS(ape, debug) {
 
     this.createUser = function(user, pipe) {
         if (pipe.properties.name.toLowerCase() == ape.lcsPipeName) {
-			//bmoon.lcs.userVisit(ape, user.properties.uin);
+			//bmoon.lcs.userVisit(ape, user.properties.uname);
         }
     };
 
     this.deleteUser = function(user, pipe) {
         if (pipe.properties.name.toLowerCase() == ape.lcsPipeName) {
-			//bmoon.lcs.userAway(user.properties.uin);
+			//bmoon.lcs.userAway(user.properties.uname);
         }
     };
 
     this.rawLcsData = function(raw, pipe) {
         if (pipe.properties.name.toLowerCase() == ape.lcsPipeName) {
             var msg = unescape(raw.data.msg);
-            var uin = raw.data.from.properties.uin;
+            var uname = raw.data.from.properties.uin;
             var tm = Date(eval(raw.time)).match(/\d{1,2}:\d{1,2}:\d{1,2}/)[0];
-            //bmoon.lcs.userSaid(ape, uin, msg, tm);
+            //bmoon.lcs.userSaid(ape, uname, msg, tm);
         }
     };
 }
