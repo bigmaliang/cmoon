@@ -13,6 +13,8 @@
 #include "stats.h"
 #include "config.h"
 
+#include "mheads.h"
+
 #include "ClearSilver.h"
 
 static void help(void) {
@@ -153,7 +155,7 @@ int main(int argc, char **argv)
 
 	stats_init(&stats);
 	if (config_parse_file(settings.conffname, &g_cfg) != 1) return 1;
-	settings.trace_level = hdf_get_int_value(g_cfg, PRE_SERVER".trace_level", TRACE_LEVEL);
+	mtc_init(hdf_get_value(g_cfg, PRE_SERVER".logfile", "/tmp/mevent"));
 
 	if (!settings.foreground) {
 		pid = fork();

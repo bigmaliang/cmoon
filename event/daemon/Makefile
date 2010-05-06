@@ -34,14 +34,14 @@ ALL_CFLAGS += -fprofile-use
 endif
 
 
-ALL_CFLAGS += -I./ $(INC_MEVENT) $(INC_CS) $(INC_MYSQL)
-LIBS = -levent -lpthread -lrt -ldl $(LIB_MEVENT) $(LIB_MYSQL)
+ALL_CFLAGS += -I./ $(INC_MEVENT) $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM)
+LIBS = -levent -lpthread -lrt -ldl $(LIB_MEVENT) $(LIB_MNL) $(LIB_MEMC) $(LIB_CS) $(LIB_JSON) $(LIB_FCGI) $(LIB_SYSTEM)
 
 
 BASE_SOURCES = $(wildcard ../base/*.c)
 PLUGIN_SOURCES = $(wildcard ../plugin/*.c)
 
-OBJS = mevent.o queue.o log.o dtrace.o net.o parse.o reply.o stats.o config.o common.o cache.o fdb.o syscmd.o smsalarm.o
+OBJS = mevent.o queue.o log.o net.o parse.o reply.o stats.o config.o common.o cache.o syscmd.o smsalarm.o
 OBJS += $(patsubst %.c, %.o, $(BASE_SOURCES))
 OBJS_MAIN = main.o
 OBJS_HB = hb.o

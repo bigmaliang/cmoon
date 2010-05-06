@@ -1,7 +1,6 @@
 #include "syscmd.h"
 
-int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd,
-                      fdb_t *db, FILE *fp, bool reply)
+int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
 {
     struct data_cell *c;
     unsigned char *val = NULL;
@@ -49,8 +48,7 @@ int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd,
     return ret;
 }
 
-int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd,
-                      fdb_t *db, FILE *fp, bool reply)
+int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
 {
     struct data_cell *c;
     unsigned char *val = NULL;
@@ -103,8 +101,7 @@ int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd,
     return ret;
 }
 
-int sys_cmd_cache_del(struct queue_entry *q, struct cache *cd,
-                      fdb_t *db, FILE *fp, bool reply)
+int sys_cmd_cache_del(struct queue_entry *q, struct cache *cd, bool reply)
 {
     struct data_cell *c;
     unsigned char *key;
@@ -134,8 +131,7 @@ int sys_cmd_cache_del(struct queue_entry *q, struct cache *cd,
     return ret;
 }
 
-int sys_cmd_cache_empty(struct queue_entry *q, struct cache **cd,
-                        fdb_t *db, FILE *fp, bool reply)
+int sys_cmd_cache_empty(struct queue_entry *q, struct cache **cd, bool reply)
 {
     int ret;
     size_t num;
