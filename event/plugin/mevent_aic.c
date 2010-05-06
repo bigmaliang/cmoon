@@ -1,10 +1,10 @@
 #include "mevent_plugin.h"
-#include "mevent_skeleton2.h"
+#include "mevent_aic.h"
 
-#define PLUGIN_NAME	"skeleton2"
+#define PLUGIN_NAME	"aic"
 #define CONFIG_PATH	PRE_PLUGIN"."PLUGIN_NAME
 
-struct skeleton2_stats {
+struct aic_stats {
 	unsigned long msg_total;
 	unsigned long msg_unrec;
 	unsigned long msg_badparam;
@@ -14,27 +14,41 @@ struct skeleton2_stats {
 	unsigned long proc_fai;
 };
 
-struct skeleton2_entry {
+struct aic_entry {
 	struct event_entry base;
 	mdb_conn *db;
 	struct cache *cd;
-	struct skeleton2_stats st;
+	struct aic_stats st;
 };
 
-static void skeleton2_process_driver(struct event_entry *entry, struct queue_entry *q)
+/*
+ * input : aid(UINT)
+ * return: NORMAL
+ * reply : ["state": 0] OR ["state": 0]
+ */
+static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
+						   mdb_conn *db)
 {
-	struct skeleton2_entry *e = (struct skeleton2_entry*)entry;
+	return REP_OK;
+}
+
+static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
+{
+	struct aic_entry *e = (struct aic_entry*)entry;
 	int ret = REP_OK;
 	
 	mdb_conn *db = e->db;
 	struct cache *cd = e->cd;
-	struct skeleton2_stats *st = &(e->st);
+	struct aic_stats *st = &(e->st);
 
 	st->msg_total++;
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
         CASE_SYS_CMD(q->operation, q, cd, ret);
+	case REQ_CMD_APPINFO:
+		ret = aic_cmd_appinfo(q, cd, db);
+		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
 		ret = REP_OK;
@@ -60,13 +74,13 @@ static void skeleton2_process_driver(struct event_entry *entry, struct queue_ent
 		mtc_err("process %u failed %d", q->operation, ret);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
-			reply_trigger(q, ret);
+		reply_trigger(q, ret);
 	}
 }
 
-static void skeleton2_stop_driver(struct event_entry *entry)
+static void aic_stop_driver(struct event_entry *entry)
 {
-	struct skeleton2_entry *e = (struct skeleton2_entry*)entry;
+	struct aic_entry *e = (struct aic_entry*)entry;
 
 	/*
 	 * e->base.name, e->base will free by mevent_stop_driver() 
@@ -77,15 +91,15 @@ static void skeleton2_stop_driver(struct event_entry *entry)
 
 
 
-static struct event_entry* skeleton2_init_driver(void)
+static struct event_entry* aic_init_driver(void)
 {
-	struct skeleton2_entry *e = calloc(1, sizeof(struct skeleton2_entry));
+	struct aic_entry *e = calloc(1, sizeof(struct aic_entry));
 	if (e == NULL) return NULL;
 
 	e->base.name = (unsigned char*)strdup(PLUGIN_NAME);
 	e->base.ksize = strlen(PLUGIN_NAME);
-	e->base.process_driver = skeleton2_process_driver;
-	e->base.stop_driver = skeleton2_stop_driver;
+	e->base.process_driver = aic_process_driver;
+	e->base.stop_driver = aic_stop_driver;
 
 	if (mdb_init(&e->db, hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL)) != RET_RBTOP_OK) {
 		wlog("init %s failure %s\n", PLUGIN_NAME, mdb_get_errmsg(e->db));
@@ -100,7 +114,7 @@ static struct event_entry* skeleton2_init_driver(void)
 	
 	return (struct event_entry*)e;
 	
- error:
+error:
 	if (e->base.name) free(e->base.name);
 	if (e->db) mdb_destroy(e->db);
 	if (e->cd) cache_free(e->cd);
@@ -108,7 +122,7 @@ static struct event_entry* skeleton2_init_driver(void)
 	return NULL;
 }
 
-struct event_driver skeleton2_driver = {
+struct event_driver aic_driver = {
 	.name = (unsigned char*)PLUGIN_NAME,
-	.init_driver = skeleton2_init_driver,
+	.init_driver = aic_init_driver,
 };
