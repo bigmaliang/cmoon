@@ -35,6 +35,9 @@ Algorithms
 	http://c-algorithms.sourceforge.net/
 	Implementations of many common data structures and algorithms.
 
+	http://www.partow.net/programming/hashfunctions
+	General Purpose Hash Function Algorithms
+
 
 http://tools.mozilla.com
 ========================
