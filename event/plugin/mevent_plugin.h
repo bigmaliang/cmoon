@@ -15,14 +15,14 @@
 #include "data.h"
 #include "packet.h"
 #include "log.h"
-#include "dtrace.h"
 #include "queue.h"
 #include "cache.h"
-#include "fdb.h"
 #include "reply.h"
 #include "smsalarm.h"
 #include "syscmd.h"
 
 #include "ClearSilver.h"
+
+#include "mheads.h"
 
 #endif	/* __MEVENT_PLUGIN_H__ */
