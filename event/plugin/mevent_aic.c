@@ -24,11 +24,50 @@ struct aic_entry {
 /*
  * input : aid(UINT)
  * return: NORMAL
- * reply : ["state": 0] OR ["state": 0]
+ * reply : ["state": 0, ...] OR []
  */
 static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 						   mdb_conn *db)
 {
+	struct data_cell *c;
+	unsigned char *val = NULL;
+	size_t vsize = 0;
+	int hit, ret;
+	unsigned int aid;
+
+	REQ_GET_PARAM_U32(c, q, false, "aid", aid);
+	hit = cache_getf(cd, &val, &vsize, PREFIX_AIC"%u", aid);
+	if (hit == 0) {
+		snprintf(db->sql, sizeof(db->sql), "SELECT aid, aname, state FROM "
+				 " appinfo WHERE aid=%u;", aid);
+		ret = fdb_exec(db);
+		if (ret != RET_DBOP_OK) {
+			dtc_err(fp, "exec %s failure %s", db->sql, fdb_error(db));
+			return REP_ERR_DB;
+		}
+		while (fdb_fetch_row(db) == RET_DBOP_OK) {
+			reply_add_u32(q, NULL, "aid", strtoul(db->row[0], NULL, 10));
+			reply_add_str(q, NULL, "aname", db->row[1]);
+			reply_add_u32(q, NULL, "state", atoi(db->row[0]));
+		}
+		val = calloc(1, MAX_PACKET_LEN);
+		if (val == NULL) {
+			return REP_ERR_MEM;
+		}
+		vsize = pack_data_array(NULL, q->replydata, val,
+								MAX_PACKET_LEN - RESERVE_SIZE);
+		if (vsize == 0) {
+			free(val);
+			return REP_ERR_PACK;
+		}
+		* (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
+		vsize += sizeof(uint32_t);
+		cache_setf(cd, val, vsize, PREFIX_AIC"%u", aid);
+		free(val);
+	} else {
+		unpack_data("root", val, vsize, &q->replydata);
+	}
+	
 	return REP_OK;
 }
 
