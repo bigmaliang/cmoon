@@ -29,6 +29,10 @@ static int rawdb_exec_cell(struct data_cell *c, mdb_conn *db)
 	int ret = mdb_exec(db, NULL, (char*)c->v.sval.val, NULL);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("exec %s failure %s", c->v.sval.val, mdb_get_errmsg(db));
+	} else {
+		if (strncasecmp(c->v.sval.val, "insert", strlen("insert"))) {
+			reply_add_u32(q, NULL, "id", mdb_get_last_id(db, NULL));
+		}
 	}
 	return ret;
 }
