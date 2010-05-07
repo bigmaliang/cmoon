@@ -16,11 +16,11 @@ function liveCS(ape, debug) {
 
 		ape.onRaw("ident", this.rawLcsIdent);
         ape.onRaw("lcsdata", this.rawLcsData);
-		
-		ape.onError('110', ape.clearSession());
-		ape.onError('111', ape.clearSession());
-		ape.onError('112', ape.clearSession());
-		ape.onError('113', ape.clearSession());
+
+        ape.onError("110", ape.clearSession);
+        ape.onError("111", ape.clearSession);
+        ape.onError("112", ape.clearSession);
+        ape.onError("113", ape.clearSession);
 
         ape.addEvent("userJoin", this.createUser);
         ape.addEvent("userLeft", this.deleteUser);
@@ -30,14 +30,16 @@ function liveCS(ape, debug) {
     };
 
     this.start = function() {
+		var lcs = this;
 		var opt = {'sendStack': false, 'request': 'stack'};
 		ape.start({'uin': ape.lcsuname}, opt);
 		if (ape.options.restore) {
 			ape.getSession('currentPipe', function(resp) {
-							   this.setCurrentPipe(resp.data.sessions.currentPipe);
+							   lcs.setCurrentPipe(resp.data.sessions.currentPipe);
 						   }, opt);
 		} else {
-			ape.request.send("LCS_JOIN", {'aname': ape.lcsaname}, opt);
+			//ape.request.send("LCS_JOIN", {'aname': ape.lcsaname}, opt);
+			ape.request.stack.add("LCS_JOIN", {'aname': ape.lcsaname}, opt);
 		}
 		ape.request.stack.send();
     };
@@ -73,7 +75,7 @@ function liveCS(ape, debug) {
     };
 
 	this.rawLcsIdent = function(raw, pipe) {
-		var jid = raw.data.user.properties.jid;
+		var jid = parseInt(raw.data.user.properties.jid);
 		// send LCS_VISIT only on session restore
 		if (jid && ape.options.restore) {
 			ape.request.send("LCS_VISIT", {'jid': jid, 'url': window.location.href, 'title': window.title});
