@@ -87,9 +87,12 @@ static struct event_entry* skeleton2_init_driver(void)
 	e->base.process_driver = skeleton2_process_driver;
 	e->base.stop_driver = skeleton2_stop_driver;
 
-	if (mdb_init(&e->db, hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL)) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", PLUGIN_NAME, mdb_get_errmsg(e->db));
+	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
+	if (mdb_init(&e->db, dbsn) != RET_RBTOP_OK) {
+		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->db));
 		goto error;
+	} else {
+		mtc_info("init %s ok", dbsn);
 	}
 	
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);

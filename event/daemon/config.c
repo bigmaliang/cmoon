@@ -11,6 +11,7 @@
 
 #include "log.h"
 #include "common.h"
+#include "mheads.h"
 #include "ClearSilver.h"
 #include "config.h"
 
