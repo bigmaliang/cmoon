@@ -24,7 +24,7 @@ struct rawdb_entry {
 	struct rawdb_stats st;
 };
 
-static int rawdb_exec_cell(struct data_cell *c, mdb_conn *db)
+static int rawdb_exec_cell(struct queue_entry *q, struct data_cell *c, mdb_conn *db)
 {
 	int ret = mdb_exec(db, NULL, (char*)c->v.sval.val, NULL);
 	if (ret != MDB_ERR_NONE) {
@@ -50,7 +50,7 @@ static int rawdb_cmd_updatedb(struct queue_entry *q, mdb_conn *db)
     c = data_cell_search(q->dataset, true, DATA_TYPE_STRING, "sqls");
     if (c != NULL) {
         mtc_dbg("exec %s ...\n", c->v.sval.val);
-        ret = rawdb_exec_cell(c, db);
+        ret = rawdb_exec_cell(q, c, db);
         if (ret != MDB_ERR_NONE) {
             return REP_ERR_DB;
         }
@@ -69,7 +69,7 @@ static int rawdb_cmd_updatedb(struct queue_entry *q, mdb_conn *db)
             if (cc == NULL) continue;
             if (cc->type == DATA_TYPE_STRING) {
                 mtc_dbg("exec %s ...\n", cc->v.sval.val);
-                ret = rawdb_exec_cell(cc, db);
+                ret = rawdb_exec_cell(q, cc, db);
                 if (ret != MDB_ERR_NONE) {
                     size_t tlen = strlen(MASTER_EVT_NAME) >
                         cc->ksize? strlen(MASTER_EVT_NAME):
@@ -174,14 +174,20 @@ static struct event_entry* rawdb_init_driver(void)
 	e->base.process_driver = rawdb_process_driver;
 	e->base.stop_driver = rawdb_stop_driver;
 
-	if (mdb_init(&e->dbaccess, hdf_get_value(g_cfg, CONFIG_PATH".access.dbsn", NULL)) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", PLUGIN_NAME, mdb_get_errmsg(e->dbaccess));
+	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".access.dbsn", NULL);
+	if (mdb_init(&e->dbaccess, dbsn) != RET_RBTOP_OK) {
+		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->dbaccess));
 		goto error;
+	} else {
+		mtc_info("init %s ok", dbsn);
 	}
-	
-	if (mdb_init(&e->dbstat, hdf_get_value(g_cfg, CONFIG_PATH".stat.dbsn", NULL)) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", PLUGIN_NAME, mdb_get_errmsg(e->dbstat));
+
+	dbsn = hdf_get_value(g_cfg, CONFIG_PATH".stat.dbsn", NULL);
+	if (mdb_init(&e->dbstat, dbsn) != RET_RBTOP_OK) {
+		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->dbstat));
 		goto error;
+	} else {
+		mtc_info("init %s ok", dbsn);
 	}
 	
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);

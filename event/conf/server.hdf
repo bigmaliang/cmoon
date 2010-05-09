@@ -1,23 +1,17 @@
 Config {
-	trace_level = 2
+	trace_level = 5
 }
 
 Mevent {
 	logfile = /data/logs/mevent
 	plugins {
 		0 = skeleton
-		1 = uic
-		2 = udc
-		3 = fans
-        4 = db_community
+		1 = rawdb
+		2 = aic
 	}
 	smsalarm {
 		db {
-			ip = 192.168.8.90
-			user = root
-			pass = mysqlroot
-			port = 3306
-			name = monitordb
+			dbsn = pgsql:dbname=lcs_mtool host=localhost user=lcser password=loveu
 		}
 		leader {
 			ml = 15111231681
@@ -26,61 +20,15 @@ Mevent {
 }
 
 Plugin {
-	uic {
-		numobjs = 102400
-		relation {
-			ip = 192.168.8.84
-			user = root1
-			pass = 123
-			name = relation
-			port = 3306
+    rawdb {
+		access {
+			dbsn = pgsql:dbname=lcs_dyn host=localhost user=lcser password=loveu
 		}
-		home {
-			ip = 192.168.8.84
-			user = root1
-			pass = 123
-			name = hcclwok
-			port = 3306
+		stat {
+			dbsn = pgsql:dbname=lcs_dyn host=localhost user=lcser password=loveu
 		}
-	}
-	udc {
-		numobjs = 10240
-		ip = 192.168.8.84
-		user = root1
-		pass = 123
-		name = hcclwok
-		port = 3306
-		exp_level {
-			1 = 100
-			2 = 300
-			3 = 600
-			4 = 1000
-			5 = 2000
-			6 = 10000
-		}
-	}
-	fans {
-		numobjs = 10240
-		ip = 192.168.8.84
-		user = root1
-		pass = 123
-		name = relation
-		port = 3306
-	}
-    db_community {
-        home {
-            ip = 192.168.8.84
-            user = root1
-            pass = 123
-            name = hcclwok
-            port = 3306
-        }
-        stat {
-            ip = 192.168.8.84
-            user = root1
-            pass = 123
-            name = stat
-            port = 3306
-        }
     }
+	aic {
+		dbsn = pgsql:dbname=lcs_main host=localhost user=lcser password=loveu
+	}
 }
