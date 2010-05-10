@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="keywords" content="eol, 易生活, 生活, 买菜, 送菜, 外卖" />
+    <meta name="description" content="eol" />
+    <!--<title>易生活 - <?cs var:Layout.title ?></title>-->
+    <title>jQuery Tools standalone demo</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/mbase.css" />
+    <link rel="stylesheet" type="text/css" href="/css/mflowtools.css" />
+    <link rel="stylesheet" type="text/css" href="/css/msuperfish.css" />
+    <?cs include:Include.css ?>
+    <style type="text/css">
+      <?cs include:Layout.css ?>
+    </style>
+
+    <script type="text/javascript" src="/js/pub/mbase.js"></script>
+    <script type="text/javascript" src="/js/pub/mform.js"></script>
+    <script type="text/javascript" src="/js/pub/mflowtools.js"></script>
+    <script type="text/javascript" src="/js/pub/msuperfish.js"></script>
+    <script type="text/javascript" src="/js/llayout.js"></script>
+    <?cs include:Include.js ?>
+    <script type="text/javascript">
+      $(document).ready(function()
+      {
+      <?cs include:Layout.js ?>
+      <?cs include:Layout.html ?>
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="top">
+      <div class="member">
+        <ul class="hide" id="nav-member">
+          <li>欢迎 <span id="unameLayout"></span><!--(<span id="uinLayout"></span>)--></li>
+          <li class="last"><a href="javascript:void(0);" id="userlogout">退出</a></li>
+        </ul>
+        <ul id="nav-guest">
+          <li><a href="/member/login.html" rel="#loginoverlay">登录</a></li>
+          <li><a href="/member/regist.html">注册</a></li>
+          <li class="last"><a href="/member/reset.html">忘记密码</a></li>
+        </ul>
+      </div>
+      <div class="overlay" id="loginoverlay">
+        <div class="wrap"></div>
+      </div>
+    </div>
+
+    <div id="mid">
+      <div class="navbanner">
+        <ul class="indentmenu">
+          <?cs each:tab = Layout.tabs ?>
+          <li><a href="<?cs var:tab.href ?>" class="<?cs var:tab.class ?>"><?cs var:tab.name ?></a></li>
+          <?cs /each ?>
+        </ul>
+      </div>
+      <div class="sepl"></div>
+      <div class="navbanner">
+        <ul class="crumbs">
+          <li class="first">您当前的位置:</li>
+          <?cs each:crumb = Layout.crumbs ?>
+          <li>&raquo; <a href="<?cs var:crumb.href ?>"><?cs var:crumb.name ?></a></li>
+          <?cs /each ?>
+        </ul>
+        <ul id="userActions" class="sf-menu uc-menu">
+          <li class="current"><a href="/run/member">管理</a></li>
+        </ul>
+      </div>
+      
+      <div class="clearer"></div>
+      <div id="content">
+        <?cs include:Include.content ?>
+        <?cs var:Content.content ?>
+        <div class="clearer"></div>
+      </div> <!-- content -->
+    </div> <!-- mid -->
+
+    <div id="bot">
+      <p>版权所有 &copy; 2008 eol</p>
+    </div>
+
+  </body>
+</html>

@@ -2,19 +2,32 @@ Config {
 	trace_level = 7
 }
 
-Layout {
-	tabs {
-		0 {
-			name = 首页
-			page = index
+Dataset {
+	Layout.html {
+		tabs {
+			0 {
+				name = 首页
+				page = index
+			}
+			1 {
+				name = 域名管理
+				page = app
+			}
 		}
-		1 {
-			name = 公告通知
-			page = notice
-		}
-		2 {
-			name = 联系我们
-			page = about
-		}
+	}
+}
+
+Db {
+	Dsn {
+		main = pgsql:dbname=lcs_main host=localhost user=lcser password=loveu
+		dyn = pgsql:dbname=lcs_dyn host=localhost user=lcser password=loveu
+		mtl = pgsql:dbname=lcs_mtool host=localhost user=lcser password=loveu
+	}
+}
+
+Mevent {
+	0 {
+		ip = 127.0.0.1
+		port = 26010
 	}
 }

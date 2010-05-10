@@ -23,7 +23,7 @@ void ltpl_prepare_rend(HDF *hdf, char *tpl)
 	/*
 	 * merge dataset from g_cfg 
 	 */
-	snprintf(key, sizeof(key), PRE_CONFIG"."PRE_CFG_DATASET"_%s", tpl);
+	snprintf(key, sizeof(key), PRE_CFG_DATASET".%s", tpl);
 	tmphdf = hdf_get_obj(g_cfg, key);
 	if (tmphdf != NULL) hdf_copy(hdf, NULL, tmphdf);
 	
@@ -113,7 +113,7 @@ int ltpl_parse_dir(char *dir, HASH *outhash)
 			err = cgi_register_strfuncs(cs);
 			JUMP_NOK(err, wnext);
 			tpl = hdf_get_value(child, PRE_CFG_LAYOUT, "null.html");
-			snprintf(fname, sizeof(fname), "%s/%s", dir, tpl);
+			snprintf(fname, sizeof(fname), "%s/%s", PATH_TPL, tpl);
 			err = cs_parse_file(cs, fname);
 			JUMP_NOK(err, wnext);
 
@@ -215,49 +215,4 @@ void ltpl_destroy(HASH *tplh)
 	}
 
 	hash_destroy(&tplh);
-}
-
-int ltpl_render(CGI *cgi, HASH *tplh, session_t *ses)
-{
-	CSPARSE *cs;
-	STRING str;
-	NEOERR *err;
-
-	char *file;
-	
-	/*
-	 * how to distinguish /music/zhangwei and /member/zhangwei ?
-	 * /music/zhangwei may be use "music"
-	 * /member/zhangwei may be use "member"
-	 */
-	file = hdf_get_value(cgi->hdf, PRE_RSV_RENDER, NULL);
-	if (file == NULL) {
-		mtc_err("%s not found", PRE_RSV_RENDER);
-		return RET_RBTOP_NEXIST;
-	}
-
-	cs = (CSPARSE*)hash_lookup(tplh, file);
-	if (cs == NULL) {
-		mtc_err("file not found");
-		return RET_RBTOP_NEXIST;
-	}
-
-	ltpl_prepare_rend(cgi->hdf, "layout.html");
-	if (ses->tm_cache_browser > 0) {
-		hdf_set_valuef(cgi->hdf, "cgiout.other.cache=Cache-Control: max-age=%lu",
-					   ses->tm_cache_browser);
-	}
-	cs->hdf = cgi->hdf;
-
-	string_init(&str);
-	err = cs_render(cs, &str, mcs_strcb);
-	RETURN_V_NOK(err, RET_RBTOP_ERROR);
-
-	err = cgi_output(cgi, &str);
-	RETURN_V_NOK(err, RET_RBTOP_ERROR);
-
-	cs->hdf = NULL;
-	string_clear(&str);
-
-	return RET_RBTOP_OK;
 }
