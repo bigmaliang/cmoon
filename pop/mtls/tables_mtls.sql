@@ -7,6 +7,6 @@ CREATE TABLE test (
 	   PRIMARY KEY (id)
 );
 
-CREATE INDEX app_test ON appinfo (type, count);
+CREATE INDEX app_test ON test (type, count);
 
 CREATE TRIGGER tg_uptime_test BEFORE UPDATE ON test FOR EACH ROW EXECUTE PROCEDURE update_time();

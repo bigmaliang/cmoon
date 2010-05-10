@@ -31,7 +31,7 @@ CREATE TABLE visit (
 	   PRIMARY KEY (id)
 );
 
-CREATE INDEX app_index ON visit (jid);
+CREATE INDEX app_visit ON visit (jid);
 
 CREATE TRIGGER tg_uptime_visit BEFORE UPDATE ON visit FOR EACH ROW EXECUTE PROCEDURE update_time();
 
