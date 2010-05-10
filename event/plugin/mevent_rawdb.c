@@ -30,9 +30,16 @@ static int rawdb_exec_cell(struct queue_entry *q, struct data_cell *c, mdb_conn 
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("exec %s failure %s", c->v.sval.val, mdb_get_errmsg(db));
 	} else {
+		int id;
+		if (mdb_get(db, "i", &id) == MDB_ERR_NONE) {
+			reply_add_u32(q, NULL, "id", id);
+		}
+/* TODO mysql and sqlite use the mdb_get_last_id() */
+#if 0
 		if (strncasecmp(c->v.sval.val, "insert", strlen("insert"))) {
 			reply_add_u32(q, NULL, "id", mdb_get_last_id(db, NULL));
 		}
+#endif
 	}
 	return ret;
 }
