@@ -9,30 +9,10 @@ Layout {
 			page = index
 		}
 		1 {
-			name = Kosher知识
-			page = kosher
-		}
-		2 {
-			name = 申请流程
-			page = process
-		}
-		3 {
-			name = 获取申请表
-			page = dld
-		}
-		4 {
-			name = 已认证产品和公司查询
-			page = query
-		}
-		5 {
-			name = 获证企业名单
-			page = com_pass
-		}
-		6 {
 			name = 公告通知
 			page = notice
 		}
-		7 {
+		2 {
 			name = 联系我们
 			page = about
 		}

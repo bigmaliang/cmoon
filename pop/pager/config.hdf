@@ -1,0 +1,145 @@
+index {
+	Output = index.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = Easy Our Life
+			crumbs {
+				0 {
+					name = 市中心
+					href = /index.html
+				}
+			}
+		}
+	}
+}
+
+csc {
+	Output = csc.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = 菜市场
+			crumbs {
+				0 {
+					name = 菜市场
+					href = /csc.html
+				}
+			}
+		}
+		Include {
+			content = csc.html
+		}
+	}
+	data_geter = static_csc_data_get
+}
+
+member_login {
+	Output = member/login.html
+	Layout = member/login.html
+}
+
+member_regist {
+	Output = member/regist.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = 'Baby, join me in death'
+			crumbs {
+				0 {
+					name = 市中心
+					href = /
+				}
+				1 {
+					name = 注册用户
+					href = /member/regist.html
+				}
+			}
+		}
+		Include {
+			css = member/regist/regist.css.html
+			js = member/regist/regist.js.html
+			content = member/regist/regist.html
+		}
+	}
+}
+
+admin_account {
+	Output = admin/account.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = 帐号管理
+			crumbs {
+				0 {
+					name = 市中心
+					href = /
+				}
+				1 {
+					name = 帐号管理
+					href = /admin/account.html
+				}
+			}
+		}
+		Include {
+			css = admin/account/account.css.html
+			js = admin/account/account.js.html
+			content = admin/account/account.html
+		}
+	}
+}
+
+admin_fileadd {
+	Output = admin/fileadd.html
+	Layout = admin/file/fileadd.html
+}
+
+admin_file {
+	Output = admin/file.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = 文件管理
+			crumbs {
+				0 {
+					name = 市中心
+					href = /
+				}
+				1 {
+					name = 文件管理
+					href = /admin/file.html
+				}
+			}
+		}
+		Include {
+			css = admin/file/file.css.html
+			js = admin/file/file.js.html
+			content = admin/file/file.html
+		}
+	}
+}
+
+admin_group {
+	Output = admin/group.html
+	Layout = layout.html
+	Dataset {
+		Layout {
+			title = 文件管理
+			crumbs {
+				0 {
+					name = 市中心
+					href = /
+				}
+				1 {
+					name = 文件管理
+					href = /admin/group.html
+				}
+			}
+		}
+		Include {
+			css = admin/group/group.css.html
+			js = admin/group/group.js.html
+			content = admin/group/group.html
+		}
+	}
+}

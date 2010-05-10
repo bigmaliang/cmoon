@@ -2,7 +2,7 @@ BASEDIR = ../
 include ../Make.env
 
 #SUBDIR = pub walk run pager
-SUBDIR = pager
+SUBDIR = pub pager
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
