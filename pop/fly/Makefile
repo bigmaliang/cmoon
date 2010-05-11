@@ -1,7 +1,7 @@
-BASEDIR = ../
-include ../Make.env
+BASEDIR = ../../
+include $(BASEDIR)Make.env
 
-SUBDIR = pub walk fly pager
+SUBDIR = css
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
