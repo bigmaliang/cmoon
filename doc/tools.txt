@@ -45,6 +45,13 @@ http://tools.mozilla.com/
 http://tools.mozilla.com/simple.html
 哪个交互更好? 浏览列表的时候选择一行能跟用户用友好的方式突出这行, 更容易让人接受
 
+
+设计风格
+------
+	http://www.ronniesan.com/work/
+	http://www.douban.com/
+	http://www.dropbox.com/
+
 codeburner
 ----------
 	http://tools.sitepoint.com/codeburner/
