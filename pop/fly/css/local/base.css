@@ -1,35 +1,37 @@
-body {
-	background: #fff;
-	color: #111;
-}
-a {
-    color: #DB3946;
-	cursor: pointer;
-    text-decoration: none;
-}
-a:hover {background-color: #D30719; color: white !important; text-decoration: none; }
+body {background: #fff; color: #111; }
+li {margin: 6px 0; }
+a {color: #DB3946; cursor: pointer; text-decoration: none; }
+/*a:hover {background-color: #DB3946; color: #FFF !important; text-decoration: none; }*/
+
 .hide {display: none;}
 .show {display: block;}
 .valid {border: 2px solid green !important;}
 .invalid {border: 2px solid #800 !important;}
-.clearer {clear: both;}
-.sep {clear: both; height: 3ex;}
-.sepl {clear: both; height: 2ex;}
-input {border: 1px solid #676767;}
-input.middle {width: 45px;}
-input.short {width: 25px;}
-:focus {
-outline-style:none;
-}
 
+#pagenav {float: right; margin: 0 10px;}
+#pagenav span {margin: 0 5px;}
 #top {height: 36px; border-bottom: 1px dashed #101010; }
 #bot {height: 100px; border-top: 1px dashed #101010; }
-#bot p {
-    padding-top: 10px;
-    text-align: center;
+#bot p {padding-top: 10px; text-align: center; }
+#mid {width: 960px; margin: 0 auto; padding: 3ex 0; }
+
+input {border: 1px solid #676767;}
+input.long {width: 180px;}
+input.middle {width: 45px;}
+input.short {width: 25px;}
+input.submitbtn, button.submitbtn {
+	margin-top: 10px;
+	padding: 1px 28px;
+	text-align: center;
+	vertical-align: middle;
+	color: #fff;
+	background-color: #686868;
 }
-#mid {
-    width: 960px;
-    margin: 0 auto;
-    padding: 3ex 0;
-}
+input.submitbtn:hover {background-color: #9a9a9a; cursor: pointer;}
+
+div.clearer {clear: both;}
+div.leftitem {float: left; width: 100px; margin: 0 13px 0 0; text-align: right;}
+div.sep {clear: both; height: 3ex;}
+div.sepl {clear: both; height: 2ex;}
+
+:focus {outline-style:none;}

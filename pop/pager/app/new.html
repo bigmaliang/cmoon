@@ -1,21 +1,32 @@
 <div id="colone">
   <div class="title">常见问题</div>
+  <div class="listcon">
+	<ul>
+	  <li><a href="/app/login.html">管理已注册站点</a></li>
+	</ul>
+  </div>
 </div>
 
 <div id='coltwo'>
-  <div class='title'>添加站点</div>
-  <ul>
-	<li>
-	  <div class='leftitem'>站点标识：</div>
-	  <input type='text' name='appname' id='appname' class="is_required" />
-	</li>
-	<li>
-	  <div class='leftitem'>管理员密码：</div>
-	  <input type="password" name="usn" id="usn" class="is_required" />
-	</li>
-	<li>
-	  <div class="leftitem"> &nbsp; </div>
-	  <input type="submit" class="submitbtn" value="提交" />
-	</li>
-  </ul>
+  <div id='add'>
+	<div class='title'>添加站点信息</div>
+	<ul>
+	  <li>
+		<div class='leftitem'>站点标识：</div>
+		<input type='text' name='appname' id='appname' class="long VAL_NEWAPP vrequire" />
+	  </li>
+	  <li>
+		<div class='leftitem'>联系邮箱：</div>
+		<input type='text' name='email' id='email' class="long VAL_NEWAPP vrequire vemail" />
+	  </li>
+	  <li>
+		<div class='leftitem'>管理密码：</div>
+		<input type="password" name="usn" id="usn" class="VAL_NEWAPP vrequire" />
+	  </li>
+	  <li>
+		<div class="leftitem"> &nbsp; </div>
+		<input type="submit" id='submit' class="submitbtn" value="提交" />
+	  </li>
+	</ul>
+  </div>
 </div>

@@ -3,7 +3,7 @@ include $(BASEDIR)Make.env
 
 all: mbase.css mtools.css
 
-mbase.css: local/reset.css local/base.css local/mid.css local/content.css
+mbase.css: local/reset.css local/base.css local/mid.css
 
 mtools.css: pub/ref/flowtools/css/mtabs.css pub/ref/flowtools/css/tooltip.css pub/ref/flowtools/css/expose.css \
 			pub/ref/flowtools/css/overlay.css pub/ref/flowtools/css/scrollable.css \

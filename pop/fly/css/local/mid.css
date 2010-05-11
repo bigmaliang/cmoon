@@ -8,7 +8,7 @@
     float: left;
     margin: 5px 0;
 	padding: 0 8px;
-    border-right: 1px solid #676767;
+    border-right: 1px solid #101010;
 }
 .member ul li.last{
 	border-right: 0 none;
@@ -18,7 +18,7 @@
 .navbanner{
     width: 100%;
 	height: 27px;
-    border: 1px solid #676767;
+    border: 1px solid #101010;
     border-width: 1px 0;
 }
 ul.indentmenu li, ul.crumbs li {
@@ -36,7 +36,7 @@ ul.indentmenu, ul.crumbs {
 ul.indentmenu li a {
     float: left;
     padding: 5px 11px;
-    border-right: 1px solid #676767;
+    border-right: 1px solid #101010;
 }
 ul.indentmenu li a:hover, ul.indentmenu li .selected {
     padding-top: 6px; /*shift text down 1px for selected and active item*/
@@ -62,21 +62,21 @@ ul.uc-menu {
 /* content */
 #content {
 	margin: 2ex 0 0 0;
-    border: 1px solid #676767;
+    border: 1px solid #101010;
     border-width: 1px 0;
 }
 #colone {
     float: left;
-    /*width: 190px;*/
-	width: 10em;
+    width: 180px;
     margin: 0 15px;
 }
 #colone .title {
+	/*color: #EE1C25;*/
 	margin: 15px 0 0 0;
     padding: 2px 0;
 	
     /*background: black url(/images/upl2.jpg) center center repeat-x;*/
-    border: 1px solid #676767;
+    border: 1px solid #101010;
     border-bottom: 0 none;
     font-weight: bold;
     font-size: 12px;
@@ -84,22 +84,25 @@ ul.uc-menu {
 }
 #colone .listcon {
     margin-bottom: 2ex;
-    border: 1px solid #676767;
+    border: 1px solid #101010;
 }
 #colone .listcon ul {
-    list-style: decimal-leading-zero;
     line-height: 20px;
+}
+#colone .listcon ul li {
+    text-align: center;
 }
 
 #coltwo {
     float: left;
-    width: 710px;			/* 960 = 190+15*4+x 15px~~15px -30px for ie6, ri */
+    width: 710px;			/* 960 = 180+15*4+x 15px~~15px -30px for ie6, ri */
     margin: 0 15px 15px 15px;
     padding: 0;
 }
 #coltwo .title {
+	/*color: #EE1C25;*/
 	margin: 15px 0;
-    border-bottom: 1px solid #676767;
+    border-bottom: 1px solid #101010;
 	
     font-weight: bold;
     font-size: 12px;

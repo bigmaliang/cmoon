@@ -5,7 +5,7 @@ index {
 			title = Easy Our Life
 			crumbs {
 				0 {
-					name = 市中心
+					name = 首页
 					href = /index.html
 				}
 			}
@@ -17,15 +17,16 @@ app_new {
 	Layout = layout.html
 	Dataset {
 		Layout {
-			title = 提交新域名
+			title = 添加站点
 			crumbs {
 				0 {
-					name = 提交新域名
+					name = 添加站点
 					href = app/new.html
 				}
 			}
 		}
 		Include {
+			js = app/new.js.html
 			content = app/new.html
 		}
 	}

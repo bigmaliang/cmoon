@@ -1,7 +1,7 @@
 BASEDIR = ../../
 include $(BASEDIR)Make.env
 
-SUBDIR = css
+SUBDIR = js css
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)
