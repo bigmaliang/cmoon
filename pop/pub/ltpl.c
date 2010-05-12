@@ -216,3 +216,46 @@ void ltpl_destroy(HASH *tplh)
 
 	hash_destroy(&tplh);
 }
+
+int ltpl_render(CGI *cgi, HASH *tplh, session_t *ses, HDF *rcfg)
+{
+	CSPARSE *cs;
+	STRING str;
+	NEOERR *err;
+
+	char *file, *render = NULL;
+	
+	file = hdf_get_value(cgi->hdf, PRE_REQ_URI_RW_HDF, NULL);
+	if (file) {
+		render = hdf_get_valuef(rcfg, "%s.render", file);
+	}
+	if (!render) {
+		mtc_err("%s not found", file);
+		return RET_RBTOP_NEXIST;
+	}
+
+	cs = (CSPARSE*)hash_lookup(tplh, file);
+	if (cs == NULL) {
+		mtc_err("file not found");
+		return RET_RBTOP_NEXIST;
+	}
+
+	ltpl_prepare_rend(cgi->hdf, "layout.html");
+	if (ses->tm_cache_browser > 0) {
+		hdf_set_valuef(cgi->hdf, "cgiout.other.cache=Cache-Control: max-age=%lu",
+					   ses->tm_cache_browser);
+	}
+	cs->hdf = cgi->hdf;
+
+	string_init(&str);
+	err = cs_render(cs, &str, mcs_strcb);
+	RETURN_V_NOK(err, RET_RBTOP_ERROR);
+
+	err = cgi_output(cgi, &str);
+	RETURN_V_NOK(err, RET_RBTOP_ERROR);
+
+	cs->hdf = NULL;
+	string_clear(&str);
+
+	return RET_RBTOP_OK;
+}

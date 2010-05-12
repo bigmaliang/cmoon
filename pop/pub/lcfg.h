@@ -17,6 +17,7 @@ __BEGIN_DECLS
 #define PATH_DOC	PATH_SITE"fly/"
 #define PATH_JS		PATH_SITE"fly/js/"
 #define PATH_CGI	PATH_SITE"run/"
+#define CGI_CONFIG	PATH_CGI"config.hdf"
 #define PATH_TPL	PATH_SITE"tpl/"
 #define PATH_PAGER	PATH_SITE"pager/"
 #define PATH_MTLS	PATH_SITE"mtls/"
@@ -30,6 +31,7 @@ __BEGIN_DECLS
 
 #define PRE_REQ_URI		PRE_CGI".ScriptName" 		/* lutil_file_access() */
 #define PRE_REQ_URI_RW	PRE_QUERY".ScriptName"		/* lutil_file_access_rewrited() */
+#define PRE_REQ_URI_RW_HDF	PRE_QUERY".ScriptNameHDF"
 #define PRE_REQ_AJAX_FN	PRE_QUERY".JsonCallback"
 
 #define PRE_RSV_FILE		PRE_RESERVE".RequestFile"	/* lutil_get_data_handler() */

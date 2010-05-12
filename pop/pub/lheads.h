@@ -3,6 +3,8 @@
 
 #include "lnum.h"
 #include "lcfg.h"
+#include "ltypes.h"
+#include "lutil.h"
 #include "ldb.h"
 #include "ltpl.h"
 

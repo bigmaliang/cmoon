@@ -1,0 +1,5 @@
+app {
+	new {
+		dataer = app_new
+	}
+}

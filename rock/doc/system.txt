@@ -52,6 +52,17 @@ config-avilable
 +    server.document-root = "/data/pic/"
 +  }
 
+$HTTP["host"] == "www.bmoon.com" {
+  server.document-root = "/var/www/www.bmoon.com/"
+  url.rewrite-once= ("^/([^\.\?]+)[^\/]$" => "/run/viki?ScriptName=/$1",
+                     "^/([^\.]+)\?(.*)[^\/]$"   => "/run/viki?ScriptName=/$1&$2")
+
+  $HTTP["url"] =~ "^/run/" {
+        cgi.assign = ( "" => "" )
+  }
+
+}
+
 10-cgi.conf:
 
 -$HTTP["url"] =~ "^/cgi-bin/" {

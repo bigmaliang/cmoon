@@ -1,0 +1,14 @@
+tjt {
+	Layout = layout.html
+	Dataset {
+		Include {
+			css = tjt/tjt.css.html
+			js = tjt/tjt.js.html
+			content = tjt/tjt.html
+		}
+        Layout {
+        	js = tjt/tjt.js
+            html = uiplug.html
+        }
+	}
+}

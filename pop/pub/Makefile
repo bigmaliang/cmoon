@@ -3,6 +3,8 @@ include $(BASEDIR)Make.env
 LOCALBASE = ../
 include $(LOCALBASE)Make.env
 
+CFLAGS += -rdynamic
+
 INCS	= $(INC_MEVENT) $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM) $(INC_PUB) $(INC_ROBOT)
 
 SOURCES = $(wildcard *.c)
