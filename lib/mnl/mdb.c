@@ -400,11 +400,17 @@ static void get_errmsg(int ret, char *res)
 	case RET_RBTOP_DELETEE:
 		strcpy(res, "数据库删除失败");
 		break;
+	case RET_RBTOP_EVTNINIT:
+		strcpy(res, "事件后台初始化失败");
+		break;
 	case RET_RBTOP_MEMALLOCE:
 		strcpy(res, "分配内存失败");
 		break;
 	case RET_RBTOP_CREATEFE:
 		strcpy(res, "创建文件失败");
+		break;
+	case RET_RBTOP_EVTE:
+		strcpy(res, "事件后台处理失败");
 		break;
 	default:
 		strcpy(res, "数据库操作错误");
@@ -428,7 +434,7 @@ void mdb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 		mdb_destroy(conn);
 	}
 	/* TODO system resource need free*/
-	exit(ret);
+	//exit(ret);
 }
 
 void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
@@ -449,5 +455,5 @@ void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
 		mdb_destroy(conn);
 	}
 	/* TODO system resource need free*/
-	exit(ret);
+	//exit(ret);
 }
