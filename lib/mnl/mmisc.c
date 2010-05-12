@@ -121,19 +121,28 @@ void mmisc_get_offset(HDF *hdf, int *count, int *offset)
 	*offset = (j-1)*i;
 }
 
-void mmisc_str_repchr(char **s, char from, char to)
+void mmisc_str_repchr(char *s, char from, char to)
 {
-	if (!s || !*s) return;
+	if (!s) return;
 
-	char *p = *s;
-
-	while (*p != '\0') {
-		if (*p == from) {
-			*p = to;
-		}
-		*p++;
+	while (*s) {
+		if (*s == from) *s = to;
+		s++;
 	}
 }
+
+unsigned int hash_string(const char *str)
+{
+        int hash = 5381; // DJB Hash
+        const char *s;
+	
+        for (s = str; *s != '\0'; s++) {
+                hash = ((hash << 5) + hash) + tolower(*s);
+        }
+	
+        return (hash & 0x7FFFFFFF);
+}
+
 
 /*
  * IE: make sure timezone & time set correct on web server
