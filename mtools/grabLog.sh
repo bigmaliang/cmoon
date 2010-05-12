@@ -1,6 +1,6 @@
 #!/bin/sh
 LC_ALL=C
-PATH=/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/sbin
+PATH=/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/sbin:/sbin
 
 useage()
 {
@@ -21,8 +21,12 @@ for (( i = $MIN; i >= 0; i-- )) ; do
     e=`date +%d/%b/%Y:%H:%M -d "-$i min"`'|'$e
 done
 
-egrep $e $INFILE
+IP=`ifconfig eth0  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
+TIME_NOW=`date +"%F:%T"`
+OUTFILE="/tmp/"${IP}":"${TIME_NOW}".access.log"
 
+egrep $e $INFILE > $OUTFILE
+rsync $OUTFILE 192.168.8.85::log
 
 #TIME_CUR="11/May/2010:16:[01-04]"xs
 #M_BGN=`date --date="-$MIN minutes" +%M`

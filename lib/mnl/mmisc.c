@@ -121,6 +121,20 @@ void mmisc_get_offset(HDF *hdf, int *count, int *offset)
 	*offset = (j-1)*i;
 }
 
+void mmisc_str_repchr(char **s, char from, char to)
+{
+	if (!s || !*s) return;
+
+	char *p = *s;
+
+	while (*p != '\0') {
+		if (*p == from) {
+			*p = to;
+		}
+		*p++;
+	}
+}
+
 /*
  * IE: make sure timezone & time set correct on web server
  */

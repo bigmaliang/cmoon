@@ -18,6 +18,7 @@ void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_c
 int mmisc_get_count(mdb_conn *conn, char *table, char *col);
 void mmisc_set_count(HDF *hdf, mdb_conn *conn, char *table, char *col);
 void mmisc_get_offset(HDF *hdf, int *count, int *offset);
+void mmisc_str_repchr(char **s, char from, char to);
 
 /*
  * IE: make sure timezone & time set correct on web server
