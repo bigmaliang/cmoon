@@ -6,6 +6,7 @@
 
 #include <time.h>
 #include "net-const.h"
+#include "data.h"
 
 /* Defined to 0 or 1 at libmevent build time according the build configuration,
  * not to be used externally. */
