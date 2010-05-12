@@ -4,7 +4,7 @@ include $(BASEDIR)Make.env
 CC = gcc
 CFLAGS = -g
 
-INCS	= -I../daemon $(INC_MEVENT)
+INCS	= -I../daemon $(INC_MEVENT) $(INC_CS)
 LIBS	= -levent -lpthread -lrt -ldl $(LIB_MEVENT)
 
 SOURCES = $(wildcard *.c)
