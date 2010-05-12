@@ -8,8 +8,8 @@ lighttpd.conf
 +            "mod_rewrite",
 
 
-+url.rewrite-once              = ( "^/([^\.\?]+)$" => "/run/viki?ScriptName=/$1",
-+                                  "^/([^\.]+)\?(.*)$"   => "/run/viki?ScriptName=/$1&$2" )
++url.rewrite-once              = ( "^/([^\.\?]+)$" => "/run/viki?ScriptName=$1",
++                                  "^/([^\.]+)\?(.*)$"   => "/run/viki?ScriptName=$1&$2" )
 +                                  
 
 

@@ -55,7 +55,7 @@ void ldb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 	if (conn != NULL) {
 		mdb_destroy(conn);
 	}
-	exit(ret);
+	//exit(ret);
 }
 
 void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn, time_t second)
@@ -79,7 +79,7 @@ void ldb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn, time_t second)
 	if (conn != NULL) {
 		mdb_destroy(conn);
 	}
-	exit(ret);
+	//exit(ret);
 }
 
 

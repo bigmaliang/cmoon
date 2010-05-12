@@ -1,5 +1,10 @@
 app {
 	new {
+		reqtype = 1
 		dataer = app_new
+	}
+	exist {
+		reqtype = 1
+		dataer = app_exist
 	}
 }

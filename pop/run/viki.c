@@ -14,12 +14,11 @@ int main(int argc, char **argv, char **envp)
 	NEOERR *err;
 	int ret;
 
-	HASH *dbh;
-	HASH *tplh;
+	HASH *dbh, *tplh, *evth;
 	session_t *session = NULL;
 	char *requri, *jsoncb;
 
-	int (*data_handler)(CGI *cgi, HASH *dbh, session_t *session);
+	int (*data_handler)(CGI *cgi, HASH *dbh, HASH *evth, session_t *session);
 	void *lib;
 
 	//sleep(20);
@@ -40,6 +39,13 @@ int main(int argc, char **argv, char **envp)
 	if (ret != RET_RBTOP_OK) {
 		mtc_err("init db error");
 		mutil_redirect("初始化数据库失败", TGT_SELF, URL_CLOSE, true);
+		return ret;
+	}
+
+	ret = levt_init(&evth);
+	if (ret != RET_RBTOP_OK) {
+		mtc_err("init mevent error");
+		mutil_redirect("初始化事件后台失败", TGT_SELF, URL_CLOSE, true);
 		return ret;
 	}
 
@@ -84,14 +90,14 @@ int main(int argc, char **argv, char **envp)
 			goto response;
 		}
 
-		ret = (*data_handler)(cgi, dbh, session);
+		ret = (*data_handler)(cgi, dbh, evth, session);
 		
 	response:
 		if (cgi != NULL && cgi->hdf != NULL) {
 #ifdef DEBUG_HDF
 			hdf_write_file(cgi->hdf, TC_ROOT"hdf.viki");
 #endif
-			switch (CGI_REQ_TYPE(cgi)) {
+			switch (CGI_REQ_TYPE(cgi, rcfg)) {
 			case CGI_REQ_HTML:
 				if (CGI_REQ_METHOD(cgi) != CGI_REQ_GET) {
 					goto resp_ajax;
@@ -129,6 +135,7 @@ int main(int argc, char **argv, char **envp)
 	}
 #endif
 
+	levt_destroy(evth);
 	ldb_destroy(dbh);
 	ltpl_destroy(tplh);
 	mconfig_cleanup(&g_cfg);

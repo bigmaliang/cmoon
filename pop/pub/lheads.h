@@ -7,5 +7,11 @@
 #include "lutil.h"
 #include "ldb.h"
 #include "ltpl.h"
+#include "levt.h"
+
+#include "mevent.h"
+
+#include "mevent_aic.h"
+#include "mevent_rawdb.h"
 
 #endif	/* __LHEADS_H__ */

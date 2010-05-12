@@ -1,10 +1,28 @@
 #include "mheads.h"
 #include "lheads.h"
 
-int CGI_REQ_TYPE(CGI *cgi)
+/*
+ * TODO how make local dlsym ok? so tired 
+ */
+static void lutil_donotcall()
 {
+	app_exist_data_get(NULL, NULL, NULL, NULL);
+}
+
+int CGI_REQ_TYPE(CGI *cgi, HDF *rcfg)
+{
+	int ret;
+	
 	if (cgi == NULL) return CGI_REQ_UNSUPPORT;
-	return hdf_get_int_value(cgi->hdf, PRE_RSV_REQ_TYPE, 0);
+	
+	ret = hdf_get_int_value(cgi->hdf, PRE_RSV_REQ_TYPE, CGI_REQ_UNSUPPORT);
+	if (ret == CGI_REQ_UNSUPPORT) {
+		char file[_POSIX_PATH_MAX];
+		snprintf(file, sizeof(file), "%s.reqtype",
+				 hdf_get_value(cgi->hdf, PRE_REQ_URI_RW_HDF, "UNKNOWN"));
+		ret = hdf_get_int_value(rcfg, file, 0);
+	}
+	return ret;
 }
 
 void* lutil_get_data_handler(void *lib, CGI *cgi, HDF *rcfg)

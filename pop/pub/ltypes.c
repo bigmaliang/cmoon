@@ -23,8 +23,7 @@ int session_init(HDF *hdf, HASH *dbh, session_t **ses)
 
 	hdf_get_copy(hdf, PRE_COOKIE".uname", &lses->uname, NULL);
 	hdf_set_copy(hdf, PRE_REQ_URI_RW_HDF, PRE_REQ_URI_RW);
-	char *esc = hdf_get_value(hdf, PRE_REQ_URI_RW_HDF, "NULL");
-	mmisc_str_repchr(&esc, '/', '.');
+	mmisc_str_repchr(hdf_get_value(hdf, PRE_REQ_URI_RW_HDF, "NULL"), '/', '.');
 	
     /* process cache */
 	HDF *node = hdf_get_obj(g_cfg, PRE_CFG_FILECACHE".0");

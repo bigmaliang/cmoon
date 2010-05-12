@@ -13,7 +13,9 @@
 	<ul>
 	  <li>
 		<div class='leftitem'>站点标识：</div>
-		<input type='text' name='appname' id='appname' class="long VAL_NEWAPP vrequire" />
+		<input type='text' name='aname' id='aname' class="long VAL_NEWAPP vrequire" />
+		<span id='hit_appexist' class='hide'>站点已被注册</span>
+		<span id='hit_appnexist' class='hide'>标识可以使用</span>
 	  </li>
 	  <li>
 		<div class='leftitem'>联系邮箱：</div>
@@ -29,4 +31,13 @@
 	  </li>
 	</ul>
   </div>
+
+  <div id='copy' class='hide'>
+	<h4>添加站点成功， 请在您网站页面上加入以下代码， 用刚注册的账号登录， 即可开始在线客服：</h4>
+	<div>
+	  xxxxx<span id='copy_aname'></span>xxxxx
+	</div>
+	<a href='/app/login'>现在登录</a>
+  </div>
+
 </div>
