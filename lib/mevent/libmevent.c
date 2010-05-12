@@ -400,5 +400,8 @@ int mevent_trigger(mevent_t *evt)
 		unpack_data("root", p+4, vsize-4, &evt->rcvdata);
 	}
 
+	data_cell_free(evt->dataset);
+	evt->dataset = data_cell_alloc_array("root");
+	
 	return rv;
 }

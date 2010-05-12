@@ -9,7 +9,7 @@
 #include "packet.h"
 
 size_t unpack_data(const char *key, unsigned char *buf, size_t len,
-		   struct data_cell **dataset)
+				   struct data_cell **dataset)
 {
 	const unsigned char *mykey, *val;
 	uint32_t ksize, vtype, vsize, vcount, ival, ttsize;
@@ -18,12 +18,15 @@ size_t unpack_data(const char *key, unsigned char *buf, size_t len,
 	struct data_cell *rcell, *cell, *oldcell;
 
 	if (key == NULL || buf == NULL) return 0;
-	rcell = data_cell_alloc_array(key);
-	if (rcell == NULL) return 0;
 
 	pos = buf;
 	vtype = * (uint32_t *) pos; vtype = ntohl(vtype);
 	ttsize = sizeof(uint32_t);
+
+	if (vtype == DATA_TYPE_EOF) return 0;
+
+	rcell = data_cell_alloc_array(key);
+	if (rcell == NULL) return 0;
 
 	while (vtype != DATA_TYPE_EOF && ttsize < len) {
 		pos = pos + sizeof(uint32_t);
