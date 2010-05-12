@@ -56,10 +56,10 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 		}
 		vsize = pack_data_array(NULL, q->replydata, val,
 								MAX_PACKET_LEN - RESERVE_SIZE);
-		if (vsize == 0) {
-			free(val);
-			return REP_ERR_PACK;
-		}
+		//if (vsize == 0) {
+		//	free(val);
+		//	return REP_ERR_PACK;
+		//}
 		* (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
 		vsize += sizeof(uint32_t);
 		cache_setf(cd, val, vsize, PREFIX_AIC"%u", aid);
