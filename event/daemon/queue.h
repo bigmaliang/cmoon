@@ -7,6 +7,7 @@
 #include "req.h"		/* for req_info */
 #include "sparse.h"
 
+#include "ClearSilver.h"
 
 #define QUEUE_SIZE_INFO		100
 #define QUEUE_SIZE_WARNING	10000
@@ -27,8 +28,8 @@ struct queue_entry {
 
 	unsigned char *ename;
 	size_t esize;
-	struct data_cell *dataset;
-	struct data_cell *replydata;
+	HDF *hdfrcv;
+	HDF *hdfsnd;
 
 	struct queue_entry *prev;
 	/* A pointer to the next element on the list is actually not
@@ -62,93 +63,49 @@ struct queue_entry *queue_get(struct queue *q)
 int queue_isempty(struct queue *q)
 	__with_lock_acquired(q->lock);
 
-#define REQ_GET_PARAM_U32(c, q, recurse, key, ret)                      \
-    do {                                                                \
-        c = data_cell_search(q->dataset, recurse, DATA_TYPE_U32, key);  \
-        if (c == NULL)                                                  \
-            return REP_ERR_BADPARAM;                                    \
-        ret = c->v.ival;                                                \
+
+#define REQ_GET_PARAM_U32(hdf, key, ret)		\
+    do {										\
+		if (!hdf_get_value(hdf, key, NULL)) {	\
+            return REP_ERR_BADPARAM;			\
+		}										\
+		ret = hdf_get_int_value(hdf, key, 0);	\
     } while (0)
 
-#define REQ_GET_PARAM_ULONG(c, q, recurse, key, ret)                    \
-    do {                                                                \
-        c = data_cell_search(q->dataset, recurse, DATA_TYPE_ULONG, key); \
-        if (c == NULL)                                                  \
-            return REP_ERR_BADPARAM;                                    \
-        ret = c->v.lval;                                                \
+#define REQ_GET_PARAM_ULONG(hdf, key, ret)						\
+    do {														\
+		if (!hdf_get_value(hdf, key, NULL)) {					\
+            return REP_ERR_BADPARAM;							\
+		}														\
+		ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);	\
     } while (0)
 
-#define REQ_GET_PARAM_STR(c, q, recurse, key, ret)                      \
-    do {                                                                \
-        c = data_cell_search(q->dataset, recurse, DATA_TYPE_STRING, key); \
-        if (c == NULL)                                                  \
-            return REP_ERR_BADPARAM;                                    \
-        ret = c->v.sval.val;                                            \
-    } while (0)
-
-#define REQ_GET_PARAM_ARRAY(c, q, recurse, key, ret)                    \
-    do {                                                                \
-        c = data_cell_search(q->dataset, recurse, DATA_TYPE_ARRAY, key); \
-        if (c == NULL)                                                  \
-            return REP_ERR_BADPARAM;                                    \
-        ret = c->v.sval.val;                                            \
+#define REQ_GET_PARAM_STR(hdf, key, ret)		\
+    do {										\
+		ret = hdf_get_value(hdf, key, NULL);	\
+		if (!ret) {								\
+            return REP_ERR_BADPARAM;			\
+		}										\
     } while (0)
 
 
-#define REQ_FETCH_PARAM_U32(c, q, recurse, key, ret)                    \
-    do {                                                                \
-        c = data_cell_search(q->dataset, recurse, DATA_TYPE_U32, key);  \
-        if (c != NULL)                                                  \
-            ret = c->v.ival;                                            \
+#define REQ_FETCH_PARAM_U32(hdf, key, ret)			\
+    do {											\
+		if (hdf_get_value(hdf, key, NULL)) {		\
+			ret = hdf_get_int_value(hdf, key, 0);	\
+		}											\
     } while (0)
 
-#define REQ_FETCH_PARAM_ULONG(c, q, recurse, key, ret)                  \
-    do {                                                                \
-        c = data_cell_search(q->dataset, recurse, DATA_TYPE_ULONG, key); \
-        if (c != NULL)                                                  \
-            ret = c->v.lval;                                            \
+#define REQ_FETCH_PARAM_ULONG(hdf, key, ret)						\
+    do {															\
+		if (hdf_get_value(hdf, key, NULL)) {						\
+			ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10); \
+		}															\
     } while (0)
 
-#define REQ_FETCH_PARAM_STR(c, q, recurse, key, ret)                    \
-    do {                                                                \
-        c = data_cell_search(q->dataset, recurse, DATA_TYPE_STRING, key); \
-        if (c != NULL)                                                  \
-            ret = c->v.sval.val;                                        \
-    } while (0)
-
-#define REQ_FETCH_PARAM_ARRAY(c, q, recurse, key, ret)                  \
-    do {                                                                \
-        c = data_cell_search(q->dataset, recurse, DATA_TYPE_ARRAY, key); \
-        if (c != NULL)                                                  \
-            ret = c->v.sval.val;                                        \
-    } while (0)
-
-#define REQ_FETCH_REPLY_U32(c, q, recurse, key, ret)                    \
-    do {                                                                \
-        c = data_cell_search(q->replydata, recurse, DATA_TYPE_U32, key);  \
-        if (c != NULL)                                                  \
-            ret = c->v.ival;                                            \
-    } while (0)
-
-#define REQ_FETCH_REPLY_ULONG(c, q, recurse, key, ret)                  \
-    do {                                                                \
-        c = data_cell_search(q->replydata, recurse, DATA_TYPE_ULONG, key); \
-        if (c != NULL)                                                  \
-            ret = c->v.lval;                                            \
-    } while (0)
-
-#define REQ_FETCH_REPLY_STR(c, q, recurse, key, ret)                    \
-    do {                                                                \
-        c = data_cell_search(q->replydata, recurse, DATA_TYPE_STRING, key); \
-        if (c != NULL)                                                  \
-            ret = c->v.sval.val;                                        \
-    } while (0)
-
-#define REQ_FETCH_REPLY_ARRAY(c, q, recurse, key, ret)                  \
-    do {                                                                \
-        c = data_cell_search(q->replydata, recurse, DATA_TYPE_ARRAY, key); \
-        if (c != NULL)                                                  \
-            ret = c->v.sval.val;                                        \
+#define REQ_FETCH_PARAM_STR(hdf, key, ret)		\
+    do {										\
+		ret = hdf_get_value(hdf, key, NULL);	\
     } while (0)
 
 #endif

@@ -29,14 +29,13 @@ struct aic_entry {
 static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 						   mdb_conn *db)
 {
-	struct data_cell *c;
 	unsigned char *val = NULL;
 	size_t vsize = 0;
 	int state, hit, ret;
 	char *aname;
 	unsigned int aid;
 
-	REQ_GET_PARAM_U32(c, q, false, "aid", aid);
+	REQ_GET_PARAM_U32(q->hdfrcv, "aid", aid);
 	hit = cache_getf(cd, &val, &vsize, PREFIX_AIC"%u", aid);
 	if (hit == 0) {
 		ret = mdb_exec(db, NULL, "SELECT aid, aname, state FROM "
@@ -46,26 +45,19 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 			return REP_ERR_DB;
 		}
 		while (mdb_get(db, "isi", &aid, &aname, &state) == MDB_ERR_NONE) {
-			reply_add_u32(q, NULL, "aid", aid);
-			reply_add_str(q, NULL, "aname", aname);
-			reply_add_u32(q, NULL, "state", state);
+			hdf_set_int_value(q->hdfsnd, "aid", aid);
+			hdf_set_value(q->hdfsnd, "aname", aname);
+			hdf_set_int_value(q->hdfsnd, "state", state);
 		}
 		val = calloc(1, MAX_PACKET_LEN);
 		if (val == NULL) {
 			return REP_ERR_MEM;
 		}
-		vsize = pack_data_array(NULL, q->replydata, val,
-								MAX_PACKET_LEN - RESERVE_SIZE);
-		//if (vsize == 0) {
-		//	free(val);
-		//	return REP_ERR_PACK;
-		//}
-		* (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
-		vsize += sizeof(uint32_t);
+		vsize = pack_hdf(q->hdfsnd, val);
 		cache_setf(cd, val, vsize, PREFIX_AIC"%u", aid);
 		free(val);
 	} else {
-		unpack_data("root", val, vsize, &q->replydata);
+		unpack_hdf(val, vsize, &q->hdfsnd);
 	}
 	
 	return REP_OK;
@@ -91,12 +83,12 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 	case REQ_CMD_STATS:
 		st->msg_stats++;
 		ret = REP_OK;
-		reply_add_ulong(q, NULL, "msg_total", st->msg_total);
-		reply_add_ulong(q, NULL, "msg_unrec", st->msg_unrec);
-		reply_add_ulong(q, NULL, "msg_badparam", st->msg_badparam);
-		reply_add_ulong(q, NULL, "msg_stats", st->msg_stats);
-		reply_add_ulong(q, NULL, "proc_suc", st->proc_suc);
-		reply_add_ulong(q, NULL, "proc_fai", st->proc_fai);
+		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
+		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
+		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
+		hdf_set_int_value(q->hdfsnd, "msg_stats", st->msg_stats);
+		hdf_set_int_value(q->hdfsnd, "proc_suc", st->proc_suc);
+		hdf_set_int_value(q->hdfsnd, "proc_fai", st->proc_fai);
 		break;
 	default:
 		st->msg_unrec++;

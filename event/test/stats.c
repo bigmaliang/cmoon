@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 	mevent_chose_plugin(evt, "Reserve.Status", REQ_CMD_STATS, FLAGS_NONE);
 	ret = mevent_trigger(evt);
 	if (ret != 0 && ret < REP_ERR) {
-		data_cell_dump(evt->rcvdata);
+		hdf_dump(evt->hdfrcv, NULL);
 	} else if (ret == REP_ERR_BUSY) {
 		printf("process busy!\n");
 	} else

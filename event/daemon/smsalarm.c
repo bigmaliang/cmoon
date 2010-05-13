@@ -7,7 +7,6 @@
 #include <unistd.h>		/* usleep() */
 #include "net-const.h"
 #include "common.h"
-#include "data.h"
 #include "packet.h"
 #include "log.h"
 #include "queue.h"

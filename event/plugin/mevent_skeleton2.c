@@ -38,12 +38,12 @@ static void skeleton2_process_driver(struct event_entry *entry, struct queue_ent
 	case REQ_CMD_STATS:
 		st->msg_stats++;
 		ret = REP_OK;
-		reply_add_ulong(q, NULL, "msg_total", st->msg_total);
-		reply_add_ulong(q, NULL, "msg_unrec", st->msg_unrec);
-		reply_add_ulong(q, NULL, "msg_badparam", st->msg_badparam);
-		reply_add_ulong(q, NULL, "msg_stats", st->msg_stats);
-		reply_add_ulong(q, NULL, "proc_suc", st->proc_suc);
-		reply_add_ulong(q, NULL, "proc_fai", st->proc_fai);
+		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
+		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
+		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
+		hdf_set_int_value(q->hdfsnd, "msg_stats", st->msg_stats);
+		hdf_set_int_value(q->hdfsnd, "proc_suc", st->proc_suc);
+		hdf_set_int_value(q->hdfsnd, "proc_fai", st->proc_fai);
 		break;
 	default:
 		st->msg_unrec++;

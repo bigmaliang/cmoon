@@ -5,7 +5,6 @@
 
 #include "queue.h"
 #include "net-const.h"
-#include "data.h"
 
 
 struct queue *queue_create(void)
@@ -63,8 +62,7 @@ size_t queue_entry_size(struct queue_entry *e)
 	rv += sizeof(struct req_info);
 	rv += e->req->clilen;
 	rv += e->req->psize;
-	rv += data_cell_size(e->dataset);
-	rv += data_cell_size(e->replydata);
+	/* TODO hdfrcv, hdfsnd size */
 
 	return rv;
 }
@@ -102,8 +100,8 @@ struct queue_entry *queue_entry_create(void)
 	e->operation = 0;
 	e->ename = NULL;
 	e->esize = 0;
-	e->dataset = NULL;
-	e->replydata = NULL;
+	e->hdfrcv = NULL;			/* hdfrcv inited in parse_event() */
+	hdf_init(&e->hdfsnd);
 	e->prev = NULL;
 
 	return e;
@@ -116,8 +114,8 @@ void queue_entry_free(struct queue_entry *e) {
 	}
 	if (e->ename)
 		free(e->ename);
-	data_cell_free(e->dataset);
-	data_cell_free(e->replydata);
+	hdf_destroy(&e->hdfrcv);
+	hdf_destroy(&e->hdfsnd);
 	free(e);
 	return;
 }

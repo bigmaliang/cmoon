@@ -16,7 +16,6 @@
 #include "sctp.h"
 #include "internal.h"
 #include "netutils.h"
-#include "data.h"
 #include "packet.h"
 
 
@@ -125,6 +124,7 @@ ssize_t ssend(int fd, const unsigned char *buf, size_t count, int flags)
 mevent_t *mevent_init(void)
 {
 	mevent_t *evt;
+	NEOERR *err;
 
 	evt = malloc(sizeof(mevent_t));
 	if (evt == NULL) {
@@ -134,8 +134,8 @@ mevent_t *mevent_init(void)
 	evt->servers = NULL;
 	evt->nservers = 0;
 	evt->ename = NULL;
-	evt->dataset = data_cell_alloc_array("root");
-	if (evt->dataset == NULL) {
+	err = hdf_init(&evt->hdfsnd);
+	if (err != STATUS_OK) {
 		free(evt);
 		return NULL;
 	}
@@ -151,7 +151,12 @@ mevent_t *mevent_init(void)
 		return NULL;
 	}
 	evt->psize = 0;
-	evt->rcvdata = NULL;
+	err = hdf_init(&evt->hdfrcv);
+	if (err != STATUS_OK) {
+		hdf_destroy(&evt->hdfsnd);
+		free(evt);
+		return NULL;
+	}
 
 	return evt;
 }
@@ -169,12 +174,12 @@ int mevent_free(mevent_t *evt)
 	}
 	if (evt->ename != NULL)
 		free(evt->ename);
-	data_cell_free(evt->dataset);
+	hdf_destroy(&evt->hdfsnd);
 	if (evt->payload != NULL)
 		free(evt->payload);
 	if (evt->rcvbuf != NULL)
 		free(evt->rcvbuf);
-	data_cell_free(evt->rcvdata);
+	hdf_destroy(&evt->hdfrcv);
 	free(evt);
 	return 1;
 }
@@ -311,46 +316,10 @@ int mevent_chose_plugin(mevent_t *evt, const char *key,
 
 	evt->psize = moff + 12 +ksize;
 	evt->packed = 0;
-	data_cell_free(evt->dataset);
-	evt->dataset = data_cell_alloc_array("root");
-	
+	hdf_destroy(&evt->hdfsnd);
+	hdf_init(&evt->hdfsnd);
+
 	return 1;
-}
-
-int mevent_add_u32(mevent_t *evt, const char *parent, const char *key, uint32_t val)
-{
-	if (evt == NULL || key == NULL) return 0;
-	if (data_cell_add_u32(evt->dataset, parent, key, val)) {
-		return 1;
-	}
-	return 0;
-}
-
-int mevent_add_ulong(mevent_t *evt, const char *parent, const char *key, unsigned long val)
-{
-	if (evt == NULL || key == NULL) return 0;
-	if (data_cell_add_ulong(evt->dataset, parent, key, val)) {
-		return 1;
-	}
-	return 0;
-}
-
-int mevent_add_str(mevent_t *evt, const char *parent, const char *key, const char *val)
-{
-	if (evt == NULL || key == NULL) return 0;
-	if (data_cell_add_str(evt->dataset, parent, key, val)) {
-		return 1;
-	}
-	return 0;
-}
-
-int mevent_add_array(mevent_t *evt, const char *parent, const char *key)
-{
-	if (evt == NULL || key == NULL) return 0;
-	if (data_cell_add_array(evt->dataset, parent, key)) {
-		return 1;
-	}
-	return 0;
 }
 
 int mevent_trigger(mevent_t *evt)
@@ -367,15 +336,12 @@ int mevent_trigger(mevent_t *evt)
 	//if (ksize == 0) return 0;
 
 	if (!evt->packed) {
-		vsize = pack_data_array(NULL, evt->dataset, evt->payload + evt->psize,
-								MAX_PACKET_LEN - evt->psize - 4);
-		if (vsize == 0 && data_cell_length(evt->dataset) != 0) return 0;
+		vsize = pack_hdf(evt->hdfsnd, evt->payload + evt->psize);
 		evt->psize += vsize;
 		evt->packed = 1;
 	}
 
-	uint32_t vtype = * (uint32_t *)(evt->payload+evt->psize); vtype = ntohl(vtype);
-	if (vtype != DATA_TYPE_EOF || evt->psize < 17) {
+	if (evt->psize < 17) {
 		* (uint32_t *) (evt->payload+evt->psize) = htonl(DATA_TYPE_EOF);
 		evt->psize += sizeof(uint32_t);
 	}
@@ -392,16 +358,12 @@ int mevent_trigger(mevent_t *evt)
 	rv = get_rep(srv, evt->rcvbuf, MAX_PACKET_LEN, &p, &vsize);
 
 	if (vsize > 8) {
-		if (evt->rcvdata != NULL) {
-			data_cell_free(evt->rcvdata);
-			evt->rcvdata = NULL;
-		}
 		/* reply_long add a vsize parameter */
-		unpack_data("root", p+4, vsize-4, &evt->rcvdata);
+		unpack_hdf(p+4, vsize-4, &evt->hdfrcv);
 	}
 
-	data_cell_free(evt->dataset);
-	evt->dataset = data_cell_alloc_array("root");
+	hdf_destroy(&evt->hdfsnd);
+	hdf_init(&evt->hdfsnd);
 	
 	return rv;
 }

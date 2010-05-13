@@ -8,7 +8,6 @@
 #include "net-const.h"
 #include "queue.h"
 #include "cache.h"
-#include "data.h"
 #include "packet.h"
 #include "netutils.h"
 #include "fdb.h"

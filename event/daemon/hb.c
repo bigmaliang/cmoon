@@ -22,7 +22,6 @@
 #include "log.h"
 #include "stats.h"
 #include "config.h"
-#include "data.h"
 #include "smsalarm.h"
 
 int main(int argc, char *argv[])
@@ -57,7 +56,7 @@ int main(int argc, char *argv[])
 	mevent_chose_plugin(evt, argv[3], REQ_CMD_STATS, FLAGS_SYNC);
 	ret = mevent_trigger(evt);
 	if (PROCESS_OK(ret)) {
-		data_cell_dump(evt->rcvdata);
+		hdf_dump(evt->hdfrcv, NULL);
 	} else {
 		int try = 0;
 		

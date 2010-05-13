@@ -16,7 +16,6 @@
 #include "sctp.h"
 #include "internal.h"
 #include "netutils.h"
-#include "data.h"
 #include "packet.h"
 
 #define CONFIG_FILE		"/etc/mevent/client.hdf"
@@ -123,8 +122,8 @@ mevent_t* mevent_init_plugin(char *ename, unsigned short cmd,
 
 	evt->psize = moff + 12 +ksize;
 	evt->packed = 0;
-	data_cell_free(evt->dataset);
-	evt->dataset = data_cell_alloc_array("root");
+	hdf_destroy(&evt->hdfsnd);
+	hdf_init(&evt->hdfsnd);
 
 	return evt;
 }

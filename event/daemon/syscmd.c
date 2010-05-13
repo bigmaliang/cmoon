@@ -2,24 +2,21 @@
 
 int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
 {
-    struct data_cell *c;
     unsigned char *val = NULL;
     size_t vsize = 0;
-    unsigned char *key;
+    char *key;
     int hit, ret;
 
     if (q == NULL || cd == NULL) {
         ret = REP_ERR;
         goto done;
     }
-    
-    c = data_cell_search(q->dataset, false,
-                         DATA_TYPE_STRING, VNAME_CACHE_KEY);
-    if (c == NULL) {
+
+	key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
+    if (!key) {
         ret = REP_ERR_BADPARAM;
         goto done;
     }
-    key = c->v.sval.val;
     hit = cache_get(cd, key, strlen((char*)key), &val, &vsize);
     if (hit)
         ret = REP_OK;
@@ -36,12 +33,7 @@ int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
     } else {
         if (ret == REP_OK && val != NULL && vsize > 0) {
             /* if we don't reply to client, store them in replydata */
-            if (!q->replydata) {
-                unpack_data("root", val, vsize, &q->replydata);
-            } else {
-                unpack_data("return", val, vsize, &c);
-                data_cell_append(q->replydata, c);
-            }
+			unpack_hdf(val, vsize, &q->hdfsnd);
         }
     }
 
@@ -50,27 +42,24 @@ int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
 
 int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
 {
-    struct data_cell *c;
     unsigned char *val = NULL;
     size_t vsize = 0;
-    unsigned char *key;
+    char *key;
     int ret;
 
     if (q == NULL || cd == NULL) {
         ret = REP_ERR;
         goto done;
     }
-    
-    c = data_cell_search(q->dataset, false,
-                         DATA_TYPE_STRING, VNAME_CACHE_KEY);
-    if (c == NULL) {
+
+	key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
+    if (!key) {
         ret = REP_ERR_BADPARAM;
         goto done;
     }
-    key = c->v.sval.val;
-    c = data_cell_search(q->dataset, false,
-                         DATA_TYPE_ANY, VNAME_CACHE_VAL);
-    if (c == NULL) {
+
+	HDF *node = hdf_get_obj(q->hdfrcv, VNAME_CACHE_VAL);
+    if (!node) {
         ret = REP_ERR_BADPARAM;
         goto done;
     }
@@ -79,13 +68,8 @@ int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
         ret = REP_ERR_MEM;
         goto done;
     }
-    vsize = pack_data_any(NULL, c, val, MAX_PACKET_LEN - RESERVE_SIZE);
-    if (vsize == 0) {
-        ret = REP_ERR_PACK;
-        goto done;
-    }
-    * (uint32_t *) (val+vsize) = htonl(DATA_TYPE_EOF);
-    vsize += sizeof(uint32_t);
+
+	vsize = pack_hdf(node, val);
     cache_set(cd, key, strlen((char*)key), val, vsize);
 
     ret = REP_OK;
@@ -103,23 +87,20 @@ int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
 
 int sys_cmd_cache_del(struct queue_entry *q, struct cache *cd, bool reply)
 {
-    struct data_cell *c;
-    unsigned char *key;
+    char *key;
     int ret;
 
     if (q == NULL || cd == NULL) {
         ret = REP_ERR;
         goto done;
     }
-    
-    c = data_cell_search(q->dataset, false,
-                         DATA_TYPE_STRING, VNAME_CACHE_KEY);
-    if (c == NULL) {
+
+	key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
+    if (!key) {
         ret = REP_ERR_BADPARAM;
         goto done;
     }
-    key = c->v.sval.val;
-    cache_del(cd, key, strlen((char*)key));
+    cache_del(cd, key, strlen(key));
 
     ret = REP_OK;
     

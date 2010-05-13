@@ -24,20 +24,20 @@ struct rawdb_entry {
 	struct rawdb_stats st;
 };
 
-static int rawdb_exec_cell(struct queue_entry *q, struct data_cell *c, mdb_conn *db)
+static int rawdb_exec_str(struct queue_entry *q, char *sql, mdb_conn *db)
 {
-	int ret = mdb_exec(db, NULL, (char*)c->v.sval.val, NULL);
+	int ret = mdb_exec(db, NULL, sql, NULL);
 	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec %s failure %s", c->v.sval.val, mdb_get_errmsg(db));
+		mtc_err("exec %s failure %s", sql, mdb_get_errmsg(db));
 	} else {
 		int id;
 		if (mdb_get(db, "i", &id) == MDB_ERR_NONE) {
-			reply_add_u32(q, NULL, "id", id);
+			hdf_set_int_value(q->hdfsnd, "id", id);
 		}
 /* TODO mysql and sqlite use the mdb_get_last_id() */
 #if 0
-		if (strncasecmp(c->v.sval.val, "insert", strlen("insert"))) {
-			reply_add_u32(q, NULL, "id", mdb_get_last_id(db, NULL));
+		if (strncasecmp(sql, "insert", strlen("insert"))) {
+			hdf_set_int_value(q->hdfsnd, "id", mdb_get_last_id(db, NULL));
 		}
 #endif
 	}
@@ -51,45 +51,43 @@ static int rawdb_exec_cell(struct queue_entry *q, struct data_cell *c, mdb_conn 
  */
 static int rawdb_cmd_updatedb(struct queue_entry *q, mdb_conn *db)
 {
-	struct data_cell *c, *cc;
+	HDF *node;
+	char *sql;
+	bool found = false;
     int ret;
-    
-    c = data_cell_search(q->dataset, true, DATA_TYPE_STRING, "sqls");
-    if (c != NULL) {
-        mtc_dbg("exec %s ...\n", c->v.sval.val);
-        ret = rawdb_exec_cell(q, c, db);
-        if (ret != MDB_ERR_NONE) {
-            return REP_ERR_DB;
-        }
-    } else {
-        c = data_cell_search(q->dataset, true, DATA_TYPE_ARRAY, "sqls");
-    }
 
-    if (c == NULL) {
+	node = hdf_get_obj(q->hdfrcv, "sqls.0");
+	while (node) {
+		found = true;
+		sql = hdf_obj_value(node);
+		mtc_dbg("exec %s ...\n", sql);
+		ret = rawdb_exec_str(q, sql, db);
+		if (ret != MDB_ERR_NONE) {
+			if (!strcmp(hdf_obj_name(node), MASTER_EVT_NAME)) {
+				return REP_ERR_DB;
+			}
+		}
+		
+		node = hdf_obj_next(node);
+	}
+
+	if (!hdf_get_obj(q->hdfrcv, "sqls.0")) {
+		sql = hdf_get_value(q->hdfrcv, "sqls", NULL);
+		if (sql) {
+			found = true;
+			mtc_dbg("exec %s ...\n", sql);
+			ret = rawdb_exec_str(q, sql, db);
+			if (ret != MDB_ERR_NONE) {
+				return REP_ERR_DB;
+			}
+		}
+	}
+
+    if (!found) {
         mtc_err("excutable sqls not found\n");
         return REP_ERR_BADPARAM;
     }
 
-    if (c->type == DATA_TYPE_ARRAY) {
-		iterate_data(c) {
-			cc = c->v.aval->items[t_rsv_i];
-            if (cc == NULL) continue;
-            if (cc->type == DATA_TYPE_STRING) {
-                mtc_dbg("exec %s ...\n", cc->v.sval.val);
-                ret = rawdb_exec_cell(q, cc, db);
-                if (ret != MDB_ERR_NONE) {
-                    size_t tlen = strlen(MASTER_EVT_NAME) >
-                        cc->ksize? strlen(MASTER_EVT_NAME):
-                        cc->ksize;
-                    if (!strncmp((const char*)cc->key,
-							     MASTER_EVT_NAME, tlen)) {
-                        return REP_ERR_DB;
-                    }
-                }
-            }
-		}
-    }
-    
     return REP_OK;
 }
 
@@ -117,12 +115,12 @@ static void rawdb_process_driver(struct event_entry *entry, struct queue_entry *
 	case REQ_CMD_STATS:
 		st->msg_stats++;
 		ret = REP_OK;
-		reply_add_ulong(q, NULL, "msg_total", st->msg_total);
-		reply_add_ulong(q, NULL, "msg_unrec", st->msg_unrec);
-		reply_add_ulong(q, NULL, "msg_badparam", st->msg_badparam);
-		reply_add_ulong(q, NULL, "msg_stats", st->msg_stats);
-		reply_add_ulong(q, NULL, "proc_suc", st->proc_suc);
-		reply_add_ulong(q, NULL, "proc_fai", st->proc_fai);
+		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
+		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
+		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
+		hdf_set_int_value(q->hdfsnd, "msg_stats", st->msg_stats);
+		hdf_set_int_value(q->hdfsnd, "proc_suc", st->proc_suc);
+		hdf_set_int_value(q->hdfsnd, "proc_fai", st->proc_fai);
 		break;
 	default:
 		st->msg_unrec++;

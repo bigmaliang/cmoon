@@ -73,7 +73,6 @@ install-lib: libs libmevent.pc
 	install -d $(PREFIX)/include
 	install -m 0644 mevent.h $(PREFIX)/include
 	install -m 0644 net-const.h $(PREFIX)/include
-	install -m 0644 data.h $(PREFIX)/include
 	install -d $(PREFIX)/lib/pkgconfig
 	install -m 644 libmevent.pc $(PREFIX)/lib/pkgconfig
 	@echo

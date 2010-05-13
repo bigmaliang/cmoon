@@ -11,20 +11,21 @@
 #include "net-const.h"
 #include "common.h"
 #include "netutils.h"
-#include "data.h"
 #include "packet.h"
 #include "smsalarm.h"
+#include "reply.h"
 
 
-static void parse_stats(struct req_info *req);
+static void parse_stats(struct queue_entry *q);
 
 
 /* Create a queue entry structure based on the parameters passed. Memory
  * allocated here will be free()'d in queue_entry_free(). It's not the
  * cleanest way, but the alternatives are even messier. */
 static struct queue_entry *make_queue_long_entry(const struct req_info *req,
-						 const unsigned char *ename, size_t esize,
-						 struct data_cell *dataset)
+												 const unsigned char *ename,
+												 size_t esize,
+												 HDF *hdfrcv)
 {
 	struct queue_entry *e;
 	unsigned char *ecopy;
@@ -47,7 +48,7 @@ static struct queue_entry *make_queue_long_entry(const struct req_info *req,
 	e->operation = (uint32_t)req->cmd;
 	e->ename = ecopy;
 	e->esize = esize;
-	e->dataset = dataset;
+	e->hdfrcv = hdfrcv;
 
 	/* Create a copy of req, including clisa */
 	e->req = malloc(sizeof(struct req_info));
@@ -75,19 +76,23 @@ static struct queue_entry *make_queue_long_entry(const struct req_info *req,
 /* Creates a new queue entry and puts it into the queue. Returns 1 if success,
  * 0 if memory error. */
 static int put_in_queue_long(const struct req_info *req, int sync,
-			     const unsigned char *ename, size_t esize,
-			     struct data_cell *dataset)
+							 const unsigned char *ename, size_t esize,
+							 HDF *hdfrcv)
 {
 	struct queue_entry *e;
 
 	struct event_entry *entry = find_entry_in_table(mevent, ename, esize);
 	if (entry == NULL) {
 		if (!strncmp((char*)ename, "Reserve.Status", esize)) {
-			data_cell_free(dataset);
-			parse_stats((struct req_info*)req);
+			/* TODO e freed? */
+			e = make_queue_long_entry(req, ename, esize, hdfrcv);
+			if (e == NULL) {
+				return 0;
+			}
+			parse_stats(e);
 			return 1;
 		}
-		data_cell_free(dataset);
+		hdf_destroy(&hdfrcv);
 		stats.net_unk_req++;
 		req->reply_mini(req, REP_ERR_UNKREQ);
 		return 1;
@@ -107,13 +112,13 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 				  entry->name, entry->op_queue->size);
 		wlog("plugin %s busy, queue size is %d\n",
 			 entry->name, entry->op_queue->size);
-		data_cell_free(dataset);
+		hdf_destroy(&hdfrcv);
 		stats.pro_busy++;
 		req->reply_mini(req, REP_ERR_BUSY);
 		return 1;
 	}
 	
-	e = make_queue_long_entry(req, ename, esize, dataset);
+	e = make_queue_long_entry(req, ename, esize, hdfrcv);
 	if (e == NULL) {
 		return 0;
 	}
@@ -138,16 +143,16 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 /* Like put_in_queue_long() but with few parameters because most actions do
  * not need newval. */
 static int put_in_queue(const struct req_info *req, int sync,
-			const unsigned char *ename, size_t esize,
-			struct data_cell *dataset)
+						const unsigned char *ename, size_t esize,
+						HDF *hdfrcv)
 {
-	return put_in_queue_long(req, sync, ename, esize, dataset);
+	return put_in_queue_long(req, sync, ename, esize, hdfrcv);
 }
 
 
-#define FILL_SYNC_FLAG()			\
-	do {					\
-		sync = req->flags & FLAGS_SYNC; \
+#define FILL_SYNC_FLAG()						\
+	do {										\
+		sync = req->flags & FLAGS_SYNC;			\
 	} while(0)
 
 static void parse_event(struct req_info *req)
@@ -156,7 +161,8 @@ static void parse_event(struct req_info *req)
 	const unsigned char *ename;
 	uint32_t esize, rsize;
 	unsigned char *pos;
-	struct data_cell *dataset = NULL;
+	HDF *hdfrcv = NULL;
+	char *val = NULL;
 
 	/*
 	 * Request format:
@@ -177,7 +183,7 @@ static void parse_event(struct req_info *req)
 	ename = pos;
 
 	pos = pos + esize;
-	rsize = unpack_data("root", pos, req->psize-esize-sizeof(uint32_t), &dataset);
+	rsize = unpack_hdf(pos, req->psize-esize-sizeof(uint32_t), &hdfrcv);
 	if (rsize == 0 || rsize+esize+sizeof(uint32_t) > MAX_PACKET_LEN ||
 		req->psize < esize) {
 		stats.net_broken_req++;
@@ -186,7 +192,7 @@ static void parse_event(struct req_info *req)
 	}
 
 	FILL_SYNC_FLAG();
-	rv = put_in_queue(req, sync, ename, esize, dataset);
+	rv = put_in_queue(req, sync, ename, esize, hdfrcv);
 	if (!rv) {
 		req->reply_mini(req, REP_ERR_MEM);
 		return;
@@ -205,7 +211,7 @@ static void parse_event(struct req_info *req)
  * TCP). Here we only deal with the clean, stripped, non protocol-specific
  * message. */
 int parse_message(struct req_info *req,
-		  const unsigned char *buf, size_t len)
+				  const unsigned char *buf, size_t len)
 {
 	uint32_t hdr, ver, id;
 	uint16_t cmd, flags;
@@ -264,27 +270,18 @@ int parse_message(struct req_info *req,
 }
 
 
-static void parse_stats(struct req_info *req)
+static void parse_stats(struct queue_entry *q)
 {
-	unsigned char buf[8192];
-	size_t vsize = 0;
+	hdf_set_int_value(q->hdfsnd, "msg_tipc", stats.msg_tipc);
+	hdf_set_int_value(q->hdfsnd, "msg_tcp", stats.msg_tcp);
+	hdf_set_int_value(q->hdfsnd, "msg_udp", stats.msg_udp);
+	hdf_set_int_value(q->hdfsnd, "msg_sctp", stats.msg_sctp);
+	hdf_set_int_value(q->hdfsnd, "net_version_mismatch", stats.net_version_mismatch);
+	hdf_set_int_value(q->hdfsnd, "net_broken_req", stats.net_broken_req);
+	hdf_set_int_value(q->hdfsnd, "net_unk_req", stats.net_unk_req);
+	hdf_set_int_value(q->hdfsnd, "pro_busy", stats.pro_busy);
 
-	memset(buf, 0x0, sizeof(buf));
-	
-	vsize = pack_data_ulong("msg_tipc", stats.msg_tipc, buf);
-	vsize += pack_data_ulong("msg_tcp", stats.msg_tcp, buf+vsize);
-	vsize += pack_data_ulong("msg_udp", stats.msg_udp, buf+vsize);
-	vsize += pack_data_ulong("msg_sctp", stats.msg_sctp, buf+vsize);
-	vsize += pack_data_ulong("net_version_mismatch", stats.net_version_mismatch,
-							 buf+vsize);
-	vsize += pack_data_ulong("net_broken_req", stats.net_broken_req, buf+vsize);
-	vsize += pack_data_ulong("net_unk_req", stats.net_unk_req, buf+vsize);
-	vsize += pack_data_ulong("pro_busy", stats.pro_busy, buf+vsize);
-
-	* (uint32_t *) (buf+vsize) = htonl(DATA_TYPE_EOF);
-	vsize += sizeof(uint32_t);
-
-	req->reply_long(req, REP_OK, buf, vsize);
+	reply_trigger(q, REP_OK);
 
 	return;
 }

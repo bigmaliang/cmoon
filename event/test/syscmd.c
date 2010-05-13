@@ -34,13 +34,13 @@ int main(int argc, char *argv[])
 	}
 
 	evt = mevent_init_plugin(plugin, cmd, FLAGS_SYNC);
-    mevent_add_str(evt, NULL, "cachekey", key);
-    mevent_add_str(evt, NULL, "cacheval", val);
+	hdf_set_value(evt->hdfsnd, "cachekey", key);
+    hdf_set_value(evt->hdfsnd, "cacheval", val);
 
     ret = mevent_trigger(evt);
     if (PROCESS_OK(ret)) {
         printf("process success %d\n", ret);
-        data_cell_dump(evt->rcvdata);
+        hdf_dump(evt->hdfrcv, NULL);
     } else {
         printf("process failure %d!\n", ret);
     }

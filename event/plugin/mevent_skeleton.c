@@ -17,14 +17,7 @@ static void skeleton_process_driver(struct event_entry *entry, struct queue_entr
 {
 	struct skeleton_entry *e = (struct skeleton_entry*)entry;
 
-	struct data_cell *c = data_cell_search(q->dataset, true, DATA_TYPE_STRING, "tmpint");
-	if (c != NULL) data_cell_dump(c);
-
-	if (e->fp) usleep(10);
-
-	e->st.memlen = queue_entry_size(q);
-	printf("memory len %lu\n", e->st.memlen);
-	data_cell_dump(q->dataset);
+	hdf_dump(q->hdfrcv, NULL);
 	
 	if ((q->req->flags & FLAGS_SYNC))
 		q->req->reply_mini(q->req, REP_OK);
