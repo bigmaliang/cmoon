@@ -1,6 +1,6 @@
 
-#ifndef __MDATA_H__
-#define __MDATA_H__
+#ifndef __MVTDATA_H__
+#define __MVTDATA_H__
 
 #include <stdint.h>		/* for uint32_t */
 #include <stdbool.h>		/* bool */
@@ -70,4 +70,4 @@ struct data_cell* data_cell_get(struct data_cell *c, int i);
 #define iterate_data(c)											\
 	for (int t_rsv_i = 0; t_rsv_i < c->v.aval->num; t_rsv_i++)
 
-#endif	/* __MDATA_H__ */
+#endif	/* __MVTDATA_H__ */
