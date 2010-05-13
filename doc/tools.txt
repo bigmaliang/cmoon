@@ -46,6 +46,36 @@ http://tools.mozilla.com/simple.html
 哪个交互更好? 浏览列表的时候选择一行能跟用户用友好的方式突出这行, 更容易让人接受
 
 
+SCM
+---
+* http://progit.org/ *
+
+git branch event_data
+git checkout event_data
+....
+git push origin event_data:event_data
+将本机的 event_data branch 推到 origin remote 的 event_data branch
+或者用以下简写 git checkout --track origin/event_data
+
+git push [remotename] [localbranch]:[remotebranch]
+git push origin :event_data
+删掉远程event_data branch
+
+
+mkdir my_blog_tmp
+cd my_blog_tmp
+git-svn init http://code.yoursite.net/my_blog/trunk/ --no-metadata
+git config svn.authorsfile ~/Desktop/users.txt
+git-svn fetch
+cd ../ && git clone my_blog_tmp my_blog
+
+git checkout -b event_data origin/event_data
+从 origin remote 上 获取 event_data branch
+
+remote
+branch
+
+
 设计风格
 ------
 	http://www.ronniesan.com/work/
