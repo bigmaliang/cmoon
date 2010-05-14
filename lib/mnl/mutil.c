@@ -201,6 +201,20 @@ void mutil_real_escape_string(char *to, char *from, size_t len)
 	}
 }
 
+char* mutil_real_escape_string_nalloc(char **to, char *from, size_t len)
+{
+	if (!to || !from) return NULL;
+
+	char *s = calloc(1, len*2+4);
+	if (!s) return NULL;
+
+	mutil_real_escape_string(s, from, len);
+	*to = s;
+
+	return s;
+}
+
+
 int mutil_replace_dbint(char **sql, int val)
 {
 	char tok[64];

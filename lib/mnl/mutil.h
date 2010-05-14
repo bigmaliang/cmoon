@@ -53,9 +53,14 @@ bool mutil_isdigit(char *s);
 bool mutil_makesure_dir(char *file);
 
 /*
- * make sure buf big enough please 
+ * make sure buf big enough please
+ * both alloc() and free() MUST be done by caller
  */
 void mutil_real_escape_string(char *buf, char *val, size_t len);
+/*
+ * caller just need free() the *to;
+ */
+char* mutil_real_escape_string_nalloc(char **to, char *from, size_t len);
 int  mutil_replace_dbint(char **sql, int val);
 int  mutil_replace_dbstr(char **sql, char *val);
 int  mutil_expand_strvf_dbfmt(char **str, const char *fmt, va_list ap);

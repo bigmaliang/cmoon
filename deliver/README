@@ -3,7 +3,9 @@ deliver
 
 APE Server
 git://github.com/bigml/APE_Server.git
+git@github.com:bigml/APE_Server.git
 
 APE JavaScript Framework
 git://github.com/bigml/APE_JSF.git
+git@github.com:bigml/APE_JSF.git
 

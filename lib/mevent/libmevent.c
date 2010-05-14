@@ -402,6 +402,9 @@ int mevent_trigger(mevent_t *evt, char *key,
 
 	evt->psize = moff + 12 +ksize;
 	
+	/*
+	 * don't escape the hdf because some body need set ' in param 
+	 */
 	vsize = pack_hdf(evt->hdfsnd, evt->payload + evt->psize);
 	evt->psize += vsize;
 
