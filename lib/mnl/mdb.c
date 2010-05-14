@@ -447,9 +447,11 @@ void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
 	}
 
 	hdf_remove_tree(hdf, PRE_SUCCESS);
-	get_errmsg(ret, msg);
-	hdf_set_value(hdf, PRE_ERRMSG, msg);
-	mjson_output_hdf(hdf, 0);
+	if (!hdf_get_obj(hdf, PRE_ERRMSG)) {
+		get_errmsg(ret, msg);
+		hdf_set_value(hdf, PRE_ERRMSG, msg);
+	}
+	//mjson_output_hdf(hdf, 0);
 	
 	if (conn != NULL) {
 		mdb_destroy(conn);

@@ -1,7 +1,7 @@
 BASEDIR = ../../
 include $(BASEDIR)Make.env
 
-all: mbase.js mbox.js mflowtools.js mform.js  mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js muiplug.js
+all: mbase.js mbox.js mflowtools.js mmd5.js mform.js  mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js muiplug.js
 
 mbase.js: ref/jquery-1.3.2.js  ref/jquery.cookie.js  own/bmoon.js 
 
@@ -9,6 +9,8 @@ mbox.js: ref/facebox/facebox.js
 
 mflowtools.js: ref/flowtools/js/tools.tabs.js ref/flowtools/js/tools.tooltip.js \
 		ref/flowtools/js/tools.overlay.js ref/flowtools/js/tools.expose.js ref/flowtools/js/tools.scrollable.js
+
+mmd5.js: ref/jquery.md5.js
 
 mform.js: ref/jquery.md5.js  ref/jquery.formval.js  ref/jquery.form.js
 
@@ -35,4 +37,4 @@ muiplug.js: own/jquery.mnuiplug.js
 
 
 clean:
-	@rm -f mbase.js mbox.js mflowtools.js mform.js mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js muiplug.js
+	@rm -f mbase.js mbox.js mflowtools.js mmd5.js mform.js mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js muiplug.js
