@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
 	int ret;
 
-	mevent_t *evt = mevent_init();
+	mevent_t *evt = mevent_init("Reserve.Status");
 	if (evt == NULL) {
 		printf("init error\n");
 		return 1;
@@ -21,8 +21,7 @@ int main(int argc, char *argv[])
 	tv.tv_usec = 800000;
 	
 	mevent_add_udp_server(evt, "127.0.0.1", 26000, NULL, &tv);
-	mevent_chose_plugin(evt, "Reserve.Status", REQ_CMD_STATS, FLAGS_NONE);
-	ret = mevent_trigger(evt);
+	ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_NONE);
 	if (ret != 0 && ret < REP_ERR) {
 		hdf_dump(evt->hdfrcv, NULL);
 	} else if (ret == REP_ERR_BUSY) {

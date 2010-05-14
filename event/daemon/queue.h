@@ -63,50 +63,5 @@ struct queue_entry *queue_get(struct queue *q)
 int queue_isempty(struct queue *q)
 	__with_lock_acquired(q->lock);
 
-
-#define REQ_GET_PARAM_U32(hdf, key, ret)		\
-    do {										\
-		if (!hdf_get_value(hdf, key, NULL)) {	\
-            return REP_ERR_BADPARAM;			\
-		}										\
-		ret = hdf_get_int_value(hdf, key, 0);	\
-    } while (0)
-
-#define REQ_GET_PARAM_ULONG(hdf, key, ret)						\
-    do {														\
-		if (!hdf_get_value(hdf, key, NULL)) {					\
-            return REP_ERR_BADPARAM;							\
-		}														\
-		ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);	\
-    } while (0)
-
-#define REQ_GET_PARAM_STR(hdf, key, ret)		\
-    do {										\
-		ret = hdf_get_value(hdf, key, NULL);	\
-		if (!ret) {								\
-            return REP_ERR_BADPARAM;			\
-		}										\
-    } while (0)
-
-
-#define REQ_FETCH_PARAM_U32(hdf, key, ret)			\
-    do {											\
-		if (hdf_get_value(hdf, key, NULL)) {		\
-			ret = hdf_get_int_value(hdf, key, 0);	\
-		}											\
-    } while (0)
-
-#define REQ_FETCH_PARAM_ULONG(hdf, key, ret)						\
-    do {															\
-		if (hdf_get_value(hdf, key, NULL)) {						\
-			ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10); \
-		}															\
-    } while (0)
-
-#define REQ_FETCH_PARAM_STR(hdf, key, ret)		\
-    do {										\
-		ret = hdf_get_value(hdf, key, NULL);	\
-    } while (0)
-
 #endif
 

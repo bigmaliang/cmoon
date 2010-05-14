@@ -53,41 +53,36 @@ static int rawdb_cmd_updatedb(struct queue_entry *q, mdb_conn *db)
 {
 	HDF *node;
 	char *sql;
-	bool found = false;
     int ret;
 
-	node = hdf_get_obj(q->hdfrcv, "sqls.0");
-	while (node) {
-		found = true;
-		sql = hdf_obj_value(node);
-		mtc_dbg("exec %s ...\n", sql);
-		ret = rawdb_exec_str(q, sql, db);
-		if (ret != MDB_ERR_NONE) {
-			if (!strcmp(hdf_obj_name(node), MASTER_EVT_NAME)) {
-				return REP_ERR_DB;
+	node = hdf_get_obj(q->hdfrcv, "sqls");
+	if (node) {
+		if (hdf_obj_child(node)) {
+			node = hdf_obj_child(node);
+			while (node) {
+				sql = hdf_obj_value(node);
+				mtc_dbg("exec %s ...\n", sql);
+				ret = rawdb_exec_str(q, sql, db);
+				if (ret != MDB_ERR_NONE) {
+					if (!strcmp(hdf_obj_name(node), MASTER_EVT_NAME)) {
+						return REP_ERR_DB;
+					}
+				}
+				node = hdf_obj_next(node);
 			}
-		}
-		
-		node = hdf_obj_next(node);
-	}
-
-	if (!hdf_get_obj(q->hdfrcv, "sqls.0")) {
-		sql = hdf_get_value(q->hdfrcv, "sqls", NULL);
-		if (sql) {
-			found = true;
+		} else {
+			sql = hdf_obj_value(node);
 			mtc_dbg("exec %s ...\n", sql);
 			ret = rawdb_exec_str(q, sql, db);
 			if (ret != MDB_ERR_NONE) {
 				return REP_ERR_DB;
 			}
 		}
-	}
-
-    if (!found) {
+	} else {
         mtc_err("excutable sqls not found\n");
         return REP_ERR_BADPARAM;
-    }
-
+	}
+	
     return REP_OK;
 }
 

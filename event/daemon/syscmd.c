@@ -1,4 +1,5 @@
 #include "syscmd.h"
+#include "ClearSilver.h"
 
 int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
 {
@@ -20,7 +21,7 @@ int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
     hit = cache_get(cd, key, strlen((char*)key), &val, &vsize);
     if (hit)
         ret = REP_OK;
-    else
+	else
         ret = REP_ERR_CACHE_MISS;
 
  done:
@@ -33,7 +34,7 @@ int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
     } else {
         if (ret == REP_OK && val != NULL && vsize > 0) {
             /* if we don't reply to client, store them in replydata */
-			unpack_hdf(val, vsize, &q->hdfsnd);
+			hdf_set_value(q->hdfsnd, VNAME_CACHE_VAL, val);
         }
     }
 
@@ -63,13 +64,9 @@ int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
         ret = REP_ERR_BADPARAM;
         goto done;
     }
-    val = calloc(1, MAX_PACKET_LEN);
-    if (val == NULL) {
-        ret = REP_ERR_MEM;
-        goto done;
-    }
-
-	vsize = pack_hdf(node, val);
+	
+	val = hdf_obj_value(node);
+	vsize = strlen(val)+1;
     cache_set(cd, key, strlen((char*)key), val, vsize);
 
     ret = REP_OK;
@@ -80,8 +77,6 @@ int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
         q->req->reply_mini(q->req, reply);
     }
 
-    if (val) free(val);
-    
     return ret;
 }
 

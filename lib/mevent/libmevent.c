@@ -1,4 +1,3 @@
-
 #include <sys/types.h>	/* socket defines */
 #include <sys/socket.h>	/* socket functions */
 #include <stdlib.h>		/* malloc() */
@@ -18,6 +17,33 @@
 #include "netutils.h"
 #include "packet.h"
 
+#define CONFIG_FILE		"/etc/mevent/client.hdf"
+
+static bool loaded = false;
+static HDF *g_cfg;
+
+static int load_config()
+{
+	NEOERR *err;
+	
+	if (g_cfg != NULL) {
+		hdf_destroy(&g_cfg);
+	}
+	err = hdf_init(&g_cfg);
+	if (err != STATUS_OK) {
+		nerr_ignore(&err);
+		return 0;
+	}
+
+	err = hdf_read_file(g_cfg, CONFIG_FILE);
+	if (err != STATUS_OK) {
+		nerr_ignore(&err);
+		return 0;
+	}
+
+	loaded = true;
+	return 1;
+}
 
 /* Compares two servers by their connection identifiers. It is used internally
  * to keep the server array sorted with qsort(). */
@@ -121,19 +147,29 @@ ssize_t ssend(int fd, const unsigned char *buf, size_t count, int flags)
 }
 
 /* Creates a mevent_t. */
-mevent_t *mevent_init(void)
+mevent_t* mevent_init(char *ename)
 {
 	mevent_t *evt;
 	NEOERR *err;
+
+	if (!ename) return NULL;
 
 	evt = malloc(sizeof(mevent_t));
 	if (evt == NULL) {
 		return NULL;
 	}
 
+	evt->cmd = REQ_CMD_NONE;
+	evt->flags = FLAGS_NONE;
+	
+	char s[64];
+	neo_rand_string(s, 60);
+	evt->key = strdup(s);
+
+	evt->ename = strdup(ename);
+	
 	evt->servers = NULL;
 	evt->nservers = 0;
-	evt->ename = NULL;
 	err = hdf_init(&evt->hdfsnd);
 	if (err != STATUS_OK) {
 		free(evt);
@@ -161,6 +197,58 @@ mevent_t *mevent_init(void)
 	return evt;
 }
 
+mevent_t *mevent_init_plugin(char *ename)
+{
+	char *type, *ip, *nblock;
+	int port;
+	struct timeval tv;
+	
+	if (!ename)	return NULL;
+	
+	if (!loaded || g_cfg == NULL) {
+		if (load_config() != 1) {
+			return NULL;
+		}
+	}
+
+	HDF *node = hdf_get_obj(g_cfg, ename);
+	if (!node) return NULL;
+	
+	mevent_t *evt = mevent_init(ename);
+	if (!evt) return NULL;
+
+	node = hdf_obj_child(node);
+	while (node != NULL) {
+		type = hdf_get_value(node, "type", "unknown");
+		ip = hdf_get_value(node, "ip", "127.0.0.1") ;
+		port = hdf_get_int_value(node, "port", 26010);
+		nblock = hdf_get_value(node, "non_block", NULL);
+		tv.tv_sec = hdf_get_int_value(node, "net_timeout_s", 0);
+		tv.tv_usec = hdf_get_int_value(node, "net_timeout_u", 0);
+			
+		if (!strcmp(type, "tcp")) {
+			mevent_add_tcp_server(evt, ip, port, nblock, &tv);
+		} else if (!strcmp(type, "udp")) {
+			mevent_add_udp_server(evt, ip, port, nblock, &tv);
+		} else if (!strcmp(type, "tipc")) {
+			mevent_add_tipc_server(evt, port);
+		} else if (!strcmp(type, "sctp")) {
+			mevent_add_sctp_server(evt, ip, port);
+		} else {
+			continue;
+		}
+
+		node = hdf_obj_next(node);
+	}
+
+	if (evt->nservers <= 0) {
+		mevent_free(evt);
+		return NULL;
+	}
+
+	return evt;
+}
+
 /* Frees a mevent_t structure created with mevent_init(). */
 int mevent_free(mevent_t *evt)
 {
@@ -174,6 +262,8 @@ int mevent_free(mevent_t *evt)
 	}
 	if (evt->ename != NULL)
 		free(evt->ename);
+	if (evt->key != NULL)
+		free(evt->key);
 	hdf_destroy(&evt->hdfsnd);
 	if (evt->payload != NULL)
 		free(evt->payload);
@@ -282,72 +372,43 @@ struct mevent_srv *select_srv(mevent_t *evt,
 	return &(evt->servers[n]);
 }
 
-/*
- * chose_plugin will reset the evt->psize, equal clear the varaialbel
- * seted formerly. so, call it first
- */
-int mevent_chose_plugin(mevent_t *evt, const char *key,
-						unsigned short cmd, unsigned short flags)
+
+int mevent_trigger(mevent_t *evt, char *key,
+				   unsigned short cmd, unsigned short flags)
 {
+	size_t t, ksize, vsize;
 	struct mevent_srv *srv;
+	unsigned int moff;
 	unsigned char *p;
-	size_t ksize;
-
-	if (key == NULL || evt == NULL ||
-	    strlen(key) == 0 || strlen(key) > MAX_PACKET_LEN-20) return 0;
-
-	if (evt->ename == NULL) {
-		evt->ename = strdup(key);
-	}
-
+	uint32_t rv;
+	
+	if (!evt) return 0;
+	
+	if (!key) key = evt->key;
+	evt->cmd = cmd;
+	evt->flags = flags;
 	ksize = strlen(evt->ename);
-	srv = select_srv(evt, evt->ename, ksize);
-    
-	if (srv == NULL) return 0;
-	unsigned int moff = srv_get_msg_offset(srv);
 
-    ksize = strlen(key);
+	srv = select_srv(evt, key, strlen(key));
+	if (!srv) return 0;
+	
+	moff = srv_get_msg_offset(srv);
 	p = evt->payload + moff;
 	* (uint32_t *) p = htonl( (PROTO_VER << 28) | ID_CODE );
 	* ((uint16_t *) p + 2) = htons(cmd);
 	* ((uint16_t *) p + 3) = htons(flags);
 	* ((uint32_t *) p + 2) = htonl(ksize);
-	memcpy(p+12, key, ksize);
+	memcpy(p+12, evt->ename, ksize);
 
 	evt->psize = moff + 12 +ksize;
-	evt->packed = 0;
-	hdf_destroy(&evt->hdfsnd);
-	hdf_init(&evt->hdfsnd);
-
-	return 1;
-}
-
-int mevent_trigger(mevent_t *evt)
-{
-	size_t t, ksize, vsize;
-	struct mevent_srv *srv;
-	unsigned char *p;
-	uint32_t rv;
 	
-	if (evt == NULL || evt->psize < 13 ||
-	    (evt->psize+4) > MAX_PACKET_LEN) return 0;
-	
-	ksize = strlen(evt->ename);
-	//if (ksize == 0) return 0;
-
-	if (!evt->packed) {
-		vsize = pack_hdf(evt->hdfsnd, evt->payload + evt->psize);
-		evt->psize += vsize;
-		evt->packed = 1;
-	}
+	vsize = pack_hdf(evt->hdfsnd, evt->payload + evt->psize);
+	evt->psize += vsize;
 
 	if (evt->psize < 17) {
 		* (uint32_t *) (evt->payload+evt->psize) = htonl(DATA_TYPE_EOF);
 		evt->psize += sizeof(uint32_t);
 	}
-	
-	srv = select_srv(evt, evt->ename, ksize);
-	if (srv == NULL) return 0;
 	
 	t = srv_send(srv, evt->payload, evt->psize);
 	if (t <= 0) {

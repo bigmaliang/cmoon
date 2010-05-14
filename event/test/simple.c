@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 		strncpy(sql, argv[3], sizeof(sql));
 	}
 
-	mevent_t *evt = mevent_init();
+	mevent_t *evt = mevent_init("db_community");
 	if (evt == NULL) {
 		printf("init error\n");
 		return 1;
@@ -39,14 +39,13 @@ int main(int argc, char *argv[])
 	tv.tv_usec = 800000;
 	
 	mevent_add_tcp_server(evt, host, 26011, NULL, &tv);
-	mevent_chose_plugin(evt, "db_community", REQ_CMD_NONE, FLAGS_NONE);
-	hdf_set_value(evt->hdfsnd, "sqls", sql);
 	
 	int i;
 	suc = fai = busy = 0;
 	timer_start();
 	for (i = 0; i < times; i++) {
-		ret = mevent_trigger(evt);
+		hdf_set_value(evt->hdfsnd, "sqls", sql);
+		ret = mevent_trigger(evt, NULL, REQ_CMD_NONE, FLAGS_NONE);
 		if (ret != 0 && ret < REP_ERR) {
 			hdf_dump(evt->hdfrcv, NULL);
 			suc++;

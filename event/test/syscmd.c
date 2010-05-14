@@ -33,11 +33,11 @@ int main(int argc, char *argv[])
 		strncpy(val, argv[4], sizeof(val));
 	}
 
-	evt = mevent_init_plugin(plugin, cmd, FLAGS_SYNC);
+	evt = mevent_init_plugin(plugin);
 	hdf_set_value(evt->hdfsnd, "cachekey", key);
     hdf_set_value(evt->hdfsnd, "cacheval", val);
 
-    ret = mevent_trigger(evt);
+    ret = mevent_trigger(evt, NULL, cmd, FLAGS_SYNC);
     if (PROCESS_OK(ret)) {
         printf("process success %d\n", ret);
         hdf_dump(evt->hdfrcv, NULL);

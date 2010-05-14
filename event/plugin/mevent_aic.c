@@ -35,7 +35,7 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 	char *aname;
 	unsigned int aid;
 
-	REQ_GET_PARAM_U32(q->hdfrcv, "aid", aid);
+	REQ_GET_PARAM_LONG(q->hdfrcv, "aid", aid);
 	hit = cache_getf(cd, &val, &vsize, PREFIX_AIC"%u", aid);
 	if (hit == 0) {
 		ret = mdb_exec(db, NULL, "SELECT aid, aname, state FROM "

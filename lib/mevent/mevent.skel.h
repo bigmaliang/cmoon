@@ -54,7 +54,10 @@ struct mevent_srv {
 typedef struct mevent_t {
 	unsigned int nservers;
 	struct mevent_srv *servers;
+	int cmd;
+	int flags;
 	char *ename;
+	char *key;					/* key for select_srv() */
 	int packed;
 	HDF *hdfsnd;
 	unsigned char *payload;
@@ -73,7 +76,7 @@ struct mevent_srv *select_srv(mevent_t *evt, const char *key, size_t ksize);
 /*
  * 初始化数据结构，用过后请使用mevent_free() 释放内存
  */
-mevent_t *mevent_init();
+mevent_t *mevent_init(char *ename);
 int mevent_free(mevent_t *evt);
 
 /*
@@ -86,34 +89,77 @@ int mevent_add_udp_server(mevent_t *evt, const char *addr, int port,
 						  const char *nblock, void *tv);
 int mevent_add_sctp_server(mevent_t *evt, const char *addr, int port);
 
-/*
- * 选择后端处理插件，该函数会清空evt中已经添加的数据。
- * cmd, flags 用来指定插件处理的模式。详细选择请参考event/base/net-const.h 中的宏定义
- */
-int mevent_chose_plugin(mevent_t *evt, const char *key,
-						unsigned short cmd, unsigned short flags);
-
 
 /*
- * 完成以上三组函数的功能: 初始化, 添加服务器, 选择插件.
+ * 完成以上二组函数的功能: 初始化, 从配置文件中添加服务器.
  * 初始化: mevent_init()
  * 添加服务器: mevent_add_*_server()
- * 选择插件: mevent_chose_plugin()
  * 该函数会从配置文件中读取所有 ename 功能的服务器列表, 初始化,
- * 并随机选择一台作为通信后台
- * 原来的 mevent_add_xxx_server(), mevent_chose_plugin() 可以
- * 继续在返回的 mevent_t 结构体下使用
+ * 原来的 mevent_add_xxx_server() 可以继续在返回的 mevent_t 结构体下使用
  */
-mevent_t* mevent_init_plugin(char *ename, unsigned short cmd,
-							 unsigned short flags);
+mevent_t *mevent_init_plugin(char *ename);
 
 
 /*
- * 发包，触发事件中心处理。不会清空evt中的数据，可以循环调用
+ * 发包，触发事件中心处理。
+ * 因为需要支持设置不同参数的循环使用，故每次trigger时会清空 hdfsnd 中的数据.
+ * 不可以同一次参数设置循环调用
+ * key: 用来选择处理后端的关键字（如UIN等），提供的话可以有效避免缓存冗余，可以为NULL
+ * cmd: 命令号，不可重复使用，必填
+ * flags: 请求标志，不可重复使用，必填
  * 返回值为该操作返回码, 分为三段区间, 取值范围参考 net-const.h 中 REP_xxx
  * 如果服务业务端有其他数据返回时, 返回数据存储在 evt->rcvdata 中
  */
-int mevent_trigger(mevent_t *evt);
+int mevent_trigger(mevent_t *evt, char *key,
+				   unsigned short cmd, unsigned short flags);
+
+
+/*
+ * 获取请求中参数
+ */
+#define REQ_GET_PARAM_INT(hdf, key, ret)		\
+    do {										\
+		if (!hdf_get_value(hdf, key, NULL)) {	\
+            return REP_ERR_BADPARAM;			\
+		}										\
+		ret = hdf_get_int_value(hdf, key, 0);	\
+    } while (0)
+
+#define REQ_GET_PARAM_LONG(hdf, key, ret)						\
+    do {														\
+		if (!hdf_get_value(hdf, key, NULL)) {					\
+            return REP_ERR_BADPARAM;							\
+		}														\
+		ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);	\
+    } while (0)
+
+#define REQ_GET_PARAM_STR(hdf, key, ret)		\
+    do {										\
+		ret = hdf_get_value(hdf, key, NULL);	\
+		if (!ret) {								\
+            return REP_ERR_BADPARAM;			\
+		}										\
+    } while (0)
+
+
+#define REQ_FETCH_PARAM_INT(hdf, key, ret)			\
+    do {											\
+		if (hdf_get_value(hdf, key, NULL)) {		\
+			ret = hdf_get_int_value(hdf, key, 0);	\
+		}											\
+    } while (0)
+
+#define REQ_FETCH_PARAM_LONG(hdf, key, ret)							\
+    do {															\
+		if (hdf_get_value(hdf, key, NULL)) {						\
+			ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10); \
+		}															\
+    } while (0)
+
+#define REQ_FETCH_PARAM_STR(hdf, key, ret)		\
+    do {										\
+		ret = hdf_get_value(hdf, key, NULL);	\
+    } while (0)
 
 #endif	/* __MEVENT_H__ */
 

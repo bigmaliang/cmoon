@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 			return 1;
 	}
 	
-	mevent_t *evt = mevent_init();
+	mevent_t *evt = mevent_init(argv[3]);
 	if (evt == NULL) {
 		printf("init error\n");
 		SMS_ALARM("mevent_init error");
@@ -53,8 +53,7 @@ int main(int argc, char *argv[])
 	tv.tv_usec = 800000;
 	
 	mevent_add_udp_server(evt, argv[1], atoi(argv[2]), NULL, &tv);
-	mevent_chose_plugin(evt, argv[3], REQ_CMD_STATS, FLAGS_SYNC);
-	ret = mevent_trigger(evt);
+	ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
 	if (PROCESS_OK(ret)) {
 		hdf_dump(evt->hdfrcv, NULL);
 	} else {
@@ -62,7 +61,7 @@ int main(int argc, char *argv[])
 		
 	redo:
 		sleep(10);
-		ret = mevent_trigger(evt);
+		ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
 		if (PROCESS_NOK(ret) && try < 3) {
 			try++;
 			goto redo;

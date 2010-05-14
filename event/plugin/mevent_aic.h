@@ -5,6 +5,7 @@
 
 enum {
 	REQ_CMD_APPINFO = 1001,
+	REQ_CMD_APPNEW,
 	REQ_CMD_UPAPP
 } req_cmd_aic;
 
