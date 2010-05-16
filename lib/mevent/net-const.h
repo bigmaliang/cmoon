@@ -42,8 +42,8 @@
 #define FLAGS_CACHE_ONLY 1	/* get, set, del, cas, incr */
 #define FLAGS_SYNC		2	/* set, del */
 
-#define PROCESS_OK(ret)	(ret >= REP_OK && ret < REP_ERR)
-#define PROCESS_NOK(ret) (ret < REP_OK || ret >= REP_ERR)
+#define PROCESS_OK(ret)	(ret >= REP_OK)
+#define PROCESS_NOK(ret) (ret < REP_OK)
 
 enum {
 	DATA_TYPE_EOF = 0,
@@ -65,8 +65,7 @@ enum {
 } req_cmd_sys;
 
 enum {
-	REP_OK = 0x64,				/* 100 */
-	REP_ERR = 0x200,			/* 512 */
+	REP_ERR = 100,
 	REP_ERR_VER,
 	REP_ERR_SEND,				/* Error sending data */
 	REP_ERR_BROKEN,				/* Broken request */
@@ -77,7 +76,8 @@ enum {
 	REP_ERR_PACK,				/* packet data failure */
 	REP_ERR_BADPARAM,			/* parameter error */
 	REP_ERR_CACHE_MISS,			/* req_cmd_cache_get miss */
-	REP_ERR_APP = 0x400		  /* application error start point 1024 */
+	REP_ERR_APP = 500,			/* application error */
+	REP_OK = 1000,				/* ok start point */
 } rep_code_sys;
 
 #endif

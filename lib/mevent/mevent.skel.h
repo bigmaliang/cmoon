@@ -56,6 +56,7 @@ typedef struct mevent_t {
 	struct mevent_srv *servers;
 	int cmd;
 	int flags;
+	int errcode;
 	char *ename;
 	char *key;					/* key for select_srv() */
 	int packed;
@@ -77,7 +78,7 @@ struct mevent_srv *select_srv(mevent_t *evt, const char *key, size_t ksize);
  * 初始化数据结构，用过后请使用mevent_free() 释放内存
  */
 mevent_t *mevent_init(char *ename);
-int mevent_free(mevent_t *evt);
+void mevent_free(void *evt);
 
 /*
  * 添加后端通信服务器。对evt结构体添加数据，触发事件等操作之前必须调用此函数。

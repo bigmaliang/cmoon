@@ -161,6 +161,7 @@ mevent_t* mevent_init(char *ename)
 
 	evt->cmd = REQ_CMD_NONE;
 	evt->flags = FLAGS_NONE;
+	evt->errcode = REP_OK;
 	
 	char s[64];
 	neo_rand_string(s, 60);
@@ -250,9 +251,10 @@ mevent_t *mevent_init_plugin(char *ename)
 }
 
 /* Frees a mevent_t structure created with mevent_init(). */
-int mevent_free(mevent_t *evt)
+void mevent_free(void *p)
 {
-    if (evt == NULL) return 0;
+	mevent_t *evt = p;
+    if (evt == NULL) return;
     
 	if (evt->servers != NULL) {
 		int i;
@@ -271,7 +273,6 @@ int mevent_free(mevent_t *evt)
 		free(evt->rcvbuf);
 	hdf_destroy(&evt->hdfrcv);
 	free(evt);
-	return 1;
 }
 
 /* Sends a buffer to the given server. */
@@ -390,7 +391,10 @@ int mevent_trigger(mevent_t *evt, char *key,
 	ksize = strlen(evt->ename);
 
 	srv = select_srv(evt, key, strlen(key));
-	if (!srv) return 0;
+	if (!srv) {
+		evt->errcode = -1;
+		return -1;
+	}
 	
 	moff = srv_get_msg_offset(srv);
 	p = evt->payload + moff;
@@ -415,7 +419,8 @@ int mevent_trigger(mevent_t *evt, char *key,
 	
 	t = srv_send(srv, evt->payload, evt->psize);
 	if (t <= 0) {
-		return -1;
+		evt->errcode = -2;
+		return -2;
 	}
 
 	vsize = 0;
@@ -428,6 +433,7 @@ int mevent_trigger(mevent_t *evt, char *key,
 
 	hdf_destroy(&evt->hdfsnd);
 	hdf_init(&evt->hdfsnd);
-	
+
+	evt->errcode = rv;
 	return rv;
 }
