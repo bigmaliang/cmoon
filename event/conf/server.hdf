@@ -8,6 +8,7 @@ Mevent {
 		0 = skeleton
 		1 = rawdb
 		2 = aic
+		3 = dyn
 	}
 	smsalarm {
 		db {
@@ -30,5 +31,8 @@ Plugin {
     }
 	aic {
 		dbsn = pgsql:dbname=lcs_main host=localhost user=lcser password=loveu
+	}
+	dyn {
+		dbsn = pgsql:dbname=lcs_dyn host=localhost user=lcser password=loveu
 	}
 }

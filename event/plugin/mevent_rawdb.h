@@ -9,8 +9,8 @@ enum {
 } req_cmd_rawdb;
 
 enum {
-	REP_OK_RAWDB = 0x65,	/* 101 */
-	REP_ERR_RAWDB = 0x401 	/* 1025 */
+	REP_ERR_RAWDB = 501,
+	REP_OK_RAWDB = 1001
 } rep_code_rawdb;
 
 #endif	/* __MEVENT_RAWDB_H__ */

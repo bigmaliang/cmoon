@@ -2,6 +2,7 @@
 #define __MEVENT_AIC_H__
 
 #define PREFIX_AIC		"Appinfo"
+#define PREFIX_USERLIST	"AppUserlist"
 
 enum {
 	LCS_ST_BLACK = 0,
@@ -22,14 +23,17 @@ enum {
 enum {
 	REQ_CMD_APPINFO = 1001,
 	REQ_CMD_APPNEW,
-	REQ_CMD_APPUP
+	REQ_CMD_APPUP,
+	REQ_CMD_USERLIST = 2001,
+	REQ_CMD_USERJOIN
 } req_cmd_aic;
 
 enum {
-	REP_OK_INSERT = 0x65,	/* 101 */
+	REP_ERR_ALREADYREGIST = 501,
+	REP_ERR_NREGIST,
+	REP_ERR_ALREADYJOIN = 511,
+	REP_OK_INSERT = 1001,
 	REP_OK_UPDATE,
-	REP_ERR_ALREADYREGIST = 0x401, 	/* 1025 */
-	REP_ERR_NREGIST
 } rep_code_aic;
 
 #endif	/* __MEVENT_AIC_H__ */
