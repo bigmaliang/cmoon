@@ -38,13 +38,15 @@ static int dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
-	
-	hit = cache_getf(cd, &val, &vsize, PREFIX_DYN"%s%s", aname, uname);
+	uid = hash_string(uname);
+	aid = hash_string(aname);
+
+	hit = cache_getf(cd, &val, &vsize, PREFIX_DYN"%d%d", uid, aid);
 	if (hit == 0) {
 		ret = mdb_exec(db, NULL, "SELECT id, uid, uname, aid, aname, "
 					   " oid, oname, ip, refer, url, title, retcode FROM "
 					   " lcsjoin WHERE uid=%d AND aid=%d ORDER BY id DESC;",
-					   NULL, hash_string(uname), hash_string(aname));
+					   NULL, uid, aid);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("exec failure %s", mdb_get_errmsg(db));
 			return REP_ERR_DB;
@@ -72,7 +74,7 @@ static int dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
 			return REP_ERR_MEM;
 		}
 		vsize = pack_hdf(q->hdfsnd, val);
-		cache_setf(cd, val, vsize, PREFIX_DYN"%s%s", uname, aname);
+		cache_setf(cd, val, vsize, PREFIX_DYN"%d%d", uid, aid);
 		free(val);
 	} else {
 		unpack_hdf(val, vsize, &q->hdfsnd);
@@ -90,10 +92,12 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 						  mdb_conn *db)
 {
 	char *uname, *aname, *oname, *ip, *refer, *url, *title;
-	int id, retcode = 0, ret;
+	int id, uid, aid, retcode = 0, ret;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+	uid = hash_string(uname);
+	aid = hash_string(aname);
 
 	REQ_FETCH_PARAM_STR(q->hdfrcv, "oname", oname);
 	REQ_FETCH_PARAM_STR(q->hdfrcv, "ip", ip);
@@ -110,7 +114,7 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 	ret = mdb_exec(db, NULL, "INSERT INTO lcsjoin (uid, uname, "
 				   " aid, aname, oid, oname, ip, refer, url, title, retcode) "
 				   " VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id;",
-				   "isisisssssi", hash_string(uname), uname, hash_string(aname), aname,
+				   "isisisssssi", uid, uname, aid, aname,
 				   hash_string(oname), oname, ip, refer, url, title, retcode);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("exec failure %s", mdb_get_errmsg(db));
@@ -121,7 +125,7 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 		hdf_set_int_value(q->hdfsnd, "id", id);
 	}
 	
-	cache_delf(cd, PREFIX_DYN"%s%s", uname, aname);
+	cache_delf(cd, PREFIX_DYN"%d%d", uid, aid);
 
 	return REP_OK;
 }

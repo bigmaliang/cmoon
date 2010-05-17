@@ -196,24 +196,25 @@ static int aic_cmd_appuserlist(struct queue_entry *q, struct cache *cd,
 	unsigned char *val = NULL;
 	size_t vsize = 0;
 	int aid, uid, hit, ret;
-	char *aname, *uname, *intime;
+	char *aname, *uname, *ip, *intime;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
 	
 	hit = cache_getf(cd, &val, &vsize, PREFIX_USERLIST"%d", aid);
 	if (hit == 0) {
-		ret = mdb_exec(db, NULL, "SELECT uid, uname, intime, aid, aname FROM "
+		ret = mdb_exec(db, NULL, "SELECT uid, uname, ip, intime, aid, aname FROM "
 					   " userinfo WHERE aid=%d;", NULL, aid);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("exec failure %s", mdb_get_errmsg(db));
 			return REP_ERR_DB;
 		}
-		while (mdb_get(db, "iss", &uid, &uname, &intime)
+		while (mdb_get(db, "isss", &uid, &uname, &ip, &intime)
 			   == MDB_ERR_NONE) {
 			hdf_set_valuef(q->hdfsnd, "%s.aid=%d", uname, aid);
 			hdf_set_valuef(q->hdfsnd, "%s.aname=%s", uname, aname);
 			hdf_set_valuef(q->hdfsnd, "%s.uid=%d", uname, uid);
+			hdf_set_valuef(q->hdfsnd, "%s.ip=%s", uname, ip);
 			hdf_set_valuef(q->hdfsnd, "%s.intime=%s", uname, intime);
 		}
 		val = calloc(1, MAX_PACKET_LEN);
@@ -238,11 +239,12 @@ static int aic_cmd_appuserlist(struct queue_entry *q, struct cache *cd,
 static int aic_cmd_appuserjoin(struct queue_entry *q, struct cache *cd,
 							   mdb_conn *db)
 {
-	char *uname, *aname;
+	char *uname, *aname, *ip;
 	int aid, ret;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+	REQ_GET_PARAM_STR(q->hdfrcv, "ip", ip);
 	aid = hash_string(aname);
 
 	ret = aic_cmd_appuserlist(q, cd, db);
@@ -252,13 +254,13 @@ static int aic_cmd_appuserjoin(struct queue_entry *q, struct cache *cd,
 	}
 
 	if (hdf_get_obj(q->hdfsnd, uname)) {
-		mtc_warn("%d already join", aid);
+		mtc_warn("%s already join %s", uname, aname);
 		return REP_ERR_ALREADYJOIN;
 	}
 
-	ret = mdb_exec(db, NULL, "INSERT INTO userinfo (uid, uname, aid, aname) "
-				   " VALUES ($1, $2, $3, $4);", "isis",
-				   hash_string(uname), uname, aid, aname);
+	ret = mdb_exec(db, NULL, "INSERT INTO userinfo (uid, uname, aid, aname, ip) "
+				   " VALUES ($1, $2, $3, $4, $5);", "isiss",
+				   hash_string(uname), uname, aid, aname, ip);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("exec failure %s", mdb_get_errmsg(db));
 		return REP_ERR_DB;
