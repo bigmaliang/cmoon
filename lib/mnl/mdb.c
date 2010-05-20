@@ -434,7 +434,7 @@ void mdb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 		mdb_destroy(conn);
 	}
 	/* TODO system resource need free*/
-	//exit(ret);
+	exit(ret);
 }
 
 void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)

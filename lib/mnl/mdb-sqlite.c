@@ -141,7 +141,8 @@ static int sqlite_mdb_query_fill(mdb_query* query, const char* sql_string)
 		//g_printerr("GSQLW: [%p:%p:%p]prepare: %s\n", g_thread_self(), CONN(conn)->handle, query->stmt, sql_string);
 		if (rs != SQLITE_OK) {
 			mdb_set_error(conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(conn)->handle));
-			sqlite_mdb_query_free(query);
+			/* TODO WHY FREE ME? */
+			//sqlite_mdb_query_free(query);
 			return -1;
 		}
 	}
