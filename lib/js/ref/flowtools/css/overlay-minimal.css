@@ -3,11 +3,13 @@
 div.overlay {
 	
 	/* growing background image */
-	background-image:url(/js/pub/ref/flowtools/image/overlay/petrol.png);
+	/*background-image:url(/js/pub/ref/flowtools/image/overlay/petrol.png);*/
+	background-color: #eeeeee;
+	border: #aaaaaa 1px solid;
 	
 	/* dimensions after the growing animation finishes  */
-	width:320px;
-	height:160px;		
+	/*width:320px;*/
+	/*height:160px;*/
 	
 	/* initially overlay is hidden */
 	display:none;
