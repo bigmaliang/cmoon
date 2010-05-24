@@ -1,47 +1,29 @@
-
 /* the overlayed element */
-div.overlay {
+.overlay {
 	
-	/* growing background image */
-	/*background-image:url(/js/pub/ref/flowtools/image/overlay/petrol.png);*/
-	background-color: #eeeeee;
-	border: #aaaaaa 1px solid;
-	
-	/* dimensions after the growing animation finishes  */
-	/*width:320px;*/
-	/*height:160px;*/
-	
-	/* initially overlay is hidden */
+	/* must be initially hidden */
 	display:none;
 	
-	/* some padding to layout nested elements nicely  */
-	padding:55px;
+	/* place overlay on top of other elements */
+	z-index:10000;
+	
+	/* styling */
+	background-color:#eeeeee;
+	border: #aaaaaa 1px solid;
+
+	padding:15px;
+	width:350px;
+	min-height:200px;
+	
 }
 
-/* default close button positioned on upper right corner */
-div.overlay div.close {
+/* close button positioned on upper right corner */
+.overlay .close {
 	background-image:url(/js/pub/ref/flowtools/image/overlay/close.png);
 	position:absolute;
-	right:5px;
-	top:5px;
+	right:-15px;
+	top:-15px;
 	cursor:pointer;
 	height:35px;
 	width:35px;
-}
-
-
-/* black */
-div.overlay.black {
-	background:url(/js/pub/ref/flowtools/image/overlay/transparent.png) no-repeat !important;
-	color:#fff;
-}
-
-/* petrol */
-div.overlay.petrol {
-	background:url(/js/pub/ref/flowtools/image/overlay/petrol.png) no-repeat !important;
-	color:#fff;
-}
-
-div.black h2, div.petrol h2 {
-	color:#ddd;		
 }
