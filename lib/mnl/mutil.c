@@ -5,15 +5,14 @@ int CGI_REQ_METHOD(CGI *cgi)
 	char *op = hdf_get_value(cgi->hdf, PRE_CGI".RequestMethod", REQ_GET);
 	/* TODO boa not support put, del method... */
 	char *opt = hdf_get_value(cgi->hdf, PRE_QUERY".op", REQ_GET);
-	if (REQ_IS_GET(op)) {
-		return CGI_REQ_GET;
-	} else if (REQ_IS_PUT(op) || !strcmp(opt, "add")) {
-		return CGI_REQ_PUT;
-	} else if (REQ_IS_DEL(op) || !strcmp(opt, "del")) {
-		return CGI_REQ_DEL;
-	} else if (REQ_IS_POST(op)) {
-		return CGI_REQ_POST;
-	}
+	if (!strcmp(opt, "add")) return CGI_REQ_PUT;
+	if (!strcmp(opt, "del")) return CGI_REQ_DEL;
+	
+	if (REQ_IS_GET(op)) return CGI_REQ_GET;
+	else if (REQ_IS_PUT(op)) return CGI_REQ_PUT;
+	else if (REQ_IS_DEL(op)) return CGI_REQ_DEL;
+	else if (REQ_IS_POST(op)) return CGI_REQ_POST;
+	
 	return CGI_REQ_UNKNOWN;
 }
 

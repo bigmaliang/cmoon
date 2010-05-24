@@ -429,10 +429,13 @@ void mdb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 
 	get_errmsg(ret, msg);
 	mutil_redirect(msg, target, url, header);
-	
+
+	/* conn destroy by user */
+	/*
 	if (conn != NULL) {
 		mdb_destroy(conn);
 	}
+	*/
 	/* TODO system resource need free*/
 	exit(ret);
 }
@@ -453,9 +456,12 @@ void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
 	}
 	//mjson_output_hdf(hdf, 0);
 	
+	/* conn destroy by user */
+	/*
 	if (conn != NULL) {
 		mdb_destroy(conn);
 	}
+	*/
 	/* TODO system resource need free*/
 	//exit(ret);
 }
