@@ -124,29 +124,39 @@ int mdb_exec(mdb_conn* conn, int *affectrow, const char* sql_fmt, const char* fm
 	
 	int retval;
 	va_list ap;
-
+	char *p;
+	bool needesc = false;
 	char *sqlstr;
-	/*
-	 * BUG sql_fmt? 
-	 */
-	va_start(ap, fmt);
-	sqlstr = vsprintf_alloc(sql_fmt, ap);
-	if (sqlstr == NULL) {
-		mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for ms query new failure.");
-		return -1;
-	}
-	/* use the first query in the connector->queries list default */
-	mdb_query_fill(query, sqlstr);
-	free(sqlstr);
-	/*
-	 * vsprintf_allc() and vsnprintf() both not modify the ap
-	 * so, we need to do this...
-	 */
-	char *p = (char*)sql_fmt;
+	
+	p = (char*)sql_fmt;
 	while (*p != '\0') {
-		if (*p == '%' && *p+1 != '%' && *p-1 != '%')
-			va_arg(ap, void);
-		p++;
+		if (*p == '%' && *p+1 != '%' && *p-1 != '%') {
+			needesc = true;
+		}
+	}
+
+	va_start(ap, fmt);
+	if (needesc) {
+		sqlstr = vsprintf_alloc(sql_fmt, ap);
+		if (sqlstr == NULL) {
+			mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for ms query new failure.");
+			return -1;
+		}
+		/* use the first query in the connector->queries list default */
+		mdb_query_fill(query, sqlstr);
+		free(sqlstr);
+		/*
+		 * vsprintf_allc() and vsnprintf() both not modify the ap
+		 * so, we need to do this...
+		 */
+		p = (char*)sql_fmt;
+		while (*p != '\0') {
+			if (*p == '%' && *p+1 != '%' && *p-1 != '%')
+				va_arg(ap, void);
+			p++;
+		}
+	} else {
+		mdb_query_fill(query, sql_fmt);
 	}
 
 	retval = mdb_query_putv(query, fmt, ap);
@@ -287,29 +297,40 @@ int mdb_exec_apart(mdb_conn* conn, mdb_query **pquery,
 	
 	int retval;
 	va_list ap;
+	char *p;
+	bool needesc;
 
 	char *sqlstr;
-	/*
-	 * BUG sql_fmt? 
-	 */
-	va_start(ap, fmt);
-	sqlstr = vsprintf_alloc(sql_fmt, ap);
-	if (sqlstr == NULL) {
-		mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for ms query new failure.");
-		return -1;
-	}
-	/* use the first query in the connector->queries list default */
-	mdb_query_fill(query, sqlstr);
-	free(sqlstr);
-	/*
-	 * vsprintf_allc() and vsnprintf() both not modify the ap
-	 * so, we need to do this...
-	 */
-	char *p = (char*)sql_fmt;
+	
+	p = (char*)sql_fmt;
 	while (*p != '\0') {
-		if (*p == '%' && *p+1 != '%' && *p-1 != '%')
-			va_arg(ap, void);
-		p++;
+		if (*p == '%' && *p+1 != '%' && *p-1 != '%') {
+			needesc = true;
+		}
+	}
+
+	va_start(ap, fmt);
+	if (needesc) {
+		sqlstr = vsprintf_alloc(sql_fmt, ap);
+		if (sqlstr == NULL) {
+			mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for ms query new failure.");
+			return -1;
+		}
+		/* use the first query in the connector->queries list default */
+		mdb_query_fill(query, sqlstr);
+		free(sqlstr);
+		/*
+		 * vsprintf_allc() and vsnprintf() both not modify the ap
+		 * so, we need to do this...
+		 */
+		char *p = (char*)sql_fmt;
+		while (*p != '\0') {
+			if (*p == '%' && *p+1 != '%' && *p-1 != '%')
+				va_arg(ap, void);
+			p++;
+		}
+	} else {
+		mdb_query_fill(query, sql_fmt);
 	}
 
 	retval = mdb_query_putv(query, fmt, ap);

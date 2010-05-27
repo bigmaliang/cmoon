@@ -18,7 +18,7 @@ int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
         ret = REP_ERR_BADPARAM;
         goto done;
     }
-    hit = cache_get(cd, key, strlen((char*)key), &val, &vsize);
+    hit = cache_get(cd, (unsigned char*)key, strlen((char*)key), &val, &vsize);
     if (hit)
         ret = REP_OK;
 	else
@@ -34,7 +34,7 @@ int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
     } else {
         if (ret == REP_OK && val != NULL && vsize > 0) {
             /* if we don't reply to client, store them in replydata */
-			hdf_set_value(q->hdfsnd, VNAME_CACHE_VAL, val);
+			hdf_set_value(q->hdfsnd, VNAME_CACHE_VAL, (char*)val);
         }
     }
 
@@ -43,7 +43,7 @@ int sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
 
 int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
 {
-    unsigned char *val = NULL;
+    char *val = NULL;
     size_t vsize = 0;
     char *key;
     int ret;
@@ -67,7 +67,8 @@ int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
 	
 	val = hdf_obj_value(node);
 	vsize = strlen(val)+1;
-    cache_set(cd, key, strlen((char*)key), val, vsize);
+    cache_set(cd, (unsigned char*)key, strlen((char*)key),
+			  (unsigned char*)val, vsize);
 
     ret = REP_OK;
     
@@ -95,7 +96,7 @@ int sys_cmd_cache_del(struct queue_entry *q, struct cache *cd, bool reply)
         ret = REP_ERR_BADPARAM;
         goto done;
     }
-    cache_del(cd, key, strlen(key));
+    cache_del(cd, (unsigned char*)key, strlen(key));
 
     ret = REP_OK;
     
