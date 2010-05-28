@@ -2,10 +2,13 @@
 #define __MEVENT_DYN_H__
 
 #define PREFIX_DYN		"Dynamic"
+#define PREFIX_VISIT	"Visit"
 
 enum {
 	REQ_CMD_JOINGET = 1001,
-	REQ_CMD_JOINSET
+	REQ_CMD_JOINSET,
+	REQ_CMD_VISITGET,
+	REQ_CMD_VISITSET
 } req_cmd_dyn;
 
 enum {

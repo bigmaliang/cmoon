@@ -130,6 +130,44 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 	return REP_OK;
 }
 
+/*
+ * input : uname(STR) aname(STR)
+ * return: NORMAL
+ * reply : ["oname": "aaa", ...] OR []
+ */
+static int dyn_cmd_visitget(struct queue_entry *q, struct cache *cd,
+							mdb_conn *db)
+{
+	return REP_OK;
+}
+
+/*
+ * input : jid(UINT) url(STR) title(URL)
+ * return: NORMAL
+ * reply : NULL
+ */
+static int dyn_cmd_visitset(struct queue_entry *q, struct cache *cd,
+							mdb_conn *db)
+{
+	char *url, *title;
+	int jid, ret;
+
+	REQ_GET_PARAM_INT(q->hdfrcv, "jid", jid);
+	REQ_GET_PARAM_STR(q->hdfrcv, "url", url);
+	REQ_GET_PARAM_STR(q->hdfrcv, "title", title);
+
+	ret = mdb_exec(db, NULL, "INSERT INTO visit (jid, url, title) "
+				   " VALUES ($1, $2, $3)", "iss", jid, url, title);
+	if (ret != MDB_ERR_NONE) {
+		mtc_err("exec failure %s", mdb_get_errmsg(db));
+		return REP_ERR_DB;
+	}
+
+	cache_delf(cd, PREFIX_VISIT"%d", jid);
+
+	return REP_OK;
+}
+
 static void dyn_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct dyn_entry *e = (struct dyn_entry*)entry;
@@ -149,6 +187,12 @@ static void dyn_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_JOINSET:
 		ret = dyn_cmd_joinset(q, cd, db);
+		break;
+	case REQ_CMD_VISITGET:
+		ret = dyn_cmd_visitget(q, cd, db);
+		break;
+	case REQ_CMD_VISITSET:
+		ret = dyn_cmd_visitset(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
