@@ -7,6 +7,9 @@ $("input[name=permittype]") 或者$("input:radio")
 $("input:[name=permittype]:checked").val()
 http://visualjquery.com/
 
+div-id-name
+div-class-name
+
 
 日期格式
 -------
