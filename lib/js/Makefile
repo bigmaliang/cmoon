@@ -3,7 +3,7 @@ include $(BASEDIR)Make.env
 
 all: mbase.js mbox.js mflowtools.js mmd5.js mform.js  mseekatt.js msuperfish.js mloadify.js mlist.js mtable.js mpagenav.js minputval.js muiplug.js
 
-mbase.js: ref/jquery-1.3.2.js  ref/jquery.cookie.js  own/bmoon.js 
+mbase.js: ref/jquery-1.4.2.js  ref/jquery.cookie.js  ref/jquery.hotkeys.js own/bmoon.js
 
 mbox.js: ref/facebox/facebox.js
 
