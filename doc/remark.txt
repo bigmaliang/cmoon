@@ -10,6 +10,26 @@ http://visualjquery.com/
 div-id-name
 div-class-name
 
+js2-mode
+--------
+http://code.google.com/p/js2-mode/issues/detail?id=94
+http://stackoverflow.com/questions/2370028/emacs-js2-mode-disable-indenting-completely
+http://mihai.bazon.net/projects/editing-javascript-with-emacs-js2-mode
+http://www.saltycrane.com/blog/2010/03/emacs-espresso-mode-jquery/
+
+
+Js2 Mirror Mode: Hide Value Toggle  off (nil)
+   State: STANDARD.
+   Non-nil to insert closing brackets, parens, etc. automatically.
+Js2 Bounce Indent P: Hide Value Toggle  on (non-nil)
+   State: SET for current session only.
+   跳跃式缩进， 多按几次Tab 会有不同的缩进
+Js2 Mode Escape Quotes: Hide Value Toggle  on (non-nil)
+   State: STANDARD.
+   Non-nil to disable automatic quote-escaping inside strings.
+
+****http://www.nongnu.org/espresso/****
+
 
 日期格式
 -------
