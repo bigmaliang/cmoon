@@ -132,5 +132,7 @@ void mcs_hdf_escape_val(HDF *hdf);
 
 int mcs_set_login_info(HDF *hdf);
 
+void mcs_rand_string(char *s, int max);
+
 __END_DECLS
 #endif	/* __MCS_H__ */

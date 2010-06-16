@@ -133,6 +133,7 @@ int mdb_exec(mdb_conn* conn, int *affectrow, const char* sql_fmt, const char* fm
 		if (*p == '%' && *p+1 != '%' && *p-1 != '%') {
 			needesc = true;
 		}
+		p++;
 	}
 
 	va_start(ap, fmt);
@@ -307,6 +308,7 @@ int mdb_exec_apart(mdb_conn* conn, mdb_query **pquery,
 		if (*p == '%' && *p+1 != '%' && *p-1 != '%') {
 			needesc = true;
 		}
+		p++;
 	}
 
 	va_start(ap, fmt);

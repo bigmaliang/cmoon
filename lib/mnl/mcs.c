@@ -69,3 +69,16 @@ int mcs_set_login_info(HDF *hdf)
 	}
 	return RET_USER_NLOGIN;
 }
+
+void mcs_rand_string(char *s, int max)
+{
+  int size;
+  int x = 0;
+
+  size = neo_rand(max-1);
+  for (x = 0; x < size; x++)
+  {
+    s[x] = (char)(65 + neo_rand(90-65));
+  }
+  s[x] = '\0';
+}
