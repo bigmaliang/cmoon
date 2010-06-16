@@ -32,27 +32,30 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 	unsigned char *val = NULL;
 	size_t vsize = 0;
 	int aid, pid, state, hit, ret;
-	char *aname, *masn, *email;
+	char *aname, *asn, *masn, *email, *intime;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
 	
 	hit = cache_getf(cd, &val, &vsize, PREFIX_AIC"%d", aid);
 	if (hit == 0) {
-		ret = mdb_exec(db, NULL, "SELECT aid, aname, pid, masn, email, state FROM "
+		ret = mdb_exec(db, NULL, "SELECT aid, aname, pid, asn, masn, email, state, "
+					   " to_char(intime, 'YYYY-MM-DD') as intime FROM "
 					   " appinfo WHERE aid=%d;", NULL, aid);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("exec failure %s", mdb_get_errmsg(db));
 			return REP_ERR_DB;
 		}
-		while (mdb_get(db, "isissi", &aid, &aname, &pid, &masn, &email, &state)
+		while (mdb_get(db, "isisssis", &aid, &aname, &pid, &asn, &masn, &email, &state, &intime)
 			   == MDB_ERR_NONE) {
 			hdf_set_int_value(q->hdfsnd, "aid", aid);
 			hdf_set_value(q->hdfsnd, "aname", aname);
 			hdf_set_int_value(q->hdfsnd, "pid", pid);
+			hdf_set_value(q->hdfsnd, "asn", asn);
 			hdf_set_value(q->hdfsnd, "masn", masn);
 			hdf_set_value(q->hdfsnd, "email", email);
 			hdf_set_int_value(q->hdfsnd, "state", state);
+			hdf_set_value(q->hdfsnd, "intime", intime);
 		}
 		val = calloc(1, MAX_PACKET_LEN);
 		if (val == NULL) {
@@ -170,7 +173,8 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 		strcat(cols, tok);
 	}
 
-	if (!strcmp(cols, "")) {
+	strcat(cols, " uptime=uptime ");
+	if (!strcmp(cols, " uptime=uptime ")) {
 		return REP_ERR_BADPARAM;
 	}
 	
