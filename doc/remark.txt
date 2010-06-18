@@ -87,6 +87,7 @@ position
 	relative
 display
 	inline <span>
+	inline-block <a>
 	block <div>
 
 

@@ -46,8 +46,8 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 			mtc_err("exec failure %s", mdb_get_errmsg(db));
 			return REP_ERR_DB;
 		}
-		while (mdb_get(db, "isisssis", &aid, &aname, &pid, &asn, &masn, &email, &state, &intime)
-			   == MDB_ERR_NONE) {
+		if (mdb_get(db, "isisssis", &aid, &aname, &pid,
+					&asn, &masn, &email, &state, &intime) == MDB_ERR_NONE) {
 			hdf_set_int_value(q->hdfsnd, "aid", aid);
 			hdf_set_value(q->hdfsnd, "aname", aname);
 			hdf_set_int_value(q->hdfsnd, "pid", pid);
@@ -56,7 +56,15 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 			hdf_set_value(q->hdfsnd, "email", email);
 			hdf_set_int_value(q->hdfsnd, "state", state);
 			hdf_set_value(q->hdfsnd, "intime", intime);
+
+			if (pid != 0) {
+				mdb_exec(db, NULL, "SELECT aname FROM appinfo WHERE aid=%d;",
+						 NULL, pid);
+				mdb_get(db, "s", &aname);
+			}
+			hdf_set_value(q->hdfsnd, "pname", aname);
 		}
+		
 		val = calloc(1, MAX_PACKET_LEN);
 		if (val == NULL) {
 			return REP_ERR_MEM;
