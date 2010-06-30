@@ -50,6 +50,7 @@ SCM
 ---
 * http://progit.org/ *
 
+http://progit.org/book/zh/
 git branch event_data
 git checkout event_data
 ....
