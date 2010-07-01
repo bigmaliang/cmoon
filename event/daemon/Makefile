@@ -73,7 +73,7 @@ endif
 LIB_PLUGIN = $(patsubst %.c, %.so, $(PLUGIN_SOURCES))
 default: all
 
-all: $(LIB_PLUGIN) mevent hb install-lib
+all: $(LIB_PLUGIN) mevent hb
 
 .c.o:
 	$(NICE_CC) $(ALL_CFLAGS) -fPIC -c $< -o $@
@@ -90,32 +90,32 @@ hb: $(OBJS_HB) $(OBJS)
 
 
 install-bin: mevent
-	sudo install -d $(PREFIX)/bin
-	sudo install -m 0755 mevent $(PREFIX)/bin/
-	sudo install -m 0755 hb $(PREFIX)/bin/
+	install -d $(PREFIX)/bin
+	install -m 0755 mevent $(PREFIX)/bin/
+	install -m 0755 hb $(PREFIX)/bin/
 
 install-man:
-	sudo install -d $(PREFIX)/man/man1
-	sudo install -m 0644 mevent.1 $(PREFIX)/man/man1/
+	install -d $(PREFIX)/man/man1
+	install -m 0644 mevent.1 $(PREFIX)/man/man1/
 
 install-lib:
-	sudo install -d $(PREFIX)/lib
-	sudo install -m 0644 $(LIB_PLUGIN) $(PREFIX)/lib/
+	install -d $(PREFIX)/lib
+	install -m 0644 $(LIB_PLUGIN) $(PREFIX)/lib/
 
 install: install-bin install-man install-lib
 
 uninstall:
-	sudo rm -f $(PREFIX)/bin/mevent
-	sudo rm -f $(PREFIX)/man/man1/mevent.1
-	sudo rm -f $(PREFIX)/lib/$(LIB_PLUGIN)
+	rm -f $(PREFIX)/bin/mevent
+	rm -f $(PREFIX)/man/man1/mevent.1
+	rm -f $(PREFIX)/lib/$(LIB_PLUGIN)
 
 clean: clean-build clean-prof
 
 clean-build:
-	sudo rm -f $(OBJS) $(OBJS_MAIN) $(OBJS_HB) $(LIB_PLUGIN) mevent
+	rm -f $(OBJS) $(OBJS_MAIN) $(OBJS_HB) $(LIB_PLUGIN) mevent
 
 clean-prof:
-	sudo rm -f *.bb *.bbg *.da *.gcov *.gcda *.gcno gmon.out
+	rm -f *.bb *.bbg *.da *.gcov *.gcda *.gcno gmon.out
 
 .PHONY: default all \
 	install-bin install-man install-lib install uninstall \
