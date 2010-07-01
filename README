@@ -45,6 +45,39 @@ libsqlite3-dev
 
 
 
+运营安装
+======
+0, debian 5 32bit
+
+1, apt-get dist-upgrade
+
+2, modify apt source
+   deb http://ftp.us.debian.org/debian squeeze main
+   deb http://security.debian.org/ squeeze/updates main
+   apt update
+
+3, adduser moon
+   chown moon:moon /usr/local/
+   mkdir -p /data/logs/ && chown moon:moon /data/logs/
+   mkdir -p /var/log/moon/ && chown moon:mooon /var/logs/moon/
+
+4, apt-get install git git-core lighttpd postgresql
+   install librarys need by moon according mtools/prepare_lib.sh
+   modify lighttpd and pg config according xxx/doc/system.txt
+   (lightty enable fastcgi, disable cgi)
+
+5, login as moon:
+   cd /usr/local/ &&
+   git clone git://github.com/bigml/cmoon.git &&
+   git clone git://github.com/bigml/APE_JSF.git &&
+   git clone git://github.com/bigml/APE_Server.git
+
+   mkdir pop/fly/js/b
+   mkdir pop/fly/js/ape/Build
+
+6, modify moon/Make.env(no space left in config line)
+   cd lib ; make && cd event; make
+
 
 注:
 ==
