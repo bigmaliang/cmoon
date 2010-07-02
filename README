@@ -63,6 +63,7 @@ libsqlite3-dev
 
 4, apt-get install git git-core lighttpd postgresql
    install librarys need by moon according mtools/prepare_lib.sh
+   scp /usr/include/ClearSilver.h  /usr/lib/libneo_utl.a
    modify lighttpd and pg config according xxx/doc/system.txt
    (lightty enable fastcgi, disable cgi)
 
