@@ -47,6 +47,16 @@ __BEGIN_DECLS
 		exit(-1);								\
 	}
 
+#define CONTINUE_NOK(err)						\
+	if (err != STATUS_OK) {						\
+		STRING zstra;	string_init(&zstra);	\
+		nerr_error_traceback(err, &zstra);		\
+		mtc_err("%s", zstra.buf);				\
+		string_clear(&zstra);					\
+		nerr_ignore(&err);						\
+		continue;								\
+	}
+
 #define RETURN_NOK(err)							\
 	if (err != STATUS_OK) {						\
 		STRING zstra;	string_init(&zstra);	\
@@ -133,6 +143,8 @@ void mcs_hdf_escape_val(HDF *hdf);
 int mcs_set_login_info(HDF *hdf);
 
 void mcs_rand_string(char *s, int max);
+
+void mcs_text_escape(char *src, char **out);
 
 __END_DECLS
 #endif	/* __MCS_H__ */

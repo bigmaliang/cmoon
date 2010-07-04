@@ -19,7 +19,7 @@ bool mmisc_getdatetime_gmt(char *res, int len, const char *fmt, time_t second)
 {
 	memset(res, 0x0, len);
 	time_t tm = time(NULL) + second;
-	struct tm *stm = gmtime(&tm);
+  	struct tm *stm = gmtime(&tm);
 	if (strftime(res, len, fmt, stm) == 0)
 		return false;
 	return true;

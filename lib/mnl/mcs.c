@@ -82,3 +82,36 @@ void mcs_rand_string(char *s, int max)
   }
   s[x] = '\0';
 }
+
+void mcs_text_escape(char *src, char **out)
+{
+  STRING out_s;
+  int x, slen = strlen(src);
+  char *ptr;
+
+  string_init(&out_s);
+  string_append (&out_s, "");
+  *out = NULL;
+
+  x = 0;
+  while (x < slen)
+  {
+    ptr = strpbrk(src + x, "\n");
+    if (ptr == NULL || (ptr-src >= slen))
+    {
+      string_appendn (&out_s, src + x, slen-x);
+      x = slen;
+    }
+    else
+    {
+      if (string_appendn (&out_s, src + x, (ptr - src) - x) != STATUS_OK) break;
+      x = ptr - src;
+      if (src[x] == '\n')
+        string_append (&out_s, "<br />");
+      else if (src[x] == '<')
+        string_append (&out_s, "&lt;");
+      x++;
+    }
+  }
+  *out = out_s.buf;
+}
