@@ -113,7 +113,8 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 
 	ret = mdb_exec(db, NULL, "INSERT INTO lcsjoin (uid, uname, "
 				   " aid, aname, oid, oname, ip, refer, url, title, retcode) "
-				   " VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id;",
+				   " VALUES ($1, $2, $3, $4, $5, $6, $7, $8::varchar(256), "
+				   " $9::varchar(256), $10::varchar(256), $11) RETURNING id;",
 				   "isisisssssi", uid, uname, aid, aname,
 				   hash_string(oname), oname, ip, refer, url, title, retcode);
 	if (ret != MDB_ERR_NONE) {
@@ -157,7 +158,7 @@ static int dyn_cmd_visitset(struct queue_entry *q, struct cache *cd,
 	REQ_GET_PARAM_STR(q->hdfrcv, "title", title);
 
 	ret = mdb_exec(db, NULL, "INSERT INTO visit (jid, url, title) "
-				   " VALUES ($1, $2, $3)", "iss", jid, url, title);
+				   " VALUES ($1, $2::varchar(256), $3::varchar(256))", "iss", jid, url, title);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("exec failure %s", mdb_get_errmsg(db));
 		return REP_ERR_DB;
