@@ -131,6 +131,18 @@ void mmisc_str_repchr(char *s, char from, char to)
 	}
 }
 
+char* mmisc_str_strip (char *s, char n)
+{
+  int x;
+
+  x = strlen(s) - 1;
+  while (x>=0 && s[x]==n) s[x--] = '\0';
+
+  while (*s && *s==n) s++;
+  
+  return s;
+}
+
 unsigned int hash_string(const char *str)
 {
         int hash = 5381; // DJB Hash

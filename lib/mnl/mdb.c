@@ -477,6 +477,7 @@ void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
 		get_errmsg(ret, msg);
 		hdf_set_value(hdf, PRE_ERRMSG, msg);
 	}
+	hdf_set_int_value(hdf, PRE_ERRCODE, ret);
 	//mjson_output_hdf(hdf, 0);
 	
 	/* conn destroy by user */

@@ -19,6 +19,7 @@ int mmisc_get_count(mdb_conn *conn, char *table, char *col);
 void mmisc_set_count(HDF *hdf, mdb_conn *conn, char *table, char *col);
 void mmisc_get_offset(HDF *hdf, int *count, int *offset);
 void mmisc_str_repchr(char *s, char from, char to);
+char* mmisc_str_strip (char *s, char n);
 unsigned int hash_string(const char *str);
 
 /*

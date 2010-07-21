@@ -14,6 +14,7 @@ __BEGIN_DECLS
 #define PRE_CONFIG	"Config"
 #define PRE_RESERVE	"Reserve"
 #define PRE_ERRMSG	PRE_OUTPUT".errmsg"
+#define PRE_ERRCODE	PRE_OUTPUT".errcode"
 #define PRE_SUCCESS	PRE_OUTPUT".success"
 
 #define PRE_MMC_CLIENT	"Client"

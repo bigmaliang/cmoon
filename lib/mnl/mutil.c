@@ -7,6 +7,7 @@ int CGI_REQ_METHOD(CGI *cgi)
 	char *opt = hdf_get_value(cgi->hdf, PRE_QUERY".op", REQ_GET);
 	if (!strcmp(opt, "add")) return CGI_REQ_PUT;
 	if (!strcmp(opt, "del")) return CGI_REQ_DEL;
+	if (!strcmp(opt, "mod")) return CGI_REQ_POST;
 	
 	if (REQ_IS_GET(op)) return CGI_REQ_GET;
 	else if (REQ_IS_PUT(op)) return CGI_REQ_PUT;
