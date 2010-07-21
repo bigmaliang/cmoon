@@ -384,6 +384,8 @@ int mevent_trigger(mevent_t *evt, char *key,
 	uint32_t rv;
 	
 	if (!evt) return 0;
+
+	hdf_destroy(&evt->hdfrcv);
 	
 	if (!key) key = evt->key;
 	evt->cmd = cmd;
