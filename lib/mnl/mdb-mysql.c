@@ -385,13 +385,21 @@ static int mysql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 	if (QUERY(query)->res != NULL)
 		mysql_free_result(QUERY(query)->res);
 	QUERY(query)->res = mysql_store_result(CONN(query->conn)->mysql);
+	/* NEED res judgement? how do i use INSERT? */
+	/*
 	if (QUERY(query)->res == NULL) {
 		mtc_err("%s %s", query->sql, mysql_error(CONN(query->conn)->mysql));
 		mdb_set_error(query->conn, MDB_ERR_OTHER, mysql_error(CONN(query->conn)->mysql));
 		retval = -3;
 	}
+	*/
   
 err:
+	for (i = 0; i < param_count; i++)
+		if (free_list[i])
+			free(param_values[i]);
+	free(param_values);
+	free(free_list);
 	return retval;
 }
 
