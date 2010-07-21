@@ -31,7 +31,7 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 {
 	unsigned char *val = NULL;
 	size_t vsize = 0;
-	int aid, pid, state, hit, ret;
+	int aid, pid, state, tune, hit, ret;
 	char *aname, *asn, *masn, *email, *intime;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
@@ -40,14 +40,14 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 	hit = cache_getf(cd, &val, &vsize, PREFIX_AIC"%d", aid);
 	if (hit == 0) {
 		ret = mdb_exec(db, NULL, "SELECT aid, aname, pid, asn, masn, email, state, "
-					   " to_char(intime, 'YYYY-MM-DD') as intime FROM "
+					   " tune, to_char(intime, 'YYYY-MM-DD') as intime FROM "
 					   " appinfo WHERE aid=%d;", NULL, aid);
 		if (ret != MDB_ERR_NONE) {
 			mtc_err("exec failure %s", mdb_get_errmsg(db));
 			return REP_ERR_DB;
 		}
-		if (mdb_get(db, "isisssis", &aid, &aname, &pid,
-					&asn, &masn, &email, &state, &intime) == MDB_ERR_NONE) {
+		if (mdb_get(db, "isisssiis", &aid, &aname, &pid,
+					&asn, &masn, &email, &state, &tune, &intime) == MDB_ERR_NONE) {
 			hdf_set_int_value(q->hdfsnd, "aid", aid);
 			hdf_set_value(q->hdfsnd, "aname", aname);
 			hdf_set_int_value(q->hdfsnd, "pid", pid);
@@ -55,6 +55,7 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 			hdf_set_value(q->hdfsnd, "masn", masn);
 			hdf_set_value(q->hdfsnd, "email", email);
 			hdf_set_int_value(q->hdfsnd, "state", state);
+			hdf_set_int_value(q->hdfsnd, "tune", tune);
 			hdf_set_value(q->hdfsnd, "intime", intime);
 
 			if (pid != 0) {
@@ -135,13 +136,14 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 						 mdb_conn *db)
 {
 	char *aname, *asn, *masn, *email;
-	int aid, state = -1, ret;
+	int aid, state = -1, tune = -1, ret;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	REQ_FETCH_PARAM_STR(q->hdfrcv, "asn", asn);
 	REQ_FETCH_PARAM_STR(q->hdfrcv, "masn", masn);
 	REQ_FETCH_PARAM_STR(q->hdfrcv, "email", email);
 	REQ_FETCH_PARAM_INT(q->hdfrcv, "state", state);
+	REQ_FETCH_PARAM_INT(q->hdfrcv, "tune", tune);
 
 	aid = hash_string(aname);
 
@@ -178,6 +180,10 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 	}
 	if (state != -1) {
 		snprintf(tok, sizeof(tok), " state=%d, ", state);
+		strcat(cols, tok);
+	}
+	if (tune != -1) {
+		snprintf(tok, sizeof(tok), " tune=%d, ", tune);
 		strcat(cols, tok);
 	}
 

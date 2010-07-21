@@ -4,6 +4,9 @@
 #define PREFIX_AIC		"Appinfo"
 #define PREFIX_USERLIST	"AppUserlist"
 
+#define LCS_TUNE_QUIET	0x01
+#define LCS_TUNE_SMS	0x02
+
 enum {
 	LCS_ST_BLACK = 0,
 	LCS_ST_STRANGER,
@@ -12,13 +15,6 @@ enum {
 	LCS_ST_VIP,					/* 200 online, one year history raw, 20 admin */
 	LCS_ST_VVIP					/* unlimit online, history raw, admin */
 } lcsStat;
-
-enum {
-	LCS_SMS_CLOSE = 0,
-	LCS_SMS_OPEN,
-	LCS_ADM_OFFLINE,
-	LCS_ADM_ONLINE
-} lcsFlag;
 
 enum {
 	REQ_CMD_APPINFO = 1001,
