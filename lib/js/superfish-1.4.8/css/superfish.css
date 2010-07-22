@@ -11,8 +11,7 @@
 .sf-menu ul {
 	position:		absolute;
 	top:			-999em;
-	/*width:			10em;*/ /* left offset of submenus need to match (see below) */
-	width:			100%;
+	width:			10em; /* left offset of submenus need to match (see below) */
 }
 .sf-menu ul li {
 	width:			100%;
@@ -56,27 +55,29 @@ ul.sf-menu li li li.sfHover ul {
 /*** DEMO SKIN ***/
 .sf-menu {
 	float:			left;
-	/*margin-bottom:	1em;*/
+	margin-bottom:	1em;
 }
 .sf-menu a {
-    border: 1px solid #101010;
-    border-width: 0 1px;
-	padding: 		.62em 1em;
+	border-left:	1px solid #fff;
+	border-top:		1px solid #CFDEFF;
+	padding: 		.75em 1em;
 	text-decoration:none;
 }
+.sf-menu a, .sf-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
+	color:			#13a;
+}
 .sf-menu li {
-	background:		#437070;
+	background:		#BDD2FF;
 }
 .sf-menu li li {
-/*	background:		#AABDE6;*/
+	background:		#AABDE6;
 }
 .sf-menu li li li {
 	background:		#9AAEDB;
 }
 .sf-menu li:hover, .sf-menu li.sfHover,
 .sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active {
-	/*background:		#CFDEFF;*/
-	background:		#518888;
+	background:		#CFDEFF;
 	outline:		0;
 }
 
@@ -94,10 +95,10 @@ ul.sf-menu li li li.sfHover ul {
 	height:			10px;
 	text-indent: 	-999em;
 	overflow:		hidden;
-	background:		url('/js/pub/ref/superfish/images/arrows-ffffff.png') no-repeat -10px -100px; /* 8-bit indexed alpha png. IE6 gets solid image only */
+	background:		url('/js/pub/superfish-1.4.8/images/arrows-ffffff.png') no-repeat -10px -100px; /* 8-bit indexed alpha png. IE6 gets solid image only */
 }
 a > .sf-sub-indicator {  /* give all except IE6 the correct values */
-	top:			.7em;
+	top:			.8em;
 	background-position: 0 -100px; /* use translucent arrow for modern browsers*/
 }
 /* apply hovers to modern browsers */
@@ -123,7 +124,7 @@ li.sfHover > a > .sf-sub-indicator {
 
 /*** shadows for all but IE6 ***/
 .sf-shadow ul {
-	background:	url('/js/pub/ref/superfish/images/shadow.png') no-repeat bottom right;
+	background:	url('/js/pub/superfish-1.4.8/images/shadow.png') no-repeat bottom right;
 	padding: 0 8px 9px 0;
 	-moz-border-radius-bottomleft: 17px;
 	-moz-border-radius-topright: 17px;
