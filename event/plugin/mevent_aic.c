@@ -183,7 +183,13 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 		strcat(cols, tok);
 	}
 	if (tune != -1) {
-		snprintf(tok, sizeof(tok), " tune=%d, ", tune);
+		if (hdf_get_int_value(q->hdfrcv, "tuneop", 0)) {
+			/* set tune bit */
+			snprintf(tok, sizeof(tok), " tune=tune | %d, ", tune);
+		} else {
+			/* unset tune bit */
+			snprintf(tok, sizeof(tok), " tune=tune & %d, ", ~tune);
+		}
 		strcat(cols, tok);
 	}
 
