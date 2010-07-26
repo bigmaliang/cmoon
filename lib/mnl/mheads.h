@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <dlfcn.h>				/* dlope()... */
 #include <dirent.h>				/* scandir()... */
+#include <iconv.h>
 
 #include <stdarg.h>
 #include <sys/stat.h>
