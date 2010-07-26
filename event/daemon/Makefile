@@ -40,7 +40,7 @@ LIBS = -levent -lpthread -lrt -ldl $(LIB_MEVENT) $(LIB_MNL) $(LIB_MEMC) $(LIB_CS
 BASE_SOURCES = $(wildcard ../base/*.c)
 PLUGIN_SOURCES = $(wildcard ../plugin/*.c)
 
-OBJS = mevent.o queue.o log.o net.o parse.o reply.o stats.o config.o common.o cache.o syscmd.o smsalarm.o
+OBJS = mevent.o queue.o log.o net.o parse.o reply.o stats.o config.o common.o syscmd.o smsalarm.o
 OBJS += $(patsubst %.c, %.o, $(BASE_SOURCES))
 OBJS_MAIN = main.o
 OBJS_HB = hb.o

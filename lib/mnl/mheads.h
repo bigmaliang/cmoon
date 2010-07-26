@@ -25,6 +25,7 @@
 #include "libmemcached/memcached.h"
 #ifndef DROP_MEVENT
 #include "mevent.h"
+#include "cache.h"
 #endif
 #ifndef DROP_FCGI
 #include "fcgi_stdio.h"
