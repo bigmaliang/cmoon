@@ -27,3 +27,13 @@ dyn {
 		net_timeout_u = 800000
 	}
 }
+
+place {
+	0 {
+		type = udp
+		ip = 127.0.0.1
+		port = 26000
+		net_timeout_s = 0
+		net_timeout_u = 800000
+	}
+}

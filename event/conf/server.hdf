@@ -9,6 +9,7 @@ Mevent {
 		1 = rawdb
 		2 = aic
 		3 = dyn
+		4 = place
 	}
 	smsalarm {
 		db {
@@ -34,5 +35,8 @@ Plugin {
 	}
 	dyn {
 		dbsn = pgsql:dbname=lcs_dyn host=localhost user=lcser password=loveu
+	}
+	place {
+		ipfile = /usr/local/lib/QQWry.Dat
 	}
 }

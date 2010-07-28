@@ -101,6 +101,7 @@ install-man:
 install-lib:
 	install -d $(PREFIX)/lib
 	install -m 0644 $(LIB_PLUGIN) $(PREFIX)/lib/
+	install -m 0644 ../plugin/QQWry.Dat $(PREFIX)/lib/
 
 install: install-bin install-man install-lib
 
