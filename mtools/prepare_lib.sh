@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Debian system
-sudo apt-get install clearsilver-dev libfcgi-dev libjson0-dev libmemcached-dev libqdbm-dev
+sudo apt-get install clearsilver-dev libfcgi-dev libjson0-dev libmemcached-dev libqdbm-dev libevent-dev
 sudo apt-get install libmysqlclient-dev libpq-dev libsqlite3-dev
 
 # Other Linux distribution
