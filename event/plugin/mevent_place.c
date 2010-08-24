@@ -29,13 +29,13 @@ static char* gb2utf8(char *s)
 {
 	if (!s) return NULL;
 
-	if (!cv || (int)cv == -1) cv = iconv_open("UTF-8", "GB2312");
-	if ((int)cv == -1) {
+	if (!cv || cv == (iconv_t)-1) cv = iconv_open("UTF-8", "GB2312");
+	if (cv == (iconv_t)-1) {
 		mtc_err("init conv error %s", strerror(errno));
 		return NULL;
 	}
 
-	unsigned int len = strlen(s), ulen;
+	size_t len = strlen(s), ulen;
 	ulen = len*2;
 	char *utf8 = calloc(1, ulen);
 	char *us = utf8;
