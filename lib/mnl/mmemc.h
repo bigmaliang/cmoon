@@ -28,7 +28,7 @@ memcached_return mmc_count(int op, const char *key, uint32_t offset, uint64_t *v
 
 char* mmc_get(const char *key, size_t *vallen, uint32_t *flags);
 bool mmc_get_int(const char *key, int *value, uint32_t *flags);
-memcached_return mmc_mget(char **keys, char *vals[], int num,
+memcached_return mmc_mget(const char **keys, char *vals[], int num,
 						  size_t *val_len[], uint32_t *flags[]);
 memcached_return mmc_delete(const char *key, time_t exp);
 
