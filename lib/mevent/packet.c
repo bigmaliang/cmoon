@@ -63,7 +63,7 @@ size_t pack_data_str(const char *key, const char *val, unsigned char *buf)
 	size_t ksize = strlen(key);
 	size_t vsize = 0;
 
-    if (val) vsize = strlen(val+1);
+    if (val) vsize = strlen(val)+1;
 
 	if (vsize > MAX_PACKET_LEN - RESERVE_SIZE) {
 		vsize = MAX_PACKET_LEN - RESERVE_SIZE;
