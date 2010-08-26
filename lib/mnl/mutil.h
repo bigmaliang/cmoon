@@ -76,5 +76,11 @@ int  mutil_expand_strvf(char **outstr, const char *sql_fmt, const char *fmt, va_
  */
 int  mutil_expand_strf(char **outstr, const char *sql_fmt, const char *fmt, ...);
 
+#ifndef DROP_FCGI
+int read_cb(void *ptr, char *data, int size);
+int printf_cb(void *ptr, const char *format, va_list ap);
+int write_cb(void *ptr, const char *data, int size);
+#endif
+
 __END_DECLS
 #endif	/* __MUTIL_H__ */
