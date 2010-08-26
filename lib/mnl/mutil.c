@@ -364,18 +364,22 @@ int mutil_expand_strf(char **outstr, const char *sql_fmt, const char *fmt, ...)
 	return ret;
 }
 
-#ifdef DROP_FCGI
-int read_cb(void *ptr, char *data, int size) {return 0;}
-int writef_cb(void *ptr, const char *format, va_list ap) {return 0;}
-int write_cb(void *ptr, const char *data, int size) {return 0;}
-void mutil_wrap_fcgi(int argc, char **argv, char **envp) {;}
-#else
-int read_cb(void *ptr, char *data, int size) {return FCGI_fread(data, sizeof(char), size, FCGI_stdin);}
-int writef_cb(void *ptr, const char *format, va_list ap) {return FCGI_vprintf(format, ap);}
-int write_cb(void *ptr, const char *data, int size) {return FCGI_fwrite((void *)data, sizeof(char), size, FCGI_stdout);}
-void mutil_wrap_fcgi(int argc, char **argv, char **envp)
-{
-	cgiwrap_init_std(argc, argv, envp);
-	cgiwrap_init_emu(NULL, &read_cb, &writef_cb, &write_cb, NULL, NULL, NULL);
+#ifndef DROP_FCGI
+int read_cb(void *ptr, char *data, int size) {
+	return fread(data, sizeof(char), size, FCGI_stdin);
+}
+int printf_cb(void *ptr, const char *format, va_list ap) {
+	return printf(format, ap);
+}
+int write_cb(void *ptr, const char *data, int size) {
+	return fwrite((void *)data, sizeof(char), size, FCGI_stdout);
 }
 #endif
+
+void mutil_wrap_fcgi(int argc, char **argv, char **envp)
+{
+	cgiwrap_init_std(argc, argv, environ);
+#ifndef DROP_FCGI
+	cgiwrap_init_emu(NULL, &read_cb, &printf_cb, &write_cb, NULL, NULL, NULL);
+#endif
+}

@@ -62,6 +62,8 @@ git push [remotename] [localbranch]:[remotebranch]
 git push origin :event_data
 删掉远程event_data branch
 
+git push git@github.com:bigml/cmoon.git ml:master
+将开发机上 ml 分支提交到 github 的 bigml master 分支
 
 mkdir my_blog_tmp
 cd my_blog_tmp
