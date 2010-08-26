@@ -162,7 +162,6 @@ static void parse_event(struct req_info *req)
 	uint32_t esize, rsize;
 	unsigned char *pos;
 	HDF *hdfrcv = NULL;
-	char *val = NULL;
 
 	/*
 	 * Request format:

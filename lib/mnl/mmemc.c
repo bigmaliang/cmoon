@@ -182,7 +182,7 @@ bool mmc_get_int(const char *key, int *value, uint32_t *flags)
 	}
 }
 
-memcached_return mmc_mget(char **keys, char *vals[], int num,
+memcached_return mmc_mget(const char **keys, char *vals[], int num,
 						  size_t *val_len[], uint32_t *flags[])
 {
 	memcached_st *mc;
@@ -218,7 +218,7 @@ memcached_return mmc_mget(char **keys, char *vals[], int num,
 		return rc;
 	}
 	for (i = 0; i < num; i++) {
-		vals[i] = memcached_fetch(mc, keys[i], &keys_len[i], plen[i], pflg[i], &rc);
+		vals[i] = memcached_fetch(mc, (char*)keys[i], &keys_len[i], plen[i], pflg[i], &rc);
 		if (rc == MEMCACHED_END) {
 			mtc_info("%s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
 			break;
