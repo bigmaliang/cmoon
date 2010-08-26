@@ -76,7 +76,5 @@ int  mutil_expand_strvf(char **outstr, const char *sql_fmt, const char *fmt, va_
  */
 int  mutil_expand_strf(char **outstr, const char *sql_fmt, const char *fmt, ...);
 
-void mutil_wrap_fcgi(int argc, char **argv, char **envp);
-
 __END_DECLS
 #endif	/* __MUTIL_H__ */

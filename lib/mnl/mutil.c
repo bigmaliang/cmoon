@@ -375,11 +375,3 @@ int write_cb(void *ptr, const char *data, int size) {
 	return fwrite((void *)data, sizeof(char), size, FCGI_stdout);
 }
 #endif
-
-void mutil_wrap_fcgi(int argc, char **argv, char **envp)
-{
-	cgiwrap_init_std(argc, argv, environ);
-#ifndef DROP_FCGI
-	cgiwrap_init_emu(NULL, &read_cb, &printf_cb, &write_cb, NULL, NULL, NULL);
-#endif
-}
