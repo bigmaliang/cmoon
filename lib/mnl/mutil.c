@@ -369,7 +369,7 @@ int read_cb(void *ptr, char *data, int size) {
 	return fread(data, sizeof(char), size, FCGI_stdin);
 }
 int printf_cb(void *ptr, const char *format, va_list ap) {
-	return printf(format, ap);
+	return vprintf(format, ap);
 }
 int write_cb(void *ptr, const char *data, int size) {
 	return fwrite((void *)data, sizeof(char), size, FCGI_stdout);
