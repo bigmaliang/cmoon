@@ -57,6 +57,7 @@ int mdb_finish(mdb_conn *conn);
 int mdb_exec(mdb_conn *conn, int *affectrow, const char* sql_fmt, const char* fmt, ...);
 int mdb_put(mdb_conn *conn, const char* fmt, ...);
 int mdb_get(mdb_conn *conn, const char* fmt, ...);
+int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
 int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
 int mdb_get_rows(mdb_conn *conn);
 int mdb_get_affect_rows(mdb_conn *conn);
@@ -92,6 +93,19 @@ int mdb_get_last_id_apart(mdb_query *query, const char* seq_name);
 		mtc_err("conn err %s", mdb_get_errmsg(conn));	\
 		return;											\
 	}
+
+
+/*
+ * col, table, condition MUST be string literal, not variable
+ * "tjt_%d" OK
+ * char *table NOK
+ * e.g.
+ * LDB_QUERY_RAW(dbtjt, "tjt_%d", TJT_QUERY_COL, "fid=%d ORDER BY uptime "
+ * " LIMIT %d OFFSET %d", NULL, aid, fid, count, offset);
+ */
+#define MDB_QUERY_RAW(conn, table, col, condition, sfmt, ...)           \
+	mdb_exec(conn, NULL, "SELECT " col " FROM " table " WHERE " condition ";", \
+			 sfmt, ##__VA_ARGS__)
 
 void mdb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
 				  char *target, char *url, bool header);

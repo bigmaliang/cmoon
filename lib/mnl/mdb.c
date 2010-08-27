@@ -203,7 +203,7 @@ int mdb_get(mdb_conn* conn, const char* fmt, ...)
 	return retval;
 }
 
-int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
+int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 {
 	int qrcnt, i;
 	char qrarray[QR_NUM_MAX][LEN_ST];
@@ -221,9 +221,50 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	}
 
 	char hdfkey[LEN_HDF_KEY];
+
+	ret = mdb_get(conn, fmt, &col[0], &col[1], &col[2], &col[3],
+				  &col[4], &col[5], &col[6], &col[7], &col[8],
+				  &col[9], &col[10], &col[11], &col[12], &col[13],
+				  &col[14], &col[15], &col[16], &col[17], &col[18]);
+	if (ret != MDB_ERR_NONE) {
+		mtc_err("db exec error %s", mdb_get_errmsg(conn));
+		return ret;
+	}
+	
+	for (i = 0; i < qrcnt; i++) {
+		if (prefix) {
+			snprintf(hdfkey, sizeof(hdfkey), "%s.%s", prefix, qrarray[i]);
+		} else {
+			strcpy(hdfkey, qrarray[i]);
+		}
+		hdf_set_value(hdf, hdfkey, col[i]);
+	}
+
+	return MDB_ERR_NONE;
+}
+
+int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
+{
+	int qrcnt, i;
+	char qrarray[QR_NUM_MAX][LEN_ST];
+	char *col[QR_NUM_MAX];
+	char fmt[LEN_ST];
+	int ret;
+	
+	memset(fmt, 0x0, sizeof(fmt));
+	memset(qrarray, 0x0, sizeof(qrarray));
+	
+	mmisc_set_qrarray(cols, qrarray, &qrcnt);
+	
+	for (i = 0; i < qrcnt; i++) {
+		strcat(fmt, "s");
+	}
+
+	char hdfkey[LEN_HDF_KEY] = "0";
 	/* append to last child */
 	int rowsn = 0;
-	snprintf(hdfkey, sizeof(hdfkey)-1, "%s.0", prefix);
+	if (prefix)
+		snprintf(hdfkey, sizeof(hdfkey), "%s.0", prefix);
 	HDF *res = hdf_get_obj(hdf, hdfkey);
 	while (res != NULL) {
 		rowsn++;
@@ -242,8 +283,12 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 				   &col[14], &col[15], &col[16], &col[17], &col[18])
 		   == MDB_ERR_NONE ){
 		for (i = 0; i < qrcnt; i++) {
-			snprintf(hdfkey, sizeof(hdfkey)-1, "%s.%d.%s",
-					 prefix, rowsn, qrarray[i]);
+			if (prefix)
+				snprintf(hdfkey, sizeof(hdfkey), "%s.%d.%s",
+						 prefix, rowsn, qrarray[i]);
+			else
+				snprintf(hdfkey, sizeof(hdfkey), "%d.%s",
+						 rowsn, qrarray[i]);
 			hdf_set_value(hdf, hdfkey, col[i]);
 		}
 		rowsn++;
