@@ -6,9 +6,9 @@
 
 enum {
 	REQ_CMD_JOINGET = 1001,
-	REQ_CMD_JOINSET,
+	REQ_CMD_JOINSET,		/* sb came to my site (join) */
 	REQ_CMD_VISITGET,
-	REQ_CMD_VISITSET
+	REQ_CMD_VISITSET		/* sb opened page of my site (visit) */
 } req_cmd_dyn;
 
 enum {

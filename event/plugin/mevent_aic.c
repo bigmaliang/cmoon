@@ -21,6 +21,14 @@ struct aic_entry {
 	struct aic_stats st;
 };
 
+#define APPINFO_COL " aid, aname, pid, asn, masn, email, state, tune, "	\
+	" to_char(intime, 'YYYY-MM-DD') as intime, "						\
+	" to_char(uptime, 'YYYY-MM-DD') as uptime "
+
+#define USERINFO_COL " uid, uname, ip, intime, aid, aname, "	\
+	" to_char(intime, 'YYYY-MM-DD') as intime, "				\
+	" to_char(uptime, 'YYYY-MM-DD') as uptime "
+
 /*
  * input : aname(STR)
  * return: NORMAL
@@ -31,39 +39,26 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 {
 	unsigned char *val = NULL;
 	size_t vsize = 0;
-	int aid, pid, state, tune, hit, ret;
-	char *aname, *asn, *masn, *email, *intime;
+	int aid, pid, hit;
+	char *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
-	
+
 	hit = cache_getf(cd, &val, &vsize, PREFIX_AIC"%d", aid);
 	if (hit == 0) {
-		ret = mdb_exec(db, NULL, "SELECT aid, aname, pid, asn, masn, email, state, "
-					   " tune, to_char(intime, 'YYYY-MM-DD') as intime FROM "
-					   " appinfo WHERE aid=%d;", NULL, aid);
-		if (ret != MDB_ERR_NONE) {
-			mtc_err("exec failure %s", mdb_get_errmsg(db));
-			return REP_ERR_DB;
-		}
-		if (mdb_get(db, "isisssiis", &aid, &aname, &pid,
-					&asn, &masn, &email, &state, &tune, &intime) == MDB_ERR_NONE) {
-			hdf_set_int_value(q->hdfsnd, "aid", aid);
-			hdf_set_value(q->hdfsnd, "aname", aname);
-			hdf_set_int_value(q->hdfsnd, "pid", pid);
-			hdf_set_value(q->hdfsnd, "asn", asn);
-			hdf_set_value(q->hdfsnd, "masn", masn);
-			hdf_set_value(q->hdfsnd, "email", email);
-			hdf_set_int_value(q->hdfsnd, "state", state);
-			hdf_set_int_value(q->hdfsnd, "tune", tune);
-			hdf_set_value(q->hdfsnd, "intime", intime);
-
+		hdf_set_value(q->hdfsnd, "pname", aname);
+		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL, "aid=%d", NULL, aid);
+		if (mdb_set_row(q->hdfsnd, db, APPINFO_COL, NULL) == MDB_ERR_NONE) {
+			pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
 			if (pid != 0) {
-				mdb_exec(db, NULL, "SELECT aname FROM appinfo WHERE aid=%d;",
-						 NULL, pid);
-				mdb_get(db, "s", &aname);
+				MDB_QUERY_RAW(db, "appinfo", "aname", "aid=%d", NULL, pid);
+				mdb_set_row(q->hdfsnd, db, "pname", NULL);
 			}
-			hdf_set_value(q->hdfsnd, "pname", aname);
+			MDB_QUERY_RAW(db, "appinfo", "COUNT(*) AS numuser", "pid=%d", NULL, aid);
+			mdb_set_row(q->hdfsnd, db, "numuser", NULL);
+		} else {
+			return REP_ERR_DB;
 		}
 		
 		val = calloc(1, MAX_PACKET_LEN);
@@ -212,35 +207,25 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 /*
  * input : aname(STR)
  * return: NORMAL
- * reply : ["293029": ["aid": "222", "aname": "appfoo", ...]
+ * reply : [0: ["aid": "222", "aname": "appfoo", ...]
  */
-static int aic_cmd_appuserlist(struct queue_entry *q, struct cache *cd,
-							   mdb_conn *db)
+static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd,
+							mdb_conn *db)
 {
 	unsigned char *val = NULL;
 	size_t vsize = 0;
-	int aid, uid, hit, ret;
-	char *aname, *uname, *ip, *intime;
+	int aid, hit;
+	char *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
 	
 	hit = cache_getf(cd, &val, &vsize, PREFIX_USERLIST"%d", aid);
 	if (hit == 0) {
-		ret = mdb_exec(db, NULL, "SELECT uid, uname, ip, intime, aid, aname FROM "
-					   " userinfo WHERE aid=%d;", NULL, aid);
-		if (ret != MDB_ERR_NONE) {
-			mtc_err("exec failure %s", mdb_get_errmsg(db));
+		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL, "aid=%d", NULL, aid);
+		if (mdb_set_rows(q->hdfsnd, db, USERINFO_COL, NULL) != MDB_ERR_NONE)
 			return REP_ERR_DB;
-		}
-		while (mdb_get(db, "isss", &uid, &uname, &ip, &intime)
-			   == MDB_ERR_NONE) {
-			hdf_set_valuef(q->hdfsnd, "%s.aid=%d", uname, aid);
-			hdf_set_valuef(q->hdfsnd, "%s.aname=%s", uname, aname);
-			hdf_set_valuef(q->hdfsnd, "%s.uid=%d", uname, uid);
-			hdf_set_valuef(q->hdfsnd, "%s.ip=%s", uname, ip);
-			hdf_set_valuef(q->hdfsnd, "%s.intime=%s", uname, intime);
-		}
+		
 		val = calloc(1, MAX_PACKET_LEN);
 		if (val == NULL) {
 			return REP_ERR_MEM;
@@ -260,8 +245,8 @@ static int aic_cmd_appuserlist(struct queue_entry *q, struct cache *cd,
  * return: NORMAL REP_ERR_ALREADYJOIN
  * reply : NULL
  */
-static int aic_cmd_appuserjoin(struct queue_entry *q, struct cache *cd,
-							   mdb_conn *db)
+static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd,
+							 mdb_conn *db)
 {
 	char *uname, *aname, *ip;
 	int aid, ret;
@@ -271,7 +256,7 @@ static int aic_cmd_appuserjoin(struct queue_entry *q, struct cache *cd,
 	REQ_GET_PARAM_STR(q->hdfrcv, "ip", ip);
 	aid = hash_string(aname);
 
-	ret = aic_cmd_appuserlist(q, cd, db);
+	ret = aic_cmd_appusers(q, cd, db);
 	if (PROCESS_NOK(ret)) {
 		mtc_err("userlist get failure %s", aname);
 		return ret;
@@ -292,6 +277,54 @@ static int aic_cmd_appuserjoin(struct queue_entry *q, struct cache *cd,
 	
 	cache_delf(cd, PREFIX_USERLIST"%d", aid);
 
+	return REP_OK;
+}
+
+/*
+ * input : pname(STR)
+ * return: NORMAL
+ * reply : [0: ["aid": "293029", "aname": "appfoo", ...]
+ */
+static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd,
+							 mdb_conn *db)
+{
+	unsigned char *val = NULL;
+	size_t vsize = 0;
+	int pid, hit;
+	char *pname;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
+	pid = hash_string(pname);
+	
+	hit = cache_getf(cd, &val, &vsize, PREFIX_APPOUSER"%d", pid);
+	if (hit == 0) {
+		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL, "pid=%d OR aid=%d", NULL, pid, pid);
+		if (mdb_set_rows(q->hdfsnd, db, APPINFO_COL, NULL) != MDB_ERR_NONE)
+			return REP_ERR_DB;
+		
+		val = calloc(1, MAX_PACKET_LEN);
+		if (val == NULL) {
+			return REP_ERR_MEM;
+		}
+		vsize = pack_hdf(q->hdfsnd, val);
+		cache_setf(cd, val, vsize, PREFIX_APPOUSER"%d", pid);
+		free(val);
+	} else {
+		unpack_hdf(val, vsize, &q->hdfsnd);
+	}
+	
+	return REP_OK;
+}
+
+static int aic_cmd_appouseradd(struct queue_entry *q, struct cache *cd,
+							   mdb_conn *db)
+{
+	return REP_OK;
+}
+
+static int aic_cmd_appouserdel(struct queue_entry *q, struct cache *cd,
+							   mdb_conn *db)
+{
 	return REP_OK;
 }
 
@@ -318,11 +351,20 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 	case REQ_CMD_APPUP:
 		ret = aic_cmd_appup(q, cd, db);
 		break;
-	case REQ_CMD_USERLIST:
-		ret = aic_cmd_appuserlist(q, cd, db);
+	case REQ_CMD_APPUSERS:
+		ret = aic_cmd_appusers(q, cd, db);
 		break;
-	case REQ_CMD_USERJOIN:
-		ret = aic_cmd_appuserjoin(q, cd, db);
+	case REQ_CMD_APPUSERIN:
+		ret = aic_cmd_appuserin(q, cd, db);
+		break;
+	case REQ_CMD_APP_O_USERS:
+		ret = aic_cmd_appousers(q, cd, db);
+		break;
+	case REQ_CMD_APP_O_USERADD:
+		ret = aic_cmd_appouseradd(q, cd, db);
+		break;
+	case REQ_CMD_APP_O_USERDEL:
+		ret = aic_cmd_appouserdel(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;

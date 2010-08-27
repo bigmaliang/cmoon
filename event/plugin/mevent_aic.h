@@ -3,6 +3,7 @@
 
 #define PREFIX_AIC		"Appinfo"
 #define PREFIX_USERLIST	"AppUserlist"
+#define PREFIX_APPOUSER	"AppOuser"
 
 #define LCS_TUNE_QUIET	0x01
 #define LCS_TUNE_SMS	0x02
@@ -20,8 +21,11 @@ enum {
 	REQ_CMD_APPINFO = 1001,
 	REQ_CMD_APPNEW,
 	REQ_CMD_APPUP,
-	REQ_CMD_USERLIST = 2001,
-	REQ_CMD_USERJOIN
+	REQ_CMD_APPUSERS = 2001,	/* who visited my app */
+	REQ_CMD_APPUSERIN,			/* remember sb visited my app */
+	REQ_CMD_APP_O_USERS = 3001, /* who is my stuff */
+	REQ_CMD_APP_O_USERADD,
+	REQ_CMD_APP_O_USERDEL
 } req_cmd_aic;
 
 enum {
