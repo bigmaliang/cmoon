@@ -195,6 +195,45 @@ static int pgsql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 	return 0;
 }
 
+static int pgsql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
+{
+	PGresult* res = QUERY(query)->pg_res;
+	int row_no = QUERY(query)->row_no;
+
+	if (res == NULL)
+		return -1;
+
+	if (mdb_query_get_rows(query) <= 0) {
+		mdb_set_error(query->conn, MDB_ERR_NONE, "attempt fetch emtpy result");
+		return MDB_ERR_NORESULT;
+	}
+	if (row_no >= mdb_query_get_rows(query)) {
+		mdb_set_error(query->conn, MDB_ERR_NONE, "last row has fetched");
+		return MDB_ERR_RESULT_ENDED;
+	}
+
+	int param_count = fmt != NULL ? strlen(fmt) : 0;
+	int i, col = 0;
+
+	for (i = 0; i < param_count; i++) {
+		if (fmt[i] == 's') {
+			if (PQgetisnull(res, row_no, col))
+				r[i] = NULL;
+			else
+				r[i] = PQgetvalue(res, row_no, col);
+		} else if (fmt[i] == 'S')	{
+			if (PQgetisnull(res, row_no, col))
+				r[i] = NULL;
+			else
+				r[i] = strdup(PQgetvalue(res, row_no, col));
+		}
+		col++;
+	}
+
+	QUERY(query)->row_no++;
+	return 0;
+}
+
 static int pgsql_convert_error(const char *sqlstate)
 {
 	switch (strtoull(sqlstate, NULL, 0)) {
@@ -307,6 +346,7 @@ mdb_driver pgsql_driver =
 	.query_fill = pgsql_mdb_query_fill,
 	.query_free = pgsql_mdb_query_free,
 	.query_getv = pgsql_mdb_query_getv,
+	.query_geta = pgsql_mdb_query_geta,
 	.query_putv = pgsql_mdb_query_putv,
 	.query_get_rows = pgsql_mdb_query_get_rows,
 	.query_get_affect_rows = pgsql_mdb_query_get_affect_rows,
@@ -315,4 +355,4 @@ mdb_driver pgsql_driver =
 
 #else
 mdb_driver pgsql_driver = {};
-#endif	/* DROP_MYSQL */
+#endif	/* DROP_PG */

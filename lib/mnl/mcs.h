@@ -146,5 +146,8 @@ void mcs_rand_string(char *s, int max);
 
 void mcs_text_escape(char *src, char **out);
 
+void mcs_build_upcol_s(HDF *data, HDF *node, STRING *str);
+void mcs_build_upcol_i(HDF *data, HDF *node, STRING *str);
+
 __END_DECLS
 #endif	/* __MCS_H__ */

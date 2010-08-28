@@ -5,8 +5,6 @@
 
 __BEGIN_DECLS
 
-#define QR_NUM_MAX	25
-
 void exiting(void);
 bool mmisc_getdatetime(char *res, int len, const char *fmt, time_t second);
 bool mmisc_getdatetime_gmt(char *res, int len, const char *fmt, time_t second);

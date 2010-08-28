@@ -8,6 +8,8 @@ __BEGIN_DECLS
 #define DFT_NUM_PERPAGE	15
 #define DFT_PAGE_NUM	1
 
+#define QR_NUM_MAX	50
+
 #define LEN_INT		16		// int max length
 #define LEN_LONG	20
 #define LEN_DT		11		// date length 2008-01-01

@@ -104,6 +104,12 @@ int mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 	return QUERY_DRIVER(query)->query_getv(query, fmt, ap);
 }
 
+int mdb_query_geta(mdb_query* query, const char* fmt, char* res[])
+{
+	QUERY_RETURN_VAL_IF_INVALID(query, -1);
+	return QUERY_DRIVER(query)->query_geta(query, fmt, res);
+}
+
 int mdb_query_put(mdb_query* query, const char* fmt, ...)
 {
 	int retval;

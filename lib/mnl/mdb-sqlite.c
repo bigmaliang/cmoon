@@ -244,6 +244,53 @@ static int sqlite_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 	return 0;
 }
 
+static int sqlite_mdb_query_geta(mdb_query* query, const char* fmt, char *r[])
+{
+	sqlite3_stmt* stmt = QUERY(query)->stmt;
+	int param_count = fmt != NULL ? strlen(fmt) : 0;
+	int i, rs;
+	int col = 0;
+
+	switch (QUERY(query)->state) {
+	case QUERY_STATE_INIT: 
+		mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid API use, call mdb_query_put() before mdb_query_get().");
+		return -1;
+	case QUERY_STATE_COMPLETED:
+		//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+		return 1;
+	case QUERY_STATE_ROW_READ:
+		// fetch next row
+		rs = sqlite3_step(stmt);
+		if (rs == SQLITE_ROW)
+			break;
+		else if (rs == SQLITE_DONE) {
+			//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+			QUERY(query)->state = QUERY_STATE_COMPLETED;
+			return 1;
+		}
+		else
+		{
+			//XXX: set error based on sqlite state
+			mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
+			return -1;
+		}
+	case QUERY_STATE_ROW_PENDING:
+		QUERY(query)->state = QUERY_STATE_ROW_READ;
+		break;
+	}
+
+	for (i = 0; i < param_count; i++) {
+		if (fmt[i] == 's') {
+			r[i] = (char*)sqlite3_column_text(stmt, col);
+		} else if (fmt[i] == 'S') {
+			r[i] = strdup((char*)sqlite3_column_text(stmt, col));
+		}
+		col++;
+	}
+
+	return 0;
+}
+
 static int sqlite_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 {
 	sqlite3_stmt* stmt = QUERY(query)->stmt;
@@ -379,6 +426,7 @@ mdb_driver sqlite_driver =
 	.query_fill = sqlite_mdb_query_fill,
 	.query_free = sqlite_mdb_query_free,
 	.query_getv = sqlite_mdb_query_getv,
+	.query_geta = sqlite_mdb_query_geta,
 	.query_putv = sqlite_mdb_query_putv,
 	.query_get_rows = sqlite_mdb_query_get_rows,
 	.query_get_affect_rows = sqlite_mdb_query_get_affect_rows,

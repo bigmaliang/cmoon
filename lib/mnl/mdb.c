@@ -203,41 +203,41 @@ int mdb_get(mdb_conn* conn, const char* fmt, ...)
 	return retval;
 }
 
+int mdb_geta(mdb_conn* conn, const char* fmt, char* res[])
+{
+	CONN_RETURN_VAL_IF_INVALID(conn, -1);
+	mdb_query *query;
+	uListGet(conn->queries, 0, (void**)&query);
+	QUERY_RETURN_VAL_IF_INVALID(query, -1);
+  
+	return mdb_query_geta(query, fmt, res);
+}
+
 int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 {
 	int qrcnt, i;
 	char qrarray[QR_NUM_MAX][LEN_ST];
 	char *col[QR_NUM_MAX];
-	char fmt[LEN_ST];
+	char fmt[LEN_ST] = {0};
 	int ret;
 	
 	memset(fmt, 0x0, sizeof(fmt));
 	memset(qrarray, 0x0, sizeof(qrarray));
 	
 	mmisc_set_qrarray(cols, qrarray, &qrcnt);
+	memset(fmt, 's', qrcnt);
 	
-	for (i = 0; i < qrcnt; i++) {
-		strcat(fmt, "s");
-	}
-
-	char hdfkey[LEN_HDF_KEY];
-
-	ret = mdb_get(conn, fmt, &col[0], &col[1], &col[2], &col[3],
-				  &col[4], &col[5], &col[6], &col[7], &col[8],
-				  &col[9], &col[10], &col[11], &col[12], &col[13],
-				  &col[14], &col[15], &col[16], &col[17], &col[18]);
+	ret = mdb_geta(conn, fmt, col);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("db exec error %s", mdb_get_errmsg(conn));
 		return ret;
 	}
 	
 	for (i = 0; i < qrcnt; i++) {
-		if (prefix) {
-			snprintf(hdfkey, sizeof(hdfkey), "%s.%s", prefix, qrarray[i]);
-		} else {
-			strcpy(hdfkey, qrarray[i]);
-		}
-		hdf_set_value(hdf, hdfkey, col[i]);
+		if (prefix)
+			hdf_set_valuef(hdf, "%s.%s=%s", prefix, qrarray[i], col[i]);
+		else
+			hdf_set_valuef(hdf, "%s=%s", qrarray[i], col[i]);
 	}
 
 	return MDB_ERR_NONE;
@@ -248,20 +248,17 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	int qrcnt, i;
 	char qrarray[QR_NUM_MAX][LEN_ST];
 	char *col[QR_NUM_MAX];
-	char fmt[LEN_ST];
+	char fmt[LEN_ST] = {0};
 	int ret;
 	
 	memset(fmt, 0x0, sizeof(fmt));
 	memset(qrarray, 0x0, sizeof(qrarray));
 	
 	mmisc_set_qrarray(cols, qrarray, &qrcnt);
-	
-	for (i = 0; i < qrcnt; i++) {
-		strcat(fmt, "s");
-	}
+	memset(fmt, 's', qrcnt);
 
-	char hdfkey[LEN_HDF_KEY] = "0";
 	/* append to last child */
+	char hdfkey[LEN_HDF_KEY] = "0";
 	int rowsn = 0;
 	if (prefix)
 		snprintf(hdfkey, sizeof(hdfkey), "%s.0", prefix);
@@ -277,19 +274,14 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 		return ret;
 	}
 	
-	while (mdb_get(conn, fmt, &col[0], &col[1], &col[2], &col[3],
-				   &col[4], &col[5], &col[6], &col[7], &col[8],
-				   &col[9], &col[10], &col[11], &col[12], &col[13],
-				   &col[14], &col[15], &col[16], &col[17], &col[18])
-		   == MDB_ERR_NONE ){
+	while (mdb_geta(conn, fmt, col) == MDB_ERR_NONE ){
 		for (i = 0; i < qrcnt; i++) {
 			if (prefix)
-				snprintf(hdfkey, sizeof(hdfkey), "%s.%d.%s",
-						 prefix, rowsn, qrarray[i]);
+				hdf_set_valuef(hdf, "%s.%d.%s=%s",
+							   prefix, rowsn, qrarray[i], col[i]);
 			else
-				snprintf(hdfkey, sizeof(hdfkey), "%d.%s",
-						 rowsn, qrarray[i]);
-			hdf_set_value(hdf, hdfkey, col[i]);
+				hdf_set_valuef(hdf, "%d.%s=%s",
+							   rowsn, qrarray[i], col[i]);
 		}
 		rowsn++;
 	}
@@ -415,6 +407,13 @@ int mdb_get_apart(mdb_query *query, const char* fmt, ...)
 	va_end(ap);
 
 	return retval;
+}
+
+int mdb_geta_apart(mdb_query *query, const char* fmt, char* res[])
+{
+	QUERY_RETURN_VAL_IF_INVALID(query, -1);
+  
+	return mdb_query_geta(query, fmt, res);
 }
 
 int mdb_get_rows_apart(mdb_query *query)

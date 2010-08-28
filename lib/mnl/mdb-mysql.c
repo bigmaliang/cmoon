@@ -277,6 +277,49 @@ static int mysql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 	return 0;
 }
 
+static int mysql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
+{
+	MYSQL_RES* res = QUERY(query)->res;
+	MYSQL_ROW row = QUERY(query)->row;
+	int row_no = QUERY(query)->row_no;
+
+	if (res == NULL)
+		return -1;
+
+	if (row_no >= mdb_query_get_rows(query)) {
+		//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+		return 1;
+	}
+
+	int param_count = fmt != NULL ? strlen(fmt) : 0;
+	int i, col = 0;
+
+	row = mysql_fetch_row(res);
+	if (row == NULL) {
+		return 2;
+	}
+	if (param_count > mysql_num_fields(res)) {
+		return 2;
+	}
+	for (i = 0; i < param_count; i++) {
+		if (fmt[i] == 's') {
+			if (row[col] == NULL)
+				r[i] = NULL;
+			else
+				r[i] = row[col];
+		} else if (fmt[i] == 'S')	{
+			if (row[col] == NULL)
+				r[i] = NULL;
+			else
+				r[i] = strdup(row[col]);
+		}
+		col++;
+	}
+
+	QUERY(query)->row_no++;
+	return 0;
+}
+
 static int mysql_add_sql_int(char **sql, int val)
 {
 	char tok[64];
@@ -433,6 +476,7 @@ mdb_driver mysql_driver =
 	.query_fill = mysql_mdb_query_fill,
 	.query_free = mysql_mdb_query_free,
 	.query_getv = mysql_mdb_query_getv,
+	.query_geta = mysql_mdb_query_geta,
 	.query_putv = mysql_mdb_query_putv,
 	.query_get_rows = mysql_mdb_query_get_rows,
 	.query_get_affect_rows = mysql_mdb_query_get_affect_rows,

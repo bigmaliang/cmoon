@@ -57,6 +57,8 @@ int mdb_finish(mdb_conn *conn);
 int mdb_exec(mdb_conn *conn, int *affectrow, const char* sql_fmt, const char* fmt, ...);
 int mdb_put(mdb_conn *conn, const char* fmt, ...);
 int mdb_get(mdb_conn *conn, const char* fmt, ...);
+/* store data to res[], fmt must be '[sS]+' */
+int mdb_geta(mdb_conn *conn, const char* fmt, char* res[]);
 int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
 int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
 int mdb_get_rows(mdb_conn *conn);
@@ -70,6 +72,7 @@ int mdb_exec_apart(mdb_conn *conn, mdb_query **pquery,
 				   int *affectrow, const char* sql_fmt, const char* fmt, ...);
 int mdb_put_apart(mdb_query *query, const char* fmt, ...);
 int mdb_get_apart(mdb_query *query, const char* fmt, ...);
+int mdb_geta_apart(mdb_query *query, const char* fmt, char* res[]);
 int mdb_get_rows_apart(mdb_query *query);
 int mdb_get_affect_rows_apart(mdb_query *query);
 int mdb_get_last_id_apart(mdb_query *query, const char* seq_name);

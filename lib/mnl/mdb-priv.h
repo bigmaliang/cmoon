@@ -63,6 +63,8 @@ struct _mdb_driver
   int (*query_getv)(mdb_query* query, const char* fmt, va_list ap);
   int (*query_putv)(mdb_query* query, const char* fmt, va_list ap);
 
+  int (*query_geta)(mdb_query* query, const char* fmt, char *res[]);
+	
   int (*query_get_rows)(mdb_query* query);
   int (*query_get_affect_rows)(mdb_query* query);
   int (*query_get_last_id)(mdb_query* query, const char* seq_name);
@@ -81,6 +83,7 @@ int mdb_query_fill(mdb_query* query, const char* sql_fmt, ...);
 void mdb_query_free(void *data);
 int mdb_query_putv(mdb_query* query, const char* fmt, va_list ap);
 int mdb_query_getv(mdb_query* query, const char* fmt, va_list ap);
+int mdb_query_geta(mdb_query* query, const char* fmt, char* res[]);
 
 int mdb_query_put(mdb_query* query, const char* fmt, ...);
 int mdb_query_get(mdb_query* query, const char* fmt, ...);

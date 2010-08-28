@@ -79,3 +79,39 @@ bool mtc_msg(const char *func, const char *file, long line,
 	trace_shift_file();
 	return true;
 }
+
+void mcs_build_upcol_s(HDF *data, HDF *node, STRING *str)
+{
+	if (!data || !node || !str) return;
+	
+	char *key, *val, *esc;
+	
+	while (node) {
+		key = hdf_obj_value(node);
+		val = hdf_get_value(data, key, NULL);
+		if (val) {
+			mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+			string_appendf(str, " %s='%s', ", key, esc);
+			free(esc);
+		}
+		
+		node = hdf_obj_next(node);
+	}
+}
+
+void mcs_build_upcol_i(HDF *data, HDF *node, STRING *str)
+{
+	if (!data || !node || !str) return;
+	
+	char *key, *val;
+	
+	while (node) {
+		key = hdf_obj_value(node);
+		val = hdf_get_value(data, key, NULL);
+		if (val) {
+			string_appendf(str, " %s=%d, ", key, atoi(val));
+		}
+		
+		node = hdf_obj_next(node);
+	}
+}
