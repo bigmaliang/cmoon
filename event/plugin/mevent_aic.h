@@ -1,7 +1,7 @@
 #ifndef __MEVENT_AIC_H__
 #define __MEVENT_AIC_H__
 
-#define PREFIX_AIC		"Appinfo"
+#define PREFIX_APPINFO	"Appinfo"
 #define PREFIX_USERLIST	"AppUserlist"
 #define PREFIX_APPOUSER	"AppOuser"
 

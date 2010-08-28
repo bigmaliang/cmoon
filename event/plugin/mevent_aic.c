@@ -132,18 +132,25 @@ static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd,
 static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 						 mdb_conn *db)
 {
-	char *aname, *asn, *masn, *email;
-	int aid, state = -1, tune = -1, ret;
+	char *aname;
+	int aid, tune = -1, ret;
+	STRING str;
 
+	string_init(&str);
+	
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
-	REQ_FETCH_PARAM_STR(q->hdfrcv, "asn", asn);
-	REQ_FETCH_PARAM_STR(q->hdfrcv, "masn", masn);
-	REQ_FETCH_PARAM_STR(q->hdfrcv, "email", email);
-	REQ_FETCH_PARAM_INT(q->hdfrcv, "state", state);
 	REQ_FETCH_PARAM_INT(q->hdfrcv, "tune", tune);
+	if (tune != -1) {
+		if (hdf_get_int_value(q->hdfrcv, "tuneop", 0)) {
+			/* set tune bit */
+			string_appendf(&str, " tune=tune | %d, ", tune);
+		} else {
+			/* unset tune bit */
+			string_appendf(&str, " tune=tune & %d, ", ~tune);
+		}
+	}
 
 	aid = hash_string(aname);
-
 	ret = aic_cmd_appinfo(q, cd, db);
 	if (PROCESS_NOK(ret)) {
 		mtc_err("info get failure %d", aid);
@@ -155,54 +162,20 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 		return REP_ERR_NREGIST;
 	}
 
-	char cols[1024], tok[128];
-	strcpy(cols, "");
-	if (aname) {
-		snprintf(tok, sizeof(tok), " aname='%s", aname);
-		strcat(cols, tok);
-		/* avoid strlen(aname) > sizeof(tok) */
-		strcat(cols, "', ");
-	}
-	if (asn) {
-		snprintf(tok, sizeof(tok), " asn='%s", asn);
-		strcat(cols, tok); strcat(cols, "', ");
-	}
-	if (masn) {
-		snprintf(tok, sizeof(tok), " masn='%s", masn);
-		strcat(cols, tok); strcat(cols, "', ");
-	}
-	if (email) {
-		snprintf(tok, sizeof(tok), " email='%s", email);
-		strcat(cols, tok); strcat(cols, "', ");
-	}
-	if (state != -1) {
-		snprintf(tok, sizeof(tok), " state=%d, ", state);
-		strcat(cols, tok);
-	}
-	if (tune != -1) {
-		if (hdf_get_int_value(q->hdfrcv, "tuneop", 0)) {
-			/* set tune bit */
-			snprintf(tok, sizeof(tok), " tune=tune | %d, ", tune);
-		} else {
-			/* unset tune bit */
-			snprintf(tok, sizeof(tok), " tune=tune & %d, ", ~tune);
-		}
-		strcat(cols, tok);
-	}
-
-	strcat(cols, " uptime=uptime ");
-	if (!strcmp(cols, " uptime=uptime ")) {
-		return REP_ERR_BADPARAM;
-	}
+	mcs_build_upcol_s(q->hdfrcv, hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.s"), &str);
+	mcs_build_upcol_i(q->hdfrcv, hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.i"), &str);
+	if (str.len <= 0) return REP_ERR_BADPARAM;
+	string_append(&str, " uptime=uptime ");
 	
-	ret = mdb_exec(db, NULL, "UPDATE appinfo SET %s WHERE aid=%d;", NULL, cols, aid);
+	ret = mdb_exec(db, NULL, "UPDATE appinfo SET %s WHERE aid=%d;", NULL, str.buf, aid);
+	string_clear(&str);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("exec failure %s", mdb_get_errmsg(db));
 		return REP_ERR_DB;
 	}
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
-	cache_delf(cd, PREFIX_APPOUSER"%d", pid);
+	//cache_delf(cd, PREFIX_APPOUSER"%d", pid);
 
 	return REP_OK;
 }

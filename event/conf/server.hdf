@@ -32,6 +32,19 @@ Plugin {
     }
 	aic {
 		dbsn = pgsql:dbname=lcs_main host=localhost user=lcser password=loveu
+		appinfo {
+			update {
+				s {
+					0 = asn
+					1 = masn
+					2 = email
+				}
+				i {
+					0 = state
+#					1 = tune
+				}
+			}
+		}
 	}
 	dyn {
 		dbsn = pgsql:dbname=lcs_dyn host=localhost user=lcser password=loveu
