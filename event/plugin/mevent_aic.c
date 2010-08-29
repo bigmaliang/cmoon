@@ -119,7 +119,9 @@ static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd,
 	}
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
-	cache_delf(cd, PREFIX_APPOUSER"%d", pid);
+	if (pid > 0) {
+		cache_delf(cd, PREFIX_APPOUSER"%d", pid);
+	}
 
 	return REP_OK;
 }
@@ -133,7 +135,7 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 						 mdb_conn *db)
 {
 	char *aname;
-	int aid, tune = -1, ret;
+	int aid, pid = 0, tune = -1, ret;
 	STRING str;
 
 	string_init(&str);
@@ -161,6 +163,7 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 		mtc_warn("%d hasn't regist", aid);
 		return REP_ERR_NREGIST;
 	}
+	pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
 
 	mcs_build_upcol_s(q->hdfrcv, hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.s"), &str);
 	mcs_build_upcol_i(q->hdfrcv, hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.i"), &str);
@@ -175,7 +178,50 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 	}
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
-	//cache_delf(cd, PREFIX_APPOUSER"%d", pid);
+	if (pid > 0) {
+		cache_delf(cd, PREFIX_APPOUSER"%d", pid);
+	}
+
+	return REP_OK;
+}
+
+/*
+ * input : aname(STR)
+ * return: NORMAL REP_ERR_NREGIST
+ * reply : NULL
+ */
+static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd,
+						  mdb_conn *db)
+{
+	char *aname;
+	int aid, pid = 0, ret;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+
+	aid = hash_string(aname);
+
+	ret = aic_cmd_appinfo(q, cd, db);
+	if (PROCESS_NOK(ret)) {
+		mtc_err("info get failure %s", aname);
+		return ret;
+	}
+
+	if (!hdf_get_obj(q->hdfsnd, "state")) {
+		mtc_warn("%s not regist", aname);
+		return REP_ERR_NREGIST;
+	}
+	pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
+
+	ret = mdb_exec(db, NULL, "DELETE FROM appinfo WHERE aid=%d;", NULL, aid);
+	if (ret != MDB_ERR_NONE) {
+		mtc_err("exec failure %s", mdb_get_errmsg(db));
+		return REP_ERR_DB;
+	}
+	
+	cache_delf(cd, PREFIX_APPINFO"%d", aid);
+	if (pid > 0) {
+		cache_delf(cd, PREFIX_APPOUSER"%d", pid);
+	}
 
 	return REP_OK;
 }
@@ -183,7 +229,7 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
 /*
  * input : aname(STR)
  * return: NORMAL
- * reply : [0: ["aid": "222", "aname": "appfoo", ...]
+ * reply : [appfoo: ["aid": "222", "aname": "appfoo", ...]
  */
 static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd,
 							mdb_conn *db)
@@ -199,7 +245,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd,
 	hit = cache_getf(cd, &val, &vsize, PREFIX_USERLIST"%d", aid);
 	if (hit == 0) {
 		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL, "aid=%d", NULL, aid);
-		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, NULL);
+		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, NULL, 1);
 		
 		val = calloc(1, MAX_PACKET_LEN);
 		if (val == NULL) {
@@ -258,7 +304,7 @@ static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd,
 /*
  * input : pname(STR)
  * return: NORMAL
- * reply : [0: ["aid": "293029", "aname": "appfoo", ...]
+ * reply : [appfoo: ["aid": "293029", "aname": "appfoo", ...]
  */
 static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd,
 							 mdb_conn *db)
@@ -274,7 +320,7 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd,
 	hit = cache_getf(cd, &val, &vsize, PREFIX_APPOUSER"%d", pid);
 	if (hit == 0) {
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL, "pid=%d OR aid=%d", NULL, pid, pid);
-		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, NULL);
+		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, NULL, 1);
 		
 		val = calloc(1, MAX_PACKET_LEN);
 		if (val == NULL) {
@@ -287,18 +333,6 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd,
 		unpack_hdf(val, vsize, &q->hdfsnd);
 	}
 	
-	return REP_OK;
-}
-
-static int aic_cmd_appouseradd(struct queue_entry *q, struct cache *cd,
-							   mdb_conn *db)
-{
-	return REP_OK;
-}
-
-static int aic_cmd_appouserdel(struct queue_entry *q, struct cache *cd,
-							   mdb_conn *db)
-{
 	return REP_OK;
 }
 
@@ -325,6 +359,9 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 	case REQ_CMD_APPUP:
 		ret = aic_cmd_appup(q, cd, db);
 		break;
+	case REQ_CMD_APPDEL:
+		ret = aic_cmd_appdel(q, cd, db);
+		break;
 	case REQ_CMD_APPUSERS:
 		ret = aic_cmd_appusers(q, cd, db);
 		break;
@@ -333,12 +370,6 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_APP_O_USERS:
 		ret = aic_cmd_appousers(q, cd, db);
-		break;
-	case REQ_CMD_APP_O_USERADD:
-		ret = aic_cmd_appouseradd(q, cd, db);
-		break;
-	case REQ_CMD_APP_O_USERDEL:
-		ret = aic_cmd_appouserdel(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;

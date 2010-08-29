@@ -21,11 +21,10 @@ enum {
 	REQ_CMD_APPINFO = 1001,
 	REQ_CMD_APPNEW,
 	REQ_CMD_APPUP,
+	REQ_CMD_APPDEL,
 	REQ_CMD_APPUSERS = 2001,	/* who visited my app */
 	REQ_CMD_APPUSERIN,			/* remember sb visited my app */
-	REQ_CMD_APP_O_USERS = 3001, /* who is my stuff */
-	REQ_CMD_APP_O_USERADD,
-	REQ_CMD_APP_O_USERDEL
+	REQ_CMD_APP_O_USERS = 3001  /* who is my stuff */
 } req_cmd_aic;
 
 enum {
