@@ -431,6 +431,8 @@ int mevent_trigger(mevent_t *evt, char *key,
 	if (vsize > 8) {
 		/* reply_long add a vsize parameter */
 		unpack_hdf(p+4, vsize-4, &evt->hdfrcv);
+	} else {
+		hdf_init(&evt->hdfrcv);
 	}
 
 	hdf_destroy(&evt->hdfsnd);
