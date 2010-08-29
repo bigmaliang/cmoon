@@ -243,7 +243,8 @@ int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	return MDB_ERR_NONE;
 }
 
-int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
+int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
+				 char *prefix, int keycol)
 {
 	int qrcnt, i;
 	char qrarray[QR_NUM_MAX][LEN_ST];
@@ -256,6 +257,7 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	
 	mmisc_set_qrarray(cols, qrarray, &qrcnt);
 	memset(fmt, 's', qrcnt);
+	if (keycol > qrcnt) keycol = 0;
 
 	/* append to last child */
 	char hdfkey[LEN_HDF_KEY] = "0";
@@ -273,15 +275,24 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 		mtc_err("db exec error %s", mdb_get_errmsg(conn));
 		return ret;
 	}
-	
+
 	while (mdb_geta(conn, fmt, col) == MDB_ERR_NONE ){
 		for (i = 0; i < qrcnt; i++) {
-			if (prefix)
-				hdf_set_valuef(hdf, "%s.%d.%s=%s",
-							   prefix, rowsn, qrarray[i], col[i]);
-			else
-				hdf_set_valuef(hdf, "%d.%s=%s",
-							   rowsn, qrarray[i], col[i]);
+			if (prefix) {
+				if (keycol < 0)
+					hdf_set_valuef(hdf, "%s.%d.%s=%s",
+								   prefix, rowsn, qrarray[i], col[i]);
+				else
+					hdf_set_valuef(hdf, "%s.%s.%s=%s",
+								   prefix, col[keycol], qrarray[i], col[i]);
+			} else {
+				if (keycol < 0)
+					hdf_set_valuef(hdf, "%d.%s=%s",
+								   rowsn, qrarray[i], col[i]);
+				else
+					hdf_set_valuef(hdf, "%s.%s=%s",
+								   col[keycol], qrarray[i], col[i]);
+			}
 		}
 		rowsn++;
 	}

@@ -60,7 +60,16 @@ int mdb_get(mdb_conn *conn, const char* fmt, ...);
 /* store data to res[], fmt must be '[sS]+' */
 int mdb_geta(mdb_conn *conn, const char* fmt, char* res[]);
 int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
-int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
+/*
+ * set db rows result into hdf
+ * hdf	 :OUT result store into
+ * conn  :IN db
+ * cols  :IN SET which colums(hdf key) {aid, aname}
+ * prefix:IN store in hdf whith prefix (Output)
+ * keycol:IN use which colum as hdf's key(exec, not cols), -1 form number
+ */
+int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
+				 char *prefix, int keycol);
 int mdb_get_rows(mdb_conn *conn);
 int mdb_get_affect_rows(mdb_conn *conn);
 int mdb_get_last_id(mdb_conn *conn, const char* seq_name);

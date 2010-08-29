@@ -112,6 +112,14 @@ __BEGIN_DECLS
 		}										\
     } while (0)
 
+#define HDF_GET_STR_IDENT(hdf, key, ret)		\
+    do {										\
+		ret = hdf_get_value(hdf, key, NULL);	\
+		if (!ret) {								\
+            return RET_RBTOP_NOTLOGIN;			\
+		}										\
+    } while (0)
+
 
 #define HDF_FETCH_INT(hdf, key, ret)				\
     do {											\
@@ -146,6 +154,12 @@ void mcs_rand_string(char *s, int max);
 
 void mcs_text_escape(char *src, char **out);
 
+/*
+ * build UPDATE's SET xxxx string
+ * data	:IN val {aname: 'foo', pname: 'bar'}
+ * node :IN key {0: 'aname', 1: 'pname'}
+ * str  :OUT update colum string: aname='foo', pname='bar',
+ */
 void mcs_build_upcol_s(HDF *data, HDF *node, STRING *str);
 void mcs_build_upcol_i(HDF *data, HDF *node, STRING *str);
 
