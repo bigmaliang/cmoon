@@ -38,3 +38,23 @@ ETAG
 	1, clearsilver/cgi/cgi.c cgi_headers() 里对 http 协议头的处理
 	2, google.cn, google.com 对缓存的处理
 	3, x.soso.com 对缓存的处理
+
+
+
+Debian里面的系统时间跟硬件时间对不上，偏差了8个小时。原因是由于MS的OS一直以来都没有支持到UTC的时间设定，一换到支持UTC的Linux就遇到这样的问题了。(关于UTC，请参照《时间缩写解释》）。其实Debian是建议使用UTC时间的，只是自己还是习惯Windows（不懂UTC的OS），所以把自己的Debian也改过来了。
+
+
+在Linuix 系统里面，系统时间由3个因素决定：硬件时间、UTC（/etc/default/rcS）、Timezone。
+　　/etc/default/rcS 里面的UTC选项，告诉Linux系统，这个硬件时间是否UTC时间。Timezone 是设定系统所处UTC时区（我现在用的是 Asia/Shanghai）。
+　　最后，系统启动时候读出硬件时间，再根据是否UTC时间、系统所处Timezone计算出系统localtime。
+
+　　下面是硬件时钟的时间。 
+　　DNAS:~# hwclock --show 
+　　Wed 03 Oct 2007 09:40:10 PM CST  -0.169539 seconds
+
+　　由于我已经在/etc/default/rcS 里面设置了UTC=no，告诉了系统，硬件时间并不是UTC时间。之后系统时间就会根据以下两个文件决定时区了：
+　　/etc/timezone
+　　/etc/localtime
+   timezone 是一个文本文件，只需要把自己所处的时区写进去就可以了，我的是 Asia/shanghailocaltime 直接从 /usr/share/zoneinfo 把自己所处时区的文件做一个 ln 过去就好了。 
+　　ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+

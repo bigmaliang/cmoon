@@ -9,22 +9,39 @@ __BEGIN_DECLS
 #define QUERY_DRIVER(q)	q->conn->driver
 #define QUERY_CONN(q)	q->base->conn
 
-#define CONN_RETURN_IF_INVALID(c)					\
-	if (mdb_get_errcode(c) != MDB_ERR_NONE) {		\
-		mtc_err("conn err %s", mdb_get_errmsg(c));	\
-		return;										\
+/*
+ * Just check the validation of conn memory and warning for conn err.
+ * If mem ok, continue do following things(exec, geta...).
+ * Otherwise return.
+ */
+#define CONN_RETURN_IF_INVALID(c)						\
+	if (c == NULL) {									\
+		mtc_err("conn NULL");							\
+		return;											\
+	} else if (mdb_get_errcode(c) != MDB_ERR_NONE) {	\
+		mtc_err("conn err %s", mdb_get_errmsg(c));		\
 	}
-#define CONN_RETURN_VAL_IF_INVALID(c, val)			\
-	if (mdb_get_errcode(c) != MDB_ERR_NONE) { 		\
-		mtc_err("conn err %s", mdb_get_errmsg(c));	\
-		return val;									\
+#define CONN_RETURN_VAL_IF_INVALID(c, val)				\
+	if (c == NULL) {									\
+		mtc_err("conn NULL");							\
+		return val;										\
+	} else if (mdb_get_errcode(c) != MDB_ERR_NONE) {	\
+		mtc_err("conn err %s", mdb_get_errmsg(c));		\
 	}
-#define QUERY_RETURN_IF_INVALID(q)								\
-	if (q == NULL || mdb_get_errcode(q->conn) != MDB_ERR_NONE)	\
-		return;
-#define QUERY_RETURN_VAL_IF_INVALID(q, val)						\
-	if (q == NULL || mdb_get_errcode(q->conn) != MDB_ERR_NONE)	\
-		return val;
+#define QUERY_RETURN_IF_INVALID(q)							\
+	if (q == NULL || q->conn == NULL) {						\
+		mtc_err("conn NULL");								\
+		return;												\
+	} else if (mdb_get_errcode(q->conn) != MDB_ERR_NONE) {	\
+		mtc_err("conn err %s", mdb_get_errmsg(q->conn));	\
+	}
+#define QUERY_RETURN_VAL_IF_INVALID(q, val)					\
+	if (q == NULL || q->conn == NULL) {						\
+		mtc_err("conn NULL");								\
+		return val;											\
+	} else if (mdb_get_errcode(q->conn) != MDB_ERR_NONE) {	\
+		mtc_err("conn err %s", mdb_get_errmsg(q->conn));	\
+	}
 
 typedef struct _mdb_driver mdb_driver;
 

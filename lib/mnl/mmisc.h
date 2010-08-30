@@ -14,8 +14,13 @@ int  mmisc_compare_inta(const void *a, const void *b);
 void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_cnt);
 
 int mmisc_get_count(mdb_conn *conn, char *table, char *col);
+
 void mmisc_set_count(HDF *hdf, mdb_conn *conn, char *table, char *col);
+void mmisc_set_count_b(HDF *hdf, mdb_conn *conn, char *table, char *col);
+void mmisc_set_countf_b(HDF *hdf, mdb_conn *conn, char *table, char *fmt, ...);
 void mmisc_get_offset(HDF *hdf, int *count, int *offset);
+void mmisc_get_offset_b(HDF *hdf, int *count, int *offset);
+
 void mmisc_str_repchr(char *s, char from, char to);
 char* mmisc_str_strip (char *s, char n);
 unsigned int hash_string(const char *str);
