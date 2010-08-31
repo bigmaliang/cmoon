@@ -34,8 +34,7 @@ struct aic_entry {
  * return: NORMAL
  * reply : ["state": 0, ...] OR []
  */
-static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
-						   mdb_conn *db)
+static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL;
 	size_t vsize = 0;
@@ -62,10 +61,7 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
 		//} else {
 		//return REP_ERR_DB;
 		
-		val = calloc(1, MAX_PACKET_LEN);
-		if (val == NULL) {
-			return REP_ERR_MEM;
-		}
+		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val);
 		cache_setf(cd, val, vsize, PREFIX_APPINFO"%d", aid);
 		free(val);
@@ -81,8 +77,7 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd,
  * return: NORMAL REP_ERR_ALREADYREGIST
  * reply : NULL
  */
-static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd,
-						  mdb_conn *db)
+static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *aname, *pname, *asn, *masn, *email;
 	int aid, pid = 0, state, ret;
@@ -131,8 +126,7 @@ static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd,
  * return: NORMAL REP_ERR_ALREADYREGIST
  * reply : NULL
  */
-static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
-						 mdb_conn *db)
+static int aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *aname;
 	int aid, pid = 0, tune = -1, ret;
@@ -190,8 +184,7 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd,
  * return: NORMAL REP_ERR_NREGIST
  * reply : NULL
  */
-static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd,
-						  mdb_conn *db)
+static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *aname;
 	int aid, pid = 0, ret;
@@ -231,8 +224,7 @@ static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd,
  * return: NORMAL
  * reply : [appfoo: ["aid": "222", "aname": "appfoo", ...]
  */
-static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd,
-							mdb_conn *db)
+static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL;
 	size_t vsize = 0;
@@ -253,10 +245,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd,
 					  NULL, aid, count, offset);
 		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, NULL, 1);
 		
-		val = calloc(1, MAX_PACKET_LEN);
-		if (val == NULL) {
-			return REP_ERR_MEM;
-		}
+		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val);
 		cache_setf(cd, val, vsize, PREFIX_USERLIST"%d_%d", aid, offset);
 		free(val);
@@ -272,8 +261,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd,
  * return: NORMAL REP_ERR_ALREADYJOIN
  * reply : NULL
  */
-static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd,
-							 mdb_conn *db)
+static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *uname, *aname, *ip;
 	int aid, ret;
@@ -313,8 +301,7 @@ static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd,
  * return: NORMAL
  * reply : [appfoo: ["aid": "293029", "aname": "appfoo", ...]
  */
-static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd,
-							 mdb_conn *db)
+static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL;
 	size_t vsize = 0;
@@ -335,10 +322,7 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd,
 					  NULL, pid, pid, count, offset);
 		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, NULL, 1);
 		
-		val = calloc(1, MAX_PACKET_LEN);
-		if (val == NULL) {
-			return REP_ERR_MEM;
-		}
+		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val);
 		cache_setf(cd, val, vsize, PREFIX_APPOUSER"%d_%d", pid, offset);
 		free(val);
