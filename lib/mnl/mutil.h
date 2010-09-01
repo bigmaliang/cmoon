@@ -47,6 +47,8 @@ bool mutil_client_attack_cookie(HDF *hdf, char *action, uint64_t limit, time_t e
 
 void mutil_redirect(const char *msg, const char *target, const char *url, bool header);
 
+/* out must be 33 length */
+void mutil_md5_str(char *in, char out[LEN_MD5]);
 char* mutil_hdf_attr(HDF *hdf, char *name, char*key);
 char* mutil_obj_attr(HDF *hdf, char*key);
 bool mutil_isdigit(char *s);

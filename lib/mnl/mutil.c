@@ -100,6 +100,20 @@ void mutil_redirect(const char *msg, const char *target, const char *url, bool h
 	printf(outstr);
 }
 
+void mutil_md5_str(char *in, char out[LEN_MD5])
+{
+	if (!in) return;
+	
+    md5_ctx my_md5;
+	unsigned char hexres[16];
+
+	MD5Init(&my_md5);
+	MD5Update(&my_md5, (unsigned char*)in, (unsigned int)strlen(in));
+	MD5Final(hexres, &my_md5);
+
+	mmisc_hex2str(hexres, 16, (unsigned char*)out);
+}
+
 char* mutil_hdf_attr(HDF *hdf, char *name, char*key)
 {
 	if (hdf == NULL || name == NULL || key == NULL)
