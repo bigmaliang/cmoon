@@ -35,7 +35,7 @@ if test "$PHP_MEVENT" != "no"; then
  
    
   LIBNAME=mevent # you may want to change this
-  LIBSYMBOL=mevent_init # you most likely want to change this 
+  LIBSYMBOL=printf # you most likely want to change this 
  
   PHP_CHECK_LIBRARY($LIBNAME,$LIBSYMBOL,
   [
@@ -44,7 +44,7 @@ if test "$PHP_MEVENT" != "no"; then
   ],[
     AC_MSG_ERROR([wrong mevent lib version or lib not found .mevent default dir is $MEVENT_DIR])
   ],[
-    -L$NMDB_DIR/lib -lm -ldl   
+    -L$MEVENT_DIR/lib -lm -ldl   
   ])
  
   PHP_SUBST(MEVENT_SHARED_LIBADD)

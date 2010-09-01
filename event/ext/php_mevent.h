@@ -41,12 +41,8 @@ PHP_RSHUTDOWN_FUNCTION(mevent);
 PHP_MINFO_FUNCTION(mevent);
 
 
-PHP_FUNCTION(mevent_init);
 PHP_FUNCTION(mevent_init_plugin);
 PHP_FUNCTION(mevent_free);
-PHP_FUNCTION(mevent_add_udp_server);
-PHP_FUNCTION(mevent_chose_plugin);
-PHP_FUNCTION(mevent_add_array);
 PHP_FUNCTION(mevent_add_str);
 PHP_FUNCTION(mevent_add_u32);
 PHP_FUNCTION(mevent_trigger);

@@ -1,18 +1,18 @@
 /*
   +----------------------------------------------------------------------+
-  | PHP Version 5                                                        |
+  | PHP Version 5														 |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2007 The PHP Group                                |
+  | Copyright (c) 1997-2007 The PHP Group								 |
   +----------------------------------------------------------------------+
-  | This source file is subject to version 3.01 of the PHP license,      |
-  | that is bundled with this package in the file LICENSE, and is        |
-  | available through the world-wide-web at the following url:           |
-  | http://www.php.net/license/3_01.txt                                  |
-  | If you did not receive a copy of the PHP license and are unable to   |
-  | obtain it through the world-wide-web, please send a note to          |
-  | license@php.net so we can mail you a copy immediately.               |
+  | This source file is subject to version 3.01 of the PHP license,		 |
+  | that is bundled with this package in the file LICENSE, and is		 |
+  | available through the world-wide-web at the following url:			 |
+  | http://www.php.net/license/3_01.txt									 |
+  | If you did not receive a copy of the PHP license and are unable to	 |
+  | obtain it through the world-wide-web, please send a note to			 |
+  | license@php.net so we can mail you a copy immediately.				 |
   +----------------------------------------------------------------------+
-  | Author:                                                              |
+  | Author:																 |
   +----------------------------------------------------------------------+
 */
 
@@ -27,13 +27,11 @@
 #include "ext/standard/info.h"
 #include "php_mevent.h"
 #include "mevent.h"
-#include "data.h"
+#include "ClearSilver.h"
  
 
-void mevent_fetch_array(struct data_cell *c,zval **re);
-
 /* If you declare any globals in php_mevent.h uncomment this:
-ZEND_DECLARE_MODULE_GLOBALS(mevent)
+   ZEND_DECLARE_MODULE_GLOBALS(mevent)
 */
 
 /* True global resources - no need for thread safety here */
@@ -45,12 +43,8 @@ static int le_mevent;
  * Every user visible function must have an entry in mevent_functions[].
  */
 zend_function_entry mevent_functions[] = {
-	PHP_FE(mevent_init,	NULL)
 	PHP_FE(mevent_init_plugin,	NULL)
-	PHP_FE(mevent_add_udp_server,	NULL)
 	PHP_FE(mevent_free,	NULL)
-	PHP_FE(mevent_chose_plugin,	NULL) 
-    PHP_FE(mevent_add_array,	NULL)
 	PHP_FE(mevent_add_str,	NULL)
 	PHP_FE(mevent_add_u32,	NULL)
 	PHP_FE(mevent_trigger,	NULL)
@@ -85,7 +79,7 @@ ZEND_GET_MODULE(mevent)
 
 
 static void php_mevent_dtor(
-                    zend_rsrc_list_entry *rsrc TSRMLS_DC)
+	zend_rsrc_list_entry *rsrc TSRMLS_DC)
 {
 	mevent_t *mevent_p = (mevent_t*) rsrc->ptr;
 	if (mevent_p) {
@@ -93,26 +87,69 @@ static void php_mevent_dtor(
 	}
 }
 
+static char* mutil_obj_attr(HDF *hdf, char*key)
+{
+	if (hdf == NULL || key == NULL)
+		return NULL;
+	
+	HDF_ATTR *attr = hdf_obj_attr(hdf);
+	while (attr != NULL) {
+		if (!strcmp(attr->key, key)) {
+			return attr->value;
+		}
+	}
+	return NULL;
+}
 
+static void mevent_fetch_array(HDF *node, zval **re)
+{
+	if (node == NULL) return;
+
+	HDF *chi;
+	char *type, *val;
+	zval *cre;
+
+	chi = hdf_obj_child(node);
+	if (chi) {
+		ALLOC_INIT_ZVAL(cre);
+		array_init(cre);
+		mevent_fetch_array(chi, &cre);
+		add_assoc_zval(*re, hdf_obj_name(chi), cre);
+	} else {
+		val = hdf_obj_value(node);
+		if (val) {
+			type = mutil_obj_attr(node, "type");
+			if (type && !strcmp(type, "int")) {
+				add_assoc_long(*re, hdf_obj_name(node), atoi(val));
+			} else {
+				add_assoc_string_ex(*re, hdf_obj_name(node),
+									(strlen(hdf_obj_name(node))+1),
+										   val, 1);
+			}
+		}
+	}
+
+	mevent_fetch_array(hdf_obj_next(node), re);
+}
 
 /* {{{ PHP_INI
  */
 /* Remove comments and fill if you need to have entries in php.ini
-PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("mevent.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_mevent_globals, mevent_globals)
-    STD_PHP_INI_ENTRY("mevent.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_mevent_globals, mevent_globals)
-PHP_INI_END()
+   PHP_INI_BEGIN()
+   STD_PHP_INI_ENTRY("mevent.global_value",	  "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_mevent_globals, mevent_globals)
+   STD_PHP_INI_ENTRY("mevent.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_mevent_globals, mevent_globals)
+   PHP_INI_END()
 */
 /* }}} */
 
 /* {{{ php_mevent_init_globals
  */
 /* Uncomment this function if you have INI entries
-static void php_mevent_init_globals(zend_mevent_globals *mevent_globals)
-{
-	mevent_globals->global_value = 0;
-	mevent_globals->global_string = NULL;
-}
+   static void php_mevent_init_globals(zend_mevent_globals *mevent_globals)
+   {
+   mevent_globals->global_value = 0;
+   mevent_globals->global_string = NULL;
+   }
 */
 /* }}} */
 
@@ -122,11 +159,11 @@ PHP_MINIT_FUNCTION(mevent)
 {
 
 	/* If you have INI entries, uncomment these lines 
-	REGISTER_INI_ENTRIES();
+	   REGISTER_INI_ENTRIES();
 	*/
 	le_mevent = zend_register_list_destructors_ex(
-                php_mevent_dtor, NULL, PHP_MEVENT_RES_NAME,
-                module_number);
+		php_mevent_dtor, NULL, PHP_MEVENT_RES_NAME,
+		module_number);
 
 	return SUCCESS;
 }
@@ -137,7 +174,7 @@ PHP_MINIT_FUNCTION(mevent)
 PHP_MSHUTDOWN_FUNCTION(mevent)
 {
 	/* uncomment this line if you have INI entries
-	UNREGISTER_INI_ENTRIES();
+	   UNREGISTER_INI_ENTRIES();
 	*/
 	return SUCCESS;
 }
@@ -167,36 +204,20 @@ PHP_MINFO_FUNCTION(mevent)
 {
 	php_info_print_table_start();
 	php_info_print_table_header(2, "mevent support", "enabled");
-	php_info_print_table_row(2, "Version", "1.0");
-    php_info_print_table_row(2, "Copyright", "Hunantv.com");
+	php_info_print_table_row(2, "Version", "2.0");
+	php_info_print_table_row(2, "Copyright", "Hunantv.com");
 	php_info_print_table_row(2, "author", "neo & bigml");
 	php_info_print_table_end();
 
 	/* Remove comments if you have entries in php.ini
-	DISPLAY_INI_ENTRIES();
+	   DISPLAY_INI_ENTRIES();
 	*/
 }
 /* }}} */
 
 
-/* {{{ proto resource mevent_init()
-    */
-PHP_FUNCTION(mevent_init)
-{
-	if (ZEND_NUM_ARGS() != 0) {
-		WRONG_PARAM_COUNT;
-	}
-	mevent_t* mevent_p;
-
-	mevent_p = mevent_init();
-	
-	ZEND_REGISTER_RESOURCE(return_value, mevent_p, le_mevent);
-}
-/* }}} */
-
-
-/* {{{ proto int mevent_init_plugin(string ename, int cmd,int flags)
-    */
+/* {{{ proto resource mevent_init_plugin(string ename)
+ */
 PHP_FUNCTION(mevent_init_plugin)
 {
 	int argc = ZEND_NUM_ARGS();
@@ -207,23 +228,23 @@ PHP_FUNCTION(mevent_init_plugin)
 	 
 	mevent_t *mevent_p;
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "sll", &ename, &ename_len, &cmd, &flags) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "s", &ename, &ename_len) == FAILURE) 
 		return;
 
-    if (!strcmp(ename,""))    ename    = NULL;
+	if (!strcmp(ename, ""))	  ename	   = "skeleton2";
 
-	mevent_p = mevent_init_plugin(ename,cmd,flags);
+	mevent_p = mevent_init_plugin(ename);
 
 	if (mevent_p == NULL)
 		RETURN_LONG(-1);
-        
-		ZEND_REGISTER_RESOURCE(return_value, mevent_p, le_mevent);
+	
+	ZEND_REGISTER_RESOURCE(return_value, mevent_p, le_mevent);
 }
 /* }}} */
 
 
 /* {{{ proto int mevent_free(resource db)
-    */
+ */
 PHP_FUNCTION(mevent_free)
 {
 	int argc = ZEND_NUM_ARGS();
@@ -238,10 +259,10 @@ PHP_FUNCTION(mevent_free)
 
 	if (db) {
 		ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
-	        PHP_MEVENT_RES_NAME, le_mevent);
-		
+							PHP_MEVENT_RES_NAME, le_mevent);
 		zend_hash_index_del(&EG(regular_list),
-						Z_RESVAL_P(db));
+							Z_RESVAL_P(db));
+		//mevent_free(db);
 		RETURN_TRUE;
 	}
 	RETURN_LONG(-1);
@@ -249,172 +270,75 @@ PHP_FUNCTION(mevent_free)
 /* }}} */
 
 
-
-/* {{{ proto int mevent_add_udp_server(resource db, int port)
-    */
-PHP_FUNCTION(mevent_add_udp_server)
-{
-	char *addr = NULL;
-	int argc = ZEND_NUM_ARGS();
-	int db_id = -1;
-	int addr_len;
-	long port;
-	int ret = 0;
-	zval *db = NULL;
-	mevent_t *mevent_p;
-
-	if (zend_parse_parameters(argc TSRMLS_CC, "rsl", &db, &addr, &addr_len, &port) == FAILURE) 
-		return;
-
-	if (db) {
-		ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
-	        PHP_MEVENT_RES_NAME, le_mevent);
-		if (mevent_p) {
-			if (!strcmp(addr,""))    addr    = NULL;
-			ret = mevent_add_udp_server(mevent_p, addr, port);
-			RETURN_LONG(ret);
-		}
-	}
-}
-/* }}} */
-
-
-
-/* {{{ proto int mevent_chose_plugin(resource db, string key,int cmd, int flags)
-    */
-PHP_FUNCTION(mevent_chose_plugin)
-{
-	char *key = NULL;
-	int argc = ZEND_NUM_ARGS();
-	int db_id = -1;
-	int key_len;
-	long cmd;
-	long flags;
-	int ret = 0;
-	zval *db = NULL;
-	mevent_t *mevent_p;
-
-	if (zend_parse_parameters(argc TSRMLS_CC, "rsll", &db, &key, &key_len, &cmd,&flags) == FAILURE) 
-		return;
-
-	if (db) {
-		ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
-	        PHP_MEVENT_RES_NAME, le_mevent);
-		if (mevent_p) {
-			if (!strcmp(key,""))    key    = NULL;
-			ret = mevent_chose_plugin(mevent_p, key, cmd,flags);
-			RETURN_LONG(ret);
-		}
-	}
-}
-/* }}} */
- 
-/* {{{ proto int mevent_add_array(resource db, string parent,string key)
-    */
-PHP_FUNCTION(mevent_add_array)
-{
-	char *parent = NULL;
-	char *key = NULL;
-	int argc = ZEND_NUM_ARGS();
-	int db_id = -1;
-	int key_len;
-    int parent_len;
-	int ret = 0;
-	zval *db = NULL;
-	mevent_t *mevent_p;
-   
-
-	if (zend_parse_parameters(argc TSRMLS_CC, "rss", &db, &parent, &parent_len, &key,&key_len) == FAILURE) 
-		return;
-
-	if (db) {
-		ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
-	        PHP_MEVENT_RES_NAME, le_mevent);
-		if (mevent_p) {
-			if (!strcmp(parent,""))    parent    = NULL;
-			if (!strcmp(key,""))       key    = NULL;
-			ret = mevent_add_array(mevent_p, parent, key);
-			RETURN_LONG(ret);
-		}
-	}
-}
-/* }}} */
-
-/* {{{ proto int mevent_add_str(resource db, string parent,string key,string val)
-    */
+/* {{{ proto int mevent_add_str(resource db, string key, string val)
+ */
 PHP_FUNCTION(mevent_add_str)
 {
-	char *parent = NULL;
 	char *key = NULL;
 	char *val = NULL;
 	int argc = ZEND_NUM_ARGS();
 	int db_id = -1;
 	int key_len;
-    int parent_len;
 	int val_len;
 	int ret = 0;
 	zval *db = NULL;
 	mevent_t *mevent_p;
    
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rsss", &db, &parent, &parent_len, &key,&key_len,&val,&val_len) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rss", &db, &key, &key_len,
+							  &val, &val_len) == FAILURE) 
 		return;
 
 	if (db) {
 		ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
-	        PHP_MEVENT_RES_NAME, le_mevent);
+							PHP_MEVENT_RES_NAME, le_mevent);
 		if (mevent_p) {
-			//ret = mevent_add_str(mevent_p, parent, key,val);
-			if (!strcmp(parent,"")) parent = NULL;
-			if (!strcmp(key,""))    key    = NULL;
-			if (!strcmp(val,""))    val    = NULL;
-			ret = mevent_add_str(mevent_p, parent, key,val);
-			RETURN_LONG(ret);
+			hdf_set_value(mevent_p->hdfsnd, key, val);
+			RETURN_LONG(0);
 		}
 	}
 }
 /* }}} */
  
 
- /* {{{ proto int mevent_add_u32(resource db, string parent,string key,int val)
-    */
+/* {{{ proto int mevent_add_u32(resource db, string key, int val)
+ */
 PHP_FUNCTION(mevent_add_u32)
 {
-	char *parent = NULL;
 	char *key = NULL;
 	 
 	int argc = ZEND_NUM_ARGS();
 	int db_id = -1;
 	int key_len;
-    int parent_len;
+	int parent_len;
 	long val;
 	int ret = 0;
 	zval *db = NULL;
 	mevent_t *mevent_p;
    
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rssl", &db, &parent, &parent_len, &key,&key_len,&val) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rsl", &db, &key,
+							  &key_len, &val) == FAILURE)
 		return;
-
+	
 	if (db) {
 		ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
-	        PHP_MEVENT_RES_NAME, le_mevent);
+							PHP_MEVENT_RES_NAME, le_mevent);
 		if (mevent_p) {
-			if (!strcmp(parent,""))       parent    = NULL;
-			if (!strcmp(key,""))       key    = NULL;
-			 
-			ret = mevent_add_u32(mevent_p, parent, key,val);
-			RETURN_LONG(ret);
+			hdf_set_int_value(mevent_p->hdfsnd, key, val);
+			RETURN_LONG(0);
 		}
 	}
 }
 /* }}} */
  
- /* {{{ proto int mevent_trigger(resource db)
-    */
+/* {{{ proto int mevent_trigger(resource db, string key, int cmd, int flags)
+ */
 PHP_FUNCTION(mevent_trigger)
 {
 	int argc = ZEND_NUM_ARGS();
+	char *key;
+	int key_len, cmd, flags = 0;
 	int db_id = -1;
 	int ret = 0;
 	 
@@ -423,124 +347,51 @@ PHP_FUNCTION(mevent_trigger)
 	mevent_t *mevent_p;
    
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "r", &db) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rsll", &db, &key, &key_len, &cmd, &flags) == FAILURE) 
 		return;
 
 	if (db) {
 		ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
-	        PHP_MEVENT_RES_NAME, le_mevent);
+							PHP_MEVENT_RES_NAME, le_mevent);
 		if (mevent_p) {
-			ret = mevent_trigger(mevent_p);
-			/**if (ret == 2051)
-			{
-				RETURN_LONG(1);
-			}  
-			else if (ret == 2048)
-			{
-				RETURN_LONG(errcode);
-			}
-			else
-			{				 
-				RETURN_LONG(0);				 
-			}**/
+			ret = mevent_trigger(mevent_p, key, cmd, flags);
 			RETURN_LONG(ret);
-
-			//RETURN_ARRAY(ret,errcode);
 		}
 	}
 }
 /* }}} */
 
  
-
-
- 
- /* {{{ proto int mevent_fetch_array(resource db)
-    */
+/* {{{ proto int mevent_fetch_array(resource db)
+ */
 PHP_FUNCTION(mevent_result)
 {
 	int argc = ZEND_NUM_ARGS();
 	int db_id = -1;
-	 
-	 
-	 
 	zval *db = NULL;
 	 
 	//int i=0;
 	mevent_t *mevent_p;
-    struct data_cell *pc, *cc;
-	 
 
 	if (zend_parse_parameters(argc TSRMLS_CC, "r", &db) == FAILURE) 
 		return;
 
 	if (db) {
 		ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
-	        PHP_MEVENT_RES_NAME, le_mevent);
+							PHP_MEVENT_RES_NAME, le_mevent);
 		if (mevent_p) {
 
 			array_init(return_value);
-             
-			//pc = data_cell_search(mevent_p->rcvdata, false, 4, "friend");
-			pc = mevent_p->rcvdata;
-			if (pc != NULL) {
-				/**cc = pc->v.aval->items[0];
-				int t_rsv_i;
-				for (t_rsv_i = 0; t_rsv_i < pc->v.aval->num; cc = pc->v.aval->items[++t_rsv_i]) {
-					add_index_string(return_value, t_rsv_i, cc->v.sval.val,1);
-				}**/
-				//.add_assoc_zval(return_value, 'dat', pc.v);
-				 mevent_fetch_array(pc,&return_value);
-				 
-				
+			 
+			if (mevent_p->hdfrcv != NULL) {
+				mevent_fetch_array(mevent_p->hdfrcv, &return_value);
 			}
 		}
 	}
- 
-
 }
 /* }}} */
 
 
- /* {{{ data_cell_dump
-    */  
- 
-void mevent_fetch_array(struct data_cell *c,zval **re)
-{
-	if (c == NULL) return;
-     
-	//array_init(return_value); 
-
-	int len, i;
-	struct data_cell *lc;
-	zval *cre;
-
-	switch (c->type) {
-	case DATA_TYPE_U32:
-		add_assoc_long(*re,c->key, c->v.ival);
-		break;
-	case DATA_TYPE_ULONG:
-		add_assoc_long(*re,c->key, c->v.lval);
-		break;
-	case DATA_TYPE_STRING:
-		//php_printf("111111(i):  %s\n", c->key);
-		add_assoc_string_ex(*re, c->key,(strlen(c->key)+1),c->v.sval.val,1);
-		break;
-	case DATA_TYPE_ARRAY:
-		ALLOC_INIT_ZVAL(cre);
-		array_init(cre);
-		len = uListLength(c->v.aval);
-		for (i = 0; i < len; i++) {
-			uListGet(c->v.aval, i, (void**)&lc);
-			mevent_fetch_array(lc, &cre);
-		}
-		add_assoc_zval(*re,c->key,cre);
-		break;
-	default:
-		 	//printf("unkown type cell");
-		break;
-	}
-}
 /*
  * Local variables:
  * tab-width: 4
@@ -549,3 +400,4 @@ void mevent_fetch_array(struct data_cell *c,zval **re)
  * vim600: noet sw=4 ts=4 fdm=marker
  * vim<600: noet sw=4 ts=4
  */
+

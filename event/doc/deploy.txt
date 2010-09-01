@@ -1,0 +1,17 @@
+tar zcvf libmevent.tar.gz /usr/local/include/mevent.h /usr/local/include/net-const.h /usr/local/lib/libmevent.a /usr/local/lib/libneo_utl.a /usr/local/include/ClearSilver/ /etc/mevent/
+
+/usr/local/src/php-5.xx/ext/ext_skel --extname=mevent
+cd mevent
+/usr/local/php/bin/phpize
+./configure --with-php-config=/usr/local/php/bin/php-config
+vim Makefile (add -lneo_utl, -I /usr/local/include/ClearSilver/)
+make
+
+cp modules/mevent.so /usr/local/php/lib/php/extensions/no-debug-non-zts-20060613/
+
+
+vim /usr/local/php/etc/php.ini
++ extension = "mevent.so"
+killall -9 php-cgi
+/usr/local/php/bin/spawn-fcgi -a 127.0.0.1 -p 10080 -C 64 -u www -f /usr/local/php/bin/php-cgi
+
