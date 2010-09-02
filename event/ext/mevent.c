@@ -105,31 +105,33 @@ static void mevent_fetch_array(HDF *node, zval **re)
 {
 	if (node == NULL) return;
 
-	HDF *chi;
-	char *type, *val;
+	char *key, *type, *val;
 	zval *cre;
 
-	chi = hdf_obj_child(node);
-	if (chi) {
-		ALLOC_INIT_ZVAL(cre);
-		array_init(cre);
-		mevent_fetch_array(chi, &cre);
-		add_assoc_zval(*re, hdf_obj_name(chi), cre);
-	} else {
-		val = hdf_obj_value(node);
-		if (val) {
+	node = hdf_obj_child(node);
+
+	while (node) {
+		if ((val = hdf_obj_value(node)) != NULL) {
 			type = mutil_obj_attr(node, "type");
 			if (type && !strcmp(type, "int")) {
 				add_assoc_long(*re, hdf_obj_name(node), atoi(val));
 			} else {
 				add_assoc_string_ex(*re, hdf_obj_name(node),
 									(strlen(hdf_obj_name(node))+1),
-										   val, 1);
+									val, 1);
 			}
 		}
-	}
 
-	mevent_fetch_array(hdf_obj_next(node), re);
+		if (hdf_obj_child(node)) {
+			key = hdf_obj_name(node) ? hdf_obj_name(node): "unkown";
+			ALLOC_INIT_ZVAL(cre);
+			array_init(cre);
+			mevent_fetch_array(node, &cre);
+			add_assoc_zval(*re, key, cre);
+		}
+
+		node = hdf_obj_next(node);
+	}
 }
 
 /* {{{ PHP_INI
