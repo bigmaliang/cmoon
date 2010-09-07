@@ -63,7 +63,7 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val);
-		cache_setf(cd, val, vsize, PREFIX_APPINFO"%d", aid);
+		cache_setf(cd, val, vsize, 0, PREFIX_APPINFO"%d", aid);
 		free(val);
 	} else {
 		unpack_hdf(val, vsize, &q->hdfsnd);
@@ -247,7 +247,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val);
-		cache_setf(cd, val, vsize, PREFIX_USERLIST"%d_%d", aid, offset);
+		cache_setf(cd, val, vsize, 0, PREFIX_USERLIST"%d_%d", aid, offset);
 		free(val);
 	} else {
 		unpack_hdf(val, vsize, &q->hdfsnd);
@@ -324,7 +324,7 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val);
-		cache_setf(cd, val, vsize, PREFIX_APPOUSER"%d_%d", pid, offset);
+		cache_setf(cd, val, vsize, 0, PREFIX_APPOUSER"%d_%d", pid, offset);
 		free(val);
 	} else {
 		unpack_hdf(val, vsize, &q->hdfsnd);

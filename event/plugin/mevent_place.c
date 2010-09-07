@@ -213,7 +213,7 @@ static int place_cmd_get(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 			return REP_ERR_MEM;
 		}
 		vsize = pack_hdf(q->hdfsnd, val);
-		cache_setf(cd, val, vsize, PREFIX_PLACE"%s", ip);
+		cache_setf(cd, val, vsize, 0, PREFIX_PLACE"%s", ip);
 		free(val);
 	} else {
 		unpack_hdf(val, vsize, &q->hdfsnd);
