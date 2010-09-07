@@ -35,7 +35,6 @@ extern struct stats stats;
 
 #include "ClearSilver.h"
 extern HDF *g_cfg;
-extern volatile time_t g_ctime;
 
 void clock_handler(const int fd, const short which, void *arg);
 size_t explode(const char split, char *input, char **tP, unsigned int limit);

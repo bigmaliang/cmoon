@@ -159,6 +159,13 @@ int cache_get(struct cache *cd, const unsigned char *key, size_t ksize,
 		return 0;
 	}
 
+	if (e->expire > 0 && e->expire < g_ctime) {
+		cache_del(cd, (unsigned char*)key, (size_t)ksize);
+		*val = NULL;
+		*vsize = 0;
+		return 0;
+	}
+
 	*val = e->val;
 	*vsize = e->vsize;
 
@@ -167,7 +174,7 @@ int cache_get(struct cache *cd, const unsigned char *key, size_t ksize,
 
 
 int cache_set(struct cache *cd, const unsigned char *key, size_t ksize,
-		const unsigned char *val, size_t vsize)
+		const unsigned char *val, size_t vsize, int timeout)
 {
 	int rv = 1;
 	uint32_t h = 0;
@@ -190,6 +197,11 @@ int cache_set(struct cache *cd, const unsigned char *key, size_t ksize,
 
 		new->ksize = ksize;
 		new->vsize = vsize;
+		if (timeout == 0) {
+			new->expire = 0;
+		} else {
+			new->expire = g_ctime + timeout;
+		}
 
 		new->key = malloc(ksize);
 		if (new->key == NULL) {
@@ -423,7 +435,7 @@ int cache_getf(struct cache *cd, unsigned char **val, size_t *vsize,
 }
 
 int cache_setf(struct cache *cd, const unsigned char *v, size_t vsize,
-			   const char *keyfmt, ...)
+			   int timeout, const char *keyfmt, ...)
 {
 	char key[MAX_CACHEKEY_LEN];
 	va_list ap;
@@ -433,7 +445,7 @@ int cache_setf(struct cache *cd, const unsigned char *v, size_t vsize,
 	r = vsnprintf(key, MAX_CACHEKEY_LEN, keyfmt, ap);
 	va_end(ap);
 
-	return cache_set(cd, (unsigned char*)key, (size_t)r, v, vsize);
+	return cache_set(cd, (unsigned char*)key, (size_t)r, v, vsize, timeout);
 }
 
 int cache_delf(struct cache *cd, const char *keyfmt, ...)

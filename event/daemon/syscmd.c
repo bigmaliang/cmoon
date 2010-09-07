@@ -68,7 +68,7 @@ int sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
 	val = hdf_obj_value(node);
 	vsize = strlen(val)+1;
     cache_set(cd, (unsigned char*)key, strlen((char*)key),
-			  (unsigned char*)val, vsize);
+			  (unsigned char*)val, vsize, 0);
 
     ret = REP_OK;
     

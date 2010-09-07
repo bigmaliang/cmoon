@@ -9,6 +9,8 @@
 
 #define MAX_CACHEKEY_LEN	1024
 
+extern volatile time_t g_ctime;
+
 struct cache {
 	/* set directly by initialization */
 	size_t numobjs;
@@ -33,6 +35,7 @@ struct cache_entry {
 	unsigned char *val;
 	size_t ksize;
 	size_t vsize;
+	time_t expire;
 
 	struct cache_entry *prev;
 	struct cache_entry *next;
@@ -44,7 +47,7 @@ int cache_free(struct cache *cd);
 int cache_get(struct cache *cd, const unsigned char *key, size_t ksize,
 			  unsigned char **val, size_t *vsize);
 int cache_set(struct cache *cd, const unsigned char *k, size_t ksize,
-			  const unsigned char *v, size_t vsize);
+			  const unsigned char *v, size_t vsize, int timeout);
 int cache_del(struct cache *cd, const unsigned char *key, size_t ksize);
 int cache_cas(struct cache *cd, const unsigned char *key, size_t ksize,
 			  const unsigned char *oldval, size_t ovsize,
@@ -55,7 +58,7 @@ int cache_incr(struct cache *cd, const unsigned char *key, size_t ksize,
 int cache_getf(struct cache *cd, unsigned char **val, size_t *vsize,
 			   const char *keyfmt, ...);
 int cache_setf(struct cache *cd, const unsigned char *v, size_t vsize,
-			   const char *keyfmt, ...);
+			   int timeout, const char *keyfmt, ...);
 int cache_delf(struct cache *cd, const char *keyfmt, ...);
 
 #endif
