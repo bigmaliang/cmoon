@@ -44,7 +44,7 @@ void net_loop(void)
 	int udp_fd = -1;
 	int sctp_fd = -1;
 	struct event tipc_evt, tcp_evt, udp_evt, sctp_evt,
-		     sigterm_evt, sigint_evt, sigusr1_evt, sigusr2_evt;
+		sigterm_evt, sigint_evt, sigusr1_evt, sigusr2_evt, clock_evt;
 
 	event_init();
 
@@ -109,6 +109,10 @@ void net_loop(void)
 	signal_set(&sigusr2_evt, SIGUSR2, passive_to_active_sighandler,
 			&sigusr2_evt);
 	signal_add(&sigusr2_evt, NULL);
+
+	struct timeval t = {.tv_sec = 1, .tv_usec = 0};
+	evtimer_set(&clock_evt, clock_handler, &clock_evt);
+	evtimer_add(&clock_evt, &t);
 
 	event_dispatch();
 
