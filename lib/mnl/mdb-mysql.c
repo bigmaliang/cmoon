@@ -109,6 +109,11 @@ static mdb_conn* mysql_mdb_connect(const char* dsn)
 			mdb_set_error((mdb_conn*)conn, MDB_ERR_OTHER, mysql_error(conn->mysql));
 			return (mdb_conn*)conn;
 		}
+		
+		my_bool reconnect = 1;
+		mysql_options(conn->mysql, MYSQL_OPT_RECONNECT, &reconnect);
+		mysql_options(conn->mysql, MYSQL_SET_CHARSET_NAME, "utf8");
+		mysql_options(conn->mysql, MYSQL_INIT_COMMAND, "SET NAMES 'utf8'");
 		conn->mysql = mysql_real_connect(conn->mysql, pa->ip, pa->user, pa->pass, pa->name, 0, NULL, 0);
 		mysql_mdb_free_conn_parameter(pa);
 		if (conn->mysql == NULL) {
