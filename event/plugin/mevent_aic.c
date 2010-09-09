@@ -62,7 +62,7 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db
 		//return REP_ERR_DB;
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
-		vsize = pack_hdf(q->hdfsnd, val);
+		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
 		cache_setf(cd, val, vsize, 0, PREFIX_APPINFO"%d", aid);
 		free(val);
 	} else {
@@ -246,7 +246,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, NULL, 1);
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
-		vsize = pack_hdf(q->hdfsnd, val);
+		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
 		cache_setf(cd, val, vsize, 0, PREFIX_USERLIST"%d_%d", aid, offset);
 		free(val);
 	} else {
@@ -323,7 +323,7 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, NULL, 1);
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
-		vsize = pack_hdf(q->hdfsnd, val);
+		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
 		cache_setf(cd, val, vsize, 0, PREFIX_APPOUSER"%d_%d", pid, offset);
 		free(val);
 	} else {

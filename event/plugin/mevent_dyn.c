@@ -73,7 +73,7 @@ static int dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
 		if (val == NULL) {
 			return REP_ERR_MEM;
 		}
-		vsize = pack_hdf(q->hdfsnd, val);
+		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
 		cache_setf(cd, val, vsize, 0, PREFIX_DYN"%d%d", uid, aid);
 		free(val);
 	} else {

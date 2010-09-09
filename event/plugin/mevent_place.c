@@ -212,7 +212,7 @@ static int place_cmd_get(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		if (val == NULL) {
 			return REP_ERR_MEM;
 		}
-		vsize = pack_hdf(q->hdfsnd, val);
+		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
 		cache_setf(cd, val, vsize, 0, PREFIX_PLACE"%s", ip);
 		free(val);
 	} else {
