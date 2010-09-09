@@ -58,15 +58,15 @@ size_t unpack_hdf(unsigned char *buf, size_t len, HDF **hdf)
 	return ttsize;
 }
 
-size_t pack_data_str(const char *key, const char *val, unsigned char *buf)
+size_t pack_data_str(const char *key, const char *val, unsigned char *buf, size_t len)
 {
 	size_t ksize = strlen(key);
 	size_t vsize = 0;
 
     if (val) vsize = strlen(val)+1;
 
-	if (vsize > MAX_PACKET_LEN - RESERVE_SIZE) {
-		vsize = MAX_PACKET_LEN - RESERVE_SIZE;
+	if (vsize > len - RESERVE_SIZE) {
+		vsize = len - RESERVE_SIZE;
 	}
 	
 	* (uint32_t *) buf = htonl(DATA_TYPE_STRING);
@@ -80,7 +80,7 @@ size_t pack_data_str(const char *key, const char *val, unsigned char *buf)
 	return (8 + ksize + 4 + vsize);
 }
 
-size_t pack_hdf(HDF *hdf, unsigned char *buf)
+size_t pack_hdf(HDF *hdf, unsigned char *buf, size_t len)
 {
 	size_t vsize;
 	char *p;
@@ -90,7 +90,7 @@ size_t pack_hdf(HDF *hdf, unsigned char *buf)
 	NEOERR *err = hdf_write_string(hdf, &p);
 	if (err != STATUS_OK) return 0;
 
-	vsize = pack_data_str("root", p, buf);
+	vsize = pack_data_str("root", p, buf, len);
 
 	free(p);
 

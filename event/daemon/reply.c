@@ -24,7 +24,7 @@ int reply_trigger(struct queue_entry *q, uint32_t reply)
 	}
 
 	size_t vsize;
-	vsize = pack_hdf(q->hdfsnd, buf);
+	vsize = pack_hdf(q->hdfsnd, buf, MAX_PACKET_LEN);
 	if (vsize == 0) goto error;
  
 	q->req->reply_long(q->req, reply, buf, vsize);

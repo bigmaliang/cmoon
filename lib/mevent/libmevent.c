@@ -411,7 +411,7 @@ int mevent_trigger(mevent_t *evt, char *key,
 	/*
 	 * don't escape the hdf because some body need set ' in param 
 	 */
-	vsize = pack_hdf(evt->hdfsnd, evt->payload + evt->psize);
+	vsize = pack_hdf(evt->hdfsnd, evt->payload + evt->psize, MAX_PACKET_LEN);
 	evt->psize += vsize;
 
 	if (evt->psize < 17) {

@@ -17,7 +17,8 @@ size_t unpack_data_str(unsigned char *buf, size_t len, char **val);
  * hdf: input hdf dataset, should contain child,
  *      it's own value will be ignore
  */
-size_t pack_hdf(HDF *hdf, unsigned char *buf);
-size_t pack_data_str(const char *key, const char *val, unsigned char *buf);
+size_t pack_hdf(HDF *hdf, unsigned char *buf, size_t len);
+size_t pack_data_str(const char *key, const char *val,
+					 unsigned char *buf, size_t len);
 
 #endif	/* __MPACKET_H__ */
