@@ -124,6 +124,7 @@ char* mutil_hdf_attr(HDF *hdf, char *name, char*key)
 		if (!strcmp(attr->key, key)) {
 			return attr->value;
 		}
+		attr = attr->next;
 	}
 	return NULL;
 }
@@ -137,6 +138,7 @@ char* mutil_obj_attr(HDF *hdf, char*key)
 		if (!strcmp(attr->key, key)) {
 			return attr->value;
 		}
+		attr = attr->next;
 	}
 	return NULL;
 }
