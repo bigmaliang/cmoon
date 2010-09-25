@@ -124,8 +124,8 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 	}
 
 	queue_lock(entry->op_queue);
-	//queue_put(entry->op_queue, e);
-	queue_cas(entry->op_queue, e);
+	if (sync) queue_cas(entry->op_queue, e);
+	else queue_put(entry->op_queue, e);
 	queue_unlock(entry->op_queue);
 
 	if (sync) {
