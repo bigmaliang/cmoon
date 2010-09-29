@@ -241,7 +241,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 		mmisc_set_countf_b(q->hdfsnd, db, "userinfo", "aid=%d", aid);
 		
 		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
-					  "aid=%d ORDER BY uptime LIMIT %d OFFSET %d",
+					  "aid=%d ORDER BY uptime DESC LIMIT %d OFFSET %d",
 					  NULL, aid, count, offset);
 		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, NULL, 1);
 		
@@ -285,6 +285,44 @@ static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *
 	ret = mdb_exec(db, NULL, "INSERT INTO userinfo (uid, uname, aid, aname, ip) "
 				   " VALUES ($1, $2, $3, $4, $5);", "isiss",
 				   hash_string(uname), uname, aid, aname, ip);
+	if (ret != MDB_ERR_NONE) {
+		mtc_err("exec failure %s", mdb_get_errmsg(db));
+		return REP_ERR_DB;
+	}
+
+	/* TODO delete aid's ALL cache */
+	cache_delf(cd, PREFIX_USERLIST"%d_0", aid);
+
+	return REP_OK;
+}
+
+/*
+ * input : uname(STR) aname(STR)
+ * return: NORMAL REP_ERR_NOTJOIN
+ * reply : NULL
+ */
+static int aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	char *uname, *aname;
+	int aid, ret;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
+	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+	aid = hash_string(aname);
+
+	ret = aic_cmd_appusers(q, cd, db);
+	if (PROCESS_NOK(ret)) {
+		mtc_err("userlist get failure %s", aname);
+		return ret;
+	}
+
+	if (!hdf_get_obj(q->hdfsnd, uname)) {
+		mtc_warn("%s not join %s", uname, aname);
+		return REP_ERR_NOTJOIN;
+	}
+
+	ret = mdb_exec(db, NULL, "DELETE FROM userinfo WHERE uid=%d AND aid=%d;",
+				   NULL, hash_string(uname), aid);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("exec failure %s", mdb_get_errmsg(db));
 		return REP_ERR_DB;
@@ -364,6 +402,9 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_APPUSERIN:
 		ret = aic_cmd_appuserin(q, cd, db);
+		break;
+	case REQ_CMD_APPUSEROUT:
+		ret = aic_cmd_appuserout(q, cd, db);
 		break;
 	case REQ_CMD_APP_O_USERS:
 		ret = aic_cmd_appousers(q, cd, db);

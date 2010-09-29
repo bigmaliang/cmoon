@@ -24,6 +24,7 @@ enum {
 	REQ_CMD_APPDEL,
 	REQ_CMD_APPUSERS = 2001,	/* who visited my app */
 	REQ_CMD_APPUSERIN,			/* remember sb visited my app */
+	REQ_CMD_APPUSEROUT,			/* remove JiangYou boy */
 	REQ_CMD_APP_O_USERS = 3001  /* who is my stuff */
 } req_cmd_aic;
 
@@ -31,6 +32,7 @@ enum {
 	REP_ERR_ALREADYREGIST = 501,
 	REP_ERR_NREGIST,
 	REP_ERR_ALREADYJOIN = 511,
+	REP_ERR_NOTJOIN,
 	REP_OK_INSERT = 1001,
 	REP_OK_UPDATE,
 } rep_code_aic;
