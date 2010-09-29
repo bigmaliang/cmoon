@@ -149,7 +149,7 @@ void mmisc_get_offset_b(HDF *hdf, int *count, int *offset)
 	j = hdf_get_int_value(hdf, "nst", -1);
 	if (j == -1) {
 		j = hdf_get_int_value(hdf, PRE_QUERY"npg", DFT_PAGE_NUM);
-		hdf_set_int_value(hdf, PRE_OUTPUT"npg", j);
+		hdf_set_int_value(hdf, "npg", j);
 		j = (j-1)*i;
 	}
 	*count = i;
