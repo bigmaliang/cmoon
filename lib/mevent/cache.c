@@ -13,6 +13,7 @@
 #include <stdarg.h>		/* va_end() */
 #include "cache.h"
 
+volatile time_t g_ctime;
 
 struct cache *cache_create(size_t numobjs, unsigned int flags)
 {
