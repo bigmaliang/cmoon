@@ -272,7 +272,7 @@ static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *
 		return ret;
 	}
 
-	if (hdf_get_obj(q->hdfsnd, uname)) {
+	if (hdf_get_valuef(q->hdfsnd, "userlist.%s", uname)) {
 		mtc_warn("%s already join %s", uname, aname);
 		return REP_ERR_ALREADYJOIN;
 	}
@@ -311,7 +311,7 @@ static int aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_conn 
 		return ret;
 	}
 
-	if (!hdf_get_obj(q->hdfsnd, uname)) {
+	if (!hdf_get_valuef(q->hdfsnd, "userlist.%s", uname)) {
 		mtc_warn("%s not join %s", uname, aname);
 		return REP_ERR_NOTJOIN;
 	}
