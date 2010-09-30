@@ -228,7 +228,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 {
 	unsigned char *val = NULL;
 	size_t vsize = 0;
-	int aid, hit, count;
+	int aid, hit;
 	char *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
