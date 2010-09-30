@@ -243,7 +243,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
 					  "aid=%d ORDER BY uptime DESC LIMIT %d OFFSET %d",
 					  NULL, aid, count, offset);
-		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, NULL, 1);
+		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, "userlist", 1);
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
