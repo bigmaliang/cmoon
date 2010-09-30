@@ -228,26 +228,21 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 {
 	unsigned char *val = NULL;
 	size_t vsize = 0;
-	int aid, hit, count, offset;
+	int aid, hit, count;
 	char *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
 	
-	mmisc_get_offset_b(q->hdfsnd, &count, &offset);
-	
-	hit = cache_getf(cd, &val, &vsize, PREFIX_USERLIST"%d_%d", aid, offset);
+	hit = cache_getf(cd, &val, &vsize, PREFIX_USERLIST"%d", aid);
 	if (hit == 0) {
-		mmisc_set_countf_b(q->hdfsnd, db, "userinfo", "aid=%d", aid);
-		
 		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
-					  "aid=%d ORDER BY uptime DESC LIMIT %d OFFSET %d",
-					  NULL, aid, count, offset);
+					  "aid=%d ORDER BY uptime DESC;", NULL, aid);
 		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, "userlist", 1);
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
-		cache_setf(cd, val, vsize, 0, PREFIX_USERLIST"%d_%d", aid, offset);
+		cache_setf(cd, val, vsize, 0, PREFIX_USERLIST"%d", aid);
 		free(val);
 	} else {
 		unpack_hdf(val, vsize, &q->hdfsnd);
@@ -291,7 +286,7 @@ static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *
 	}
 
 	/* TODO delete aid's ALL cache */
-	cache_delf(cd, PREFIX_USERLIST"%d_0", aid);
+	cache_delf(cd, PREFIX_USERLIST"%d", aid);
 
 	return REP_OK;
 }
@@ -329,7 +324,7 @@ static int aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_conn 
 	}
 
 	/* TODO delete aid's ALL cache */
-	cache_delf(cd, PREFIX_USERLIST"%d_0", aid);
+	cache_delf(cd, PREFIX_USERLIST"%d", aid);
 
 	return REP_OK;
 }
