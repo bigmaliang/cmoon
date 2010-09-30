@@ -351,9 +351,9 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 		mmisc_set_countf_b(q->hdfsnd, db, "appinfo", "pid=%d OR aid=%d", pid, pid);
 		
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL,
-					  "pid=%d OR aid=%d OBDER BY uptime LIMIT %d OFFSET %d",
+					  "pid=%d OR aid=%d ORDER BY uptime LIMIT %d OFFSET %d",
 					  NULL, pid, pid, count, offset);
-		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, NULL, 1);
+		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, "users", 1);
 		
 		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
 		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
