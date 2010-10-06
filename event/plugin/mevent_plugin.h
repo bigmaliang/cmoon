@@ -24,4 +24,15 @@
 
 #include "mheads.h"
 
+#define DECLARE_CACHE()							\
+	unsigned char *val = NULL;					\
+	size_t vsize = 0;							\
+	int hit;									\
+
+#define CACHE_HDF(timeout, fmt, ...)									\
+	if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;	\
+	vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);					\
+	cache_setf(cd, val, vsize, timeout, fmt, ##__VA_ARGS__);			\
+	free(val);
+
 #endif	/* __MEVENT_PLUGIN_H__ */

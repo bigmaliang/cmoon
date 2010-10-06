@@ -54,9 +54,9 @@ static void skeleton2_process_driver(struct event_entry *entry, struct queue_ent
 		st->proc_suc++;
 	} else {
 		st->proc_fai++;
-        if (ret == REP_ERR_BADPARAM) {
-            st->msg_badparam++;
-        }
+		if (ret == REP_ERR_BADPARAM) {
+			st->msg_badparam++;
+		}
 		mtc_err("process %u failed %d", q->operation, ret);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
@@ -103,7 +103,7 @@ static struct event_entry* skeleton2_init_driver(void)
 	
 	return (struct event_entry*)e;
 	
- error:
+error:
 	if (e->base.name) free(e->base.name);
 	if (e->db) mdb_destroy(e->db);
 	if (e->cd) cache_free(e->cd);

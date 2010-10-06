@@ -10,6 +10,7 @@ Mevent {
 		2 = aic
 		3 = dyn
 		4 = place
+		5 = msg
 	}
 	smsalarm {
 		db {
@@ -51,5 +52,8 @@ Plugin {
 	}
 	place {
 		ipfile = /usr/local/lib/QQWry.Dat
+	}
+	msg {
+		dbsn = pgsql:dbname=lcs_msg host=localhost user=lcser password=loveu
 	}
 }

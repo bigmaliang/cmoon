@@ -423,9 +423,9 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		st->proc_suc++;
 	} else {
 		st->proc_fai++;
-        if (ret == REP_ERR_BADPARAM) {
-            st->msg_badparam++;
-        }
+		if (ret == REP_ERR_BADPARAM) {
+			st->msg_badparam++;
+		}
 		mtc_err("process %u failed %d", q->operation, ret);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
