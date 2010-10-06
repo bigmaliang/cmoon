@@ -234,6 +234,7 @@ int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	}
 	
 	for (i = 0; i < qrcnt; i++) {
+		/* TODO cols NULL means what? see mdb_set_rows() */
 		if (prefix)
 			hdf_set_valuef(hdf, "%s.%s=%s", prefix, qrarray[i], col[i]);
 		else
@@ -243,24 +244,40 @@ int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	return MDB_ERR_NONE;
 }
 
+#define BUILD_HDF_FMT()													\
+	do {																\
+		memset(hdfkey, 0x0, sizeof(hdfkey));							\
+		if (prefix) snprintf(hdfkey, sizeof(hdfkey), "%s.", prefix);	\
+		if (keycol > 0) {												\
+			strncat(hdfkey, col[keycol], sizeof(hdfkey));				\
+		} else {														\
+			snprintf(tok, sizeof(tok), "%d", rowsn);					\
+			strncat(hdfkey, tok, sizeof(hdfkey));						\
+		}																\
+		if (cols) {														\
+			strcat(hdfkey, ".");										\
+			strncat(hdfkey, qrarray[i], sizeof(hdfkey));				\
+		}																\
+		strcat(hdfkey, "=%s");											\
+	} while (0)
+
 int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
 				 char *prefix, int keycol)
 {
-	int qrcnt, i;
+	int qrcnt = 1, i;
 	char qrarray[QR_NUM_MAX][LEN_ST];
 	char *col[QR_NUM_MAX];
-	char fmt[LEN_ST] = {0};
+	char fmt[LEN_ST] = {0}, hdfkey[LEN_HDF_KEY] = {0}, tok[LEN_ST];
 	int ret;
 	
 	memset(fmt, 0x0, sizeof(fmt));
 	memset(qrarray, 0x0, sizeof(qrarray));
-	
-	mmisc_set_qrarray(cols, qrarray, &qrcnt);
+
+	if (cols) mmisc_set_qrarray(cols, qrarray, &qrcnt);
 	memset(fmt, 's', qrcnt);
 	if (keycol > qrcnt) keycol = 0;
 
 	/* append to last child */
-	char hdfkey[LEN_HDF_KEY] = "0";
 	int rowsn = 0;
 	if (prefix)
 		snprintf(hdfkey, sizeof(hdfkey), "%s.0", prefix);
@@ -278,21 +295,8 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
 
 	while (mdb_geta(conn, fmt, col) == MDB_ERR_NONE ){
 		for (i = 0; i < qrcnt; i++) {
-			if (prefix) {
-				if (keycol < 0)
-					hdf_set_valuef(hdf, "%s.%d.%s=%s",
-								   prefix, rowsn, qrarray[i], col[i]);
-				else
-					hdf_set_valuef(hdf, "%s.%s.%s=%s",
-								   prefix, col[keycol], qrarray[i], col[i]);
-			} else {
-				if (keycol < 0)
-					hdf_set_valuef(hdf, "%d.%s=%s",
-								   rowsn, qrarray[i], col[i]);
-				else
-					hdf_set_valuef(hdf, "%s.%s=%s",
-								   col[keycol], qrarray[i], col[i]);
-			}
+			BUILD_HDF_FMT();
+			hdf_set_valuef(hdf, hdfkey, col[i]);
 		}
 		rowsn++;
 	}

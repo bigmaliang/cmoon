@@ -114,6 +114,47 @@ mevent_t *mevent_init_plugin(char *ename);
 int mevent_trigger(mevent_t *evt, char *key,
 				   unsigned short cmd, unsigned short flags);
 
+#define MEVENT_TRIGGER(ret, evt, key, cmd, flags)					\
+	do {															\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {	\
+			mtc_err("process failure %d", evt->errcode);			\
+			return ret;												\
+		}															\
+	} while(0)
+#define MEVENT_TRIGGER_VOID(evt, key, cmd, flags)					\
+	do {															\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {	\
+			mtc_err("process failure %d", evt->errcode);			\
+			return;													\
+		}															\
+	} while(0)
+#define MEVENT_TRIGGER_NRET(evt, key, cmd, flags)					\
+	do {															\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {	\
+			mtc_err("process failure %d", evt->errcode);			\
+		}															\
+	} while(0)
+
+#define AEVENT_TRIGGER(ret, evt, key, cmd, flags)					\
+	do {															\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {	\
+			alog_err("process failure %d", evt->errcode);			\
+			return ret;												\
+		}															\
+	} while(0)
+#define AEVENT_TRIGGER_VOID(evt, key, cmd, flags)					\
+	do {															\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {	\
+			alog_err("process failure %d", evt->errcode);			\
+			return;													\
+		}															\
+	} while(0)
+#define AEVENT_TRIGGER_NRET(evt, key, cmd, flags)					\
+	do {															\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {	\
+			alog_err("process failure %d", evt->errcode);			\
+		}															\
+	} while(0)
 
 /*
  * 获取请求中参数
