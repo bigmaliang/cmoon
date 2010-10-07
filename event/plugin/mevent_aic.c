@@ -344,12 +344,12 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
 	pid = hash_string(pname);
 	
-	mmisc_get_offset_b(q->hdfsnd, &count, &offset);
+	mmisc_pagediv_get(q->hdfrcv, NULL, &count, &offset);
 	
 	hit = cache_getf(cd, &val, &vsize, PREFIX_APPOUSER"%d_%d", pid, offset);
 	if (hit == 0) {
-		mmisc_set_countf_b(q->hdfsnd, db, "appinfo", "pid=%d OR aid=%d", pid, pid);
-		
+		MMISC_PAGEDIV_SET(q->hdfsnd, offset, db, "appinfo", "pid=%d OR aid=%d",
+						  NULL, pid, pid);
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL,
 					  "pid=%d OR aid=%d ORDER BY uptime LIMIT %d OFFSET %d",
 					  NULL, pid, pid, count, offset);
