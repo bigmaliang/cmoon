@@ -96,62 +96,25 @@ void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_c
 	*qr_cnt = cnt;
 }
 
-int mmisc_get_count(mdb_conn *conn, char *table, char *col)
+void mmisc_pagediv_get(HDF *hdf, char *inprefix, int *count, int *offset)
 {
-	int count = 0;
-	mdb_exec(conn, NULL, "SELECT count(*) FROM %s WHERE %s;",
-			 NULL, table, col);
-	mdb_get(conn, "i", &count);
-	return count;
-}
-void mmisc_set_count(HDF *hdf, mdb_conn *conn, char *table, char *col)
-{
-	PRE_DBOP_NRET(hdf, conn);
-	hdf_set_int_value(hdf, PRE_OUTPUT".ntt",
-					  mmisc_get_count(conn, table, col));
-}
-void mmisc_get_offset(HDF *hdf, int *count, int *offset)
-{
+	char hdfkey[LEN_HDF_KEY];
 	int i, j;
+
+	if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.npp", inprefix);
+	else strcpy(hdfkey, "npp");
+	i = hdf_get_int_value(hdf, hdfkey, DFT_NUM_PERPAGE);
 	
-	i = hdf_get_int_value(hdf, PRE_QUERY".npp", DFT_NUM_PERPAGE);
-	j = hdf_get_int_value(hdf, PRE_QUERY".nst", -1);
+	if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.nst", inprefix);
+	else strcpy(hdfkey, "nst");
+	j = hdf_get_int_value(hdf, hdfkey, -1);
 	if (j == -1) {
-		j = hdf_get_int_value(hdf, PRE_QUERY".npg", DFT_PAGE_NUM);
-		hdf_set_int_value(hdf, PRE_OUTPUT".npg", j);
+		if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.npg", inprefix);
+		else strcpy(hdfkey, "npg");
+		j = hdf_get_int_value(hdf, hdfkey, DFT_PAGE_NUM);
 		j = (j-1)*i;
 	}
-	*count = i;
-	*offset = j;
-}
-void mmisc_set_count_b(HDF *hdf, mdb_conn *conn, char *table, char *col)
-{
-	PRE_DBOP_NRET(hdf, conn);
-	hdf_set_int_value(hdf, "ntt", mmisc_get_count(conn, table, col));
-}
-void mmisc_set_countf_b(HDF *hdf, mdb_conn *conn, char *table, char *fmt, ...)
-{
-	char col[LEN_SM];
-	va_list ap;
-
-	va_start(ap, fmt);
-	vsnprintf(col, sizeof(col), fmt, ap);
-	va_end(ap);
-
-	return mmisc_set_count_b(hdf, conn, table, col);
-}
-
-void mmisc_get_offset_b(HDF *hdf, int *count, int *offset)
-{
-	int i, j;
 	
-	i = hdf_get_int_value(hdf, "npp", DFT_NUM_PERPAGE);
-	j = hdf_get_int_value(hdf, "nst", -1);
-	if (j == -1) {
-		j = hdf_get_int_value(hdf, PRE_QUERY"npg", DFT_PAGE_NUM);
-		hdf_set_int_value(hdf, "npg", j);
-		j = (j-1)*i;
-	}
 	*count = i;
 	*offset = j;
 }

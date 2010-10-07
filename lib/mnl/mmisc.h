@@ -13,13 +13,24 @@ int  mmisc_compare_inta(const void *a, const void *b);
 
 void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_cnt);
 
-int mmisc_get_count(mdb_conn *conn, char *table, char *col);
-
-void mmisc_set_count(HDF *hdf, mdb_conn *conn, char *table, char *col);
-void mmisc_set_count_b(HDF *hdf, mdb_conn *conn, char *table, char *col);
-void mmisc_set_countf_b(HDF *hdf, mdb_conn *conn, char *table, char *fmt, ...);
-void mmisc_get_offset(HDF *hdf, int *count, int *offset);
-void mmisc_get_offset_b(HDF *hdf, int *count, int *offset);
+void mmisc_pagediv_get(HDF *hdf, char *inprefix, int *count, int *offset);
+/* table, condition MUST be string literal, not variable */
+#define MMISC_PAGEDIV_SET(hdf, offset, db, table, condition, sfmt, ...) \
+	do {																\
+		int zinta;														\
+		mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
+		mdb_get(db, "i", &zinta);										\
+		hdf_set_int_value(hdf, "ntt", zinta);							\
+		hdf_set_int_value(hdf, "nst", offset);							\
+	} while (0)
+#define MMISC_PAGEDIV_SET_O(hdf, outprefix, offset, db, table, condition, sfmt, ...) \
+	do {																\
+		int zinta;														\
+		mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
+		mdb_get(db, "i", &zinta);										\
+		hdf_set_valuef(hdf, "%s.ntt=%d", outprefix, zinta);				\
+		hdf_set_valuef(hdf, "%s.nst=%d", outprefix, offset);			\
+	} while (0)
 
 void mmisc_str_repchr(char *s, char from, char to);
 char* mmisc_str_strip (char *s, char n);
