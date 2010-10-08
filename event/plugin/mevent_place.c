@@ -183,15 +183,15 @@ static void ip2place(HDF *hdf, char *ip, char *key)
 
 static int place_cmd_get(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
-	unsigned char *val = NULL;
-	size_t vsize = 0;
-	int hit, count = 0;
+	unsigned char *val = NULL; size_t vsize = 0;
+	int count = 0;
 	char *ip, tok[64];
 	
 	REQ_GET_PARAM_STR(q->hdfrcv, "ip", ip);
 	
-	hit = cache_getf(cd, &val, &vsize, PREFIX_PLACE"%s", ip);
-	if (hit == 0) {
+	if (cache_getf(cd, &val, &vsize, PREFIX_PLACE"%s", ip)) {
+		unpack_hdf(val, vsize, &q->hdfsnd);
+	} else {
 		char *s = strdup(ip);
 		char *dupip = s, *p = s;
 		while (*p != '\0') {
@@ -207,16 +207,8 @@ static int place_cmd_get(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		sprintf(tok, "%d", count);
 		ip2place(q->hdfsnd, s, tok);
 		free(dupip);
-		
-		val = calloc(1, MAX_PACKET_LEN);
-		if (val == NULL) {
-			return REP_ERR_MEM;
-		}
-		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
-		cache_setf(cd, val, vsize, 0, PREFIX_PLACE"%s", ip);
-		free(val);
-	} else {
-		unpack_hdf(val, vsize, &q->hdfsnd);
+
+		CACHE_HDF(q->hdfsnd, 0, PREFIX_PLACE"%s", ip);
 	}
 	
 	return REP_OK;

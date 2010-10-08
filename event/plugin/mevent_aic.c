@@ -36,16 +36,16 @@ struct aic_entry {
  */
 static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
-	unsigned char *val = NULL;
-	size_t vsize = 0;
-	int aid, pid, hit;
+	unsigned char *val = NULL; size_t vsize = 0;
+	int aid, pid;
 	char *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
 
-	hit = cache_getf(cd, &val, &vsize, PREFIX_APPINFO"%d", aid);
-	if (hit == 0) {
+	if (cache_getf(cd, &val, &vsize, PREFIX_APPINFO"%d", aid)) {
+		unpack_hdf(val, vsize, &q->hdfsnd);
+	} else {
 		hdf_set_value(q->hdfsnd, "pname", aname);
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL, "aid=%d", NULL, aid);
 		if (mdb_set_row(q->hdfsnd, db, APPINFO_COL, NULL) == MDB_ERR_NONE) {
@@ -54,19 +54,11 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db
 				MDB_QUERY_RAW(db, "appinfo", "aname", "aid=%d", NULL, pid);
 				mdb_set_row(q->hdfsnd, db, "pname", NULL);
 			}
-			MDB_QUERY_RAW(db, "appinfo", "COUNT(*)+1 AS numuser", "pid=%d", NULL, aid);
+			MDB_QUERY_RAW(db, "appinfo", "COUNT(*)+1 AS numuser", "pid=%d",
+						  NULL, aid);
 			mdb_set_row(q->hdfsnd, db, "numuser", NULL);
 		}
-		// cache for error result, because of most be empty, and new/up will del the cache
-		//} else {
-		//return REP_ERR_DB;
-		
-		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
-		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
-		cache_setf(cd, val, vsize, 0, PREFIX_APPINFO"%d", aid);
-		free(val);
-	} else {
-		unpack_hdf(val, vsize, &q->hdfsnd);
+		CACHE_HDF(q->hdfsnd, 0, PREFIX_APPINFO"%d", aid);
 	}
 	
 	return REP_OK;
@@ -104,14 +96,10 @@ static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		return REP_ERR_ALREADYREGIST;
 	}
 
-	ret = mdb_exec(db, NULL, "INSERT INTO appinfo (aid, aname, "
-				   " pid, asn, masn, email, state) "
-				   " VALUES ($1, $2, $3, $4, $5, $6, $7);",
-				   "isisssi", aid, aname, pid, asn, masn, email, state);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec failure %s", mdb_get_errmsg(db));
-		return REP_ERR_DB;
-	}
+	MDB_EXEC_EVT(db, NULL, "INSERT INTO appinfo (aid, aname, "
+				 " pid, asn, masn, email, state) "
+				 " VALUES ($1, $2, $3, $4, $5, $6, $7);",
+				 "isisssi", aid, aname, pid, asn, masn, email, state);
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
 	if (pid > 0) {
@@ -159,17 +147,17 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	}
 	pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
 
-	mcs_build_upcol_s(q->hdfrcv, hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.s"), &str);
-	mcs_build_upcol_i(q->hdfrcv, hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.i"), &str);
+	mcs_build_upcol_s(q->hdfrcv,
+					  hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.s"), &str);
+	mcs_build_upcol_i(q->hdfrcv,
+					  hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.i"), &str);
 	if (str.len <= 0) return REP_ERR_BADPARAM;
 	string_append(&str, " uptime=uptime ");
-	
-	ret = mdb_exec(db, NULL, "UPDATE appinfo SET %s WHERE aid=%d;", NULL, str.buf, aid);
+
+	MDB_EXEC_EVT(db, NULL, "UPDATE appinfo SET %s WHERE aid=%d;", NULL, str.buf, aid);
+
+	/* TODO memory leak, if exec() failure */
 	string_clear(&str);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec failure %s", mdb_get_errmsg(db));
-		return REP_ERR_DB;
-	}
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
 	if (pid > 0) {
@@ -205,11 +193,7 @@ static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	}
 	pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
 
-	ret = mdb_exec(db, NULL, "DELETE FROM appinfo WHERE aid=%d;", NULL, aid);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec failure %s", mdb_get_errmsg(db));
-		return REP_ERR_DB;
-	}
+	MDB_EXEC_EVT(db, NULL, "DELETE FROM appinfo WHERE aid=%d;", NULL, aid);
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
 	if (pid > 0) {
@@ -226,26 +210,20 @@ static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
  */
 static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
-	unsigned char *val = NULL;
-	size_t vsize = 0;
-	int aid, hit;
+	unsigned char *val = NULL; size_t vsize = 0;
+	int aid;
 	char *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
 	
-	hit = cache_getf(cd, &val, &vsize, PREFIX_USERLIST"%d", aid);
-	if (hit == 0) {
+	if (cache_getf(cd, &val, &vsize, PREFIX_USERLIST"%d", aid)) {
+		unpack_hdf(val, vsize, &q->hdfsnd);
+	} else {
 		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
 					  "aid=%d ORDER BY uptime DESC;", NULL, aid);
 		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, "userlist", 1);
-		
-		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
-		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
-		cache_setf(cd, val, vsize, 0, PREFIX_USERLIST"%d", aid);
-		free(val);
-	} else {
-		unpack_hdf(val, vsize, &q->hdfsnd);
+		CACHE_HDF(q->hdfsnd, 0, PREFIX_USERLIST"%d", aid);
 	}
 	
 	return REP_OK;
@@ -336,9 +314,9 @@ static int aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_conn 
  */
 static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
-	unsigned char *val = NULL;
-	size_t vsize = 0;
-	int pid, hit, count, offset;
+	unsigned char *val = NULL; size_t vsize = 0;
+	int count, offset;
+	int pid;
 	char *pname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
@@ -346,21 +324,16 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 	
 	mmisc_pagediv_get(q->hdfrcv, NULL, &count, &offset);
 	
-	hit = cache_getf(cd, &val, &vsize, PREFIX_APPOUSER"%d_%d", pid, offset);
-	if (hit == 0) {
-		MMISC_PAGEDIV_SET(q->hdfsnd, offset, db, "appinfo", "pid=%d OR aid=%d",
-						  NULL, pid, pid);
+	if (cache_getf(cd, &val, &vsize, PREFIX_APPOUSER"%d_%d", pid, offset)) {
+		unpack_hdf(val, vsize, &q->hdfsnd);
+	} else {
+		MMISC_PAGEDIV_SET_N(q->hdfsnd, offset, db, "appinfo", "pid=%d OR aid=%d",
+							NULL, pid, pid);
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL,
 					  "pid=%d OR aid=%d ORDER BY uptime LIMIT %d OFFSET %d",
 					  NULL, pid, pid, count, offset);
 		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, "users", 1);
-		
-		if ((val = calloc(1, MAX_PACKET_LEN)) == NULL) return REP_ERR_MEM;
-		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
-		cache_setf(cd, val, vsize, 0, PREFIX_APPOUSER"%d_%d", pid, offset);
-		free(val);
-	} else {
-		unpack_hdf(val, vsize, &q->hdfsnd);
+		CACHE_HDF(q->hdfsnd, 0, PREFIX_APPOUSER"%d_%d", pid, offset);
 	}
 	
 	return REP_OK;

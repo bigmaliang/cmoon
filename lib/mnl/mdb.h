@@ -86,6 +86,11 @@ int mdb_get_rows_apart(mdb_query *query);
 int mdb_get_affect_rows_apart(mdb_query *query);
 int mdb_get_last_id_apart(mdb_query *query, const char* seq_name);
 
+void mdb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
+				  char *target, char *url, bool header);
+void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn);
+
+
 #define PRE_DBOP(hdf, conn)								\
 	if (hdf == NULL) {									\
 		mtc_err("hdf is null");							\
@@ -106,6 +111,20 @@ int mdb_get_last_id_apart(mdb_query *query, const char* seq_name);
 		return;											\
 	}
 
+#define MDB_EXEC_RBT(conn, affrow, sqlfmt, fmt, ...)				\
+	do {															\
+		if (mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__)) {	\
+			mtc_err("exec failure %s", mdb_get_errmsg(conn));		\
+			return RET_RBTOP_DBE;									\
+		}															\
+	} while (0)
+#define MDB_EXEC_EVT(conn, affrow, sqlfmt, fmt, ...)				\
+	do {															\
+		if (mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__)) {	\
+			mtc_err("exec failure %s", mdb_get_errmsg(conn));		\
+			return REP_ERR_DB;										\
+		}															\
+	} while (0)
 
 /*
  * col, table, condition MUST be string literal, not variable
@@ -118,18 +137,6 @@ int mdb_get_last_id_apart(mdb_query *query, const char* seq_name);
 #define MDB_QUERY_RAW(conn, table, col, condition, sfmt, ...)           \
 	mdb_exec(conn, NULL, "SELECT " col " FROM " table " WHERE " condition ";", \
 			 sfmt, ##__VA_ARGS__)
-
-#define MDB_EXEC(ret, conn, affrow, sqlfmt, fmt, ...)				\
-	do {															\
-		if (mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__)) {	\
-			mtc_err("exec failure %s", mdb_get_errmsg(conn));		\
-			return ret;												\
-		}															\
-	} while (0)
-
-void mdb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
-				  char *target, char *url, bool header);
-void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn);
 
 __END_DECLS
 #endif	/* __MDB_H__ */

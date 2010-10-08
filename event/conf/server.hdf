@@ -24,6 +24,7 @@ Mevent {
 
 Plugin {
     rawdb {
+		numobjs = 8
 		access {
 			dbsn = pgsql:dbname=lcs_dyn host=localhost user=lcser password=loveu
 		}

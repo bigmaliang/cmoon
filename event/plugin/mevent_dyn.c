@@ -21,6 +21,9 @@ struct dyn_entry {
 	struct dyn_stats st;
 };
 
+#define JOIN_COL " id, uid, uname, aid, aname, "	\
+	" oid, oname, ip, refer, url, title, retcode "
+
 /*
  * input : uname(STR) aname(STR)
  * return: NORMAL
@@ -29,55 +32,22 @@ struct dyn_entry {
 static int dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
 						   mdb_conn *db)
 {
-	unsigned char *val = NULL;
-	size_t vsize = 0;
-	int hit, ret;
-	
-	char *uname, *aname, *oname, *ip, *refer, *url, *title, *tmp;
-	int id, uid, aid, oid, retcode, cnt = 0;
+	unsigned char *val = NULL; size_t vsize = 0;
+	char *uname, *aname;
+	int uid, aid;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	uid = hash_string(uname);
 	aid = hash_string(aname);
 
-	hit = cache_getf(cd, &val, &vsize, PREFIX_DYN"%d%d", uid, aid);
-	if (hit == 0) {
-		ret = mdb_exec(db, NULL, "SELECT id, uid, uname, aid, aname, "
-					   " oid, oname, ip, refer, url, title, retcode FROM "
-					   " lcsjoin WHERE uid=%d AND aid=%d ORDER BY id DESC;",
-					   NULL, uid, aid);
-		if (ret != MDB_ERR_NONE) {
-			mtc_err("exec failure %s", mdb_get_errmsg(db));
-			return REP_ERR_DB;
-		}
-		while (mdb_get(db, "iisisisssssi", &id, &uid, &tmp, &aid, &tmp,
-					   &oid, &oname, &ip, &refer, &url, &title, &retcode)
-			   == MDB_ERR_NONE) {
-			hdf_set_valuef(q->hdfsnd, "%d.id=%d", cnt, id);
-			hdf_set_valuef(q->hdfsnd, "%d.uid=%d", cnt, uid);
-			hdf_set_valuef(q->hdfsnd, "%d.aid=%d", cnt, aid);
-			hdf_set_valuef(q->hdfsnd, "%d.oid=%d", cnt, oid);
-			hdf_set_valuef(q->hdfsnd, "%d.retcode=%d", cnt, retcode);
-
-			hdf_set_valuef(q->hdfsnd, "%d.uname=%s", cnt, uname);
-			hdf_set_valuef(q->hdfsnd, "%d.aname=%s", cnt, aname);
-			hdf_set_valuef(q->hdfsnd, "%d.oname=%s", cnt, oname);
-			hdf_set_valuef(q->hdfsnd, "%d.ip=%s", cnt, ip);
-			hdf_set_valuef(q->hdfsnd, "%d.refer=%s", cnt, refer);
-			hdf_set_valuef(q->hdfsnd, "%d.url=%s", cnt, url);
-			hdf_set_valuef(q->hdfsnd, "%d.title=%s", cnt, title);
-			cnt++;
-		}
-		val = calloc(1, MAX_PACKET_LEN);
-		if (val == NULL) {
-			return REP_ERR_MEM;
-		}
-		vsize = pack_hdf(q->hdfsnd, val, MAX_PACKET_LEN);
-		cache_setf(cd, val, vsize, 0, PREFIX_DYN"%d%d", uid, aid);
-		free(val);
-	} else {
+	if (cache_getf(cd, &val, &vsize, PREFIX_DYN"%d_%d", uid, aid)) {
 		unpack_hdf(val, vsize, &q->hdfsnd);
+	} else {
+		MDB_QUERY_RAW(db, "lcsjoin", JOIN_COL, "uid=%d AND aid=%d ORDER BY id DESC;",
+					  NULL, uid, aid);
+		mdb_set_rows(q->hdfsnd, db, JOIN_COL, NULL, -1);
+		CACHE_HDF(q->hdfsnd, 0, PREFIX_DYN"%d_%d", uid, aid);
 	}
 	
 	return REP_OK;
@@ -92,7 +62,7 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 						  mdb_conn *db)
 {
 	char *uname, *aname, *oname, *ip, *refer, *url, *title;
-	int id, uid, aid, retcode = 0, ret;
+	int id, uid, aid, retcode = 0;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
@@ -111,22 +81,18 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 	url = url ? url: "";
 	title = title ? title: "";
 
-	ret = mdb_exec(db, NULL, "INSERT INTO lcsjoin (uid, uname, "
-				   " aid, aname, oid, oname, ip, refer, url, title, retcode) "
-				   " VALUES ($1, $2, $3, $4, $5, $6, $7, $8::varchar(256), "
-				   " $9::varchar(256), $10::varchar(256), $11) RETURNING id;",
-				   "isisisssssi", uid, uname, aid, aname,
-				   hash_string(oname), oname, ip, refer, url, title, retcode);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec failure %s", mdb_get_errmsg(db));
-		return REP_ERR_DB;
-	}
+	MDB_EXEC_EVT(db, NULL, "INSERT INTO lcsjoin (uid, uname, "
+				 " aid, aname, oid, oname, ip, refer, url, title, retcode) "
+				 " VALUES ($1, $2, $3, $4, $5, $6, $7, $8::varchar(256), "
+				 " $9::varchar(256), $10::varchar(256), $11) RETURNING id;",
+				 "isisisssssi", uid, uname, aid, aname,
+				 hash_string(oname), oname, ip, refer, url, title, retcode);
 	
 	if (mdb_get(db, "i", &id) == MDB_ERR_NONE) {
 		hdf_set_int_value(q->hdfsnd, "id", id);
 	}
 	
-	cache_delf(cd, PREFIX_DYN"%d%d", uid, aid);
+	cache_delf(cd, PREFIX_DYN"%d_%d", uid, aid);
 
 	return REP_OK;
 }
@@ -151,18 +117,15 @@ static int dyn_cmd_visitset(struct queue_entry *q, struct cache *cd,
 							mdb_conn *db)
 {
 	char *url, *title;
-	int jid, ret;
+	int jid;
 
 	REQ_GET_PARAM_INT(q->hdfrcv, "jid", jid);
 	REQ_GET_PARAM_STR(q->hdfrcv, "url", url);
 	REQ_GET_PARAM_STR(q->hdfrcv, "title", title);
 
-	ret = mdb_exec(db, NULL, "INSERT INTO visit (jid, url, title) "
-				   " VALUES ($1, $2::varchar(256), $3::varchar(256))", "iss", jid, url, title);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec failure %s", mdb_get_errmsg(db));
-		return REP_ERR_DB;
-	}
+	MDB_EXEC_EVT(db, NULL, "INSERT INTO visit (jid, url, title) "
+				 " VALUES ($1, $2::varchar(256), $3::varchar(256))",
+				 "iss", jid, url, title);
 
 	cache_delf(cd, PREFIX_VISIT"%d", jid);
 

@@ -494,6 +494,7 @@ static void get_errmsg(int ret, char *res)
 	case RET_RBTOP_EVTE:
 		strcpy(res, "事件后台处理失败");
 		break;
+	case RET_RBTOP_DBE:
 	default:
 		strcpy(res, "数据库操作错误");
 		break;
