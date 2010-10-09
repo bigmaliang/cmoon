@@ -5,6 +5,7 @@
 #define PREFIX_MYSAID		"Mysaid"
 #define PREFIX_SAYTOME		"Saytome"
 #define PREFIX_SAYWITHOTHER	"Saywithother"
+#define MSG_CC_SEC			60
 
 enum msg_type {
 	MSG_TYPE_SEND = 0,

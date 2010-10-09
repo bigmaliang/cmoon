@@ -258,7 +258,7 @@ static int pgsql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 	int i, col = 0, retval = 0;
 	PGresult* res;
 
-	mtc_dbg("%s %d", query->sql, param_count);
+	mtc_dbg("%s %s %d", query->sql, fmt, param_count);
 	for (i = 0; i < param_count; i++) {
 		int is_null = 0;
 

@@ -14,33 +14,37 @@ __BEGIN_DECLS
  * If mem ok, continue do following things(exec, geta...).
  * Otherwise return.
  */
-#define CONN_RETURN_IF_INVALID(c)						\
-	if (c == NULL) {									\
-		mtc_err("conn NULL");							\
-		return;											\
-	} else if (mdb_get_errcode(c) != MDB_ERR_NONE) {	\
-		mtc_err("conn err %s", mdb_get_errmsg(c));		\
-	}
-#define CONN_RETURN_VAL_IF_INVALID(c, val)				\
-	if (c == NULL) {									\
-		mtc_err("conn NULL");							\
-		return val;										\
-	} else if (mdb_get_errcode(c) != MDB_ERR_NONE) {	\
-		mtc_err("conn err %s", mdb_get_errmsg(c));		\
-	}
-#define QUERY_RETURN_IF_INVALID(q)							\
-	if (q == NULL || q->conn == NULL) {						\
+#define CONN_RETURN_IF_INVALID(c)							\
+	if (c == NULL) {										\
 		mtc_err("conn NULL");								\
 		return;												\
-	} else if (mdb_get_errcode(q->conn) != MDB_ERR_NONE) {	\
-		mtc_err("conn err %s", mdb_get_errmsg(q->conn));	\
+	} else if (mdb_get_errcode(c) != MDB_ERR_NONE) {		\
+		mtc_err("conn err %s", mdb_get_errmsg(c));			\
+		mdb_set_error(c, MDB_ERR_NONE, "errmsg cleared");	\
 	}
-#define QUERY_RETURN_VAL_IF_INVALID(q, val)					\
-	if (q == NULL || q->conn == NULL) {						\
+#define CONN_RETURN_VAL_IF_INVALID(c, val)					\
+	if (c == NULL) {										\
 		mtc_err("conn NULL");								\
 		return val;											\
-	} else if (mdb_get_errcode(q->conn) != MDB_ERR_NONE) {	\
-		mtc_err("conn err %s", mdb_get_errmsg(q->conn));	\
+	} else if (mdb_get_errcode(c) != MDB_ERR_NONE) {		\
+		mtc_err("conn err %s", mdb_get_errmsg(c));			\
+		mdb_set_error(c, MDB_ERR_NONE, "errmsg cleared");	\
+	}
+#define QUERY_RETURN_IF_INVALID(q)								\
+	if (q == NULL || q->conn == NULL) {							\
+		mtc_err("conn NULL");									\
+		return;													\
+	} else if (mdb_get_errcode(q->conn) != MDB_ERR_NONE) {		\
+		mtc_err("conn err %s", mdb_get_errmsg(q->conn));		\
+		mdb_set_error(q->conn, MDB_ERR_NONE, "errmsg cleared");	\
+	}
+#define QUERY_RETURN_VAL_IF_INVALID(q, val)						\
+	if (q == NULL || q->conn == NULL) {							\
+		mtc_err("conn NULL");									\
+		return val;												\
+	} else if (mdb_get_errcode(q->conn) != MDB_ERR_NONE) {		\
+		mtc_err("conn err %s", mdb_get_errmsg(q->conn));		\
+		mdb_set_error(q->conn, MDB_ERR_NONE, "errmsg cleared");	\
 	}
 
 typedef struct _mdb_driver mdb_driver;

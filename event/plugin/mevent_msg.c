@@ -37,9 +37,10 @@ static int msg_cmd_mysaid(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		unpack_hdf(val, vsize, &q->hdfsnd);
 	} else {
 		MMISC_PAGEDIV_SET_N(q->hdfsnd, offset, db, "msg", "mfrom=$1", "s", name);
-		MDB_QUERY_RAW(db, "msg", MSG_COL, "mfrom=$1", "s", name);
+		MDB_QUERY_RAW(db, "msg", MSG_COL, "mfrom=$1 ORDER BY intime DESC "
+					  " LIMIT %d OFFSET %d", "s", count, offset, name);
 		mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
-		CACHE_HDF(q->hdfsnd, 600, PREFIX_MYSAID"%s_%d", name, offset);
+		CACHE_HDF(q->hdfsnd, MSG_CC_SEC, PREFIX_MYSAID"%s_%d", name, offset);
 	}
 
 	return REP_OK;
@@ -59,9 +60,10 @@ static int msg_cmd_saytome(struct queue_entry *q, struct cache *cd, mdb_conn *db
 		unpack_hdf(val, vsize, &q->hdfsnd);
 	} else {
 		MMISC_PAGEDIV_SET_N(q->hdfsnd, offset, db, "msg", "mto=$1", "s", name);
-		MDB_QUERY_RAW(db, "msg", MSG_COL, "mto=$1", "s", name);
+		MDB_QUERY_RAW(db, "msg", MSG_COL, "mto=$1 ORDER BY intime DESC "
+					  " LIMIT %d OFFSET %d", "s", count, offset, name);
 		mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
-		CACHE_HDF(q->hdfsnd, 600, PREFIX_SAYTOME"%s_%d", name, offset);
+		CACHE_HDF(q->hdfsnd, MSG_CC_SEC, PREFIX_SAYTOME"%s_%d", name, offset);
 	}
 
 	return REP_OK;
@@ -88,12 +90,14 @@ static int msg_cmd_saywithother(struct queue_entry *q, struct cache *cd, mdb_con
 		unpack_hdf(val, vsize, &q->hdfsnd);
 	} else {
 		MMISC_PAGEDIV_SET_N(q->hdfsnd, offset, db, "msg",
-							"(mfrom=%s AND mto=%s) OR (mfrom=%s AND mto=%s)",
-							name, name2, name2, name);
-		MDB_QUERY_RAW(db, "msg", MSG_COL, "(mfrom=$1 AND mto=$2) OR (mfrom=$3 AND mto=$4)",
-					  "ssss", name, name2, name2, name);
+							"(mfrom=$1 AND mto=$2) OR (mfrom=$3 AND mto=$4)",
+							"ssss", name, name2, name2, name);
+		MDB_QUERY_RAW(db, "msg", MSG_COL, "(mfrom=$1 AND mto=$2) OR "
+					  " (mfrom=$3 AND mto=$4)"
+					  " ORDER BY intime DESC LIMIT %d OFFSET %d",
+					  "ssss", count, offset, name, name2, name2, name);
 		mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
-		CACHE_HDF(q->hdfsnd, 600, PREFIX_SAYWITHOTHER"%s_%d", key, offset);
+		CACHE_HDF(q->hdfsnd, MSG_CC_SEC, PREFIX_SAYWITHOTHER"%s_%d", key, offset);
 	}
 
 	return REP_OK;
@@ -114,10 +118,11 @@ static int msg_cmd_mymsg(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	} else {
 		MMISC_PAGEDIV_SET_N(q->hdfsnd, offset, db, "msg", "mfrom=$1 OR mto=$2"
 							"ss", name, name);
-		MDB_QUERY_RAW(db, "msg", MSG_COL, "mfrom=$1 OR mto=$2",
-					  "ss", name, name);
+		MDB_QUERY_RAW(db, "msg", MSG_COL, "mfrom=$1 OR mto=$2"
+					  " ORDER BY intime DESC LIMIT %d OFFSET %d",
+					  "ss", count, offset, name, name);
 		mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
-		CACHE_HDF(q->hdfsnd, 600, PREFIX_MYMSG"%s_%d", name, offset);
+		CACHE_HDF(q->hdfsnd, MSG_CC_SEC, PREFIX_MYMSG"%s_%d", name, offset);
 	}
 	
 	return REP_OK;
