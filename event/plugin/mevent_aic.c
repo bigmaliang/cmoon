@@ -221,7 +221,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 		unpack_hdf(val, vsize, &q->hdfsnd);
 	} else {
 		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
-					  "aid=%d ORDER BY uptime;", NULL, aid);
+					  "aid=%d ORDER BY uptime DESC;", NULL, aid);
 		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, "userlist", 1);
 		CACHE_HDF(q->hdfsnd, 0, PREFIX_USERLIST"%d", aid);
 	}
