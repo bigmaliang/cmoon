@@ -115,3 +115,39 @@ void mcs_build_upcol_i(HDF *data, HDF *node, STRING *str)
 		node = hdf_obj_next(node);
 	}
 }
+
+void mcs_build_querycond_s(HDF *data, HDF *node, STRING *str)
+{
+	if (!data || !node || !str) return;
+	
+	char *key, *val, *esc;
+	
+	while (node) {
+		key = hdf_obj_value(node);
+		val = hdf_get_value(data, key, NULL);
+		if (val) {
+			mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+			string_appendf(str, " %s='%s' AND ", key, esc);
+			free(esc);
+		}
+		
+		node = hdf_obj_next(node);
+	}
+}
+
+void mcs_build_querycond_i(HDF *data, HDF *node, STRING *str)
+{
+	if (!data || !node || !str) return;
+	
+	char *key, *val;
+	
+	while (node) {
+		key = hdf_obj_value(node);
+		val = hdf_get_value(data, key, NULL);
+		if (val) {
+			string_appendf(str, " %s=%d AND ", key, atoi(val));
+		}
+		
+		node = hdf_obj_next(node);
+	}
+}

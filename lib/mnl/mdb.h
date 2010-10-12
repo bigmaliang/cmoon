@@ -64,7 +64,7 @@ int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
  * set db rows result into hdf
  * hdf	 :OUT result store into
  * conn  :IN db
- * cols  :IN SET which colums(hdf key) {aid, aname}
+ * cols  :IN SET which colums(hdf key) {aid, aname}, NULL for single col
  * prefix:IN store in hdf whith prefix (Output)
  * keycol:IN use which colum as hdf's key(exec, not cols), start with 0. -1 form number
  */
