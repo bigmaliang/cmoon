@@ -14,7 +14,8 @@ enum {
 	LCS_ST_FREE = 10,			/* 20 online, 20 history raw, 2 admin */
 	LCS_ST_VIPED,				/* ED history raw */
 	LCS_ST_VIP,					/* 200 online, one year history raw, 20 admin */
-	LCS_ST_VVIP					/* unlimit online, history raw, admin */
+	LCS_ST_VVIP,				/* unlimit online, history raw, admin */
+	LCS_ST_ROOT = 1001
 } lcsStat;
 
 enum {
