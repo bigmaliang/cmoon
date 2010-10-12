@@ -146,6 +146,42 @@ static int msg_cmd_msgset(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	return REP_OK;
 }
 
+static int msg_cmd_del_mysaid(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	char *name;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
+
+	MDB_EXEC_EVT(db, NULL, "DELETE FROM msg WHERE mfrom=$1", "s", name);
+
+	return REP_OK;
+}
+
+static int msg_cmd_del_saytome(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	char *name;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
+
+	MDB_EXEC_EVT(db, NULL, "DELETE FROM msg WHERE mto=$1", "s", name);
+
+	return REP_OK;
+}
+
+static int msg_cmd_del_both(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	char *name, *name2;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
+	REQ_GET_PARAM_STR(q->hdfrcv, "name2", name2);
+
+	MDB_EXEC_EVT(db, NULL, "DELETE FROM msg WHERE "
+				 "(mfrom=$1 AND mto=$2) OR (mfrom=$3 AND mto=$4) ",
+				 "ssss", name, name2, name2, name);
+
+	return REP_OK;
+}
+
 static void msg_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct msg_entry *e = (struct msg_entry*)entry;
@@ -174,6 +210,15 @@ static void msg_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_MSGSET:
 		ret = msg_cmd_msgset(q, cd, db);
+		break;
+	case REQ_CMD_DEL_MYSAID:
+		ret = msg_cmd_del_mysaid(q, cd, db);
+		break;
+	case REQ_CMD_DEL_SAYTOME:
+		ret = msg_cmd_del_saytome(q, cd, db);
+		break;
+	case REQ_CMD_DEL_BOTH:
+		ret = msg_cmd_del_both(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
