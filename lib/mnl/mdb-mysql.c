@@ -39,9 +39,9 @@ static int mysql_get_token(const char *dsn, char *tok, char **s, char **e)
 	if (p) {
 		start = strchr(p, '=');
 		if (start) start += 1;
-		while (start && isspace(*start)) start++;
+		while (*start && isspace(*start)) start++;
 		end = start;
-		while (end && !isspace(*end)) end++;
+		while (*end && !isspace(*end)) end++;
 	}
 
 	if (!start || !end || start == end) return 1;
