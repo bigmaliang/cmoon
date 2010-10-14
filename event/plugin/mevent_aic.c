@@ -317,7 +317,7 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
 	int pid;
-	char *pname;
+	char *pname, *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
 	pid = hash_string(pname);
@@ -333,6 +333,16 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 					  "pid=%d OR aid=%d ORDER BY uptime LIMIT %d OFFSET %d",
 					  NULL, pid, pid, count, offset);
 		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, "users", 1);
+		HDF *node = hdf_get_child(q->hdfsnd, "users");
+		while (node) {
+			aname = hdf_get_value(node, "aname", NULL);
+			if (aname) {
+				MDB_QUERY_RAW(db, "userinfo", " COUNT(*) AS numcamer ",
+							  "aid=%d", NULL, hash_string(aname));
+				mdb_set_row(node, db, " numcamer ", NULL);
+			}
+			node = hdf_obj_next(node);
+		}
 		CACHE_HDF(q->hdfsnd, 0, PREFIX_APPOUSER"%d_%d", pid, offset);
 	}
 	
