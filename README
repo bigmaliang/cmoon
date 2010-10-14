@@ -72,7 +72,7 @@ libsqlite3-dev
 5, login as moon:
    cd /usr/local/ &&
    git clone git://github.com/bigml/cmoon.git && mv cmoon moon &&
-   cd /usr/local/moon/lib/js/ && git clone git://github.com/jquerytools/jquerytools.git
+   cd /usr/local/moon/lib/js/ && git clone git://github.com/jquerytools/jquerytools.git && svn checkout http://flot.googlecode.com/svn/trunk/ flot
    git clone git://github.com/bigml/APE_JSF.git &&
    git clone git://github.com/bigml/APE_Server.git
 
