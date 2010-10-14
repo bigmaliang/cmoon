@@ -47,22 +47,24 @@ void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_c
 	int cnt = 0;
 	char *p;
 	char *b, *e, *bp;
+	int pos, level;
 
 	/*
 	 * prepare src string for strtok. (exactly qrcol string without '(...)')
-	 * in : Direction, Actor, CONCAT(Sort1,';',Sort2,';',Sort3,';',Sort4,';',Sort5) AS Sort1
-	 * out: Direction, Actor, CONCAT AS Sort1
-	 * only support one level '()'
+	 * in : Direction, Actor, CONCAT(Sort1,';',Sort2,';',Sort3,';',Sort4,';',Sort5) AS Sort1, ceil(date_part('epoch', intime)*1000) as   intime
+	 * out: Direction, Actor, CONCAT AS Sort1, ceil as    intime
 	 */
 	memset(src, 0x0, sizeof(src));
-	b = qrcol;
-	e = strchr(qrcol, '(');
-	while (e != NULL) {
-		strncat(src, b, e-b);
-		b = strchr(e, ')')+1;
-		e = strchr(b, '(');
+	p = qrcol;
+	pos = level = 0;
+	while (*p && pos < LEN_ML) {
+		if (*p != '(' && *p != ')' && level == 0) src[pos++] = *p;
+		else {
+			if (*p == '(') level++;
+			else if (*p == ')') level--;
+		}
+		p++;
 	}
-	strncat(src, b, sizeof(src)-1);
 	
 	p = strtok(src, ",");
 	while (p != NULL) {
@@ -86,7 +88,11 @@ void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_c
 		bp = strcasestr(tok, " as ");
 		if (bp != NULL) {
 			//mtc_noise("token '%s' contain ' as '", qr_array[cnt]);
-			strncpy(qr_array[cnt], bp+4, sizeof(qr_array[cnt])-1);
+			bp = bp + 4;
+			while(*bp == '\t' || *bp == ' ' || *bp == '\r' || *bp == '\n') {
+				bp++;
+			}
+			strncpy(qr_array[cnt], bp, sizeof(qr_array[cnt])-1);
 			mtc_info("get tok truely '%s'", qr_array[cnt]);
 		}
 		
