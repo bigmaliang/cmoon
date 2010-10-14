@@ -37,13 +37,13 @@ Plugin {
 		appinfo {
 			update {
 				s {
-					0 = asn
-					1 = masn
-					2 = email
+					asn = asn
+					masn = masn
+					email = email
 				}
 				i {
-					0 = state
-#					1 = tune
+					state = state
+#					tune = tune
 				}
 			}
 		}

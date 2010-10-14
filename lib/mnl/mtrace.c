@@ -84,14 +84,23 @@ void mcs_build_upcol_s(HDF *data, HDF *node, STRING *str)
 {
 	if (!data || !node || !str) return;
 	
-	char *key, *val, *esc;
+	char *name, *col, *val, *esc;
 	
 	while (node) {
-		key = hdf_obj_value(node);
-		val = hdf_get_value(data, key, NULL);
-		if (val) {
+		name = hdf_obj_name(node);
+		col = hdf_obj_value(node);
+		val = hdf_get_value(data, name, NULL);
+		/*
+		 * TODO
+		 *   we checked *val not "" here, the following also need check:
+		 *   HDF_GET_STR()
+		 *   REQ_GET_PARAM_STR()
+		 *   JNEED_STR()
+		 *   ...
+		 */
+		if (val && *val) {
 			mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-			string_appendf(str, " %s='%s', ", key, esc);
+			string_appendf(str, " %s='%s', ", col, esc);
 			free(esc);
 		}
 		
@@ -103,13 +112,14 @@ void mcs_build_upcol_i(HDF *data, HDF *node, STRING *str)
 {
 	if (!data || !node || !str) return;
 	
-	char *key, *val;
+	char *name, *col, *val;
 	
 	while (node) {
-		key = hdf_obj_value(node);
-		val = hdf_get_value(data, key, NULL);
-		if (val) {
-			string_appendf(str, " %s=%d, ", key, atoi(val));
+		name = hdf_obj_name(node);
+		col = hdf_obj_value(node);
+		val = hdf_get_value(data, name, NULL);
+		if (val && *val) {
+			string_appendf(str, " %s=%d, ", col, atoi(val));
 		}
 		
 		node = hdf_obj_next(node);
@@ -120,14 +130,15 @@ void mcs_build_querycond_s(HDF *data, HDF *node, STRING *str)
 {
 	if (!data || !node || !str) return;
 	
-	char *key, *val, *esc;
+	char *name, *col, *val, *esc;
 	
 	while (node) {
-		key = hdf_obj_value(node);
-		val = hdf_get_value(data, key, NULL);
-		if (val) {
+		name = hdf_obj_name(node);
+		col = hdf_obj_value(node);
+		val = hdf_get_value(data, name, NULL);
+		if (val && *val) {
 			mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-			string_appendf(str, " %s='%s' AND ", key, esc);
+			string_appendf(str, " %s '%s' AND ", col, esc);
 			free(esc);
 		}
 		
@@ -139,13 +150,14 @@ void mcs_build_querycond_i(HDF *data, HDF *node, STRING *str)
 {
 	if (!data || !node || !str) return;
 	
-	char *key, *val;
+	char *name, *col, *val;
 	
 	while (node) {
-		key = hdf_obj_value(node);
-		val = hdf_get_value(data, key, NULL);
-		if (val) {
-			string_appendf(str, " %s=%d AND ", key, atoi(val));
+		name = hdf_obj_name(node);
+		col = hdf_obj_value(node);
+		val = hdf_get_value(data, name, NULL);
+		if (val && *val) {
+			string_appendf(str, " %s %d AND ", col, atoi(val));
 		}
 		
 		node = hdf_obj_next(node);
