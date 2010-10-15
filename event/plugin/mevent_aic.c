@@ -204,6 +204,38 @@ static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 }
 
 /*
+ * input : pname(STR) aname(STR)
+ * return: NORMAL
+ * reply : NULL
+ */
+static int aic_cmd_app_setsecy(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	char *pname, *aname;
+	int pid, aid, upid;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
+	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+
+	pid = hash_string(pname);
+	aid = hash_string(aname);
+
+	MDB_EXEC_EVT(db, NULL, "UPDATE appinfo SET tune=tune & %d WHERE aid=%d OR pid=%d "
+				 " RETURNING aid", NULL, ~LCS_TUNE_SECY, pid, pid);
+
+	upid = aid;
+	mdb_get(db, "i", &upid);
+	
+	MDB_EXEC_EVT(db, NULL, "UPDATE appinfo SET tune=tune | %d WHERE aid=%d",
+				 NULL, LCS_TUNE_SECY, aid);
+
+	cache_delf(cd, PREFIX_APPINFO"%d", upid);
+	cache_delf(cd, PREFIX_APPINFO"%d", aid);
+	cache_delf(cd, PREFIX_APPOUSER"%d_0", pid);
+
+	return REP_OK;
+}
+
+/*
  * input : aname(STR)
  * return: NORMAL
  * reply : [appfoo: ["aid": "222", "aname": "appfoo", ...]
@@ -316,7 +348,7 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
-	int pid;
+	int pid, tune;
 	char *pname, *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
@@ -335,11 +367,17 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, "users", 1);
 		HDF *node = hdf_get_child(q->hdfsnd, "users");
 		while (node) {
+			/* numcamer */
 			aname = hdf_get_value(node, "aname", NULL);
 			if (aname) {
 				MDB_QUERY_RAW(db, "userinfo", " COUNT(*) AS numcamer ",
 							  "aid=%d", NULL, hash_string(aname));
 				mdb_set_row(node, db, " numcamer ", NULL);
+			}
+			/* secy */
+			tune = hdf_get_int_value(node, "tune", 0);
+			if (tune & LCS_TUNE_SECY) {
+				hdf_set_value(node, "secy", "1");
 			}
 			node = hdf_obj_next(node);
 		}
@@ -374,6 +412,9 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_APPDEL:
 		ret = aic_cmd_appdel(q, cd, db);
+		break;
+	case REQ_CMD_APP_SETSECY:
+		ret = aic_cmd_app_setsecy(q, cd, db);
 		break;
 	case REQ_CMD_APPUSERS:
 		ret = aic_cmd_appusers(q, cd, db);

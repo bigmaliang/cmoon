@@ -7,6 +7,7 @@
 
 #define LCS_TUNE_QUIET	0x01
 #define LCS_TUNE_SMS	0x02
+#define LCS_TUNE_SECY	0x04	/* default aname when every body offline */
 
 enum {
 	LCS_ST_BLACK = 0,
@@ -23,6 +24,7 @@ enum {
 	REQ_CMD_APPNEW,
 	REQ_CMD_APPUP,
 	REQ_CMD_APPDEL,
+	REQ_CMD_APP_SETSECY,
 	REQ_CMD_APPUSERS = 2001,	/* who visited my app */
 	REQ_CMD_APPUSERIN,			/* remember sb visited my app */
 	REQ_CMD_APPUSEROUT,			/* remove JiangYou boy */
