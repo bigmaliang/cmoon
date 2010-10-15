@@ -24,8 +24,8 @@ static memcached_st* mmc_create()
 		node = hdf_obj_child(node);
 	} else {
 		mtc_err("%s not found in config", PRE_CFG_MEMC);
-		memcached_free(l_mc);
-		l_mc = NULL;
+		//memcached_free(l_mc);
+		//l_mc = NULL;
 		return NULL;
 	}
 	
@@ -89,7 +89,7 @@ memcached_return mmc_store(int op, const char *key, char *value, size_t len, tim
 	if (rc != MEMCACHED_SUCCESS) {
 		mtc_err("%s:%s store '%s=%s' %s", MEMC_IP, MEMC_PORT, key, value, memcached_strerror(mc, rc));
 	}
-	memcached_free(mc);
+	//memcached_free(mc);
 	return rc;
 }
 memcached_return mmc_store_int(int op, const char *key, int value, time_t exp, uint32_t flags)
@@ -136,7 +136,7 @@ memcached_return mmc_count(int op, const char *key, uint32_t offset,
 		mtc_err("%s:%s count '%s' %s", MEMC_IP, MEMC_PORT, key, memcached_strerror(mc, rc));
 	}
 	free(dupkey);
-	memcached_free(mc);
+	//memcached_free(mc);
 	return rc;
 }
 
@@ -162,10 +162,10 @@ char* mmc_get(const char *key, size_t *vallen, uint32_t *flags)
 	value = memcached_get(mc, key, strlen(key), plv, plf, &rc);
 	if (value == NULL || *plv < 1) {
 		mtc_info("get %s from %s:%s %s", key, MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
-		memcached_free(mc);
+		//memcached_free(mc);
 		return NULL;
 	}
-	memcached_free(mc);
+	//memcached_free(mc);
 	*(value+*plv) = '\0';
 	return value;
 }
@@ -214,7 +214,7 @@ memcached_return mmc_mget(const char **keys, char *vals[], int num,
 	rc = memcached_mget(mc, keys, keys_len, (unsigned int)num);
 	if (rc != MEMCACHED_SUCCESS) {
 		mtc_info("%s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
-		memcached_free(mc);
+		//memcached_free(mc);
 		return rc;
 	}
 	for (i = 0; i < num; i++) {
@@ -224,7 +224,7 @@ memcached_return mmc_mget(const char **keys, char *vals[], int num,
 			break;
 		}
 	}
-	memcached_free(mc);
+	//memcached_free(mc);
 	return rc;
 }
 
@@ -242,7 +242,7 @@ memcached_return mmc_delete(const char *key, time_t exp)
 	if (rc != MEMCACHED_SUCCESS) {
 		mtc_info("%s:%s %s %s", MEMC_IP, MEMC_PORT, key, memcached_strerror(mc, rc));
 	}
-	memcached_free(mc);
+	//memcached_free(mc);
 	return rc;
 }
 
