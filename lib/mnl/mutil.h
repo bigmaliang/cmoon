@@ -42,7 +42,7 @@ int CGI_REQ_METHOD(CGI *cgi);
 
 
 /* res must have enough capacity */
-bool mutil_client_attack(HDF *hdf, char *action, uint64_t limit, time_t exp);
+bool mutil_client_attack(HDF *hdf, char *action, char *cname, uint64_t limit, time_t exp);
 bool mutil_client_attack_cookie(HDF *hdf, char *action, uint64_t limit, time_t exp);
 
 void mutil_redirect(const char *msg, const char *target, const char *url, bool header);

@@ -17,11 +17,11 @@ int CGI_REQ_METHOD(CGI *cgi)
 	return CGI_REQ_UNKNOWN;
 }
 
-bool mutil_client_attack(HDF *hdf, char *action, uint64_t limit, time_t exp)
+bool mutil_client_attack(HDF *hdf, char *action, char *cname, uint64_t limit, time_t exp)
 {
 	uint64_t cntcn, cntip; cntcn = cntip = 0;
-	char *cn = hdf_get_value(hdf, "Cookie.ClientName", "");
-	char *ip = hdf_get_value(hdf, "CGI.RemoteAddress", "unknown host");
+	char *cn = hdf_get_valuef(hdf, "Cookie.%s", cname);	cn = cn ? cn: "";
+	char *ip = hdf_get_value(hdf, "CGI.RemoteAddress", "unknownHost");
 	mmc_countf(MMC_OP_INC, 1, &cntcn, exp, 0, "%s.%s.%s", PRE_MMC_CLIENT, action, cn);
 	mmc_countf(MMC_OP_INC, 1, &cntip, exp, 0, "%s.%s.%s", PRE_MMC_CLIENT, action, ip);
 	if (cntcn >= limit || cntip >= limit) {
