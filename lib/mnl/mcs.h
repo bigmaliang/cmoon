@@ -146,13 +146,14 @@ NEOERR* mcs_outputcb(void *ctx, char *s);
 /* because of libneo_cs doesn't have cs_render_to_file */
 NEOERR* mcs_strcb(void *ctx, char *s);
 bool mcs_str2file(STRING str, const char *file);
-void mcs_hdf_escape_val(HDF *hdf);
-
-int mcs_set_login_info(HDF *hdf);
 
 void mcs_rand_string(char *s, int max);
+void mcs_register_bitop_functions(CSPARSE *cs);
+void mcs_hdf_escape_val(HDF *hdf);
 
+/* rubish */
 void mcs_text_escape(char *src, char **out);
+int mcs_set_login_info(HDF *hdf);
 
 /*
  * build UPDATE's SET xxxx string

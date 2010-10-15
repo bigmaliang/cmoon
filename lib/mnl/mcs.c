@@ -31,6 +31,78 @@ bool mcs_str2file(STRING str, const char *file)
 	fclose(fp);
 	return true;
 }
+
+void mcs_rand_string(char *s, int max)
+{
+  int size;
+  int x = 0;
+
+  size = neo_rand(max-1);
+  for (x = 0; x < size; x++)
+  {
+    s[x] = (char)(65 + neo_rand(90-65));
+  }
+  s[x] = '\0';
+}
+
+static NEOERR* _builtin_bitop_and(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
+								CSARG *result)
+{
+  NEOERR *err;
+  long int n1 = 0;
+  long int n2 = 0;
+
+  result->op_type = CS_TYPE_NUM;
+  result->n = 0;
+
+  err = cs_arg_parse(parse, args, "ii", &n1, &n2);
+  if (err) return nerr_pass(err);
+  result->n = n1 & n2;
+
+  return STATUS_OK;
+}
+
+static NEOERR* _builtin_bitop_or(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
+								 CSARG *result)
+{
+  NEOERR *err;
+  long int n1 = 0;
+  long int n2 = 0;
+
+  result->op_type = CS_TYPE_NUM;
+  result->n = 0;
+
+  err = cs_arg_parse(parse, args, "ii", &n1, &n2);
+  if (err) return nerr_pass(err);
+  result->n = n1 | n2;
+
+  return STATUS_OK;
+}
+
+static NEOERR* _builtin_bitop_xor(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
+								  CSARG *result)
+{
+  NEOERR *err;
+  long int n1 = 0;
+  long int n2 = 0;
+
+  result->op_type = CS_TYPE_NUM;
+  result->n = 0;
+
+  err = cs_arg_parse(parse, args, "ii", &n1, &n2);
+  if (err) return nerr_pass(err);
+  result->n = n1 & ~n2;
+
+  return STATUS_OK;
+}
+
+void mcs_register_bitop_functions(CSPARSE *cs)
+{
+	cs_register_function(cs, "bitop.and", 2, _builtin_bitop_and);
+	cs_register_function(cs, "bitop.or", 2, _builtin_bitop_or);
+	cs_register_function(cs, "bitop.xor", 2, _builtin_bitop_xor);
+}
+
 void mcs_hdf_escape_val(HDF *hdf)
 {
 	char *esc = NULL, *val = NULL;
@@ -56,31 +128,6 @@ void mcs_hdf_escape_val(HDF *hdf)
 		mcs_hdf_escape_val(next);
 		next = hdf_obj_next(next);
 	}
-}
-
-
-int mcs_set_login_info(HDF *hdf)
-{
-	int uin = hdf_get_int_value(hdf, "Cookie.uin", 0);
-	char *uname = hdf_get_value(hdf, "Cookie.uname", "");
-	if (uin != 0 && strcmp(uname, "")) {
-		hdf_set_value(hdf, PRE_LAYOUT".member.uname", uname);
-		return RET_USER_LOGIN;
-	}
-	return RET_USER_NLOGIN;
-}
-
-void mcs_rand_string(char *s, int max)
-{
-  int size;
-  int x = 0;
-
-  size = neo_rand(max-1);
-  for (x = 0; x < size; x++)
-  {
-    s[x] = (char)(65 + neo_rand(90-65));
-  }
-  s[x] = '\0';
 }
 
 void mcs_text_escape(char *src, char **out)
@@ -114,4 +161,15 @@ void mcs_text_escape(char *src, char **out)
     }
   }
   *out = out_s.buf;
+}
+
+int mcs_set_login_info(HDF *hdf)
+{
+	int uin = hdf_get_int_value(hdf, "Cookie.uin", 0);
+	char *uname = hdf_get_value(hdf, "Cookie.uname", "");
+	if (uin != 0 && strcmp(uname, "")) {
+		hdf_set_value(hdf, PRE_LAYOUT".member.uname", uname);
+		return RET_USER_LOGIN;
+	}
+	return RET_USER_NLOGIN;
 }
