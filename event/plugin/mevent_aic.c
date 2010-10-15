@@ -219,7 +219,7 @@ static int aic_cmd_app_getsecy(struct queue_entry *q, struct cache *cd, mdb_conn
 					  " (aid=%d OR pid=%d) AND tune & %d = %d ",
 					  NULL, aid, aid, LCS_TUNE_SECY, LCS_TUNE_SECY);
 		mdb_set_row(q->hdfsnd, db, " aname ", NULL);
-		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_APPINFO"%d", aid);
+		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_SECY"%d", aid);
 	}
 
 	return REP_OK;
