@@ -58,7 +58,7 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db
 						  NULL, aid);
 			mdb_set_row(q->hdfsnd, db, "numuser", NULL);
 		}
-		CACHE_HDF(q->hdfsnd, 0, PREFIX_APPINFO"%d", aid);
+		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_APPINFO"%d", aid);
 	}
 	
 	return REP_OK;
@@ -203,6 +203,28 @@ static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	return REP_OK;
 }
 
+static int aic_cmd_app_getsecy(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	unsigned char *val = NULL; size_t vsize = 0;
+	char *aname;
+	int aid;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+	aid = hash_string(aname);
+
+	if (cache_getf(cd, &val, &vsize, PREFIX_SECY"%d", aid)) {
+		unpack_hdf(val, vsize, &q->hdfsnd);
+	} else {
+		MDB_QUERY_RAW(db, "appinfo", " aname ",
+					  " (aid=%d OR pid=%d) AND tune & %d = %d ",
+					  NULL, aid, aid, LCS_TUNE_SECY, LCS_TUNE_SECY);
+		mdb_set_row(q->hdfsnd, db, " aname ", NULL);
+		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_APPINFO"%d", aid);
+	}
+
+	return REP_OK;
+}
+
 /*
  * input : pname(STR) aname(STR)
  * return: NORMAL
@@ -231,6 +253,7 @@ static int aic_cmd_app_setsecy(struct queue_entry *q, struct cache *cd, mdb_conn
 	cache_delf(cd, PREFIX_APPINFO"%d", upid);
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
 	cache_delf(cd, PREFIX_APPOUSER"%d_0", pid);
+	cache_delf(cd, PREFIX_SECY"%d", pid);
 
 	return REP_OK;
 }
@@ -255,7 +278,7 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
 					  "aid=%d ORDER BY uptime DESC;", NULL, aid);
 		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, "userlist", 1);
-		CACHE_HDF(q->hdfsnd, 0, PREFIX_USERLIST"%d", aid);
+		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_USERLIST"%d", aid);
 	}
 	
 	return REP_OK;
@@ -376,7 +399,7 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 			}
 			node = hdf_obj_next(node);
 		}
-		CACHE_HDF(q->hdfsnd, 0, PREFIX_APPOUSER"%d_%d", pid, offset);
+		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_APPOUSER"%d_%d", pid, offset);
 	}
 	
 	return REP_OK;
@@ -407,6 +430,9 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_APPDEL:
 		ret = aic_cmd_appdel(q, cd, db);
+		break;
+	case REQ_CMD_APP_GETSECY:
+		ret = aic_cmd_app_getsecy(q, cd, db);
 		break;
 	case REQ_CMD_APP_SETSECY:
 		ret = aic_cmd_app_setsecy(q, cd, db);
