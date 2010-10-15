@@ -348,7 +348,7 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
-	int pid, tune;
+	int pid;
 	char *pname, *aname;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
@@ -373,11 +373,6 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 				MDB_QUERY_RAW(db, "userinfo", " COUNT(*) AS numcamer ",
 							  "aid=%d", NULL, hash_string(aname));
 				mdb_set_row(node, db, " numcamer ", NULL);
-			}
-			/* secy */
-			tune = hdf_get_int_value(node, "tune", 0);
-			if (tune & LCS_TUNE_SECY) {
-				hdf_set_value(node, "secy", "1");
 			}
 			node = hdf_obj_next(node);
 		}
