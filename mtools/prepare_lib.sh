@@ -12,8 +12,13 @@ make
 make install
 
 
-sudo apt-get install libfcgi-dev libjson0-dev libmemcached-dev libqdbm-dev libevent-dev
+sudo apt-get install libfcgi-dev libjson0-dev libqdbm-dev libevent-dev
 sudo apt-get install libmysqlclient-dev libpq-dev libsqlite3-dev
+
+cd /usr/local/src/
+wget http://memcached.googlecode.com/files/memcached-1.4.5.tar.gz
+wget http://launchpad.net/libmemcached/1.0/0.44/+download/libmemcached-0.44.tar.gz
+tar zxvf mem.....
 
 # Other Linux distribution
 if [ 1 == 2 ]; then

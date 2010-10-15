@@ -1,0 +1,13 @@
+1, 设置 watchpoint
+gdb 默认设置观察点是对变量， 比如 watch s， 当 s 超过生效范围时便变得不能监控。
+这时需要监控 s 的地址， 这样 p s, watch *(char*)0xaafffff8。
+0xaafffff8 为 s 的值。
+
+(gdb) p ptr
+$3 = (memcached_st *) 0xa1eff08
+(gdb) watch *(memcached_st *) 0xa1eff08
+Watchpoint 2: *(struct memcached_st *) 169803528
+
+这样就能监控对 ptr 指向的内存空间的结构体的修改。
+注意， 不能 watch *(_Bool*) [&ptr.flags.bin_mode]
+对结构题内部成员的监控将不能达到效果。
