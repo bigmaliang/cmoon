@@ -8,6 +8,10 @@ cd clearsilver &&
 svn checkout http://streamhtmlparser.googlecode.com/svn/trunk/ streamhtmlparser
 cd streamhtmlparser && ./configure && make && make install
 cd ../ && ./autogen.sh --disable-wdb --disable-perl --disable-ruby --disable-java --disable-python && mkdir libs
+vim utl/neo_hdf.c +1623
+while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
+===>
+while (*s && (isalnum(*s) || *s == '_' || *s == '.' || *(unsigned char*)s > 127)) s++;
 make
 make install
 

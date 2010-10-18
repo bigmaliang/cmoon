@@ -10,16 +10,17 @@ int main(int argc, char *argv[])
 {
 	int ret;
 
-	mevent_t *evt = mevent_init_plugin("msg");
+	mevent_t *evt = mevent_init_plugin("aic");
 	if (evt == NULL) {
 		printf("init error\n");
 		return 1;
 	}
 
+	hdf_set_value(evt->hdfsnd, "pname", "kol");
 	hdf_set_value(evt->hdfsnd, "from", "cj_BXTSJ");
 	hdf_set_value(evt->hdfsnd, "to", "kol");
 
-	ret = mevent_trigger(evt, NULL, 1002, FLAGS_SYNC);
+	ret = mevent_trigger(evt, NULL, 3001, FLAGS_SYNC);
 	if (PROCESS_OK(ret))
 		hdf_dump(evt->hdfrcv, NULL);
 	else
