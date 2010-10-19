@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# sc new.jpg -s -d 3
+
+FPATH=/home/bigml/web/moon/pop/fly/pic/
+
+FNAME=$1
+shift
+OP=$*
+
+scrot ${OP} ${FPATH}${FNAME}
