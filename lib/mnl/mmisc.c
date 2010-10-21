@@ -72,14 +72,18 @@ void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_c
 		memset(tok,0,sizeof(tok));
 		strncpy(tok, p, sizeof(tok)-1);
 		b = tok;
-		while(*b == '\t' || *b == ' ' || *b == '\r' || *b == '\n') {
+		while(*b && (*b == '\t' || *b == ' ' || *b == '\r' || *b == '\n')) {
 			b++;
 		}
 		e = tok;
 		if (strlen(tok) >= 1)
 			e += strlen(tok)-1;
-		while(*e == '\t' || *e == ' ' || *e == '\r' || *e == '\n') {
+		while(*e && (*e == '\t' || *e == ' ' || *e == '\r' || *e == '\n')) {
 			e--;
+		}
+		if (*b == '\0' || *e == '\0') {
+			p = strtok(NULL, ",");
+			continue;
 		}
 		strncpy(qr_array[cnt], b, e-b+1);
 		//mtc_noise("get tok '%s'", qr_array[cnt]);
@@ -89,7 +93,7 @@ void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_c
 		if (bp != NULL) {
 			//mtc_noise("token '%s' contain ' as '", qr_array[cnt]);
 			bp = bp + 4;
-			while(*bp == '\t' || *bp == ' ' || *bp == '\r' || *bp == '\n') {
+			while(*bp && (*bp == '\t' || *bp == ' ' || *bp == '\r' || *bp == '\n')) {
 				bp++;
 			}
 			strncpy(qr_array[cnt], bp, sizeof(qr_array[cnt])-1);

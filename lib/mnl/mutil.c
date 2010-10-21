@@ -168,7 +168,7 @@ bool mutil_makesure_dir(char *file)
 		memset(tok, 0x0, sizeof(tok));
 		strncpy(tok, file, p-file+1);
 		if (mkdir(tok, 0755) != 0 && errno != EEXIST) {
-			mtc_err("mkdir %s failure %s", strerror(errno));
+			mtc_err("mkdir %s failure %s", tok, strerror(errno));
 			return false;
 		}
 		p = strchr(p+1, '/');

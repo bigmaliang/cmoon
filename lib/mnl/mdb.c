@@ -53,7 +53,8 @@ int mdb_get_errcode(mdb_conn* conn)
 
 void mdb_set_error(mdb_conn* conn, int code, const char* msg)
 {
-	CONN_RETURN_IF_INVALID(conn);
+	/* this line cause endless looop */
+	//CONN_RETURN_IF_INVALID(conn);
 	conn->errcode = code;
 	free(conn->errmsg);
 	conn->errmsg = strdup(msg);
