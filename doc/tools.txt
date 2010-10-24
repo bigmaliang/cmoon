@@ -120,6 +120,13 @@ git checkout -b event_data origin/event_data
 remote
 branch
 
+ssh 
+-----
+cd ~/.ssh
+mkdir key_backup
+cp id_rsa* key_backup
+rm id_rsa*
+ssh-keygen -t rsa -C "tekkub@gmail.com"
 
 设计风格
 ------

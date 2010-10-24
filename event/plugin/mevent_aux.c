@@ -71,6 +71,7 @@ static int aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 								  NULL, type, CMT_ST_NORMAL, oid, count, offset);
 					sprintf(tok, "%d.%d.cmts", type, oid);
 					mdb_set_rows(q->hdfsnd, db, CMT_COL, tok, -1);
+					mcs_html_escape(hdf_get_child(q->hdfsnd, tok), "content");
 					type = oid = -1;
 				}
 				ids = p+1;
@@ -89,6 +90,7 @@ static int aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 						  NULL, type, CMT_ST_NORMAL, oid, count, offset);
 			sprintf(tok, "%d.%d.cmts", type, oid);
 			mdb_set_rows(q->hdfsnd, db, CMT_COL, tok, -1);
+			mcs_html_escape(hdf_get_child(q->hdfsnd, tok), "content");
 		}
 		
 		CACHE_HDF(q->hdfsnd, CMT_CC_SEC, PREFIX_CMTAPP"%s_%d", idsdump, offset);

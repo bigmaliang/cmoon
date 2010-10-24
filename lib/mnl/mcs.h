@@ -81,7 +81,7 @@ __BEGIN_DECLS
 	item = list->items[0];												\
 	for (int t_rsv_i = 0; t_rsv_i < list->num; item = list->items[++t_rsv_i])
 
-#define ITERATE_MLIST(ul)                                       \
+#define ITERATE_MLIST(ul)								\
 	for (int t_rsv_i = 0; t_rsv_i < ul->num; t_rsv_i++)
 
 
@@ -150,10 +150,7 @@ bool mcs_str2file(STRING str, const char *file);
 void mcs_rand_string(char *s, int max);
 void mcs_register_bitop_functions(CSPARSE *cs);
 void mcs_hdf_escape_val(HDF *hdf);
-
-/* rubish */
-void mcs_text_escape(char *src, char **out);
-int mcs_set_login_info(HDF *hdf);
+void mcs_html_escape(HDF *hdf, char *name);
 
 /*
  * build UPDATE's SET xxxx string

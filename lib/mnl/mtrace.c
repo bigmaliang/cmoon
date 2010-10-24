@@ -163,3 +163,20 @@ void mcs_build_querycond_i(HDF *data, HDF *node, STRING *str)
 		node = hdf_obj_next(node);
 	}
 }
+
+void mcs_html_escape(HDF *node, char *name)
+{
+	if (!node || !name) return;
+	char *s, *os;
+	
+	while (node) {
+		s = hdf_get_value(node, name, NULL);
+		if (s) {
+			neos_html_escape(s, strlen(s), &os);
+			hdf_set_value(node, name, os);
+			free(os);
+		}
+		
+		node = hdf_obj_next(node);
+	}
+}
