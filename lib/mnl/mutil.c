@@ -182,6 +182,7 @@ void mutil_real_escape_string(char *to, char *from, size_t len)
 	char escape = 0;
 	
 	for (size_t i = 0; i < len; i++) {
+		escape = 0;
 		switch (*(from+i)) {
 		case 0:                             /* Must be escaped for 'mysql' */
 			escape = '0';
