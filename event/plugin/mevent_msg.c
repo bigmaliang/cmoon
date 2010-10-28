@@ -139,7 +139,8 @@ static int msg_cmd_msgset(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	REQ_GET_PARAM_INT(q->hdfrcv, "type", type);
 
 	MDB_EXEC_EVT(db, NULL, "INSERT INTO msg (mfrom, mto, mtype, mraw) "
-				 " VALUES ($1, $2, $3, $4);", "ssis", from, to, type, raw);
+				 " VALUES ($1::varchar(256), $2::varchar(256), "
+				 " $3, $4::varchar(1024));", "ssis", from, to, type, raw);
 
 	/* cache removed by timeout, not here */
 

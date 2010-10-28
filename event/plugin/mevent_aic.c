@@ -98,7 +98,8 @@ static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 
 	MDB_EXEC_EVT(db, NULL, "INSERT INTO appinfo (aid, aname, "
 				 " pid, asn, masn, email, state) "
-				 " VALUES ($1, $2, $3, $4, $5, $6, $7);",
+				 " VALUES ($1, $2::varchar(256), $3, $4::varchar(256), "
+				 " $5::varchar(256), $6::varchar(256), $7);",
 				 "isisssi", aid, aname, pid, asn, masn, email, state);
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
@@ -311,7 +312,8 @@ static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *
 	}
 
 	ret = mdb_exec(db, NULL, "INSERT INTO userinfo (uid, uname, aid, aname, ip) "
-				   " VALUES ($1, $2, $3, $4, $5);", "isiss",
+				   " VALUES ($1, $2::varchar(256), $3, "
+				   " $4::varchar(256), $5::varchar(256));", "isiss",
 				   hash_string(uname), uname, aid, aname, ip);
 	if (ret != MDB_ERR_NONE) {
 		mtc_err("exec failure %s", mdb_get_errmsg(db));

@@ -116,7 +116,8 @@ static int aux_cmd_cmtadd(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 
 	MDB_EXEC_EVT(db, NULL, "INSERT INTO comment "
 				 " (type, oid, pid, ip, addr, author, content) "
-				 " VALUES ($1, $2, $3, $4, $5, $6, $7)",
+				 " VALUES ($1, $2, $3, $4::varchar(256), "
+				 " $5::varchar(256), $6::varchar(256), $7)",
 				 "iiissss", type, oid, pid, ip, addr, author, content);
 
 	cache_delf(cd, PREFIX_CMTAPP"%d:%d_0", type, oid);
