@@ -1,0 +1,116 @@
+Bad substitution 错误， /bin/sh 不支持， 要改成 /bin/bash
+
+
+
+字符串处理
+===========
+
+得到长度:
+代码:
+ %x="abcd" 
+#方法一 
+%expr length $x 
+4 
+# 方法二 
+%echo ${#x} 
+4 
+# 方法三 
+%expr "$x" : ".*" 
+4 
+# expr 的帮助 
+# STRING : REGEXP   anchored pattern match of REGEXP in STRING
+
+
+
+
+查找子串:
+
+代码:
+ %expr index  $x "b" 
+2 
+%expr index  $x "a" 
+1 
+%expr index  $x "b" 
+2 
+%expr index  $x "c" 
+3 
+%expr index  $x "d" 
+4
+
+
+
+
+
+得到子字符串:
+
+代码:
+ # 方法一 
+# expr <string> startpos length 
+%expr substr "$x" 1 3 
+abc 
+%expr substr "$x" 1 5 
+abcd 
+%expr substr "$x" 2 5 
+bcd 
+# 方法二 
+# ${x:pos:lenght} 
+%echo ${x:1} 
+bcd 
+%echo ${x:2} 
+cd 
+%echo ${x:0} 
+abcd 
+%echo ${x:0:2} 
+ab 
+%pos=1 
+%len=2 
+%echo ${x:$pos:$len} 
+bc
+
+
+
+
+
+匹配正则表达式: 
+
+代码:
+ # 打印匹配长度 
+%expr match $x "." 
+1 
+%expr match $x "abc" 
+3 
+%expr match $x "bc" 
+0
+
+
+
+
+字符串的掐头去尾:
+
+代码:
+ %x=aabbaarealwwvvww 
+%echo "${x%w*w}" 
+aabbaarealwwvv 
+%echo "${x%%w*w}" 
+aabbaareal 
+%echo "${x##a*a}" 
+lwwvvww 
+%echo "${x#a*a}" 
+bbaarealwwvvww 
+
+其中 , # 表示掐头， 因为键盘上 # 在 $ 的左面。 
+其中 , % 表示%， 因为键盘上 % 在 $ 的右面。 
+单个的表示最小匹配，双个表示最大匹配。 
+也就是说，当匹配的有多种方案的时候，选择匹配的最大长度还是最小长度。
+
+
+
+
+字符串的替换; 
+代码:
+ %x=abcdabcd 
+%echo ${x/a/b} # 只替换一个 
+bbcdabcd 
+%echo ${x//a/b} # 替换所有 
+bbcdbbcd
+不可以使用 regexp ， 只能用 * ? 的文件扩展方式。
