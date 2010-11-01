@@ -35,17 +35,12 @@ Plugin {
     }
 	aic {
 		dbsn = pgsql:dbname=lcs_main host=localhost user=lcser password=loveu
-		appinfo {
-			update {
-				s {
-					asn = asn
-					masn = masn
-					email = email
-				}
-				i {
-					state = state
-#					tune = tune
-				}
+		UpdateCol {
+			appinfo {
+				asn [type=str, maxlen=256] = asn
+				masn [type=str, maxlen=256] = masn
+				email [type=str, maxlen=256] = email
+				state [type=int] = state
 			}
 		}
 	}

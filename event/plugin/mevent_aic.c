@@ -119,9 +119,7 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *aname;
 	int aid, pid = 0, tune = -1, ret;
-	STRING str;
-
-	string_init(&str);
+	STRING str;	string_init(&str);
 	
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	REQ_FETCH_PARAM_INT(q->hdfrcv, "tune", tune);
@@ -148,13 +146,10 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	}
 	pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
 
-	mcs_build_upcol_s(q->hdfrcv,
-					  hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.s"), &str);
-	mcs_build_upcol_i(q->hdfrcv,
-					  hdf_get_child(g_cfg, CONFIG_PATH".appinfo.update.i"), &str);
-	if (str.len <= 0) return REP_ERR_BADPARAM;
-	string_append(&str, " uptime=uptime ");
-
+	ret = mcs_build_upcol(q->hdfrcv,
+						  hdf_get_obj(g_cfg, CONFIG_PATH".UpdateCol.appinfo"), &str);
+	if (ret != RET_RBTOP_OK) return REP_ERR_BADPARAM;
+	
 	MDB_EXEC_EVT(db, NULL, "UPDATE appinfo SET %s WHERE aid=%d;", NULL, str.buf, aid);
 
 	/* TODO memory leak, if exec() failure */
