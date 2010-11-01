@@ -137,6 +137,23 @@ static int aux_cmd_cmtdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	return REP_OK;
 }
 
+static int aux_cmd_mailadd(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	STRING str; string_init(&str);
+
+	if (mcs_build_incol(q->hdfrcv,
+						hdf_get_obj(g_cfg, CONFIG_PATH".InsertCol.aux"),
+						&str) != RET_RBTOP_OK) {
+		return REP_ERR_BADPARAM;
+	}
+
+	MDB_EXEC_EVT(db, NULL, "ISNERT INTO mail %s", NULL, str.buf);
+
+	string_clear(&str);
+
+	return REP_OK;
+}
+
 static void aux_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct aux_entry *e = (struct aux_entry*)entry;
@@ -159,6 +176,9 @@ static void aux_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_CMT_DEL:
 		ret = aux_cmd_cmtdel(q, cd, db);
+		break;
+	case REQ_CMD_MAIL_ADD:
+		ret = aux_cmd_mailadd(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;

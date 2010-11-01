@@ -12,7 +12,8 @@ enum cmt_state {
 enum req_cmd_aux {
 	REQ_CMD_CMT_GET = 1001,
 	REQ_CMD_CMT_ADD,
-	REQ_CMD_CMT_DEL
+	REQ_CMD_CMT_DEL,
+	REQ_CMD_MAIL_ADD = 2001
 };
 
 enum req_code_aux {
