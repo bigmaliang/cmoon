@@ -80,16 +80,21 @@ bool mtc_msg(const char *func, const char *file, long line,
 	return true;
 }
 
-void mcs_build_upcol_s(HDF *data, HDF *node, STRING *str)
+int mcs_build_upcol(HDF *data, HDF *node, STRING *str)
 {
-	if (!data || !node || !str) return;
+	if (!data || !node || !str) return RET_RBTOP_INPUTE;
 	
-	char *name, *col, *val, *esc;
+	char *name, *col, *val, *esc, *require, *clen, *type;
+
+	node = hdf_obj_child(node);
 	
 	while (node) {
 		name = hdf_obj_name(node);
 		col = hdf_obj_value(node);
 		val = hdf_get_value(data, name, NULL);
+		require = mutil_obj_attr(node, "require");
+		clen = mutil_obj_attr(node, "maxlen");
+		type = mutil_obj_attr(node, "type");
 		/*
 		 * TODO
 		 *   we checked *val not "" here, the following also need check:
@@ -98,70 +103,149 @@ void mcs_build_upcol_s(HDF *data, HDF *node, STRING *str)
 		 *   JNEED_STR()
 		 *   ...
 		 */
-		if (val && *val) {
-			mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-			string_appendf(str, " %s='%s', ", col, esc);
-			free(esc);
+		if (val && *val && type && *type) {
+			if (strcmp(type, "int")) {
+				mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+				if (str->len <= 0) {
+					if (clen)
+						string_appendf(str, " %s='%s'::varchar(%d) ",
+									   col, esc, atoi(clen));
+					else
+						string_appendf(str, " %s='%s' ", col, esc);
+					free(esc);
+				} else {
+					if (clen)
+						string_appendf(str, " , %s='%s'::varchar(%d) ",
+									   col, esc, atoi(clen));
+					else
+						string_appendf(str, " , %s='%s' ", col, esc);
+					free(esc);
+				}
+			} else {
+				if (str->len <= 0)
+					string_appendf(str, " %s=%d ", col, atoi(val));
+				else
+					string_appendf(str, " , %s=%d ", col, atoi(val));
+			}
+		} else if (require && !strcmp(require, "true")) {
+			return RET_RBTOP_INPUTE;
 		}
 		
 		node = hdf_obj_next(node);
 	}
+
+	if (str->len <= 0)
+		return RET_RBTOP_INPUTE;
+
+	return RET_RBTOP_OK;
 }
 
-void mcs_build_upcol_i(HDF *data, HDF *node, STRING *str)
+int mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
 {
-	if (!data || !node || !str) return;
+	if (!data || !node || !str) return RET_RBTOP_INPUTE;
 	
-	char *name, *col, *val;
+	char *name, *col, *val, *esc, *require, *type;
+
+	node = hdf_obj_child(node);
 	
 	while (node) {
 		name = hdf_obj_name(node);
 		col = hdf_obj_value(node);
 		val = hdf_get_value(data, name, NULL);
-		if (val && *val) {
-			string_appendf(str, " %s=%d, ", col, atoi(val));
+		require = mutil_obj_attr(node, "require");
+		type = mutil_obj_attr(node, "type");
+		if (val && *val && type && *type) {
+			if (strcmp(type, "int")) {
+				mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+				if (str->len <= 0)
+					string_appendf(str, " %s '%s' ", col, esc);
+				else
+					string_appendf(str, " AND %s '%s' ", col, esc);
+				free(esc);
+			} else {
+				if (str->len <= 0)
+					string_appendf(str, " %s %d ", col, atoi(val));
+				else
+					string_appendf(str, " AND %s %d ", col, atoi(val));
+			}
+		} else if (require && !strcmp(require, "true")) {
+			return RET_RBTOP_INPUTE;
 		}
 		
 		node = hdf_obj_next(node);
 	}
+	
+	if (str->len <= 0 && defstr) string_append(str, defstr);
+
+	return RET_RBTOP_OK;
 }
 
-void mcs_build_querycond_s(HDF *data, HDF *node, STRING *str)
+int mcs_build_incol(HDF *data, HDF *node, STRING *str)
 {
-	if (!data || !node || !str) return;
+	if (!data || !node || !str) return RET_RBTOP_INPUTE;
 	
-	char *name, *col, *val, *esc;
+	char *name, *col, *val, *esc, *require, *clen, *type;
+	STRING sa, sb;
+	string_init(&sa);
+	string_init(&sb);
+
+	node = hdf_obj_child(node);
 	
 	while (node) {
 		name = hdf_obj_name(node);
 		col = hdf_obj_value(node);
 		val = hdf_get_value(data, name, NULL);
-		if (val && *val) {
-			mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-			string_appendf(str, " %s '%s' AND ", col, esc);
-			free(esc);
+		require = mutil_obj_attr(node, "require");
+		clen = mutil_obj_attr(node, "maxlen");
+		type = mutil_obj_attr(node, "type");
+		if (val && *val && type && *type) {
+			if (strcmp(type, "int")) {
+				mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+				if (sa.len <= 0) {
+					string_appendf(&sa, " (%s ", col);
+					if (clen)
+						string_appendf(&sb, " VALUES ('%s'::varchar(%d) ",
+									   esc, atoi(clen));
+					else
+						string_appendf(&sb, " VALUES ('%s' ", esc);
+				} else {
+					string_appendf(&sa, ", %s ", col);
+					if (clen)
+						string_appendf(&sb, ", '%s'::varchar(%d) ",
+									   esc, atoi(clen));
+					else
+						string_appendf(&sb, ", '%s' ", esc);
+				}
+				free(esc);
+			} else {
+				if (sa.len <= 0) {
+					string_appendf(&sa, " (%s ", col);
+					string_appendf(&sb, " VALUES (%d ", atoi(val));
+				} else {
+					string_appendf(&sa, ", %s ", col);
+					string_appendf(&sb, ", %d ", atoi(val));
+				}
+			}
+		} else if (require && !strcmp(require, "true")) {
+			goto error;
 		}
 		
 		node = hdf_obj_next(node);
 	}
-}
 
-void mcs_build_querycond_i(HDF *data, HDF *node, STRING *str)
-{
-	if (!data || !node || !str) return;
+	if (sa.len <= 0) goto error;
+
+	string_appendf(str, "%s)  %s)", sa.buf, sb.buf);
+
+	string_clear(&sa);
+	string_clear(&sb);
 	
-	char *name, *col, *val;
-	
-	while (node) {
-		name = hdf_obj_name(node);
-		col = hdf_obj_value(node);
-		val = hdf_get_value(data, name, NULL);
-		if (val && *val) {
-			string_appendf(str, " %s %d AND ", col, atoi(val));
-		}
-		
-		node = hdf_obj_next(node);
-	}
+	return RET_RBTOP_OK;
+
+error:
+	string_clear(&sa);
+	string_clear(&sb);
+	return RET_RBTOP_INPUTE;
 }
 
 void mcs_html_escape(HDF *node, char *name)

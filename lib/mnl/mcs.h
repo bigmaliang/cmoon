@@ -158,10 +158,9 @@ void mcs_html_escape(HDF *hdf, char *name);
  * node :IN key {0: 'aname', 1: 'pname'}
  * str  :OUT update colum string: aname='foo', pname='bar',
  */
-void mcs_build_upcol_s(HDF *data, HDF *node, STRING *str);
-void mcs_build_upcol_i(HDF *data, HDF *node, STRING *str);
-void mcs_build_querycond_s(HDF *data, HDF *node, STRING *str);
-void mcs_build_querycond_i(HDF *data, HDF *node, STRING *str);
+int mcs_build_upcol(HDF *data, HDF *node, STRING *str);
+int mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
+int mcs_build_incol(HDF *data, HDF *node, STRING *str);
 
 __END_DECLS
 #endif	/* __MCS_H__ */
