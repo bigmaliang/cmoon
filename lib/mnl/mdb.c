@@ -487,7 +487,7 @@ static void get_errmsg(int ret, char *res)
 		strcpy(res, "事件后台初始化失败");
 		break;
 	case RET_RBTOP_ATTACKE:
-		strcpy(res, "插寻太快，受不了！");
+		strcpy(res, "查询太快，休息会儿！");
 		break;
 	case RET_RBTOP_MEMALLOCE:
 		strcpy(res, "分配内存失败");
