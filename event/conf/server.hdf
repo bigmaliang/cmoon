@@ -55,5 +55,15 @@ Plugin {
 	}
 	aux {
 		dbsn = pgsql:dbname=lcs_aux host=localhost user=lcser password=loveu
+		InsertCol {
+			email {
+				go [type=int]= gotime
+				opt [maxlen=512, require=true] = opts
+				sub [maxlen=256, require=true] = subject
+				to [require=true] = sendto
+				content [require=true] = content
+				checksum [require=true, maxlen=64] = checksum
+			}
+		}
 	}
 }

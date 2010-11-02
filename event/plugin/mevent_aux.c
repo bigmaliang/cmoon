@@ -140,9 +140,14 @@ static int aux_cmd_cmtdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 static int aux_cmd_mailadd(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	STRING str; string_init(&str);
+	char sum[LEN_MD5], *content;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "content", content);
+	mutil_md5_str(content, sum);
+	hdf_set_value(q->hdfrcv, "checksum", sum);
 
 	if (mcs_build_incol(q->hdfrcv,
-						hdf_get_obj(g_cfg, CONFIG_PATH".InsertCol.aux"),
+						hdf_get_obj(g_cfg, CONFIG_PATH".InsertCol.email"),
 						&str) != RET_RBTOP_OK) {
 		return REP_ERR_BADPARAM;
 	}

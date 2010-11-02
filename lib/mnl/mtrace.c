@@ -103,8 +103,8 @@ int mcs_build_upcol(HDF *data, HDF *node, STRING *str)
 		 *   JNEED_STR()
 		 *   ...
 		 */
-		if (val && *val && type && *type) {
-			if (strcmp(type, "int")) {
+		if (val && *val) {
+			if (type == NULL || strcmp(type, "int")) {
 				mutil_real_escape_string_nalloc(&esc, val, strlen(val));
 				if (str->len <= 0) {
 					if (clen)
@@ -154,8 +154,8 @@ int mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
 		val = hdf_get_value(data, name, NULL);
 		require = mutil_obj_attr(node, "require");
 		type = mutil_obj_attr(node, "type");
-		if (val && *val && type && *type) {
-			if (strcmp(type, "int")) {
+		if (val && *val) {
+			if (type == NULL || strcmp(type, "int")) {
 				mutil_real_escape_string_nalloc(&esc, val, strlen(val));
 				if (str->len <= 0)
 					string_appendf(str, " %s '%s' ", col, esc);
@@ -198,8 +198,8 @@ int mcs_build_incol(HDF *data, HDF *node, STRING *str)
 		require = mutil_obj_attr(node, "require");
 		clen = mutil_obj_attr(node, "maxlen");
 		type = mutil_obj_attr(node, "type");
-		if (val && *val && type && *type) {
-			if (strcmp(type, "int")) {
+		if (val && *val) {
+			if (type == NULL || strcmp(type, "int")) {
 				mutil_real_escape_string_nalloc(&esc, val, strlen(val));
 				if (sa.len <= 0) {
 					string_appendf(&sa, " (%s ", col);
