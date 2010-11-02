@@ -280,12 +280,12 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
 
 	/* append to last child */
 	int rowsn = 0;
-	if (prefix)
-		snprintf(hdfkey, sizeof(hdfkey), "%s.0", prefix);
-	HDF *res = hdf_get_obj(hdf, hdfkey);
-	while (res != NULL) {
-		rowsn++;
-		res = hdf_obj_next(res);
+	if (prefix) {
+		HDF *res = hdf_get_child(hdf, prefix);
+		while (res != NULL) {
+			rowsn++;
+			res = hdf_obj_next(res);
+		}
 	}
 
 	ret = mdb_get_errcode(conn);

@@ -44,10 +44,10 @@ static int dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
 	if (cache_getf(cd, &val, &vsize, PREFIX_DYN"%d_%d", uid, aid)) {
 		unpack_hdf(val, vsize, &q->hdfsnd);
 	} else {
-		MDB_QUERY_RAW(db, "lcsjoin", JOIN_COL, "uid=%d AND aid=%d ORDER BY id DESC;",
-					  NULL, uid, aid);
+		MDB_QUERY_RAW(db, "lcsjoin", JOIN_COL, "uid=%d AND aid=%d ORDER BY id DESC LIMIT %d;",
+					  NULL, uid, aid, 20);
 		mdb_set_rows(q->hdfsnd, db, JOIN_COL, NULL, -1);
-		CACHE_HDF(q->hdfsnd, 0, PREFIX_DYN"%d_%d", uid, aid);
+		CACHE_HDF(q->hdfsnd, ONE_MINUTE, PREFIX_DYN"%d_%d", uid, aid);
 	}
 	
 	return REP_OK;
@@ -91,8 +91,9 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 	if (mdb_get(db, "i", &id) == MDB_ERR_NONE) {
 		hdf_set_int_value(q->hdfsnd, "id", id);
 	}
-	
-	cache_delf(cd, PREFIX_DYN"%d_%d", uid, aid);
+
+	//cache delete by timeout
+	//cache_delf(cd, PREFIX_DYN"%d_%d", uid, aid);
 
 	return REP_OK;
 }
