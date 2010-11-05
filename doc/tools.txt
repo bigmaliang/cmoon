@@ -38,6 +38,9 @@ Algorithms
 	http://www.partow.net/programming/hashfunctions
 	General Purpose Hash Function Algorithms
 
+	http://osdir.com
+	mailing list archive	
+
 
 http://tools.mozilla.com
 ========================
