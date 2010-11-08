@@ -27,7 +27,7 @@ struct place_entry {
 
 static char* gb2utf8(char *s)
 {
-	if (!s) return NULL;
+	if (!s || !*s) return NULL;
 
 	if (!cv || cv == (iconv_t)-1) cv = iconv_open("UTF-8", "GB2312");
 	if (cv == (iconv_t)-1) {
@@ -150,9 +150,9 @@ static int ip_offset(unsigned int ip)
 		return -1;
 }
 
-static void ip2place(HDF *hdf, char *ip, char *key)
+static bool ip2place(HDF *hdf, char *ip, char *key)
 {
-	if (!hdf || !ip) return;
+	if (!hdf || !ip) return false;
 	
 	unsigned int dip, offset;
 	char *c, *a;
@@ -176,9 +176,11 @@ static void ip2place(HDF *hdf, char *ip, char *key)
 				}
 				free(c); c = NULL;
 				free(a); a = NULL;
+				return true;
 			}
 		}
 	}
+	return false;
 }
 
 static int place_cmd_get(struct queue_entry *q, struct cache *cd, mdb_conn *db)

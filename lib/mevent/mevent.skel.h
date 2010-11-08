@@ -178,7 +178,7 @@ int mevent_trigger(mevent_t *evt, char *key,
 #define REQ_GET_PARAM_STR(hdf, key, ret)		\
     do {										\
 		ret = hdf_get_value(hdf, key, NULL);	\
-		if (!ret) {								\
+		if (!ret || *ret == '\0') {				\
             return REP_ERR_BADPARAM;			\
 		}										\
     } while (0)

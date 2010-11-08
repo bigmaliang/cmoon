@@ -95,14 +95,6 @@ int mcs_build_upcol(HDF *data, HDF *node, STRING *str)
 		require = mutil_obj_attr(node, "require");
 		clen = mutil_obj_attr(node, "maxlen");
 		type = mutil_obj_attr(node, "type");
-		/*
-		 * TODO
-		 *   we checked *val not "" here, the following also need check:
-		 *   HDF_GET_STR()
-		 *   REQ_GET_PARAM_STR()
-		 *   JNEED_STR()
-		 *   ...
-		 */
 		if (val && *val) {
 			if (type == NULL || strcmp(type, "int")) {
 				mutil_real_escape_string_nalloc(&esc, val, strlen(val));

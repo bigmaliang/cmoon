@@ -107,7 +107,7 @@ __BEGIN_DECLS
 #define HDF_GET_STR(hdf, key, ret)				\
     do {										\
 		ret = hdf_get_value(hdf, key, NULL);	\
-		if (!ret) {								\
+		if (!ret || *ret == '\0') {				\
             return RET_RBTOP_INPUTE;			\
 		}										\
     } while (0)
