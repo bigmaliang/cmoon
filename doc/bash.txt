@@ -1,5 +1,9 @@
 Bad substitution 错误， /bin/sh 不支持， 要改成 /bin/bash
 
+$PROMPT_COMMAND
+Bash provides an environment variable called PROMPT_COMMAND. The contents of this variable are executed as a regular Bash command just before Bash displays a prompt.
+Bash 在每次显示输入指示($/#)时， 都会执行 $PROMPT_COMMAND
+
 
 
 字符串处理

@@ -12,6 +12,7 @@
 /* The ID code for requests is hardcoded for now, until asynchronous requests
  * are implemented. */
 #define ID_CODE 1
+extern unsigned int g_reqid;
 
 /* For a given buffer, how much into it should the generic library code write
  * the message contents. */

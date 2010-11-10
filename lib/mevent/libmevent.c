@@ -21,6 +21,7 @@
 
 static bool loaded = false;
 static HDF *g_cfg;
+unsigned int g_reqid = 0;
 
 static int load_config()
 {
@@ -398,9 +399,14 @@ int mevent_trigger(mevent_t *evt, char *key,
 		return -1;
 	}
 	
+	if (g_reqid++ > 0x0FFFFFFC) {
+		g_reqid = 1;
+	}
+	
 	moff = srv_get_msg_offset(srv);
 	p = evt->payload + moff;
-	* (uint32_t *) p = htonl( (PROTO_VER << 28) | ID_CODE );
+	//* (uint32_t *) p = htonl( (PROTO_VER << 28) | ID_CODE );
+	* (uint32_t *) p = htonl( (PROTO_VER << 28) | g_reqid );
 	* ((uint16_t *) p + 2) = htons(cmd);
 	* ((uint16_t *) p + 3) = htons(flags);
 	* ((uint32_t *) p + 2) = htonl(ksize);

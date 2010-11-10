@@ -82,6 +82,7 @@ uint32_t tipc_get_rep(struct mevent_srv *srv,
 	ssize_t rv;
 	uint32_t id, reply;
 
+rerecv:
 	rv = recv(srv->fd, buf, bsize, 0);
 	if (rv < 4 + 4) {
 		return -1;
@@ -92,10 +93,8 @@ uint32_t tipc_get_rep(struct mevent_srv *srv,
 	reply = * ((uint32_t *) buf + 1);
 	reply = ntohl(reply);
 
-	if (id != ID_CODE) {
-		return -1;
-	}
-
+	if (id < g_reqid) goto rerecv;
+	
 	if (payload != NULL) {
 		*payload = buf + 4 + 4;
 		*psize = rv - 4 - 4;

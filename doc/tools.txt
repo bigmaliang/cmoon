@@ -216,3 +216,24 @@ scrot -u x.jpg
   -b, --border              When selecting a window, grab wm border too
   -u, --focused             use the currently focused window
 
+
+tools
+-----
+	scrot		抓屏软件
+		scrot -d 3 -s x.jpg 延迟3秒，选择抓屏，存到x.jpg中
+
+	valgrind	调试软件
+		valgrind --leak-check=full ./xxxxx
+		
+	screen		方便调试后台程序工具
+		screen -S dbg 新开 dbg 终端
+		screen -r dbg attach 到 dbg 终端
+		C+a c 新建、 n 切换、 d detach
+
+	ack-grep	代码grep				http://betterthangrep.com/
+		ack-grep -f --hh  仅打印文件名
+		ack-grep --hh 'RBTOP_OK'  * 仅在头文件中查找 RBTOP_OK
+
+	eMail		命令行发smpt邮件		https://github.com/deanproxy/email
+
+	z			目录关键字跳转			https://github.com/rupa/z

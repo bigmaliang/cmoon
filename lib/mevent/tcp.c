@@ -175,6 +175,7 @@ uint32_t tcp_get_rep(struct mevent_srv *srv,
 	ssize_t rv;
 	uint32_t id, reply;
 
+rerecv:
 	rv = recv_msg(srv->fd, buf, bsize);
 	if (rv <= 0)
 		return -1;
@@ -184,9 +185,7 @@ uint32_t tcp_get_rep(struct mevent_srv *srv,
 	reply = * ((uint32_t *) buf + 2);
 	reply = ntohl(reply);
 
-	if (id != ID_CODE) {
-		return -1;
-	}
+	if (id < g_reqid) goto rerecv;
 
 	if (payload != NULL) {
 		*payload = buf + 4 + 4 + 4;
