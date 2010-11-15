@@ -10,6 +10,11 @@ http://visualjquery.com/
 div-id-name
 div-class-name
 
+setTimeout(fn, msec)
+setInterval(fn, msec)
+window.clearInterval(intervalID);
+window.clearTimeout(timeoutID);
+
 js2-mode
 --------
 http://code.google.com/p/js2-mode/issues/detail?id=94
