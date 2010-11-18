@@ -149,6 +149,7 @@ bool mcs_str2file(STRING str, const char *file);
 
 void mcs_rand_string(char *s, int max);
 void mcs_register_bitop_functions(CSPARSE *cs);
+void mcs_register_mkd_functions(CSPARSE *cs);
 void mcs_hdf_escape_val(HDF *hdf);
 void mcs_html_escape(HDF *hdf, char *name);
 

@@ -25,6 +25,9 @@ cd /usr/local/etc/email;
 sudo cp email.conf liucs.conf
 sudo cp email.sig liucs.sig
 
+cd /usr/local/src
+git clone git://github.com/Orc/discount.git
+cd discount; ./configure.sh; make; sudo make install
 
 sudo apt-get install libfcgi-dev libjson0-dev libqdbm-dev libevent-dev
 sudo apt-get install libmysqlclient-dev libpq-dev libsqlite3-dev

@@ -1,0 +1,43 @@
+MarkDown
+========
+http://daringfireball.net/projects/markdown/syntax
+
+markdown 是一种方便书写的语法。  我们可以将其用在html 编辑器上。
+
+用户输入时， 为了将用户输入中html语法 和 故意需要的语法（如连接、图片等）分开， 我们可以使用 makdown、bbcode等语法与 html 语法去分开。
+这样， 我们可以 escape 用户输入中的所有 html 特殊字符（< > 等）， 而保留用户想要的特殊效果。
+
+分两种情况讨论：
+
+对展示页面生成无速度要求（静态页面）
+---------------------------
+	数据库中存用户输入的原始数据， 所有的语法都不转义。
+	展现页面时:
+		1, 先 escape: "html" 或 var: html_escape(xxx)
+		2, 再 解析 markdown、 bbcode 等语法， 最终生成可以安全解释的 html 页面
+	可以通过 cs 的如下语法实现：  <?cs var: mkd_escape(html_escape(xxx)) ?>， 需要 register_xxx_func
+
+
+对展示页面生成有速度要求（动态页面）
+---------------------------
+	数据库中存数据时， 将用户输入进行 html 转义， 再将 mkd_escape 转义， 再入库， 吐页面时可直接展现
+	实现方法:
+		同上， 不过是入库前做。
+	但这样有个弱点： 用户需要修改时，暂时无法还原用户的原始输入（或者需要其他方法）。
+
+
+
+几个工具
+======
+markitup
+--------
+markItUp! Universal markup editor 1.x
+https://github.com/markitup/1.x
+http://markitup.jaysalvat.com/home/
+
+discount
+--------
+My C implementation of John Gruber's Markdown markup language
+https://github.com/orc/discount
+http://www.pell.portland.or.us/~orc/Code/discount
+

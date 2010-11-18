@@ -103,6 +103,11 @@ void mcs_register_bitop_functions(CSPARSE *cs)
 	cs_register_function(cs, "bitop.xor", 2, _builtin_bitop_xor);
 }
 
+void mcs_register_mkd_functions(CSPARSE *cs)
+{
+	cs_register_esc_strfunc(cs, "mkd.escape", mkd_esc_str);
+}
+
 void mcs_hdf_escape_val(HDF *hdf)
 {
 	char *esc = NULL, *val = NULL;

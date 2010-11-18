@@ -145,6 +145,12 @@ codeburner
 	查找 HTML, CSS 各个标签的标准用法和浏览器兼容性, 带实例.
 
 
+imagemagick
+-----------
+	http://www.imagemagick.org/Usage/
+	http://www.ioncannon.net/linux/81/5-imagemagick-command-line-examples-part-1/
+
+
 Pencil
 ------
 	http://www.evolus.vn/Pencil/

@@ -1,0 +1,107 @@
+扩展 cs 功能
+==========
+
+只能扩展 expression <?cs if/var...: xxxxxxxx() ?>
+(
+Commands if/var... 无法扩展
+EscapeModes <? escape: "html/js/url..." 无法扩展
+)
+-------------------
+
+	cs_register_function(cs, "bitop.and", 2, _builtin_bitop_and);
+	cs_register_function(cs, "bitop.or", 2, _builtin_bitop_or);
+	cs_register_function(cs, "bitop.xor", 2, _builtin_bitop_xor);
+
+类似 cs builtin <?cs if: string.find(Output.appinfo.intime, "2010") == -1 ?>
+为 cs 添加函数 <? cs var: bitop.and() ?> <? cs if: bitop.and() ?>....
+扩展原理见 csparse.c cs_init_internal()
+
+cs 官方扩展例子：
+	cgi.c cgi_register_strfuncs()：
+		cs_register_esc_strfunc(parse, "html_escape", html_escape_strfunc);
+		cs_register_esc_strfunc(parse, "js_escape", js_escape_strfunc);
+
+这种方式类似 cs_register_function()， 只是仅仅限于 escape 字符串。
+注：如果是没有用到 cgi 模块的程序， 请手动调用该函数， 以让 cs 模板有效。  见 pop/pub/ltpl.c ltpl_parse_file()
+
+
+
+register[_xxx]_func() 系列函数的区别：
+-------------------
+
+	NEOERR *cs_register_esc_strfunc(CSPARSE *parse, char *funcname,
+	                                CSSTRFUNC str_func)
+	{
+	  NEOERR *err;
+	
+	  err = cs_register_strfunc(parse, funcname, str_func);
+	  if (err) return nerr_pass(err);
+	  parse->functions->escape = NEOS_ESCAPE_FUNCTION;
+	
+	  return STATUS_OK;
+	}
+	NEOERR *cs_register_strfunc(CSPARSE *parse, char *funcname, CSSTRFUNC str_func)
+	{
+	  NEOERR *err;
+	
+	  err = cs_register_function(parse, funcname, 1, _str_func_wrapper);
+	  if (err) return nerr_pass(err);
+	  parse->functions->str_func = str_func;
+	
+	  return STATUS_OK;
+	}
+
+register_esc_strfunc() > register_strfunc() > register_function()
+
+register[_xxx]_func() 仅接受两类函数指针：
+	typedef NEOERR* (*CSFUNCTION)(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
+	                              CSARG *result);
+	typedef NEOERR* (*CSSTRFUNC)(const char *str, char **ret);
+如：
+	static NEOERR* _builtin_bitop_or(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
+									 CSARG *result)
+	{
+		NEOERR *err;
+		long int n1 = 0;
+		long int n2 = 0;
+	
+		result->op_type = CS_TYPE_NUM;
+		result->n = 0;
+	
+		err = cs_arg_parse(parse, args, "ii", &n1, &n2);
+		if (err) return nerr_pass(err);
+		result->n = n1 | n2;
+	
+		return STATUS_OK;
+	}
+
+
+
+
+嵌套 escape
+==========
+
+BlahJs = quote ' backslash \ semicolon ; end tag </script>
+
+<?cs escape: "js" ?>
+Nested escaping: js
+The internal calls should take precedence
+(1)<?cs escape: "html"   ?>js  -> BlahJs: <?cs var:BlahJs ?><?cs /escape ?>
+(2)<?cs var: html_escape(BlahJs) ?>
+(3)<?cs var: js_escape(html_escape(BlahJs)) ?>
+(4)<?cs var: BlahJs ?>
+<?cs /escape ?>
+
+
+Nested escaping: js
+The internal calls should take precedence
+(1)js  -> BlahJs: quote &#39; backslash \ semicolon ; end tag &lt;/script&gt;
+(2)quote &#39; backslash \ semicolon ; end tag &lt;/script&gt;
+(3)quote \x26#39\x3B backslash \x5C semicolon \x3B end tag \x26lt\x3B\x2Fscript\x26gt\x3B
+(4)quote \x27 backslash \x5C semicolon \x3B end tag \x3C\x2Fscript\x3E
+
+
+(1) /script 没有被解析， 据结果推论出 cs nested escape 时， 仅执行最里面的 escape 方法， 此处为 html
+(2) 调用了 html_escape() 函数， 便不会再调用外层的 escape: "js"
+(3) 调用了 html_escape() 函数， 然后再调用了 js_escape() 函数， 正是我们想要的
+(4) 仅仅 escape: "js"

@@ -6,7 +6,7 @@ CFLAGS += -fPIC
 DEPS	= $(INC_MEVENT) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM) 
 
 SOURCE1 = mconfig.c
-SOURCES = mconfig.c mcs.c md5c.c mdata.c mdb.c mdb-priv.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mjson.c mmemc.c mmisc.c mtrace.c mtypes.c mutil.c
+SOURCES = mconfig.c mcs.c md5c.c mdata.c mdb.c mdb-priv.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mjson.c mmemc.c mmkd.c mmisc.c mtrace.c mtypes.c mutil.c
 ifneq ($(NMYSQL), 1)
 	SOURCES += fdb.c
 endif

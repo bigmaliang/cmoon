@@ -27,6 +27,7 @@
 #ifndef DROP_MEVENT
 #include "mevent.h"
 #include "cache.h"
+#include "mkdio.h"
 #endif
 #ifndef DROP_FCGI
 #include "fcgi_stdio.h"
@@ -93,6 +94,7 @@
 #include "json.h"
 #include "mnum.h"
 #include "mcfg.h"		/* cfg.h must be the first one */
+#include "mmkd.h"
 #include "mtypes.h"
 #include "mconfig.h"
 #include "mtrace.h"
