@@ -36,6 +36,8 @@ static void rep_send_error(const struct req_info *req, const unsigned int code)
 	memcpy(minibuf + 4, &r, 4);
 	memcpy(minibuf + 8, &c, 4);
 
+	MSG_DUMP("send: ",  minibuf, 3 * 4);
+	
 	/* If this send fails, there's nothing to be done */
 	r = sendto(req->fd, minibuf, 3 * 4, 0, req->clisa, req->clilen);
 
@@ -71,6 +73,8 @@ static int rep_send(const struct req_info *req, const unsigned char *buf,
 	if (settings.passive)
 		return 1;
 
+	MSG_DUMP("send: ",  buf, size);
+	
 	rv = sendto(req->fd, buf, size, 0, req->clisa, req->clilen);
 	if (rv < 0) {
 		//rep_send_error(req, ERR_SEND);
