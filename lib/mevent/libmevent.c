@@ -382,12 +382,10 @@ int mevent_trigger(mevent_t *evt, char *key,
 	struct mevent_srv *srv;
 	unsigned int moff;
 	unsigned char *p;
-	uint32_t rv;
+	uint32_t rv = REP_OK;
 	
 	if (!evt) return 0;
 
-	hdf_destroy(&evt->hdfrcv);
-	
 	if (!key) key = evt->key;
 	evt->cmd = cmd;
 	evt->flags = flags;
@@ -431,19 +429,21 @@ int mevent_trigger(mevent_t *evt, char *key,
 		return -2;
 	}
 
-	vsize = 0;
-	rv = get_rep(srv, evt->rcvbuf, MAX_PACKET_LEN, &p, &vsize);
-
-	if (vsize > 8) {
-		/* reply_long add a vsize parameter */
-		unpack_hdf(p+4, vsize-4, &evt->hdfrcv);
-	} else {
-		hdf_init(&evt->hdfrcv);
-	}
-
 	hdf_destroy(&evt->hdfsnd);
 	hdf_init(&evt->hdfsnd);
+	hdf_destroy(&evt->hdfrcv);
+	hdf_init(&evt->hdfrcv);
+	
+	if (flags & FLAGS_SYNC) {
+		vsize = 0;
+		rv = get_rep(srv, evt->rcvbuf, MAX_PACKET_LEN, &p, &vsize);
+		evt->errcode = rv;
 
-	evt->errcode = rv;
+		if (vsize > 8) {
+			/* reply_long add a vsize parameter */
+			unpack_hdf(p+4, vsize-4, &evt->hdfrcv);
+		}
+	}
+
 	return rv;
 }

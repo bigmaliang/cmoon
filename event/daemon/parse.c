@@ -94,7 +94,7 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 		}
 		hdf_destroy(&hdfrcv);
 		stats.net_unk_req++;
-		req->reply_mini(req, REP_ERR_UNKREQ);
+		if (sync) req->reply_mini(req, REP_ERR_UNKREQ);
 		return 1;
 	}
 	
@@ -114,7 +114,7 @@ static int put_in_queue_long(const struct req_info *req, int sync,
 			 entry->name, entry->op_queue->size);
 		hdf_destroy(&hdfrcv);
 		stats.pro_busy++;
-		req->reply_mini(req, REP_ERR_BUSY);
+		if (sync) req->reply_mini(req, REP_ERR_BUSY);
 		return 1;
 	}
 	
@@ -163,6 +163,8 @@ static void parse_event(struct req_info *req)
 	unsigned char *pos;
 	HDF *hdfrcv = NULL;
 
+	FILL_SYNC_FLAG();
+	
 	/*
 	 * Request format:
 	 * 4		esize
@@ -186,19 +188,14 @@ static void parse_event(struct req_info *req)
 	if (rsize == 0 || rsize+esize+sizeof(uint32_t) > MAX_PACKET_LEN ||
 		req->psize < esize) {
 		stats.net_broken_req++;
-		req->reply_mini(req, REP_ERR_BROKEN);
+		if (sync) req->reply_mini(req, REP_ERR_BROKEN);
 		return;
 	}
 
-	FILL_SYNC_FLAG();
 	rv = put_in_queue(req, sync, ename, esize, hdfrcv);
 	if (!rv) {
-		req->reply_mini(req, REP_ERR_MEM);
+		if (sync) req->reply_mini(req, REP_ERR_MEM);
 		return;
-	}
-
-	if (!sync) {
-		req->reply_mini(req, REP_OK);
 	}
 
 	return;
