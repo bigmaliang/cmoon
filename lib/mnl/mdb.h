@@ -9,11 +9,10 @@ __BEGIN_DECLS
  * ==== user attention ====
  * ========================
  * except mdb_init return RET_RBTOP_* for cgi use
- * the mdb API return MDB_ERR_* for success check.
- * caller can check return value != MDB_ERR_NONE,
- * or use mdb_get_errcode(conn) for connecter check.
- * DON't use get_errcode for normal check, because some
- * mdb_* action don't set errcode but return !MDB_ERR_NONE
+ * others mdb API return MDB_ERR_* for success check.
+ *
+ * some function return !MDB_ERR_NONE, but don't so terriable for most situation.
+ * e.g. NORESULT for _get
  */
 
 /*
@@ -30,13 +29,21 @@ typedef struct _mdb_query mdb_query;
 enum _mdb_errors
 {
   MDB_ERR_NONE = 0,
-  MDB_ERR_OTHER,
+  
+  MDB_ERR_NIMPLEM,
+  MDB_ERR_API_TURN,
+  MDB_ERR_INPUTE,
+
+  MDB_ERR_RESULTE,
+  MDB_ERR_NORESULT,
+  MDB_ERR_RESULT_ENDED,
+
   MDB_ERR_UNIQUE_VIOLATION,
   MDB_ERR_NOT_NULL_VIOLATION,
-  MDB_ERR_MEMORY_ALLOC,
-  MDB_ERR_NORESULT,
-  MDB_ERR_RESULTE,
-  MDB_ERR_RESULT_ENDED
+  MDB_ERR_OTHER,
+  
+  MDB_ERR_INIT = 100,
+  MDB_ERR_MEMORY_ALLOC
 };
 
 int  mdb_init(mdb_conn **conn, char *dsn);
@@ -96,9 +103,12 @@ void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn);
 		mtc_err("hdf is null");							\
 		return RET_RBTOP_HDFNINIT;						\
 	}													\
-	if (mdb_get_errcode(conn) != MDB_ERR_NONE) {		\
-		mtc_err("conn err %s", mdb_get_errmsg(conn));	\
+	if (MDB_CONN_BAD(conn)) {							\
+		mtc_err("conn bad %d", mdb_get_errcode(conn));	\
 		return RET_RBTOP_DBNINIT;						\
+	} else if (mdb_get_errcode(conn) != MDB_ERR_NONE) {	\
+		mtc_err("conn err %s", mdb_get_errmsg(conn));	\
+		mdb_clear_error(conn);							\
 	}
 
 #define PRE_DBOP_NRET(hdf, conn)						\
@@ -106,9 +116,12 @@ void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn);
 		mtc_err("hdf is null");							\
 		return;											\
 	}													\
-	if (mdb_get_errcode(conn) != MDB_ERR_NONE) {		\
-		mtc_err("conn err %s", mdb_get_errmsg(conn));	\
+	if (MDB_CONN_BAD(conn)) {							\
+		mtc_err("conn bad %d", mdb_get_errcode(conn));	\
 		return;											\
+	} else if (mdb_get_errcode(conn) != MDB_ERR_NONE) {	\
+		mtc_err("conn err %s", mdb_get_errmsg(conn));	\
+		mdb_clear_error(conn);							\
 	}
 
 #define MDB_EXEC_RBT(conn, affrow, sqlfmt, fmt, ...)				\
@@ -137,6 +150,8 @@ void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn);
 #define MDB_QUERY_RAW(conn, table, col, condition, sfmt, ...)           \
 	mdb_exec(conn, NULL, "SELECT " col " FROM " table " WHERE " condition ";", \
 			 sfmt, ##__VA_ARGS__)
+
+#define MDB_CONN_BAD(conn) (mdb_get_errcode(conn) > MDB_ERR_OTHER)
 
 __END_DECLS
 #endif	/* __MDB_H__ */

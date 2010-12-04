@@ -143,10 +143,10 @@ static int sqlite_mdb_query_fill(mdb_query* query, const char* sql_string)
 			mdb_set_error(conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(conn)->handle));
 			/* TODO WHY FREE ME? */
 			//sqlite_mdb_query_free(query);
-			return -1;
+			return MDB_ERR_OTHER;
 		}
 	}
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static void sqlite_mdb_query_free(mdb_query* query)
@@ -192,26 +192,26 @@ static int sqlite_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 
 	switch (QUERY(query)->state) {
 	case QUERY_STATE_INIT: 
-		mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid API use, call mdb_query_put() before mdb_query_get().");
-		return -1;
+		mdb_set_error(query->conn, MDB_ERR_API_TURN,
+					  "call mdb_query_put() before mdb_query_get().");
+		return MDB_ERR_API_TURN;
 	case QUERY_STATE_COMPLETED:
-		//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
-		return 1;
+		mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+		return MDB_ERR_RESULT_ENDED;
 	case QUERY_STATE_ROW_READ:
 		// fetch next row
 		rs = sqlite3_step(stmt);
 		if (rs == SQLITE_ROW)
 			break;
 		else if (rs == SQLITE_DONE) {
-			//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+			mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
 			QUERY(query)->state = QUERY_STATE_COMPLETED;
-			return 1;
-		}
-		else
-		{
+			return MDB_ERR_RESULT_ENDED;
+		} else {
 			//XXX: set error based on sqlite state
-			mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
-			return -1;
+			mdb_set_error(query->conn, MDB_ERR_OTHER,
+						  sqlite3_errmsg(CONN(query->conn)->handle));
+			return MDB_ERR_OTHER;
 		}
 	case QUERY_STATE_ROW_PENDING:
 		QUERY(query)->state = QUERY_STATE_ROW_READ;
@@ -235,9 +235,9 @@ static int sqlite_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 			int* int_ptr = (int*)va_arg(ap, int*);
 			*int_ptr = sqlite3_value_type(sqlite3_column_value(stmt, col)) == SQLITE_NULL;
 		} else {
-			mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid format string.");
+			mdb_set_error(query->conn, MDB_ERR_INPUTE, "Invalid format string.");
 			va_end(ap);
-			return -1;
+			return MDB_ERR_INPUTE;
 		}
 	}
 
@@ -253,26 +253,28 @@ static int sqlite_mdb_query_geta(mdb_query* query, const char* fmt, char *r[])
 
 	switch (QUERY(query)->state) {
 	case QUERY_STATE_INIT: 
-		mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid API use, call mdb_query_put() before mdb_query_get().");
-		return -1;
+		mdb_set_error(query->conn, MDB_ERR_OTHER,
+					  "call mdb_query_put() before mdb_query_get().");
+		return MDB_ERR_OTHER;
 	case QUERY_STATE_COMPLETED:
-		//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
-		return 1;
+		mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+		return MDB_ERR_RESULT_ENDED;
 	case QUERY_STATE_ROW_READ:
 		// fetch next row
 		rs = sqlite3_step(stmt);
 		if (rs == SQLITE_ROW)
 			break;
 		else if (rs == SQLITE_DONE) {
-			//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+			mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
 			QUERY(query)->state = QUERY_STATE_COMPLETED;
-			return 1;
+			return MDB_ERR_RESULT_ENDED;
 		}
 		else
 		{
 			//XXX: set error based on sqlite state
-			mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
-			return -1;
+			mdb_set_error(query->conn, MDB_ERR_OTHER,
+						  sqlite3_errmsg(CONN(query->conn)->handle));
+			return MDB_ERR_OTHER;
 		}
 	case QUERY_STATE_ROW_PENDING:
 		QUERY(query)->state = QUERY_STATE_ROW_READ;
@@ -288,7 +290,7 @@ static int sqlite_mdb_query_geta(mdb_query* query, const char* fmt, char *r[])
 		col++;
 	}
 
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int sqlite_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
@@ -300,8 +302,9 @@ static int sqlite_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 
 	if (QUERY(query)->state != QUERY_STATE_INIT) {
 		if (sqlite3_reset(stmt) != SQLITE_OK) {
-			mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
-			return -1;
+			mdb_set_error(query->conn, MDB_ERR_OTHER,
+						  sqlite3_errmsg(CONN(query->conn)->handle));
+			return MDB_ERR_OTHER;
 		}
 	}
 
@@ -331,8 +334,8 @@ static int sqlite_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 				sqlite3_bind_int(stmt, col, value);
 			col++;
 		} else {
-			mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid format string.");
-			return -1;
+			mdb_set_error(query->conn, MDB_ERR_INPUTE, "Invalid format string.");
+			return MDB_ERR_INPUTE;
 		}
 	}
 
@@ -344,11 +347,12 @@ static int sqlite_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 		QUERY(query)->state = QUERY_STATE_ROW_PENDING;
 	else {
 		//XXX: set error based on sqlite state
-		mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
-		return -1;
+		mdb_set_error(query->conn, MDB_ERR_OTHER,
+					  sqlite3_errmsg(CONN(query->conn)->handle));
+		return MDB_ERR_OTHER;
 	}
 
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int sqlite_mdb_query_get_rows(mdb_query* query)
@@ -358,12 +362,14 @@ static int sqlite_mdb_query_get_rows(mdb_query* query)
 	sqlite3_stmt* stmt = QUERY(query)->stmt;
 
 	if (QUERY(query)->state == QUERY_STATE_INIT) {
-		mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid API use, call mdb_query_put() before mdb_query_get_rows().");
+		mdb_set_error(query->conn, MDB_ERR_OTHER,
+					  "call mdb_query_put() before mdb_query_get_rows().");
 		return -1;
 	}
 
 	if (sqlite3_reset(stmt) != SQLITE_OK) {
-		mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
+		mdb_set_error(query->conn, MDB_ERR_OTHER,
+					  sqlite3_errmsg(CONN(query->conn)->handle));
 		return -1;
 	}
 
@@ -375,13 +381,15 @@ static int sqlite_mdb_query_get_rows(mdb_query* query)
 			count++;
 		else {
 			//XXX: set error based on sqlite state
-			mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
+			mdb_set_error(query->conn, MDB_ERR_OTHER,
+						  sqlite3_errmsg(CONN(query->conn)->handle));
 			return -1;
 		}
 	}
 
 	if (sqlite3_reset(stmt) != SQLITE_OK) {
-		mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
+		mdb_set_error(query->conn, MDB_ERR_OTHER,
+					  sqlite3_errmsg(CONN(query->conn)->handle));
 		return -1;
 	}
 
@@ -392,7 +400,8 @@ static int sqlite_mdb_query_get_rows(mdb_query* query)
 		QUERY(query)->state = QUERY_STATE_COMPLETED;
 	else {
 		//XXX: set error based on sqlite state
-		mdb_set_error(query->conn, MDB_ERR_OTHER, sqlite3_errmsg(CONN(query->conn)->handle));
+		mdb_set_error(query->conn, MDB_ERR_OTHER,
+					  sqlite3_errmsg(CONN(query->conn)->handle));
 		return -1;
 	}
 
@@ -401,8 +410,9 @@ static int sqlite_mdb_query_get_rows(mdb_query* query)
 
 static int sqlite_mdb_query_get_affect_rows(mdb_query* query)
 {
-	mdb_set_error(query->conn, MDB_ERR_OTHER, "sqlite_mdb_query_get_affect_rows() is not implemented!");
-	return -1;
+	mdb_set_error(query->conn, MDB_ERR_NIMPLEM,
+				  "sqlite_mdb_query_get_affect_rows() is not implemented!");
+	return MDB_ERR_NIMPLEM;
 }
 
 static int sqlite_mdb_query_get_last_id(mdb_query* query, const char* seq_name)

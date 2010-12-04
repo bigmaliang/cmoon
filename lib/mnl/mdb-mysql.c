@@ -138,11 +138,11 @@ static int mysql_mdb_begin(mdb_conn* conn)
 	ret = mysql_real_query(CONN(conn)->mysql, "BEGIN", strlen("BEGIN"));
 	if (ret != 0) {
 		mdb_set_error(conn, MDB_ERR_OTHER, mysql_error(CONN(conn)->mysql));
-		return -1;
+		return MDB_ERR_OTHER;
 	}
 
 	/* TODO free query? */
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int mysql_mdb_commit(mdb_conn* conn)
@@ -153,10 +153,10 @@ static int mysql_mdb_commit(mdb_conn* conn)
 	ret = mysql_commit(CONN(conn)->mysql);
 	if (ret != 0) {
 		mdb_set_error(conn, MDB_ERR_OTHER, mysql_error(CONN(conn)->mysql));
-		return -1;
+		return MDB_ERR_OTHER;
 	}
 	
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int mysql_mdb_rollback(mdb_conn* conn)
@@ -167,10 +167,10 @@ static int mysql_mdb_rollback(mdb_conn* conn)
 	ret = mysql_rollback(CONN(conn)->mysql);
 	if (ret != 0) {
 		mdb_set_error(conn, MDB_ERR_OTHER, mysql_error(CONN(conn)->mysql));
-		return -1;
+		return MDB_ERR_OTHER;
 	}
 	
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static mdb_query* mysql_mdb_query_new(mdb_conn* conn, const char* sql_string)
@@ -231,8 +231,12 @@ static int mysql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 		return -1;
 
 	if (row_no >= mdb_query_get_rows(query)) {
-		//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
-		return 1;
+		if (row_no == 0) {
+			mdb_set_error(query->conn, MDB_ERR_NORESULT, "empty result");
+			return MDB_ERR_NORESULT;
+		}
+		mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+		return MDB_ERR_RESULT_ENDED;
 	}
 
 	int param_count = fmt != NULL ? strlen(fmt) : 0;
@@ -240,10 +244,12 @@ static int mysql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 
 	row = mysql_fetch_row(res);
 	if (row == NULL) {
-		return 2;
+		mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+		return MDB_ERR_RESULT_ENDED;
 	}
 	if (param_count > mysql_num_fields(res)) {
-		return 2;
+		mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "result col num failure");
+		return MDB_ERR_RESULTE;
 	}
 	for (i = 0; i < param_count; i++) {
 		if (fmt[i] == 's') {
@@ -272,14 +278,14 @@ static int mysql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 			else
 				*int_ptr = 0;
 		} else {
-			mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid format string.");
+			mdb_set_error(query->conn, MDB_ERR_INPUTE, "Invalid format string.");
 			va_end(ap);
-			return -1;
+			return MDB_ERR_INPUTE;
 		}
 	}
 
 	QUERY(query)->row_no++;
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int mysql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
@@ -292,8 +298,12 @@ static int mysql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
 		return -1;
 
 	if (row_no >= mdb_query_get_rows(query)) {
-		//mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
-		return 1;
+		if (row_no == 0) {
+			mdb_set_error(query->conn, MDB_ERR_NORESULT, "empty result");
+			return MDB_ERR_NORESULT;
+		}
+		mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+		return MDB_ERR_RESULT_ENDED;
 	}
 
 	int param_count = fmt != NULL ? strlen(fmt) : 0;
@@ -301,10 +311,12 @@ static int mysql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
 
 	row = mysql_fetch_row(res);
 	if (row == NULL) {
-		return 2;
+		mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "last row has fetched");
+		return MDB_ERR_RESULT_ENDED;
 	}
 	if (param_count > mysql_num_fields(res)) {
-		return 2;
+		mdb_set_error(query->conn, MDB_ERR_RESULT_ENDED, "result col num failure");
+		return MDB_ERR_RESULTE;
 	}
 	for (i = 0; i < param_count; i++) {
 		if (fmt[i] == 's') {
@@ -320,9 +332,9 @@ static int mysql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
 		}
 		col++;
 	}
-
+	
 	QUERY(query)->row_no++;
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int mysql_add_sql_int(char **sql, int val)
@@ -383,10 +395,11 @@ static int mysql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 	char** param_values = calloc(param_count, sizeof(char*));
 	int* free_list = calloc(param_count, sizeof(int));
 	if (param_values == NULL || free_list == NULL) {
-		mdb_set_error(query->conn, MDB_ERR_MEMORY_ALLOC, "calloc for query putv failure.");
-		return -1;
+		mdb_set_error(query->conn, MDB_ERR_MEMORY_ALLOC,
+					  "calloc for query putv failure.");
+		return MDB_ERR_MEMORY_ALLOC;
 	}
-	int i, col = 0, retval = 0;
+	int i, col = 0, retval = MDB_ERR_NONE;
 
 	int is_null;
 	for (i = 0; i < param_count; i++) {
@@ -400,8 +413,11 @@ static int mysql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 		if (fmt[i] == 's') {
 			char* value = (char*)va_arg(ap, char*);
 			if (!is_null)
-				if (mysql_add_sql_str(CONN(query->conn)->mysql, &(query->sql), value) != 0) {
-					retval = -1;
+				if (mysql_add_sql_str(CONN(query->conn)->mysql,
+									  &(query->sql), value) != 0) {
+					mdb_set_error(query->conn, MDB_ERR_INPUTE,
+								  "Invalid sql string.");
+					retval = MDB_ERR_INPUTE;
 					goto err;
 				}
 			col++;
@@ -410,14 +426,16 @@ static int mysql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 			int value = (int)va_arg(ap, int);
 			if (!is_null) {
 				if (mysql_add_sql_int(&(query->sql), value) != 0) {
-					retval = -1;
+					mdb_set_error(query->conn, MDB_ERR_INPUTE,
+								  "Invalid sql string.");
+					retval = MDB_ERR_INPUTE;
 					goto err;
 				}
 			}
 			col++;
 		} else {
-			mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid format string.");
-			retval = -1;
+			mdb_set_error(query->conn, MDB_ERR_INPUTE, "Invalid format string.");
+			retval = MDB_ERR_INPUTE;
 			goto err;
 		}
 	}
@@ -427,7 +445,7 @@ static int mysql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 	if (ret != 0) {
 		mtc_err("%s %s", query->sql, mysql_error(CONN(query->conn)->mysql));
 		mdb_set_error(query->conn, MDB_ERR_OTHER, mysql_error(CONN(query->conn)->mysql));
-		retval = -2;
+		retval = MDB_ERR_OTHER;
 	}
 
 	if (QUERY(query)->res != NULL)

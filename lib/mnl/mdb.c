@@ -32,22 +32,19 @@ void mdb_destroy(mdb_conn *conn)
 
 const char* mdb_get_backend(mdb_conn* conn)
 {
-	if (conn == NULL)
-		return "";
+	if (conn == NULL) return NULL;
 	return conn->driver->name;
 }
 
 const char* mdb_get_errmsg(mdb_conn* conn)
 {
-	if (conn == NULL)
-		return "Connection obejct is NULL.";
+	if (conn == NULL) return "Connection obejct is NULL.";
 	return conn->errmsg;
 }
 
 int mdb_get_errcode(mdb_conn* conn)
 {
-	if (conn == NULL)
-		return MDB_ERR_OTHER;
+	if (conn == NULL) return MDB_ERR_INIT;
 	return conn->errcode;
 }
 
@@ -62,8 +59,7 @@ void mdb_set_error(mdb_conn* conn, int code, const char* msg)
 
 void mdb_clear_error(mdb_conn* conn)
 {
-	if (conn == NULL)
-		return;
+	if (conn == NULL) return;
 	conn->errcode = MDB_ERR_NONE;
 	free(conn->errmsg);
 	conn->errmsg = NULL;
@@ -73,7 +69,7 @@ int mdb_begin(mdb_conn* conn)
 {
 	CONN_RETURN_VAL_IF_INVALID(conn, -1);
 	int retval = CONN_DRIVER(conn)->begin(conn);
-	if (retval == 0)
+	if (retval == MDB_ERR_NONE)
 		conn->in_transaction = true;
 	return retval;
 }
@@ -82,34 +78,30 @@ int mdb_commit(mdb_conn* conn)
 {
 	CONN_RETURN_VAL_IF_INVALID(conn, -1);
 	int retval = CONN_DRIVER(conn)->commit(conn);
-	if (retval == 0)
+	if (retval == MDB_ERR_NONE)
 		conn->in_transaction = false;
 	return retval;
 }
 
 int mdb_rollback(mdb_conn* conn)
 {
-	if (conn == NULL)
-		return -1;
+	if (conn == NULL) return MDB_ERR_INIT;
 	int retval = CONN_DRIVER(conn)->rollback(conn);
-	if (retval == 0)
+	if (retval == MDB_ERR_NONE)
 		conn->in_transaction = false;
 	return retval;
 }
 
 int mdb_finish(mdb_conn* conn)
 {
-	if (conn == NULL)
-		return -1;
-	if (!conn->in_transaction)
-		return -1;
-	if (mdb_get_errcode(conn) != MDB_ERR_NONE)
-	{
+	if (conn == NULL) return MDB_ERR_INIT;
+	if (!conn->in_transaction) MDB_ERR_API_TURN;
+	if (mdb_get_errcode(conn) != MDB_ERR_NONE) {
 		mdb_rollback(conn);
-		return -1;
+		return mdb_get_errcode(conn);
 	}
 	mdb_commit(conn);
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 /*
@@ -141,8 +133,9 @@ int mdb_exec(mdb_conn* conn, int *affectrow, const char* sql_fmt, const char* fm
 	if (needesc) {
 		sqlstr = vsprintf_alloc(sql_fmt, ap);
 		if (sqlstr == NULL) {
-			mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for ms query new failure.");
-			return -1;
+			mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC,
+						  "calloc for ms query new failure.");
+			return MDB_ERR_MEMORY_ALLOC;
 		}
 		/* use the first query in the connector->queries list default */
 		mdb_query_fill(query, sqlstr);
@@ -220,7 +213,6 @@ int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	char qrarray[QR_NUM_MAX][LEN_ST];
 	char *col[QR_NUM_MAX];
 	char fmt[LEN_ST] = {0};
-	int ret;
 	
 	memset(fmt, 0x0, sizeof(fmt));
 	memset(qrarray, 0x0, sizeof(qrarray));
@@ -228,10 +220,9 @@ int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	mmisc_set_qrarray(cols, qrarray, &qrcnt);
 	memset(fmt, 's', qrcnt);
 	
-	ret = mdb_geta(conn, fmt, col);
-	if (ret != MDB_ERR_NONE) {
+	if (mdb_geta(conn, fmt, col) != MDB_ERR_NONE) {
 		mtc_err("db exec error %s", mdb_get_errmsg(conn));
-		return ret;
+		return mdb_get_errcode(conn);
 	}
 	
 	for (i = 0; i < qrcnt; i++) {
@@ -269,7 +260,6 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
 	char qrarray[QR_NUM_MAX][LEN_ST];
 	char *col[QR_NUM_MAX];
 	char fmt[LEN_ST] = {0}, hdfkey[LEN_HDF_KEY] = {0}, tok[LEN_ST];
-	int ret;
 	
 	memset(fmt, 0x0, sizeof(fmt));
 	memset(qrarray, 0x0, sizeof(qrarray));
@@ -287,11 +277,10 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
 			res = hdf_obj_next(res);
 		}
 	}
-
-	ret = mdb_get_errcode(conn);
-	if (ret != MDB_ERR_NONE) {
+	
+	if (mdb_get_errcode(conn) != MDB_ERR_NONE) {
 		mtc_err("db exec error %s", mdb_get_errmsg(conn));
-		return ret;
+		return mdb_get_errcode(conn);
 	}
 
 	while (mdb_geta(conn, fmt, col) == MDB_ERR_NONE ){
@@ -368,8 +357,9 @@ int mdb_exec_apart(mdb_conn* conn, mdb_query **pquery,
 	if (needesc) {
 		sqlstr = vsprintf_alloc(sql_fmt, ap);
 		if (sqlstr == NULL) {
-			mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for ms query new failure.");
-			return -1;
+			mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC,
+						  "calloc for ms query new failure.");
+			return MDB_ERR_MEMORY_ALLOC;
 		}
 		/* use the first query in the connector->queries list default */
 		mdb_query_fill(query, sqlstr);
@@ -542,14 +532,4 @@ void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
 		hdf_set_value(hdf, PRE_ERRMSG, msg);
 	}
 	hdf_set_int_value(hdf, PRE_ERRCODE, ret);
-	//mjson_output_hdf(hdf, 0);
-	
-	/* conn destroy by user */
-	/*
-	if (conn != NULL) {
-		mdb_destroy(conn);
-	}
-	*/
-	/* TODO system resource need free*/
-	//exit(ret);
 }

@@ -56,11 +56,11 @@ static int pgsql_mdb_begin(mdb_conn* conn)
 	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 		mdb_set_error(conn, MDB_ERR_OTHER, PQresultErrorMessage(res));
 		PQclear(res);
-		return -1;
+		return MDB_ERR_OTHER;
 	}
 
 	PQclear(res);
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int pgsql_mdb_commit(mdb_conn* conn)
@@ -71,11 +71,11 @@ static int pgsql_mdb_commit(mdb_conn* conn)
 	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 		mdb_set_error(conn, MDB_ERR_OTHER, PQresultErrorMessage(res));
 		PQclear(res);
-		return -1;
+		return MDB_ERR_OTHER;
 	}
 
 	PQclear(res);
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int pgsql_mdb_rollback(mdb_conn* conn)
@@ -86,11 +86,11 @@ static int pgsql_mdb_rollback(mdb_conn* conn)
 	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
 		mdb_set_error(conn, MDB_ERR_OTHER, PQresultErrorMessage(res));
 		PQclear(res);
-		return -1;
+		return MDB_ERR_OTHER;
 	}
 
 	PQclear(res);
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static mdb_query* pgsql_mdb_query_new(mdb_conn* conn, const char* sql_string)
@@ -149,11 +149,11 @@ static int pgsql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 	if (res == NULL)
 		return -1;
 
-	if (mdb_query_get_rows(query) <= 0) {
-		mdb_set_error(query->conn, MDB_ERR_NONE, "attempt fetch emtpy result");
-		return MDB_ERR_NORESULT;
-	}
 	if (row_no >= mdb_query_get_rows(query)) {
+		if (row_no == 0) {
+			mdb_set_error(query->conn, MDB_ERR_NORESULT, "empty result");
+			return MDB_ERR_NORESULT;
+		}
 		mdb_set_error(query->conn, MDB_ERR_NONE, "last row has fetched");
 		return MDB_ERR_RESULT_ENDED;
 	}
@@ -185,14 +185,14 @@ static int pgsql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 			int* int_ptr = (int*)va_arg(ap, int*);
 			*int_ptr = PQgetisnull(res, row_no, col);
 		} else {
-			mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid format string.");
+			mdb_set_error(query->conn, MDB_ERR_INPUTE, "Invalid format string.");
 			va_end(ap);
-			return -1;
+			return MDB_ERR_INPUTE;
 		}
 	}
 
 	QUERY(query)->row_no++;
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int pgsql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
@@ -203,11 +203,11 @@ static int pgsql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
 	if (res == NULL)
 		return -1;
 
-	if (mdb_query_get_rows(query) <= 0) {
-		mdb_set_error(query->conn, MDB_ERR_NONE, "attempt fetch emtpy result");
-		return MDB_ERR_NORESULT;
-	}
 	if (row_no >= mdb_query_get_rows(query)) {
+		if (row_no == 0) {
+			mdb_set_error(query->conn, MDB_ERR_NORESULT, "empty result");
+			return MDB_ERR_NORESULT;
+		}
 		mdb_set_error(query->conn, MDB_ERR_NONE, "last row has fetched");
 		return MDB_ERR_RESULT_ENDED;
 	}
@@ -231,7 +231,7 @@ static int pgsql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
 	}
 
 	QUERY(query)->row_no++;
-	return 0;
+	return MDB_ERR_NONE;
 }
 
 static int pgsql_convert_error(const char *sqlstate)
@@ -252,10 +252,11 @@ static int pgsql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 	char** param_values = calloc(param_count, sizeof(char*));
 	int* free_list = calloc(param_count, sizeof(int));
 	if (param_values == NULL || free_list == NULL) {
-		mdb_set_error(query->conn, MDB_ERR_MEMORY_ALLOC, "calloc for query putv failure.");
-		return -1;
+		mdb_set_error(query->conn, MDB_ERR_MEMORY_ALLOC,
+					  "calloc for query putv failure.");
+		return MDB_ERR_MEMORY_ALLOC;
 	}
-	int i, col = 0, retval = 0;
+	int i, col = 0, retval = MDB_ERR_NONE;
 	PGresult* res;
 
 	mtc_dbg("%s %s %d", query->sql, fmt, param_count);
@@ -283,8 +284,8 @@ static int pgsql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 			}
 			col++;
 		} else {
-			mdb_set_error(query->conn, MDB_ERR_OTHER, "Invalid format string.");
-			retval = -1;
+			mdb_set_error(query->conn, MDB_ERR_INPUTE, "Invalid format string.");
+			retval = MDB_ERR_INPUTE;
 			goto err;
 		}
 	}
@@ -295,7 +296,7 @@ static int pgsql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 	if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
 		int code = pgsql_convert_error(PQresultErrorField(res, PG_DIAG_SQLSTATE));
 		mdb_set_error(query->conn, code, PQresultErrorMessage(res));
-		retval = -1;
+		retval = code;
 	}
 
 	if (QUERY(query)->pg_res != NULL)
@@ -330,8 +331,9 @@ static int pgsql_mdb_query_get_affect_rows(mdb_query* query)
 
 static int pgsql_mdb_query_get_last_id(mdb_query* query, const char* seq_name)
 {
-	mdb_set_error(query->conn, MDB_ERR_OTHER, "pgsql_mdb_query_get_last_id() is not implemented!");
-	return -1;
+	mdb_set_error(query->conn, MDB_ERR_NIMPLEM,
+				  "pgsql_mdb_query_get_last_id() is not implemented!");
+	return MDB_ERR_NIMPLEM;
 }
 
 mdb_driver pgsql_driver =
