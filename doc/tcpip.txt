@@ -1,0 +1,23 @@
+最近由于项目上的一个问题，涉及到TCP/IP的底层机制，结果拿出TCP/IP详解的vol 1和vol 2好好研究了一把，搞清楚了几个机制问题，摘要记录一下。
+
+一个完整的TCP连接为什么必须是3次握手，而不是2次或者4次呢？研究了这么多年网络，还真没去好好思考过这个问题，那天在饭桌上我们几个同事还真煞有介事的探讨了这个问题。TCP是一个可靠的连接过程，按道理2次握手就可以确认双方能够互相通信，那为什么现实的TCP需要多一次呢？Larry给的解答很有道理：TCP实现的是一个双工的通信，其中一端需要确认对端具备正常的收、发功能，也就需要了2次握手，那么双方的互相确认就一共需要4次握手。由于确认对端收、发的2次握手可以合并到一起，所以也就只需要3次握手的过程。
+现在的操作系统，不管是windows、unix还是linux，其网络功能无不都是对BSD的tcp/ip协议栈的封装，所有的网络应用都是基于BSD的开放源代码。不过这次的问题却让我发现，并不是所有的操作系统对BSD的内容是完全支持的，比如说设置发送或接收网络数据包的超时时间，TCP/IP详解vol 2里面有介绍这个设置参数，但Linux和VxWorks里面可以设置这个参数，却不会生效；Windows在以前的版本也不支持这个，好像WinSock 2之后开始支持了。
+在一个socket里面调用send或者receive，会导致进程挂起，这时进入的是一个sbwait函数，关于这个sbwait，我查到的资料是这么描述：
+- The thread is trying to send on a blocking socket, but there's
+  insufficient socket buffer space, so it must wait for space.  This might
+  occur if it has managead to max out the bandwidth available to a TCP
+  connection, or flow control is in use and the receiver does not wish to
+  receive more data yet.
+
+- The thread is trying to receive on a blocking socket, but there's not
+  enough data to satisfy the read request, so it must wait for data to be
+  received.  It might be waiting for a remote TCP sender to have data
+  available, or for in-flight data to arrive.
+
+也就是说，TCP和UDP在发送网络数据包的时候，是先发送到socket缓冲区，再到系统缓冲区，然后再由系统通过网络设备发送出去；接收的过程则相反。send或receive并不是等到数据包发送出去才返回，而是在等待socket缓冲区。在发送的时候，如果socket缓冲区满了，send函数就会调用sbwait去等待缓冲区空闲；在接收的时候，如果socket缓冲区是空的，receive函数就会调用sbwait去等到缓冲区产生数据。因此当进程挂在sbwait的时候，如果是发送导致的挂起，就要检查下socket缓冲区的设置是否太小，满足不了数据传输的要求；更大的可能是网络拥塞，因为TCP在发送数据后需要等待对端的ACK确认才会继续发送后续的数据，如果因为网络拥塞对端收不到数据或者socket本身收不到对端的ACK，就会停止发送数据，导致socket缓冲区被写满；对端的缓冲区太小也会导致这样的问题，因为发送的速度超过接收的速度，缓冲区在一段时间后也会被写满。
+
+Setsockopt的功能是很强大的,关于它的设置足够写上一篇的文章,通过它可以设定很多socket的功能。修改SO_SNDBUF或SO_RCVBUF可以改变socket缓冲区大小；SO_SNDTIMEO或SO_RCVTIMEO可以修改send或receive的等待超时时间，但就像我上面提到的，对有些系统并不奏效，还是会挂死在sbwait；SO_BROADCAST可以设置广播包，但只对UDP连接有用；SO_KEEPALIVE可以使socket在TCP连接下允许使用“保持活动”包，在TCP连接下这个设置非常有用，它会按照TCP的设置时间定期发送数据包检查对端的网络设备是否有效，一旦返回的数据包超时会自动关闭socket连接，这样可以防止由于网络设备故障导致的进程挂死。
+Select也是socket里面一个作用很大的函数，它能够提供类似windows下面的异步socket功能，而且在linux、unix里面，Select可以适用于所有基于句柄的设备，比如socket、file……如果在send或receive之前先调用Select，能够实现socket的非阻塞模式（non-block），因为它是事件触发的，能够监视某个文件句柄或者socket句柄的读写状态，如果读写状态没有改变，不会挂死进程，它能即刻返回，等到状态改变才会被触发。
+block和non-block。socket默认的connect、accept、send、receive这些都是block模式，就是当进程或者线程执行到这些函数必须等待某个事件的完成，如果事件没有完成，进程或线程就会被阻塞挂死， 但它的好处在于能够保证事件是被完成的。non-block则不需要等待事件的完成，只要事件开始执行就肯定返回，通过返回值来反映函数的执行情况，然后使进程或线程能够继续执行，它的不足就是需要人为去控制事件是否被完成。
+费了那么多口舌，解决上面说的send进程挂死比较好的办法就是采用non-block模式了。但它也需要解决缓冲区满的问题，因为non-block不会等待事件的完成，一旦缓冲区满而send还未完成的时候，可能会丢掉后面的数据，但可以通过在一个循环里延时等待缓冲区空闲再发送剩余的数据包，来保证数据包的完整，如果等待时间过长，可以中止发送数据，这样可以避免任务挂死。
+ 

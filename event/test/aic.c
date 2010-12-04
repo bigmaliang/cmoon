@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	hdf_set_value(evt->hdfsnd, "uname", "ru_PGFOV");
 	hdf_set_value(evt->hdfsnd, "to", "kol");
 
-	ret = mevent_trigger(evt, NULL, 1001, FLAGS_SYNC);
+	ret = mevent_trigger(evt, NULL, 1002, FLAGS_SYNC);
 	if (PROCESS_OK(ret))
 		hdf_dump(evt->hdfrcv, NULL);
 	else

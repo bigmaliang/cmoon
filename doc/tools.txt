@@ -39,7 +39,10 @@ Algorithms
 	General Purpose Hash Function Algorithms
 
 	http://osdir.com
-	mailing list archive	
+	mailing list archive
+	
+	http://vger.kernel.org/~davem/tcp_output.html
+	tcp output engine
 
 
 http://tools.mozilla.com

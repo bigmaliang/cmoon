@@ -25,7 +25,8 @@ int main()
 	struct sockaddr_in srvsa;
 	struct in_addr ia;
 
-	rv = inet_pton(AF_INET, "127.0.0.1", &ia);
+	//rv = inet_pton(AF_INET, "127.0.0.1", &ia);
+	rv = inet_pton(AF_INET, "0.0.0.0", &ia);
 	if (rv <= 0)
 		return -1;
 
@@ -58,7 +59,8 @@ int main()
 	int blen = 200;
 	//rv = recvfrom(fd, static_buf, SBSIZE, 0, (struct sockaddr *) &clisa, &clilen);
 	while ( (rv = recvfrom(fd, static_buf, SBSIZE, 0, (struct sockaddr *) &clisa, &clilen)) > 0) {
-		int count = 10;
+#if 0
+		int count = 1;
 		printf("listener: got packet from %s\n",
 			   inet_ntop(clisa.sin_family, get_in_addr((struct sockaddr *)&clisa), s, sizeof s));
 		printf("listener: packet is %d bytes long\n", rv);
@@ -66,9 +68,13 @@ int main()
 		printf("listener: packet contains \"%s\"\n", static_buf);
 
 		while (count > 0) {
+#endif
 			sendto(fd, buf, blen, 0, (struct sockaddr *) &clisa, clilen);
+#if 0
 			count--;
 		}
+#endif
+		//sleep(3);
 	}
 	perror("recvfrom");
 	

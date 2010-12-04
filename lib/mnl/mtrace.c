@@ -3,7 +3,7 @@
 /* global file name for trace info write to */
 static char g_fn[LEN_FN] = "";
 static FILE *g_fp = NULL;
-static char *g_trace_level[TC_LEVELS] = {"DIE", "MESSAGE", "ERROR", "WARNING", "DEBUG", "INFO", "NOISE"};
+static char *g_trace_level[TC_LEVELS] = {"DIE", "MESSAGE", "ERROR", "WARNING", "INFO", "DEBUG", "NOISE"};
 
 static void trace_shift_file()
 {

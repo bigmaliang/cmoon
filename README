@@ -12,8 +12,8 @@ moon/
 |-- rock		应用一: moon 网站主程序应用
 |-- event		应用二: 支持插件的高并发处理缓冲层, 详情请参考该目录文档和代码
 |-- cdata		应用三: 类似浏览量, 点击量等更新频繁的数值型数据的存取接口, 详情请参考该目录文档和代码
-|-- ksa			应用四: kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
-!-- pop			应用五: 开物在线
+|-- ksa			应用四: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
+!-- pop			应用五: www.kaiwuonline.com 开物在线
 |
 |-- deliver		Web IM 解决方案 (deliver代码放到 github 上, 参考 deliver/README)
 `-- grabber		获取邮件, msn, qq 好友方案
