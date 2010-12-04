@@ -95,7 +95,7 @@ int mdb_rollback(mdb_conn* conn)
 int mdb_finish(mdb_conn* conn)
 {
 	if (conn == NULL) return MDB_ERR_INIT;
-	if (!conn->in_transaction) MDB_ERR_API_TURN;
+	if (!conn->in_transaction) return MDB_ERR_API_TURN;
 	if (mdb_get_errcode(conn) != MDB_ERR_NONE) {
 		mdb_rollback(conn);
 		return mdb_get_errcode(conn);
