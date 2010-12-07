@@ -170,17 +170,17 @@ void mcfg_leave()
 }
 
 
-bool mconfig_parse_file(const char *file, HDF **cfg)
+NEOERR* mconfig_parse_file(const char *file, HDF **cfg)
 {
 	NEOERR *err;
 
 	err = hdf_init(cfg);
-	RETURN_V_NOK(err, false);
+	if (err != STATUS_OK) return nerr_pass(err);
 	
 	err = hdf_read_file(*cfg, file);
-	RETURN_V_NOK(err, false);
+	if (err != STATUS_OK) return nerr_pass(err);
 
-	return true;
+	return STATUS_OK;
 }
 
 void mconfig_cleanup(HDF **config)

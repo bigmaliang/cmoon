@@ -1,33 +1,48 @@
 #include "mheads.h"
-#include "mdb-priv.h"
+
+static mdb_driver* drivers[MDB_DV_NUM] = {
+	&sqlite_driver,
+	&pgsql_driver,
+	&mysql_driver,
+};
 
 /*
  * function sets one 
  */
-int mdb_init(mdb_conn **conn, char *dsn)
+NEOERR* mdb_init(mdb_conn **conn, char *dsn)
 {
+	if (!dsn) return nerr_raise(NERR_ASSERT, "dns null");
+	
 	mdb_conn *lconn = NULL;
-	if (dsn == NULL) {
-		mtc_err("init db err. dsn is null");
-		return RET_RBTOP_INITE;
-	}
+	NEOERR *err;
+
 	mtc_dbg("connect to %s ...", dsn);
-	lconn = mdb_connect(dsn);
-	if (mdb_get_errcode(lconn) != MDB_ERR_NONE) {
-		mtc_err("connect to %s failure %s", dsn, mdb_get_errmsg(lconn));
-		*conn = NULL;
-		mdb_destroy(lconn);
-		return RET_RBTOP_INITE;
+	*conn = NULL;
+
+	for (int i = 0; i < MDB_DV_NUM; i++) {
+		const char* name = drivers[i]->name;
+		if (name && !strncmp(dsn, name, strlen(name)) && dsn[strlen(name)] == ':') {
+			const char* drv_dsn = strchr(dsn, ':') + 1;
+			err = drivers[i]->connect(drv_dsn, &lconn);
+			if (err != STATUS_OK) return nerr_pass(err);
+			lconn->dsn = strdup(drv_dsn);
+			lconn->driver = drivers[i];
+			break;
+		}
 	}
+
 	*conn = lconn;
-	return RET_RBTOP_OK;
+
+	return STATUS_OK;
 }
 
 void mdb_destroy(mdb_conn *conn)
 {
-	if (conn == NULL)
-		return;
-	mdb_disconnect(conn);
+	if (conn == NULL) return;
+	conn->driver->disconnect(conn);
+	if (conn->dsn) free(conn->dsn);
+	if (conn->sql) free(conn->sql);
+	free(conn);
 }
 
 const char* mdb_get_backend(mdb_conn* conn)
@@ -36,90 +51,60 @@ const char* mdb_get_backend(mdb_conn* conn)
 	return conn->driver->name;
 }
 
-const char* mdb_get_errmsg(mdb_conn* conn)
+NEOERR* mdb_begin(mdb_conn* conn)
 {
-	if (conn == NULL) return "Connection obejct is NULL.";
-	return conn->errmsg;
+	if (!conn) return nerr_raise(NERR_ASSERT, "conn null");
+	NEOERR *err = conn->driver->begin(conn);
+	if (err != STATUS_OK) return nerr_pass(err);
+	conn->in_transaction = true;
+
+	return STATUS_OK;
 }
 
-int mdb_get_errcode(mdb_conn* conn)
+NEOERR* mdb_commit(mdb_conn* conn)
 {
-	if (conn == NULL) return MDB_ERR_INIT;
-	return conn->errcode;
+	if (!conn) return nerr_raise(NERR_ASSERT, "conn null");
+	NEOERR *err = conn->driver->commit(conn);
+	if (err != STATUS_OK) return nerr_pass(err);
+	conn->in_transaction = false;
+
+	return STATUS_OK;
 }
 
-void mdb_set_error(mdb_conn* conn, int code, const char* msg)
+NEOERR* mdb_rollback(mdb_conn* conn)
 {
-	/* this line cause endless looop */
-	//CONN_RETURN_IF_INVALID(conn);
-	conn->errcode = code;
-	free(conn->errmsg);
-	conn->errmsg = strdup(msg);
+	if (!conn) return nerr_raise(NERR_ASSERT, "conn null");
+	NEOERR *err = conn->driver->rollback(conn);
+	if (err != STATUS_OK) return nerr_pass(err);
+	conn->in_transaction = false;
+	
+	return STATUS_OK;
 }
 
-void mdb_clear_error(mdb_conn* conn)
+NEOERR* mdb_finish(mdb_conn* conn)
 {
-	if (conn == NULL) return;
-	conn->errcode = MDB_ERR_NONE;
-	free(conn->errmsg);
-	conn->errmsg = NULL;
-}
+	if (!conn) return nerr_raise(NERR_ASSERT, "conn null");
+	if (!conn->in_transaction) return nerr_raise(NERR_ASSERT, "not in transaction");
 
-int mdb_begin(mdb_conn* conn)
-{
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	int retval = CONN_DRIVER(conn)->begin(conn);
-	if (retval == MDB_ERR_NONE)
-		conn->in_transaction = true;
-	return retval;
-}
-
-int mdb_commit(mdb_conn* conn)
-{
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	int retval = CONN_DRIVER(conn)->commit(conn);
-	if (retval == MDB_ERR_NONE)
-		conn->in_transaction = false;
-	return retval;
-}
-
-int mdb_rollback(mdb_conn* conn)
-{
-	if (conn == NULL) return MDB_ERR_INIT;
-	int retval = CONN_DRIVER(conn)->rollback(conn);
-	if (retval == MDB_ERR_NONE)
-		conn->in_transaction = false;
-	return retval;
-}
-
-int mdb_finish(mdb_conn* conn)
-{
-	if (conn == NULL) return MDB_ERR_INIT;
-	if (!conn->in_transaction) return MDB_ERR_API_TURN;
-	if (mdb_get_errcode(conn) != MDB_ERR_NONE) {
-		mdb_rollback(conn);
-		return mdb_get_errcode(conn);
-	}
-	mdb_commit(conn);
-	return MDB_ERR_NONE;
+	NEOERR *err = mdb_rollback(conn);
+	if (err != STATUS_OK) return nerr_pass(err);
+	
+	return nerr_pass(mdb_commit(conn));
 }
 
 /*
  * function sets two
  */
-int mdb_exec(mdb_conn* conn, int *affectrow, const char* sql_fmt, const char* fmt, ...)
+NEOERR* mdb_exec(mdb_conn* conn, int *affectrow, const char* sql_fmt,
+				 const char* fmt, ...)
 {
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	
-	mdb_query *query;
-	uListGet(conn->queries, 0, (void**)&query);
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-	
-	int retval;
+	if (!conn || !sql_fmt) return nerr_raise(NERR_ASSERT, "param error");
+
 	va_list ap;
 	char *p;
 	bool needesc = false;
 	char *sqlstr;
+	NEOERR *err;
 	
 	p = (char*)sql_fmt;
 	while (*p != '\0') {
@@ -132,14 +117,12 @@ int mdb_exec(mdb_conn* conn, int *affectrow, const char* sql_fmt, const char* fm
 	va_start(ap, fmt);
 	if (needesc) {
 		sqlstr = vsprintf_alloc(sql_fmt, ap);
-		if (sqlstr == NULL) {
-			mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC,
-						  "calloc for ms query new failure.");
-			return MDB_ERR_MEMORY_ALLOC;
+		if (!sqlstr) return nerr_raise(NERR_NOMEM, "alloc sql string fail");
+		err = conn->driver->query_fill(conn, sqlstr);
+		if (err != STATUS_OK) {
+			free(sqlstr);
+			return nerr_pass(err);
 		}
-		/* use the first query in the connector->queries list default */
-		mdb_query_fill(query, sqlstr);
-		free(sqlstr);
 		/*
 		 * vsprintf_allc() and vsnprintf() both not modify the ap
 		 * so, we need to do this...
@@ -151,89 +134,81 @@ int mdb_exec(mdb_conn* conn, int *affectrow, const char* sql_fmt, const char* fm
 			p++;
 		}
 	} else {
-		mdb_query_fill(query, sql_fmt);
+		err = conn->driver->query_fill(conn, sql_fmt);
+		if (err != STATUS_OK) return nerr_pass(err);
 	}
 
-	retval = mdb_query_putv(query, fmt, ap);
+	err = conn->driver->query_putv(conn, fmt, ap);
 	va_end(ap);
 
 	if (affectrow != NULL)
 		*affectrow = mdb_get_affect_rows(conn);
 
-	return retval;
+	return nerr_pass(err);
 }
 
-int mdb_put(mdb_conn* conn, const char* fmt, ...)
+NEOERR* mdb_put(mdb_conn* conn, const char* fmt, ...)
 {
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	mdb_query *query;
-	uListGet(conn->queries, 0, (void**)&query);
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
+	if (!conn || !fmt) return nerr_raise(NERR_ASSERT, "param error");
   
-	int retval;
 	va_list ap;
-
 	va_start(ap, fmt);
-	retval = mdb_query_putv(query, fmt, ap);
+	NEOERR *err = conn->driver->query_putv(conn, fmt, ap);
 	va_end(ap);
 
-	return retval;
+	return nerr_pass(err);
 }
 
-int mdb_get(mdb_conn* conn, const char* fmt, ...)
+NEOERR* mdb_get(mdb_conn* conn, const char* fmt, ...)
 {
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	mdb_query *query;
-	uListGet(conn->queries, 0, (void**)&query);
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
+	if (!conn || !fmt) return nerr_raise(NERR_ASSERT, "param error");
   
-	int retval;
 	va_list ap;
-
 	va_start(ap, fmt);
-	retval = mdb_query_getv(query, fmt, ap);
+	NEOERR *err = conn->driver->query_getv(conn, fmt, ap);
 	va_end(ap);
 
-	return retval;
+	return nerr_pass(err);
 }
 
-int mdb_geta(mdb_conn* conn, const char* fmt, char* res[])
+NEOERR* mdb_geta(mdb_conn* conn, const char* fmt, char* res[])
 {
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	mdb_query *query;
-	uListGet(conn->queries, 0, (void**)&query);
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-  
-	return mdb_query_geta(query, fmt, res);
+	if (!conn || !fmt) return nerr_raise(NERR_ASSERT, "param error");
+
+	return nerr_pass(conn->driver->query_geta(conn, fmt, res));
 }
 
-int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
+NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 {
+	if (!conn || !hdf) return nerr_raise(NERR_ASSERT, "param error");
+
 	int qrcnt, i;
 	char qrarray[QR_NUM_MAX][LEN_ST];
 	char *col[QR_NUM_MAX];
 	char fmt[LEN_ST] = {0};
+	NEOERR *err;
 	
 	memset(fmt, 0x0, sizeof(fmt));
 	memset(qrarray, 0x0, sizeof(qrarray));
 	
 	mmisc_set_qrarray(cols, qrarray, &qrcnt);
 	memset(fmt, 's', qrcnt);
-	
-	if (mdb_geta(conn, fmt, col) != MDB_ERR_NONE) {
-		mtc_err("db exec error %s", mdb_get_errmsg(conn));
-		return mdb_get_errcode(conn);
-	}
-	
+
+	err = mdb_geta(conn, fmt, col);
+	if (err != STATUS_OK) return nerr_pass(err);
+
 	for (i = 0; i < qrcnt; i++) {
 		/* TODO cols NULL means what? see mdb_set_rows() */
-		if (prefix)
-			hdf_set_valuef(hdf, "%s.%s=%s", prefix, qrarray[i], col[i]);
-		else
+		if (prefix) {
+			err = hdf_set_valuef(hdf, "%s.%s=%s", prefix, qrarray[i], col[i]);
+			if (err != STATUS_OK) return nerr_pass(err);
+		} else {
 			hdf_set_valuef(hdf, "%s=%s", qrarray[i], col[i]);
+			if (err != STATUS_OK) return nerr_pass(err);
+		}
 	}
 
-	return MDB_ERR_NONE;
+	return STATUS_OK;
 }
 
 #define BUILD_HDF_FMT()													\
@@ -253,13 +228,16 @@ int mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 		strcat(hdfkey, "=%s");											\
 	} while (0)
 
-int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
-				 char *prefix, int keycol)
+NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
+					 char *prefix, int keycol)
 {
+	if (!conn || !hdf) return nerr_raise(NERR_ASSERT, "param error");
+
 	int qrcnt = 1, i;
 	char qrarray[QR_NUM_MAX][LEN_ST];
 	char *col[QR_NUM_MAX];
 	char fmt[LEN_ST] = {0}, hdfkey[LEN_HDF_KEY] = {0}, tok[LEN_ST];
+	NEOERR *err;
 	
 	memset(fmt, 0x0, sizeof(fmt));
 	memset(qrarray, 0x0, sizeof(qrarray));
@@ -277,259 +255,36 @@ int mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
 			res = hdf_obj_next(res);
 		}
 	}
-	
-	if (mdb_get_errcode(conn) != MDB_ERR_NONE) {
-		mtc_err("db exec error %s", mdb_get_errmsg(conn));
-		return mdb_get_errcode(conn);
-	}
 
-	while (mdb_geta(conn, fmt, col) == MDB_ERR_NONE ){
+	while ( (err = mdb_geta(conn, fmt, col)) == STATUS_OK ){
 		for (i = 0; i < qrcnt; i++) {
 			BUILD_HDF_FMT();
 			hdf_set_valuef(hdf, hdfkey, col[i]);
 		}
 		rowsn++;
 	}
+	nerr_ignore(&err);
 
-	return MDB_ERR_NONE;
+	return STATUS_OK;
 }
 
 int mdb_get_rows(mdb_conn* conn)
 {
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	mdb_query *query;
-	uListGet(conn->queries, 0, (void**)&query);
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
+	if (!conn) return -1;
   
-	return QUERY_DRIVER(query)->query_get_rows(query);
+	return conn->driver->query_get_rows(conn);
 }
 
 int mdb_get_affect_rows(mdb_conn* conn)
 {
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	mdb_query *query;
-	uListGet(conn->queries, 0, (void**)&query);
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
+	if (!conn) return -1;
   
-	return QUERY_DRIVER(query)->query_get_affect_rows(query);
+	return conn->driver->query_get_affect_rows(conn);
 }
 
 int mdb_get_last_id(mdb_conn* conn, const char* seq_name)
 {
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	mdb_query *query = (mdb_query*)(conn->queries->items[0]);
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
+	if (!conn) return -1;
 
-	return QUERY_DRIVER(query)->query_get_last_id(query, seq_name);
-}
-
-/*
- * function sets three
- */
-int mdb_exec_apart(mdb_conn* conn, mdb_query **pquery,
-				   int *affectrow, const char* sql_fmt, const char* fmt, ...)
-{
-	CONN_RETURN_VAL_IF_INVALID(conn, -1);
-	
-	mdb_query *query = mdb_query_new(conn, NULL);
-	if (query != NULL) {
-		uListAppend(conn->queries, query);
-		*pquery = query;
-	}
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-	
-	int retval;
-	va_list ap;
-	char *p;
-	bool needesc;
-
-	char *sqlstr;
-	
-	p = (char*)sql_fmt;
-	while (*p != '\0') {
-		if (*p == '%' && *p+1 != '%' && *p-1 != '%') {
-			needesc = true;
-		}
-		p++;
-	}
-
-	va_start(ap, fmt);
-	if (needesc) {
-		sqlstr = vsprintf_alloc(sql_fmt, ap);
-		if (sqlstr == NULL) {
-			mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC,
-						  "calloc for ms query new failure.");
-			return MDB_ERR_MEMORY_ALLOC;
-		}
-		/* use the first query in the connector->queries list default */
-		mdb_query_fill(query, sqlstr);
-		free(sqlstr);
-		/*
-		 * vsprintf_allc() and vsnprintf() both not modify the ap
-		 * so, we need to do this...
-		 */
-		char *p = (char*)sql_fmt;
-		while (*p != '\0') {
-			if (*p == '%' && *p+1 != '%' && *p-1 != '%')
-				va_arg(ap, void);
-			p++;
-		}
-	} else {
-		mdb_query_fill(query, sql_fmt);
-	}
-
-	retval = mdb_query_putv(query, fmt, ap);
-	va_end(ap);
-
-	if (affectrow != NULL)
-		*affectrow = mdb_get_affect_rows(conn);
-
-	return retval;
-}
-
-int mdb_put_apart(mdb_query *query, const char* fmt, ...)
-{
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-  
-	int retval;
-	va_list ap;
-
-	va_start(ap, fmt);
-	retval = mdb_query_putv(query, fmt, ap);
-	va_end(ap);
-
-	return retval;
-}
-
-int mdb_get_apart(mdb_query *query, const char* fmt, ...)
-{
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-  
-	int retval;
-	va_list ap;
-
-	va_start(ap, fmt);
-	retval = mdb_query_getv(query, fmt, ap);
-	va_end(ap);
-
-	return retval;
-}
-
-int mdb_geta_apart(mdb_query *query, const char* fmt, char* res[])
-{
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-  
-	return mdb_query_geta(query, fmt, res);
-}
-
-int mdb_get_rows_apart(mdb_query *query)
-{
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-  
-	return QUERY_DRIVER(query)->query_get_rows(query);
-}
-
-int mdb_get_affect_rows_apart(mdb_query *query)
-{
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-  
-	return QUERY_DRIVER(query)->query_get_affect_rows(query);
-}
-
-int mdb_get_last_id_apart(mdb_query *query, const char* seq_name)
-{
-	QUERY_RETURN_VAL_IF_INVALID(query, -1);
-
-	return QUERY_DRIVER(query)->query_get_last_id(query, seq_name);
-}
-
-static void get_errmsg(int ret, char *res)
-{
-	switch (ret) {
-	case RET_RBTOP_INITE:
-		strcpy(res, "链接数据库错误");
-		break;
-	case RET_RBTOP_HDFNINIT:
-		strcpy(res, "输入数据错误");
-		break;
-	case RET_RBTOP_INPUTE:
-		strcpy(res, "输入参数错误");
-		break;
-	case RET_RBTOP_OPCODEE:
-		strcpy(res, "操作码错误");
-		break;
-	case RET_RBTOP_DBNINIT:
-		strcpy(res, "数据库未初始化");
-		break;
-	case RET_RBTOP_DBINTRANS:
-		strcpy(res, "数据库操作未提交");
-		break;
-	case RET_RBTOP_SELECTE:
-		strcpy(res, "数据库查询失败");
-		break;
-	case RET_RBTOP_UPDATEE:
-		strcpy(res, "数据库更新失败");
-		break;
-	case RET_RBTOP_DELETEE:
-		strcpy(res, "数据库删除失败");
-		break;
-	case RET_RBTOP_EVTNINIT:
-		strcpy(res, "事件后台初始化失败");
-		break;
-	case RET_RBTOP_ATTACKE:
-		strcpy(res, "查询太快，休息会儿！");
-		break;
-	case RET_RBTOP_MEMALLOCE:
-		strcpy(res, "分配内存失败");
-		break;
-	case RET_RBTOP_CREATEFE:
-		strcpy(res, "创建文件失败");
-		break;
-	case RET_RBTOP_EVTE:
-		strcpy(res, "事件后台处理失败");
-		break;
-	case RET_RBTOP_DBE:
-	default:
-		strcpy(res, "数据库操作错误");
-		break;
-	}
-}
-
-void mdb_opfinish(int ret, HDF *hdf, mdb_conn *conn,
-				  char *target, char *url, bool header)
-{
-	char msg[LEN_SM];
-	
-	if (ret == RET_RBTOP_OK) {
-		return;
-	}
-
-	get_errmsg(ret, msg);
-	mutil_redirect(msg, target, url, header);
-
-	/* conn destroy by user */
-	/*
-	if (conn != NULL) {
-		mdb_destroy(conn);
-	}
-	*/
-	/* TODO system resource need free*/
-	exit(ret);
-}
-
-void mdb_opfinish_json(int ret, HDF *hdf, mdb_conn *conn)
-{
-	char msg[LEN_SM];
-	
-	if (ret == RET_RBTOP_OK) {
-		hdf_set_value(hdf, PRE_SUCCESS, "1");
-		return;
-	}
-
-	hdf_remove_tree(hdf, PRE_SUCCESS);
-	if (!hdf_get_obj(hdf, PRE_ERRMSG)) {
-		get_errmsg(ret, msg);
-		hdf_set_value(hdf, PRE_ERRMSG, msg);
-	}
-	hdf_set_int_value(hdf, PRE_ERRCODE, ret);
+	return conn->driver->query_get_last_id(conn, seq_name);
 }

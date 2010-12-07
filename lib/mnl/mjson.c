@@ -75,17 +75,17 @@ void mjson_output_hdf(HDF *hdf, time_t second)
 	}
 	
 	NEOERR *err = cgiwrap_writef("Content-Type: text/html; charset=UTF-8\r\n\r\n");
-	if (err != STATUS_OK) nerr_ignore(&err);
+	TRACE_NOK(err);
+
 	HDF *ohdf = hdf_get_obj(hdf, PRE_OUTPUT);
-	if (ohdf == NULL) {
-		return;
-	}
+	if (!ohdf) return;
 
 	struct json_object *out = NULL;
 	mjson_asm_objs(ohdf, &out);
 
 	err = cgiwrap_writef("%s\n", json_object_to_json_string(out));
-	if (err != STATUS_OK) nerr_ignore(&err);
+	TRACE_NOK(err);
+
 	json_object_put(out);
 }
 void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
@@ -95,16 +95,16 @@ void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
 	}
 	
 	NEOERR *err = cgiwrap_writef("Content-Type: text/html; charset=UTF-8\r\n\r\n");
-	if (err != STATUS_OK) nerr_ignore(&err);
+	TRACE_NOK(err);
+
 	HDF *ohdf = hdf_get_obj(hdf, PRE_OUTPUT);
-	if (ohdf == NULL) {
-		return;
-	}
+	if (!ohdf) return;
 
 	struct json_object *out = NULL;
 	mjson_asm_objs(ohdf, &out);
 
 	cgiwrap_writef("%s(%s);\n", cb, json_object_to_json_string(out));
-	if (err != STATUS_OK) nerr_ignore(&err);
+	TRACE_NOK(err);
+
 	json_object_put(out);
 }

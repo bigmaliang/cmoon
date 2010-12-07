@@ -80,9 +80,9 @@ bool mtc_msg(const char *func, const char *file, long line,
 	return true;
 }
 
-int mcs_build_upcol(HDF *data, HDF *node, STRING *str)
+NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str)
 {
-	if (!data || !node || !str) return RET_RBTOP_INPUTE;
+	if (!data || !node || !str) return nerr_raise(NERR_ASSERT, "param err");
 	
 	char *name, *col, *val, *esc, *require, *clen, *type;
 
@@ -120,21 +120,21 @@ int mcs_build_upcol(HDF *data, HDF *node, STRING *str)
 					string_appendf(str, " , %s=%d ", col, atoi(val));
 			}
 		} else if (require && !strcmp(require, "true")) {
-			return RET_RBTOP_INPUTE;
+			return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
 		}
 		
 		node = hdf_obj_next(node);
 	}
 
 	if (str->len <= 0)
-		return RET_RBTOP_INPUTE;
+		return nerr_raise(NERR_ASSERT, "str len 0");
 
-	return RET_RBTOP_OK;
+	return STATUS_OK;
 }
 
-int mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
+NEOERR* mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
 {
-	if (!data || !node || !str) return RET_RBTOP_INPUTE;
+	if (!data || !node || !str) return nerr_raise(NERR_ASSERT, "param err");
 	
 	char *name, *col, *val, *esc, *require, *type;
 
@@ -161,7 +161,7 @@ int mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
 					string_appendf(str, " AND %s %d ", col, atoi(val));
 			}
 		} else if (require && !strcmp(require, "true")) {
-			return RET_RBTOP_INPUTE;
+			return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
 		}
 		
 		node = hdf_obj_next(node);
@@ -169,12 +169,12 @@ int mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
 	
 	if (str->len <= 0 && defstr) string_append(str, defstr);
 
-	return RET_RBTOP_OK;
+	return STATUS_OK;
 }
 
-int mcs_build_incol(HDF *data, HDF *node, STRING *str)
+NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str)
 {
-	if (!data || !node || !str) return RET_RBTOP_INPUTE;
+	if (!data || !node || !str) return nerr_raise(NERR_ASSERT, "param err");
 	
 	char *name, *col, *val, *esc, *require, *clen, *type;
 	STRING sa, sb;
@@ -219,25 +219,26 @@ int mcs_build_incol(HDF *data, HDF *node, STRING *str)
 				}
 			}
 		} else if (require && !strcmp(require, "true")) {
-			goto error;
+			string_clear(&sa);
+			string_clear(&sb);
+			return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
 		}
 		
 		node = hdf_obj_next(node);
 	}
 
-	if (sa.len <= 0) goto error;
+	if (sa.len <= 0) {
+		string_clear(&sa);
+		string_clear(&sb);
+		return nerr_raise(NERR_ASSERT, "str len 0");
+	}
 
 	string_appendf(str, "%s)  %s)", sa.buf, sb.buf);
 
 	string_clear(&sa);
 	string_clear(&sb);
 	
-	return RET_RBTOP_OK;
-
-error:
-	string_clear(&sa);
-	string_clear(&sb);
-	return RET_RBTOP_INPUTE;
+	return STATUS_OK;
 }
 
 void mcs_html_escape(HDF *node, char *name)

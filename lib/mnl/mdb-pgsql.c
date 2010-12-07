@@ -7,155 +7,108 @@ struct _mdb_conn_pgsql
 {
 	mdb_conn base;
 	PGconn* pg;
-};
-
-struct _mdb_query_pgsql
-{
-	mdb_query base;
 	PGresult* pg_res;
 	int row_no;
 };
 
 #define CONN(c) ((struct _mdb_conn_pgsql*)(c))
-#define QUERY(c) ((struct _mdb_query_pgsql*)(c))
 
 void notices_black_hole(void* arg, const char* message)
 {
 	;
 }
 
-static mdb_conn* pgsql_mdb_connect(const char* dsn)
+static NEOERR* pgsql_mdb_connect(const char* dsn, mdb_conn **rconn)
 {
 	struct _mdb_conn_pgsql* conn;
   
+	*rconn = NULL;
 	conn = calloc(1, sizeof(struct _mdb_conn_pgsql));
-	if (conn == NULL) {
-		mtc_die("calloc for ms connect failure.");
-		return NULL;
-	}
+	if (!conn) return nerr_raise(NERR_NOMEM, "calloc for ms connect failure");
+	*rconn = (mdb_conn*)conn;
+
 	conn->pg = PQconnectdb(dsn);
 	if (PQstatus(conn->pg) == CONNECTION_BAD)
-		mdb_set_error((mdb_conn*)conn, MDB_ERR_OTHER, PQerrorMessage(conn->pg));
-	else
-		PQsetNoticeProcessor(conn->pg, notices_black_hole, NULL);
+		return nerr_raise(NERR_SYSTEM, "connect to %s failure %s",
+						  dsn, PQerrorMessage(conn->pg));
+	PQsetNoticeProcessor(conn->pg, notices_black_hole, NULL);
 
-	return (mdb_conn*)conn;
+	return STATUS_OK;
 }
 
 static void pgsql_mdb_disconnect(mdb_conn* conn)
 {
 	if (CONN(conn)->pg)
 		PQfinish(CONN(conn)->pg);
+	if (CONN(conn)->pg_res != NULL)
+		PQclear(CONN(conn)->pg_res);
+	CONN(conn)->pg_res = NULL;
 }
 
-static int pgsql_mdb_begin(mdb_conn* conn)
+static NEOERR* pgsql_mdb_begin(mdb_conn* conn)
 {
 	PGresult* res;
+	NEOERR *err = STATUS_OK;
   
 	res = PQexec(CONN(conn)->pg, "BEGIN");
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-		mdb_set_error(conn, MDB_ERR_OTHER, PQresultErrorMessage(res));
-		PQclear(res);
-		return MDB_ERR_OTHER;
-	}
-
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+		err = nerr_raise(NERR_DB, PQresultErrorMessage(res));
 	PQclear(res);
-	return MDB_ERR_NONE;
+	
+	return nerr_pass(err);
 }
 
-static int pgsql_mdb_commit(mdb_conn* conn)
+static NEOERR* pgsql_mdb_commit(mdb_conn* conn)
 {
 	PGresult* res;
+	NEOERR *err = STATUS_OK;
   
 	res = PQexec(CONN(conn)->pg, "COMMIT");
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-		mdb_set_error(conn, MDB_ERR_OTHER, PQresultErrorMessage(res));
-		PQclear(res);
-		return MDB_ERR_OTHER;
-	}
-
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+		err = nerr_raise(NERR_DB, PQresultErrorMessage(res));
 	PQclear(res);
-	return MDB_ERR_NONE;
+	
+	return nerr_pass(err);
 }
 
-static int pgsql_mdb_rollback(mdb_conn* conn)
+static NEOERR* pgsql_mdb_rollback(mdb_conn* conn)
 {
 	PGresult* res;
+	NEOERR *err = STATUS_OK;
   
 	res = PQexec(CONN(conn)->pg, "ROLLBACK");
-	if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-		mdb_set_error(conn, MDB_ERR_OTHER, PQresultErrorMessage(res));
-		PQclear(res);
-		return MDB_ERR_OTHER;
-	}
-
+	if (PQresultStatus(res) != PGRES_COMMAND_OK)
+		err = nerr_raise(NERR_DB, PQresultErrorMessage(res));
 	PQclear(res);
-	return MDB_ERR_NONE;
-}
-
-static mdb_query* pgsql_mdb_query_new(mdb_conn* conn, const char* sql_string)
-{
-	struct _mdb_query_pgsql* query;
-  
-	query = calloc(1, sizeof(struct _mdb_query_pgsql));
-	if (query == NULL) {
-		mdb_set_error(conn, MDB_ERR_MEMORY_ALLOC, "calloc for query new failure.");
-		return NULL;
-	}
-	query->base.conn = conn;
-	if (sql_string)
-		query->base.sql = strdup(sql_string);
-
-	return (mdb_query*)query;
-}
-
-static int pgsql_mdb_query_fill(mdb_query* query, const char* sql_string)
-{
-	if (QUERY(query)->pg_res != NULL)
-		PQclear(QUERY(query)->pg_res);
-	QUERY(query)->pg_res = NULL;
-	QUERY(query)->row_no = 0;
 	
-	if (query->sql)
-		free(query->sql);
-	query->sql = NULL;
-	if (sql_string)
-		query->sql = strdup(sql_string);
-
-	return 0;
+	return nerr_pass(err);
 }
 
-static void pgsql_mdb_query_free(mdb_query* query)
+static NEOERR* pgsql_mdb_query_fill(mdb_conn* conn, const char* sql_string)
 {
-	/*
-	 * if (p)
-	 * if (p != NULL)
-	 * both can judge a pointer valid, which one better?
-	 */
-	if (QUERY(query)->pg_res != NULL)
-		PQclear(QUERY(query)->pg_res);
-	QUERY(query)->pg_res = NULL;
-	if (query->sql)
-		free(query->sql);
-	query->sql = NULL;
-	free(query);
+	if (CONN(conn)->pg_res != NULL)
+		PQclear(CONN(conn)->pg_res);
+	CONN(conn)->pg_res = NULL;
+	CONN(conn)->row_no = 0;
+	
+	if (conn->sql) free(conn->sql);
+	conn->sql = NULL;
+	if (sql_string)	conn->sql = strdup(sql_string);
+
+	return STATUS_OK;
 }
 
-static int pgsql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
+static NEOERR* pgsql_mdb_query_getv(mdb_conn* conn, const char* fmt, va_list ap)
 {
-	PGresult* res = QUERY(query)->pg_res;
-	int row_no = QUERY(query)->row_no;
+	PGresult* res = CONN(conn)->pg_res;
+	int row_no = CONN(conn)->row_no;
+	NEOERR *err = STATUS_OK;
 
-	if (res == NULL)
-		return -1;
+	if (res == NULL) return nerr_raise(NERR_DB, "attemp fetch null res");
 
-	if (row_no >= mdb_query_get_rows(query)) {
-		if (row_no == 0) {
-			mdb_set_error(query->conn, MDB_ERR_NORESULT, "empty result");
-			return MDB_ERR_NORESULT;
-		}
-		mdb_set_error(query->conn, MDB_ERR_NONE, "last row has fetched");
-		return MDB_ERR_RESULT_ENDED;
+	if (row_no >= mdb_get_rows(conn)) {
+		if (row_no == 0) return nerr_raise(NERR_DB, "empty result");
+		return nerr_raise(NERR_DB, "last row has fetched");
 	}
 
 	int param_count = fmt != NULL ? strlen(fmt) : 0;
@@ -185,31 +138,27 @@ static int pgsql_mdb_query_getv(mdb_query* query, const char* fmt, va_list ap)
 			int* int_ptr = (int*)va_arg(ap, int*);
 			*int_ptr = PQgetisnull(res, row_no, col);
 		} else {
-			mdb_set_error(query->conn, MDB_ERR_INPUTE, "Invalid format string.");
+			err = nerr_raise(NERR_ASSERT, "invalid format string %s %c",
+							 fmt, fmt[i]);
 			va_end(ap);
-			return MDB_ERR_INPUTE;
+			break;
 		}
 	}
 
-	QUERY(query)->row_no++;
-	return MDB_ERR_NONE;
+	CONN(conn)->row_no++;
+	return nerr_pass(err);
 }
 
-static int pgsql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
+static NEOERR* pgsql_mdb_query_geta(mdb_conn* conn, const char* fmt, char* r[])
 {
-	PGresult* res = QUERY(query)->pg_res;
-	int row_no = QUERY(query)->row_no;
+	PGresult* res = CONN(conn)->pg_res;
+	int row_no = CONN(conn)->row_no;
 
-	if (res == NULL)
-		return -1;
+	if (res == NULL) return nerr_raise(NERR_DB, "attemp fetch null res");
 
-	if (row_no >= mdb_query_get_rows(query)) {
-		if (row_no == 0) {
-			mdb_set_error(query->conn, MDB_ERR_NORESULT, "empty result");
-			return MDB_ERR_NORESULT;
-		}
-		mdb_set_error(query->conn, MDB_ERR_NONE, "last row has fetched");
-		return MDB_ERR_RESULT_ENDED;
+	if (row_no >= mdb_get_rows(conn)) {
+		if (row_no == 0) return nerr_raise(NERR_DB, "empty result");
+		return nerr_raise(NERR_DB, "last row has fetched");
 	}
 
 	int param_count = fmt != NULL ? strlen(fmt) : 0;
@@ -230,38 +179,26 @@ static int pgsql_mdb_query_geta(mdb_query* query, const char* fmt, char* r[])
 		col++;
 	}
 
-	QUERY(query)->row_no++;
-	return MDB_ERR_NONE;
+	CONN(conn)->row_no++;
+
+	return STATUS_OK;
 }
 
-static int pgsql_convert_error(const char *sqlstate)
-{
-	switch (strtoull(sqlstate, NULL, 0)) {
-	case 23505:
-		return MDB_ERR_UNIQUE_VIOLATION;
-	case 23502:
-		return MDB_ERR_NOT_NULL_VIOLATION;
-	default:
-		return MDB_ERR_OTHER;
-	}
-}
-
-static int pgsql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
+static NEOERR* pgsql_mdb_query_putv(mdb_conn* conn, const char* fmt, va_list ap)
 {
 	int param_count = (fmt != NULL) ? strlen(fmt) : 0;
 	char** param_values = calloc(param_count, sizeof(char*));
 	int* free_list = calloc(param_count, sizeof(int));
-	if (param_values == NULL || free_list == NULL) {
-		mdb_set_error(query->conn, MDB_ERR_MEMORY_ALLOC,
-					  "calloc for query putv failure.");
-		return MDB_ERR_MEMORY_ALLOC;
-	}
-	int i, col = 0, retval = MDB_ERR_NONE;
+	int i, col = 0;
+	int is_null;
 	PGresult* res;
+	NEOERR *err = STATUS_OK;
 
-	mtc_dbg("%s %s %d", query->sql, fmt, param_count);
+	if (param_values == NULL || free_list == NULL)
+		return nerr_raise(NERR_NOMEM, "calloc for query putv failure");
+	
 	for (i = 0; i < param_count; i++) {
-		int is_null = 0;
+		is_null = 0;
 
 		if (fmt[i] == '?') {
 			is_null = (int)va_arg(ap, int);
@@ -284,56 +221,55 @@ static int pgsql_mdb_query_putv(mdb_query* query, const char* fmt, va_list ap)
 			}
 			col++;
 		} else {
-			mdb_set_error(query->conn, MDB_ERR_INPUTE, "Invalid format string.");
-			retval = MDB_ERR_INPUTE;
-			goto err;
+			err = nerr_raise(NERR_ASSERT, "invalid format string %s %c",
+							 fmt, fmt[i]);
+			goto done;
 		}
 	}
 	param_count = col;
 
-	res = PQexecParams(CONN(query->conn)->pg, query->sql, param_count, NULL,
-			   (const char* const*)param_values, NULL, NULL, 0);
-	if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res) != PGRES_TUPLES_OK) {
-		int code = pgsql_convert_error(PQresultErrorField(res, PG_DIAG_SQLSTATE));
-		mdb_set_error(query->conn, code, PQresultErrorMessage(res));
-		retval = code;
+	mtc_dbg("%s %s %d", conn->sql, fmt, param_count);
+	for (int i = 0; i < param_count; i++) {
+		mtc_dbg("%s", param_values[i]);
 	}
+	res = PQexecParams(CONN(conn)->pg, conn->sql, param_count, NULL,
+					   (const char* const*)param_values, NULL, NULL, 0);
+	if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res)
+		!= PGRES_TUPLES_OK)
+		err = nerr_raise(NERR_DB, PQresultErrorMessage(res));
 
-	if (QUERY(query)->pg_res != NULL)
-		PQclear(QUERY(query)->pg_res);
-	QUERY(query)->pg_res = res;
+	if (CONN(conn)->pg_res != NULL)
+		PQclear(CONN(conn)->pg_res);
+	CONN(conn)->pg_res = res;
   
-err:
+done:
 	for (i = 0; i < param_count; i++)
 		if (free_list[i])
 			free(param_values[i]);
 	free(param_values);
 	free(free_list);
 
-	return retval;
+	return nerr_pass(err);
 }
 
-static int pgsql_mdb_query_get_rows(mdb_query* query)
+static int pgsql_mdb_query_get_rows(mdb_conn* conn)
 {
-	PGresult* res = QUERY(query)->pg_res;
-	if (res)
-		return PQntuples(res);
+	PGresult* res = CONN(conn)->pg_res;
+	if (res) return PQntuples(res);
 	return -1;
 }
 
-static int pgsql_mdb_query_get_affect_rows(mdb_query* query)
+static int pgsql_mdb_query_get_affect_rows(mdb_conn* conn)
 {
-	PGresult* res = QUERY(query)->pg_res;
-	if (res)
-		return atoi(PQcmdTuples(res));
+	PGresult* res = CONN(conn)->pg_res;
+	if (res) return atoi(PQcmdTuples(res));
 	return -1;
 }
 
-static int pgsql_mdb_query_get_last_id(mdb_query* query, const char* seq_name)
+static int pgsql_mdb_query_get_last_id(mdb_conn* conn, const char* seq_name)
 {
-	mdb_set_error(query->conn, MDB_ERR_NIMPLEM,
-				  "pgsql_mdb_query_get_last_id() is not implemented!");
-	return MDB_ERR_NIMPLEM;
+	mtc_err("pgsql_mdb_query_get_last_id() is not implemented!");
+	return -1;
 }
 
 mdb_driver pgsql_driver =
@@ -344,9 +280,7 @@ mdb_driver pgsql_driver =
 	.begin = pgsql_mdb_begin,
 	.commit = pgsql_mdb_commit,
 	.rollback = pgsql_mdb_rollback,
-	.query_new = pgsql_mdb_query_new,
 	.query_fill = pgsql_mdb_query_fill,
-	.query_free = pgsql_mdb_query_free,
 	.query_getv = pgsql_mdb_query_getv,
 	.query_geta = pgsql_mdb_query_geta,
 	.query_putv = pgsql_mdb_query_putv,

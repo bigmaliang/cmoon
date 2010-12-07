@@ -38,7 +38,7 @@ bool mcfg_additem(const char *key, const char *value);
 bool mcfg_setitem(const char *key, const char *value);
 void mcfg_leave(void);
 
-bool mconfig_parse_file(const char *file, HDF **cfg);
+NEOERR* mconfig_parse_file(const char *file, HDF **cfg);
 void mconfig_cleanup(HDF **config);
 
 __END_DECLS

@@ -63,20 +63,6 @@ void mutil_real_escape_string(char *buf, char *val, size_t len);
  * caller just need free() the *to;
  */
 char* mutil_real_escape_string_nalloc(char **to, char *from, size_t len);
-int  mutil_replace_dbint(char **sql, int val);
-int  mutil_replace_dbstr(char **sql, char *val);
-int  mutil_expand_strvf_dbfmt(char **str, const char *fmt, va_list ap);
-int  mutil_expand_strvf(char **outstr, const char *sql_fmt, const char *fmt, va_list ap);
-/*
- * expand
- * "UPDATE %s SET musn=$1, uin=$2 WHERE uin=%d", "s", &p, table, uin, musn, uinnew
- * to
- * "UPDATE tablexxx SET musn='test\'s member', uin=3333 WHERE uin=2323"
- *
- * defect: $[:digit:] is reserved by this function,
- * so, your sql's $[:digit:] will make mistake
- */
-int  mutil_expand_strf(char **outstr, const char *sql_fmt, const char *fmt, ...);
 
 #ifndef DROP_FCGI
 int read_cb(void *ptr, char *data, int size);

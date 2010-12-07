@@ -77,69 +77,21 @@ __BEGIN_DECLS
 		return v;								\
 	}
 
+#define TRACE_NOK(err)							\
+	if (err != STATUS_OK) {						\
+		STRING zstra;	string_init(&zstra);	\
+		nerr_error_traceback(err, &zstra);		\
+		mtc_err("%s", zstra.buf);				\
+		string_clear(&zstra);					\
+		nerr_ignore(&err);						\
+	}
+
 #define MLIST_ITERATE(list, item)										\
 	item = list->items[0];												\
 	for (int t_rsv_i = 0; t_rsv_i < list->num; item = list->items[++t_rsv_i])
 
 #define ITERATE_MLIST(ul)								\
 	for (int t_rsv_i = 0; t_rsv_i < ul->num; t_rsv_i++)
-
-
-/*
- * 获取请求中参数
- */
-#define HDF_GET_INT(hdf, key, ret)				\
-    do {										\
-		if (!hdf_get_value(hdf, key, NULL)) {	\
-            return RET_RBTOP_INPUTE;			\
-		}										\
-		ret = hdf_get_int_value(hdf, key, 0);	\
-    } while (0)
-
-#define HDF_GET_ULONG(hdf, key, ret)							\
-    do {														\
-		if (!hdf_get_value(hdf, key, NULL)) {					\
-            return RET_RBTOP_INPUTE;							\
-		}														\
-		ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);	\
-    } while (0)
-
-#define HDF_GET_STR(hdf, key, ret)				\
-    do {										\
-		ret = hdf_get_value(hdf, key, NULL);	\
-		if (!ret || *ret == '\0') {				\
-            return RET_RBTOP_INPUTE;			\
-		}										\
-    } while (0)
-
-#define HDF_GET_STR_IDENT(hdf, key, ret)		\
-    do {										\
-		ret = hdf_get_value(hdf, key, NULL);	\
-		if (!ret) {								\
-            return RET_RBTOP_NOTLOGIN;			\
-		}										\
-    } while (0)
-
-
-#define HDF_FETCH_INT(hdf, key, ret)				\
-    do {											\
-		if (hdf_get_value(hdf, key, NULL)) {		\
-			ret = hdf_get_int_value(hdf, key, 0);	\
-		}											\
-    } while (0)
-
-#define HDF_FETCH_ULONG(hdf, key, ret)								\
-    do {															\
-		if (hdf_get_value(hdf, key, NULL)) {						\
-			ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10); \
-		}															\
-    } while (0)
-
-#define HDF_FETCH_STR(hdf, key, ret)			\
-    do {										\
-		ret = hdf_get_value(hdf, key, NULL);	\
-    } while (0)
-
 
 /* because of libneo_cs doesn't have cs_render_stdout */
 NEOERR* mcs_outputcb(void *ctx, char *s);
@@ -148,8 +100,8 @@ NEOERR* mcs_strcb(void *ctx, char *s);
 bool mcs_str2file(STRING str, const char *file);
 
 void mcs_rand_string(char *s, int max);
-void mcs_register_bitop_functions(CSPARSE *cs);
-void mcs_register_mkd_functions(CSPARSE *cs);
+NEOERR* mcs_register_bitop_functions(CSPARSE *cs);
+NEOERR* mcs_register_mkd_functions(CSPARSE *cs);
 void mcs_hdf_escape_val(HDF *hdf);
 void mcs_html_escape(HDF *hdf, char *name);
 
@@ -159,9 +111,9 @@ void mcs_html_escape(HDF *hdf, char *name);
  * node :IN key {0: 'aname', 1: 'pname'}
  * str  :OUT update colum string: aname='foo', pname='bar',
  */
-int mcs_build_upcol(HDF *data, HDF *node, STRING *str);
-int mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
-int mcs_build_incol(HDF *data, HDF *node, STRING *str);
+NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str);
+NEOERR* mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
+NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str);
 
 __END_DECLS
 #endif	/* __MCS_H__ */

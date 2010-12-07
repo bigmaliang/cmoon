@@ -96,16 +96,23 @@ static NEOERR* _builtin_bitop_xor(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
 	return STATUS_OK;
 }
 
-void mcs_register_bitop_functions(CSPARSE *cs)
+NEOERR* mcs_register_bitop_functions(CSPARSE *cs)
 {
-	cs_register_function(cs, "bitop.and", 2, _builtin_bitop_and);
+	NEOERR *err;
+	
+	err = cs_register_function(cs, "bitop.and", 2, _builtin_bitop_and);
+	if (err != STATUS_OK) return nerr_pass(err);
 	cs_register_function(cs, "bitop.or", 2, _builtin_bitop_or);
+	if (err != STATUS_OK) return nerr_pass(err);
 	cs_register_function(cs, "bitop.xor", 2, _builtin_bitop_xor);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+	return STATUS_OK;
 }
 
-void mcs_register_mkd_functions(CSPARSE *cs)
+NEOERR* mcs_register_mkd_functions(CSPARSE *cs)
 {
-	cs_register_esc_strfunc(cs, "mkd.escape", mkd_esc_str);
+	return nerr_pass(cs_register_esc_strfunc(cs, "mkd.escape", mkd_esc_str));
 }
 
 void mcs_hdf_escape_val(HDF *hdf)

@@ -5,6 +5,12 @@
 
 __BEGIN_DECLS
 
+#define SAFE_FREE(str)							\
+	do {										\
+		if (str != NULL)						\
+			free(str);							\
+	} while (0)
+
 /* table, condition MUST be string literal, not variable */
 #define MMISC_PAGEDIV_SET_N(hdf, offset, db, table, condition, sfmt, ...) \
 	do {																\

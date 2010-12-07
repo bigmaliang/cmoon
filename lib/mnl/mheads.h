@@ -104,7 +104,6 @@
 #include "mutil.h"
 #include "md5.h"
 #include "mdb.h"
-#include "mdata.h"
 #include "fdb.h"
 #include "mmisc.h"
 #include "mglobal.h"
