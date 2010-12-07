@@ -2,6 +2,7 @@ tar zcvf libmevent.tar.gz /usr/local/include/mevent.h /usr/local/include/net-con
 
 /usr/local/src/php-5.xx/ext/ext_skel --extname=mevent
 cd mevent
+(recover config.m4, mevent.c, php_mevent.h)
 /usr/local/php/bin/phpize
 ./configure --with-php-config=/usr/local/php/bin/php-config
 vim Makefile (add -lneo_utl, -I /usr/local/include/ClearSilver/)

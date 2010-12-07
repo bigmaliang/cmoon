@@ -12,6 +12,16 @@ vim utl/neo_hdf.c +1623
 while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
 ===>
 while (*s && (isalnum(*s) || *s == '_' || *s == '.' || *(unsigned char*)s > 127)) s++;
+
+vim utl/neo_err.c +193
+static char *_lookup_errname(NEOERR *err, char *buf, int buflen)
+===>
+char *_lookup_errname(NEOERR *err, char *buf, int buflen)
+
+vim utl/neo_err.h +139
+++++
+char *_lookup_errname(NEOERR *err, char *buf, int buflen);
+
 make
 make install
 
