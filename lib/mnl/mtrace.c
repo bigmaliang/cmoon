@@ -257,3 +257,15 @@ void mcs_html_escape(HDF *node, char *name)
 		node = hdf_obj_next(node);
 	}
 }
+
+NEOERR* mcs_err_valid(NEOERR *err)
+{
+	NEOERR *r = err;
+
+	while (r && r != INTERNAL_ERR) {
+		if (r->error != NERR_PASS) break;
+		r = r->next;
+	}
+	
+	return r;
+}
