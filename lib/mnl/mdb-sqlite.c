@@ -120,14 +120,14 @@ static NEOERR* sqlite_mdb_query_getv(mdb_conn* conn, const char* fmt, va_list ap
 	case QUERY_STATE_INIT:
 		return nerr_raise(NERR_ASSERT, "call mdb_put() before mdb_get() pls");
 	case QUERY_STATE_COMPLETED:
-		return nerr_raise(NERR_DB, "last row has fetched");
+		return nerr_raise(NERR_OUTOFRANGE, "last row has fetched");
 	case QUERY_STATE_ROW_READ:
 		// fetch next row
 		rs = sqlite3_step(stmt);
 		if (rs == SQLITE_ROW) break;
 		else if (rs == SQLITE_DONE) {
 			CONN(conn)->state = QUERY_STATE_COMPLETED;
-			return nerr_raise(NERR_DB, "last row has fetched");
+			return nerr_raise(NERR_OUTOFRANGE, "last row has fetched");
 		} else {
 			return nerr_raise(NERR_DB, "get %s failure %s",
 							  fmt, sqlite3_errmsg(CONN(conn)->handle));
