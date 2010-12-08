@@ -219,7 +219,7 @@ static NEOERR* mysql_mdb_query_getv(mdb_conn* conn, const char* fmt, va_list ap)
 	}
 
 	CONN(conn)->row_no++;
-	return nerr_pass(err);
+	return err;
 }
 
 static NEOERR* mysql_mdb_query_geta(mdb_conn* conn, const char* fmt, char* r[])
@@ -377,7 +377,7 @@ done:
 	free(param_values);
 	free(free_list);
 	
-	return nerr_pass(err);
+	return err;
 }
 
 static int mysql_mdb_query_get_rows(mdb_conn* conn)

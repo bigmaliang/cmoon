@@ -55,7 +55,7 @@ static NEOERR* pgsql_mdb_begin(mdb_conn* conn)
 		err = nerr_raise(NERR_DB, PQresultErrorMessage(res));
 	PQclear(res);
 	
-	return nerr_pass(err);
+	return err;
 }
 
 static NEOERR* pgsql_mdb_commit(mdb_conn* conn)
@@ -68,7 +68,7 @@ static NEOERR* pgsql_mdb_commit(mdb_conn* conn)
 		err = nerr_raise(NERR_DB, PQresultErrorMessage(res));
 	PQclear(res);
 	
-	return nerr_pass(err);
+	return err;
 }
 
 static NEOERR* pgsql_mdb_rollback(mdb_conn* conn)
@@ -81,7 +81,7 @@ static NEOERR* pgsql_mdb_rollback(mdb_conn* conn)
 		err = nerr_raise(NERR_DB, PQresultErrorMessage(res));
 	PQclear(res);
 	
-	return nerr_pass(err);
+	return err;
 }
 
 static NEOERR* pgsql_mdb_query_fill(mdb_conn* conn, const char* sql_string)
@@ -146,7 +146,7 @@ static NEOERR* pgsql_mdb_query_getv(mdb_conn* conn, const char* fmt, va_list ap)
 	}
 
 	CONN(conn)->row_no++;
-	return nerr_pass(err);
+	return err;
 }
 
 static NEOERR* pgsql_mdb_query_geta(mdb_conn* conn, const char* fmt, char* r[])
@@ -234,9 +234,9 @@ static NEOERR* pgsql_mdb_query_putv(mdb_conn* conn, const char* fmt, va_list ap)
 	}
 	res = PQexecParams(CONN(conn)->pg, conn->sql, param_count, NULL,
 					   (const char* const*)param_values, NULL, NULL, 0);
-	if (PQresultStatus(res) != PGRES_COMMAND_OK && PQresultStatus(res)
-		!= PGRES_TUPLES_OK)
-		err = nerr_raise(NERR_DB, PQresultErrorMessage(res));
+	if (PQresultStatus(res) != PGRES_COMMAND_OK &&
+		PQresultStatus(res) != PGRES_TUPLES_OK)
+		err = nerr_raise(NERR_DB, "%s %s", conn->sql, PQresultErrorMessage(res));
 
 	if (CONN(conn)->pg_res != NULL)
 		PQclear(CONN(conn)->pg_res);
@@ -249,7 +249,7 @@ done:
 	free(param_values);
 	free(free_list);
 
-	return nerr_pass(err);
+	return err;
 }
 
 static int pgsql_mdb_query_get_rows(mdb_conn* conn)

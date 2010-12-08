@@ -161,7 +161,7 @@ static NEOERR* sqlite_mdb_query_getv(mdb_conn* conn, const char* fmt, va_list ap
 		}
 	}
 
-	return nerr_pass(err);
+	return err;
 }
 
 static NEOERR* sqlite_mdb_query_geta(mdb_conn* conn, const char* fmt, char *r[])
