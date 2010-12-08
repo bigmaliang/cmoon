@@ -156,6 +156,7 @@ int main(int argc, char **argv)
 	stats_init(&stats);
 	if (config_parse_file(settings.conffname, &g_cfg) != 1) return 1;
 	mtc_init(hdf_get_value(g_cfg, PRE_SERVER".logfile", "/tmp/mevent"));
+	nerr_init();
 
 	if (!settings.foreground) {
 		pid = fork();

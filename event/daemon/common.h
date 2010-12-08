@@ -8,31 +8,28 @@
 #include "queue.h"
 #include "meventd.h"
 
-/*
- * 获取请求中参数
- */
-#define REQ_GET_PARAM_INT(hdf, key, ret)		\
-    do {										\
-		if (!hdf_get_value(hdf, key, NULL)) {	\
-            return REP_ERR_BADPARAM;			\
-		}										\
-		ret = hdf_get_int_value(hdf, key, 0);	\
+#define REQ_GET_PARAM_INT(hdf, key, ret)							\
+    do {															\
+		if (!hdf_get_value(hdf, key, NULL)) {						\
+			return nerr_raise(REP_ERR_BADPARAM, "need %s", key);	\
+		}															\
+		ret = hdf_get_int_value(hdf, key, 0);						\
     } while (0)
 
-#define REQ_GET_PARAM_LONG(hdf, key, ret)						\
-    do {														\
-		if (!hdf_get_value(hdf, key, NULL)) {					\
-            return REP_ERR_BADPARAM;							\
-		}														\
-		ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);	\
+#define REQ_GET_PARAM_LONG(hdf, key, ret)							\
+    do {															\
+		if (!hdf_get_value(hdf, key, NULL)) {						\
+			return nerr_raise(REP_ERR_BADPARAM, "need %s", key);	\
+		}															\
+		ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);		\
     } while (0)
 
-#define REQ_GET_PARAM_STR(hdf, key, ret)		\
-    do {										\
-		ret = hdf_get_value(hdf, key, NULL);	\
-		if (!ret || *ret == '\0') {				\
-            return REP_ERR_BADPARAM;			\
-		}										\
+#define REQ_GET_PARAM_STR(hdf, key, ret)							\
+    do {															\
+		ret = hdf_get_value(hdf, key, NULL);						\
+		if (!ret || *ret == '\0') {									\
+			return nerr_raise(REP_ERR_BADPARAM, "need %s", key);	\
+		}															\
     } while (0)
 
 

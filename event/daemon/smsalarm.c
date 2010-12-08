@@ -21,26 +21,20 @@ void smsalarm_msg(char *msg)
 {
 	mdb_conn *db;
 	//char content[100];
-	int ret;
+	NEOERR *err;
 
-	if (mdb_init(&db, SMSA_DB_SN) != RET_RBTOP_OK) {
-		wlog("init alarm db err %s\n", mdb_get_errmsg(db));
-		return;
-	}
+	err = mdb_init(&db, SMSA_DB_SN);
+	RETURN_NOK(err);
 
 	HDF *node = hdf_get_obj(g_cfg, SMSA_CFG_PATH".leader");
 	if (node != NULL) node = hdf_obj_child(node);
 
 	while (node != NULL) {
 		//memset(content, 0x0, sizeof(content));
-		ret = mdb_exec(db, NULL,
+		err = mdb_exec(db, NULL,
 					   "INSERT INTO monitor_smssend (smsSendTo, smsContent) VALUES ('%s', '%s')",
 					   NULL, hdf_obj_value(node), msg);
-		if (ret != MDB_ERR_NONE) {
-			wlog("exec %s failure %s\n", msg, mdb_get_errmsg(db));
-		} else {
-			wlog("%s alarm ok\n", msg);
-		}
+		TRACE_NOK(err);
 		
 		node = hdf_obj_next(node);
 	}
