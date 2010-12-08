@@ -183,7 +183,7 @@ static bool ip2place(HDF *hdf, char *ip, char *key)
 	return false;
 }
 
-static int place_cmd_get(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* place_cmd_get(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count = 0;
@@ -213,13 +213,14 @@ static int place_cmd_get(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		CACHE_HDF(q->hdfsnd, 0, PREFIX_PLACE"%s", ip);
 	}
 	
-	return REP_OK;
+	return STATUS_OK;
 }
 
 static void place_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct place_entry *e = (struct place_entry*)entry;
-	int ret = REP_OK;
+	NEOERR *err;
+	int ret;
 	
 	mdb_conn *db = e->db;
 	struct cache *cd = e->cd;
@@ -229,13 +230,13 @@ static void place_process_driver(struct event_entry *entry, struct queue_entry *
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, ret);
+        CASE_SYS_CMD(q->operation, q, cd, err);
 	case REQ_CMD_PLACEGET:
-		ret = place_cmd_get(q, cd, db);
+		err = place_cmd_get(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
-		ret = REP_OK;
+		err = STATUS_OK;
 		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
 		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
 		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
@@ -245,9 +246,12 @@ static void place_process_driver(struct event_entry *entry, struct queue_entry *
 		break;
 	default:
 		st->msg_unrec++;
-		ret = REP_ERR_UNKREQ;
+		err = nerr_raise(REP_ERR_UNKREQ, "unknown command %u", q->operation);
 		break;
 	}
+	
+	NEOERR *neede = mcs_err_valid(err);
+	ret = neede ? err->error : REP_OK;
 	if (PROCESS_OK(ret)) {
 		st->proc_suc++;
 	} else {
@@ -255,7 +259,7 @@ static void place_process_driver(struct event_entry *entry, struct queue_entry *
         if (ret == REP_ERR_BADPARAM) {
             st->msg_badparam++;
         }
-		mtc_err("process %u failed %d", q->operation, ret);
+		TRACE_ERR(q, ret, err);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 		reply_trigger(q, ret);
@@ -289,16 +293,6 @@ static struct event_entry* place_init_driver(void)
 	e->base.process_driver = place_process_driver;
 	e->base.stop_driver = place_stop_driver;
 
-#if 0
-	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
-	if (mdb_init(&e->db, dbsn) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->db));
-		goto error;
-	} else {
-		mtc_info("init %s ok", dbsn);
-	}
-#endif
-
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
 	if (e->cd == NULL) {
 		wlog("init cache failure");
@@ -307,14 +301,7 @@ static struct event_entry* place_init_driver(void)
 
 	char *f = hdf_get_value(g_cfg, CONFIG_PATH".ipfile", "QQWry.Dat");
 	NEOERR *err = ne_load_file(f, (char**)&ips);
-	if (err != STATUS_OK) {
-		STRING zstra;	string_init(&zstra);
-		nerr_error_traceback(err, &zstra);
-		wlog("read %s failure %s", f, zstra.buf);
-		string_clear(&zstra);
-		nerr_ignore(&err);
-		goto error;
-	}
+	JUMP_NOK(err, error);
 
 	ipbgn = b2int(ips, 4);
 	ipend = b2int(ips+4, 4);

@@ -24,24 +24,25 @@ struct rawdb_entry {
 	struct rawdb_stats st;
 };
 
-static int rawdb_exec_str(struct queue_entry *q, char *sql, mdb_conn *db)
+static NEOERR* rawdb_exec_str(struct queue_entry *q, char *sql, mdb_conn *db)
 {
-	int ret = mdb_exec(db, NULL, sql, NULL);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec %s failure %s", sql, mdb_get_errmsg(db));
-	} else {
-		int id;
-		if (mdb_get(db, "i", &id) == MDB_ERR_NONE) {
-			hdf_set_int_value(q->hdfsnd, "id", id);
-		}
+	NEOERR *err;
+
+	err = mdb_exec(db, NULL, sql, NULL);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+	int id;
+	err = mdb_get(db, "i", &id);
+	if (err != STATUS_OK) return nerr_pass(err);
+	hdf_set_int_value(q->hdfsnd, "id", id);
 /* TODO mysql and sqlite use the mdb_get_last_id() */
 #if 0
-		if (strncasecmp(sql, "insert", strlen("insert"))) {
-			hdf_set_int_value(q->hdfsnd, "id", mdb_get_last_id(db, NULL));
-		}
-#endif
+	if (strncasecmp(sql, "insert", strlen("insert"))) {
+		hdf_set_int_value(q->hdfsnd, "id", mdb_get_last_id(db, NULL));
 	}
-	return ret;
+#endif
+
+	return STATUS_OK;
 }
 
 /*
@@ -49,11 +50,11 @@ static int rawdb_exec_str(struct queue_entry *q, char *sql, mdb_conn *db)
  * return: NORMAL
  * reply : NULL
  */
-static int rawdb_cmd_updatedb(struct queue_entry *q, mdb_conn *db)
+static NEOERR* rawdb_cmd_updatedb(struct queue_entry *q, mdb_conn *db)
 {
 	HDF *node;
 	char *sql;
-    int ret;
+	NEOERR *err;
 
 	node = hdf_get_obj(q->hdfrcv, "sqls");
 	if (node) {
@@ -61,35 +62,31 @@ static int rawdb_cmd_updatedb(struct queue_entry *q, mdb_conn *db)
 			node = hdf_obj_child(node);
 			while (node) {
 				sql = hdf_obj_value(node);
-				mtc_dbg("exec %s ...\n", sql);
-				ret = rawdb_exec_str(q, sql, db);
-				if (ret != MDB_ERR_NONE) {
-					if (!strcmp(hdf_obj_name(node), MASTER_EVT_NAME)) {
-						return REP_ERR_DB;
-					}
+				err = rawdb_exec_str(q, sql, db);
+				if (err != STATUS_OK) {
+					if (!strcmp(hdf_obj_name(node), MASTER_EVT_NAME))
+						return nerr_raise(REP_ERR_DB, "exec %s failure", sql);
+					else
+						TRACE_NOK(err);
 				}
 				node = hdf_obj_next(node);
 			}
 		} else {
 			sql = hdf_obj_value(node);
-			mtc_dbg("exec %s ...\n", sql);
-			ret = rawdb_exec_str(q, sql, db);
-			if (ret != MDB_ERR_NONE) {
-				return REP_ERR_DB;
-			}
+			err = rawdb_exec_str(q, sql, db);
+			if (err != STATUS_OK) return nerr_pass(err);
 		}
-	} else {
-        mtc_err("excutable sqls not found\n");
-        return REP_ERR_BADPARAM;
-	}
+	} else
+		return nerr_raise(REP_ERR_BADPARAM, "excutable sqls not found\n");
 	
-    return REP_OK;
+    return STATUS_OK;
 }
 
 static void rawdb_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct rawdb_entry *e = (struct rawdb_entry*)entry;
-	int ret = REP_OK;
+	NEOERR *err;
+	int ret;
 	
 	mdb_conn *dbaccess = e->dbaccess;
 	mdb_conn *dbstat = e->dbstat;
@@ -100,16 +97,16 @@ static void rawdb_process_driver(struct event_entry *entry, struct queue_entry *
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, ret);
+        CASE_SYS_CMD(q->operation, q, cd, err);
 	case REQ_CMD_ACCESS:
-		ret = rawdb_cmd_updatedb(q, dbaccess);
+		err = rawdb_cmd_updatedb(q, dbaccess);
 		break;
 	case REQ_CMD_STAT:
-		ret = rawdb_cmd_updatedb(q, dbstat);
+		err = rawdb_cmd_updatedb(q, dbstat);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
-		ret = REP_OK;
+		err = STATUS_OK;
 		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
 		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
 		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
@@ -119,9 +116,12 @@ static void rawdb_process_driver(struct event_entry *entry, struct queue_entry *
 		break;
 	default:
 		st->msg_unrec++;
-		ret = REP_ERR_UNKREQ;
+		err = nerr_raise(REP_ERR_UNKREQ, "unknown command %u", q->operation);
 		break;
 	}
+	
+	NEOERR *neede = mcs_err_valid(err);
+	ret = neede ? err->error : REP_OK;
 	if (PROCESS_OK(ret)) {
 		st->proc_suc++;
 	} else {
@@ -129,7 +129,7 @@ static void rawdb_process_driver(struct event_entry *entry, struct queue_entry *
         if (ret == REP_ERR_BADPARAM) {
             st->msg_badparam++;
         }
-		mtc_err("process %u failed %d", q->operation, ret);
+		TRACE_ERR(q, ret, err);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 		reply_trigger(q, ret);
@@ -168,6 +168,7 @@ static struct event_entry* rawdb_init_driver(void)
 {
 	struct rawdb_entry *e = calloc(1, sizeof(struct rawdb_entry));
 	if (e == NULL) return NULL;
+	NEOERR *err;
 
 	e->base.name = (unsigned char*)strdup(PLUGIN_NAME);
 	e->base.ksize = strlen(PLUGIN_NAME);
@@ -175,20 +176,12 @@ static struct event_entry* rawdb_init_driver(void)
 	e->base.stop_driver = rawdb_stop_driver;
 
 	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".access.dbsn", NULL);
-	if (mdb_init(&e->dbaccess, dbsn) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->dbaccess));
-		goto error;
-	} else {
-		mtc_info("init %s ok", dbsn);
-	}
+	err = mdb_init(&e->dbaccess, dbsn);
+	JUMP_NOK(err, error);
 
 	dbsn = hdf_get_value(g_cfg, CONFIG_PATH".stat.dbsn", NULL);
-	if (mdb_init(&e->dbstat, dbsn) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->dbstat));
-		goto error;
-	} else {
-		mtc_info("init %s ok", dbsn);
-	}
+	err = mdb_init(&e->dbstat, dbsn);
+	JUMP_NOK(err, error);
 	
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
 	if (e->cd == NULL) {

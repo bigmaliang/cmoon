@@ -34,11 +34,12 @@ struct aic_entry {
  * return: NORMAL
  * reply : ["state": 0, ...] OR []
  */
-static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int aid, pid;
 	char *aname;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
@@ -48,20 +49,23 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db
 	} else {
 		hdf_set_value(q->hdfsnd, "pname", aname);
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL, "aid=%d", NULL, aid);
-		if (mdb_set_row(q->hdfsnd, db, APPINFO_COL, NULL) == MDB_ERR_NONE) {
-			pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
-			if (pid != 0) {
-				MDB_QUERY_RAW(db, "appinfo", "aname", "aid=%d", NULL, pid);
-				mdb_set_row(q->hdfsnd, db, "pname", NULL);
-			}
-			MDB_QUERY_RAW(db, "appinfo", "COUNT(*)+1 AS numuser", "pid=%d",
-						  NULL, aid);
-			mdb_set_row(q->hdfsnd, db, "numuser", NULL);
+		err = mdb_set_row(q->hdfsnd, db, APPINFO_COL, NULL);
+		if (err != STATUS_OK) return nerr_pass(err);
+		pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
+		if (pid != 0) {
+			MDB_QUERY_RAW(db, "appinfo", "aname", "aid=%d", NULL, pid);
+			err = mdb_set_row(q->hdfsnd, db, "pname", NULL);
+			if (err != STATUS_OK) return nerr_pass(err);
 		}
+		MDB_QUERY_RAW(db, "appinfo", "COUNT(*)+1 AS numuser", "pid=%d",
+					  NULL, aid);
+		err = mdb_set_row(q->hdfsnd, db, "numuser", NULL);
+		if (err != STATUS_OK) return nerr_pass(err);
+
 		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_APPINFO"%d", aid);
 	}
 	
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -69,10 +73,11 @@ static int aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn *db
  * return: NORMAL REP_ERR_ALREADYREGIST
  * reply : NULL
  */
-static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_appnew(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *aname, *pname, *asn, *masn, *email;
-	int aid, pid = 0, state, ret;
+	int aid, pid = 0, state;
+	NEOERR *err;
 
 	REQ_GET_PARAM_INT(q->hdfrcv, "state", state);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
@@ -85,29 +90,24 @@ static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	aid = hash_string(aname);
 	if (pname) pid = hash_string(pname);
 
-	ret = aic_cmd_appinfo(q, cd, db);
-	if (PROCESS_NOK(ret)) {
-		mtc_err("info get failure %s", aname);
-		return ret;
-	}
+	err = aic_cmd_appinfo(q, cd, db);
+	if (err != STATUS_OK) return nerr_pass(err);
 
-	if (hdf_get_obj(q->hdfsnd, "state")) {
-		mtc_warn("%s already regist", aname);
-		return REP_ERR_ALREADYREGIST;
-	}
+	if (hdf_get_obj(q->hdfsnd, "state"))
+		return nerr_raise(REP_ERR_ALREADYREGIST, "%s already regist", aname);
 
-	MDB_EXEC_EVT(db, NULL, "INSERT INTO appinfo (aid, aname, "
-				 " pid, asn, masn, email, state) "
-				 " VALUES ($1, $2::varchar(256), $3, $4::varchar(256), "
-				 " $5::varchar(256), $6::varchar(256), $7);",
-				 "isisssi", aid, aname, pid, asn, masn, email, state);
+	MDB_EXEC(db, NULL, "INSERT INTO appinfo (aid, aname, "
+			 " pid, asn, masn, email, state) "
+			 " VALUES ($1, $2::varchar(256), $3, $4::varchar(256), "
+			 " $5::varchar(256), $6::varchar(256), $7);",
+			 "isisssi", aid, aname, pid, asn, masn, email, state);
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
 	if (pid > 0) {
 		cache_delf(cd, PREFIX_APPOUSER"%d_0", pid);
 	}
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -115,11 +115,12 @@ static int aic_cmd_appnew(struct queue_entry *q, struct cache *cd, mdb_conn *db)
  * return: NORMAL REP_ERR_ALREADYREGIST
  * reply : NULL
  */
-static int aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *aname;
-	int aid, pid = 0, tune = -1, ret;
+	int aid, pid = 0, tune = -1;
 	STRING str;	string_init(&str);
+	NEOERR *err;
 	
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	REQ_FETCH_PARAM_INT(q->hdfrcv, "tune", tune);
@@ -134,23 +135,18 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	}
 
 	aid = hash_string(aname);
-	ret = aic_cmd_appinfo(q, cd, db);
-	if (PROCESS_NOK(ret)) {
-		mtc_err("info get failure %d", aid);
-		return ret;
-	}
+	err = aic_cmd_appinfo(q, cd, db);
+	if (err != STATUS_OK) return nerr_pass(err);
 
-	if (!hdf_get_obj(q->hdfsnd, "state")) {
-		mtc_warn("%d hasn't regist", aid);
-		return REP_ERR_NREGIST;
-	}
+	if (!hdf_get_obj(q->hdfsnd, "state"))
+		return nerr_raise(REP_ERR_NREGIST, "%s %d hasn't regist", aname, aid);
 	pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
 
-	ret = mcs_build_upcol(q->hdfrcv,
+	err = mcs_build_upcol(q->hdfrcv,
 						  hdf_get_obj(g_cfg, CONFIG_PATH".UpdateCol.appinfo"), &str);
-	if (ret != RET_RBTOP_OK) return REP_ERR_BADPARAM;
+	if (err != STATUS_OK) return nerr_pass(err);
 	
-	MDB_EXEC_EVT(db, NULL, "UPDATE appinfo SET %s WHERE aid=%d;", NULL, str.buf, aid);
+	MDB_EXEC(db, NULL, "UPDATE appinfo SET %s WHERE aid=%d;", NULL, str.buf, aid);
 
 	/* TODO memory leak, if exec() failure */
 	string_clear(&str);
@@ -160,7 +156,7 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		cache_delf(cd, PREFIX_APPOUSER"%d_0", pid);
 	}
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -168,42 +164,39 @@ static int aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
  * return: NORMAL REP_ERR_NREGIST
  * reply : NULL
  */
-static int aic_cmd_appdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_appdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *aname;
-	int aid, pid = 0, ret;
+	int aid, pid = 0;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 
 	aid = hash_string(aname);
 
-	ret = aic_cmd_appinfo(q, cd, db);
-	if (PROCESS_NOK(ret)) {
-		mtc_err("info get failure %s", aname);
-		return ret;
-	}
+	err = aic_cmd_appinfo(q, cd, db);
+	if (err != STATUS_OK) return nerr_pass(err);
 
-	if (!hdf_get_obj(q->hdfsnd, "state")) {
-		mtc_warn("%s not regist", aname);
-		return REP_ERR_NREGIST;
-	}
+	if (!hdf_get_obj(q->hdfsnd, "state"))
+		return nerr_raise(REP_ERR_NREGIST, "%s not regist", aname);
 	pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
 
-	MDB_EXEC_EVT(db, NULL, "DELETE FROM appinfo WHERE aid=%d;", NULL, aid);
+	MDB_EXEC(db, NULL, "DELETE FROM appinfo WHERE aid=%d;", NULL, aid);
 	
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
 	if (pid > 0) {
 		cache_delf(cd, PREFIX_APPOUSER"%d_0", pid);
 	}
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int aic_cmd_app_getsecy(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_app_getsecy(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	char *aname;
 	int aid;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
@@ -214,11 +207,12 @@ static int aic_cmd_app_getsecy(struct queue_entry *q, struct cache *cd, mdb_conn
 		MDB_QUERY_RAW(db, "appinfo", " aname ",
 					  " (aid=%d OR pid=%d) AND tune & %d = %d ",
 					  NULL, aid, aid, LCS_TUNE_SECY, LCS_TUNE_SECY);
-		mdb_set_row(q->hdfsnd, db, " aname ", NULL);
+		err = mdb_set_row(q->hdfsnd, db, " aname ", NULL);
+		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_SECY"%d", aid);
 	}
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -226,10 +220,11 @@ static int aic_cmd_app_getsecy(struct queue_entry *q, struct cache *cd, mdb_conn
  * return: NORMAL
  * reply : NULL
  */
-static int aic_cmd_app_setsecy(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_app_setsecy(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *pname, *aname;
 	int pid, aid, upid;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
@@ -237,21 +232,22 @@ static int aic_cmd_app_setsecy(struct queue_entry *q, struct cache *cd, mdb_conn
 	pid = hash_string(pname);
 	aid = hash_string(aname);
 
-	MDB_EXEC_EVT(db, NULL, "UPDATE appinfo SET tune=tune & %d WHERE aid=%d OR pid=%d "
-				 " RETURNING aid", NULL, ~LCS_TUNE_SECY, pid, pid);
+	MDB_EXEC(db, NULL, "UPDATE appinfo SET tune=tune & %d WHERE aid=%d OR pid=%d "
+			 " RETURNING aid", NULL, ~LCS_TUNE_SECY, pid, pid);
 
 	upid = aid;
-	mdb_get(db, "i", &upid);
+	err = mdb_get(db, "i", &upid);
+	if (err != STATUS_OK) return nerr_pass(err);
 	
-	MDB_EXEC_EVT(db, NULL, "UPDATE appinfo SET tune=tune | %d WHERE aid=%d",
-				 NULL, LCS_TUNE_SECY, aid);
+	MDB_EXEC(db, NULL, "UPDATE appinfo SET tune=tune | %d WHERE aid=%d",
+			 NULL, LCS_TUNE_SECY, aid);
 
 	cache_delf(cd, PREFIX_APPINFO"%d", upid);
 	cache_delf(cd, PREFIX_APPINFO"%d", aid);
 	cache_delf(cd, PREFIX_APPOUSER"%d_0", pid);
 	cache_delf(cd, PREFIX_SECY"%d", pid);
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -259,11 +255,12 @@ static int aic_cmd_app_setsecy(struct queue_entry *q, struct cache *cd, mdb_conn
  * return: NORMAL
  * reply : [appfoo: ["aid": "222", "aname": "appfoo", ...]
  */
-static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int aid;
 	char *aname;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
@@ -273,11 +270,12 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
 	} else {
 		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
 					  "aid=%d ORDER BY uptime DESC;", NULL, aid);
-		mdb_set_rows(q->hdfsnd, db, USERINFO_COL, "userlist", 1);
+		err = mdb_set_rows(q->hdfsnd, db, USERINFO_COL, "userlist", 1);
+		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_USERLIST"%d", aid);
 	}
 	
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -285,40 +283,32 @@ static int aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *d
  * return: NORMAL REP_ERR_ALREADYJOIN
  * reply : NULL
  */
-static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *uname, *aname, *ip;
-	int aid, ret;
+	int aid;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "ip", ip);
 	aid = hash_string(aname);
 
-	ret = aic_cmd_appusers(q, cd, db);
-	if (PROCESS_NOK(ret)) {
-		mtc_err("userlist get failure %s", aname);
-		return ret;
-	}
+	err = aic_cmd_appusers(q, cd, db);
+	if (err != STATUS_OK) return nerr_pass(err);
 
-	if (hdf_get_valuef(q->hdfsnd, "userlist.%s.uname", uname)) {
-		mtc_warn("%s already join %s", uname, aname);
-		return REP_ERR_ALREADYJOIN;
-	}
-
-	ret = mdb_exec(db, NULL, "INSERT INTO userinfo (uid, uname, aid, aname, ip) "
-				   " VALUES ($1, $2::varchar(256), $3, "
-				   " $4::varchar(256), $5::varchar(256));", "isiss",
-				   hash_string(uname), uname, aid, aname, ip);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec failure %s", mdb_get_errmsg(db));
-		return REP_ERR_DB;
-	}
-
+	if (hdf_get_valuef(q->hdfsnd, "userlist.%s.uname", uname))
+		return nerr_raise(REP_ERR_ALREADYJOIN, "%s already join %s", uname, aname);
+	
+	MDB_EXEC(db, NULL, "INSERT INTO userinfo (uid, uname, aid, aname, ip) "
+			 " VALUES ($1, $2::varchar(256), $3, "
+			 " $4::varchar(256), $5::varchar(256));", "isiss",
+			 hash_string(uname), uname, aid, aname, ip);
+	
 	/* TODO delete aid's ALL cache */
 	cache_delf(cd, PREFIX_USERLIST"%d", aid);
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -326,37 +316,29 @@ static int aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *
  * return: NORMAL REP_ERR_NOTJOIN
  * reply : NULL
  */
-static int aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *uname, *aname;
-	int aid, ret;
+	int aid;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
 	aid = hash_string(aname);
 
-	ret = aic_cmd_appusers(q, cd, db);
-	if (PROCESS_NOK(ret)) {
-		mtc_err("userlist get failure %s", aname);
-		return ret;
-	}
+	err = aic_cmd_appusers(q, cd, db);
+	if (err != STATUS_OK) return nerr_pass(err);
 
-	if (!hdf_get_valuef(q->hdfsnd, "userlist.%s.uname", uname)) {
-		mtc_warn("%s not join %s", uname, aname);
-		return REP_ERR_NOTJOIN;
-	}
+	if (!hdf_get_valuef(q->hdfsnd, "userlist.%s.uname", uname))
+		return nerr_raise(REP_ERR_NOTJOIN, "%s not join %s", uname, aname);
 
-	ret = mdb_exec(db, NULL, "DELETE FROM userinfo WHERE uid=%d AND aid=%d;",
-				   NULL, hash_string(uname), aid);
-	if (ret != MDB_ERR_NONE) {
-		mtc_err("exec failure %s", mdb_get_errmsg(db));
-		return REP_ERR_DB;
-	}
+	MDB_EXEC(db, NULL, "DELETE FROM userinfo WHERE uid=%d AND aid=%d;",
+			 NULL, hash_string(uname), aid);
 
 	/* TODO delete aid's ALL cache */
 	cache_delf(cd, PREFIX_USERLIST"%d", aid);
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -364,12 +346,13 @@ static int aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_conn 
  * return: NORMAL
  * reply : [appfoo: ["aid": "293029", "aname": "appfoo", ...]
  */
-static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
 	int pid;
 	char *pname, *aname;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
 	pid = hash_string(pname);
@@ -384,7 +367,8 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL,
 					  "pid=%d OR aid=%d ORDER BY uptime LIMIT %d OFFSET %d",
 					  NULL, pid, pid, count, offset);
-		mdb_set_rows(q->hdfsnd, db, APPINFO_COL, "users", 1);
+		err = mdb_set_rows(q->hdfsnd, db, APPINFO_COL, "users", 1);
+		if (err != STATUS_OK) return nerr_pass(err);
 		HDF *node = hdf_get_child(q->hdfsnd, "users");
 		while (node) {
 			/* numcamer */
@@ -392,20 +376,22 @@ static int aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *
 			if (aname) {
 				MDB_QUERY_RAW(db, "userinfo", " COUNT(*) AS numcamer ",
 							  "aid=%d", NULL, hash_string(aname));
-				mdb_set_row(node, db, " numcamer ", NULL);
+				err = mdb_set_row(node, db, " numcamer ", NULL);
+				if (err != STATUS_OK) return nerr_pass(err);
 			}
 			node = hdf_obj_next(node);
 		}
 		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_APPOUSER"%d_%d", pid, offset);
 	}
 	
-	return REP_OK;
+	return STATUS_OK;
 }
 
 static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct aic_entry *e = (struct aic_entry*)entry;
-	int ret = REP_OK;
+	NEOERR *err;
+	int ret;
 	
 	mdb_conn *db = e->db;
 	struct cache *cd = e->cd;
@@ -415,40 +401,40 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, ret);
+        CASE_SYS_CMD(q->operation, q, cd, err);
 	case REQ_CMD_APPINFO:
-		ret = aic_cmd_appinfo(q, cd, db);
+		err = aic_cmd_appinfo(q, cd, db);
 		break;
 	case REQ_CMD_APPNEW:
-		ret = aic_cmd_appnew(q, cd, db);
+		err = aic_cmd_appnew(q, cd, db);
 		break;
 	case REQ_CMD_APPUP:
-		ret = aic_cmd_appup(q, cd, db);
+		err = aic_cmd_appup(q, cd, db);
 		break;
 	case REQ_CMD_APPDEL:
-		ret = aic_cmd_appdel(q, cd, db);
+		err = aic_cmd_appdel(q, cd, db);
 		break;
 	case REQ_CMD_APP_GETSECY:
-		ret = aic_cmd_app_getsecy(q, cd, db);
+		err = aic_cmd_app_getsecy(q, cd, db);
 		break;
 	case REQ_CMD_APP_SETSECY:
-		ret = aic_cmd_app_setsecy(q, cd, db);
+		err = aic_cmd_app_setsecy(q, cd, db);
 		break;
 	case REQ_CMD_APPUSERS:
-		ret = aic_cmd_appusers(q, cd, db);
+		err = aic_cmd_appusers(q, cd, db);
 		break;
 	case REQ_CMD_APPUSERIN:
-		ret = aic_cmd_appuserin(q, cd, db);
+		err = aic_cmd_appuserin(q, cd, db);
 		break;
 	case REQ_CMD_APPUSEROUT:
-		ret = aic_cmd_appuserout(q, cd, db);
+		err = aic_cmd_appuserout(q, cd, db);
 		break;
 	case REQ_CMD_APP_O_USERS:
-		ret = aic_cmd_appousers(q, cd, db);
+		err = aic_cmd_appousers(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
-		ret = REP_OK;
+		err = STATUS_OK;
 		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
 		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
 		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
@@ -458,9 +444,12 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	default:
 		st->msg_unrec++;
-		ret = REP_ERR_UNKREQ;
+		err = nerr_raise(REP_ERR_UNKREQ, "unknown command %u", q->operation);
 		break;
 	}
+	
+	NEOERR *neede = mcs_err_valid(err);
+	ret = neede ? err->error : REP_OK;
 	if (PROCESS_OK(ret)) {
 		st->proc_suc++;
 	} else {
@@ -468,7 +457,7 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		if (ret == REP_ERR_BADPARAM) {
 			st->msg_badparam++;
 		}
-		mtc_err("process %u failed %d", q->operation, ret);
+		TRACE_ERR(q, ret, err);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 		reply_trigger(q, ret);
@@ -492,6 +481,7 @@ static struct event_entry* aic_init_driver(void)
 {
 	struct aic_entry *e = calloc(1, sizeof(struct aic_entry));
 	if (e == NULL) return NULL;
+	NEOERR *err;
 
 	e->base.name = (unsigned char*)strdup(PLUGIN_NAME);
 	e->base.ksize = strlen(PLUGIN_NAME);
@@ -499,12 +489,8 @@ static struct event_entry* aic_init_driver(void)
 	e->base.stop_driver = aic_stop_driver;
 
 	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
-	if (mdb_init(&e->db, dbsn) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->db));
-		goto error;
-	} else {
-		mtc_info("init %s ok", dbsn);
-	}
+	err = mdb_init(&e->db, dbsn);
+	JUMP_NOK(err, error);
 	
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
 	if (e->cd == NULL) {

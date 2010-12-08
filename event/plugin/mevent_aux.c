@@ -35,12 +35,13 @@ struct aux_entry {
  * ids=0:1,1:20
  * { "0": { "1": { "ntt": "0", "nst": "0" } }, "1": { "20": { "ntt": "0", "nst": "0" } }, "success": "1" } 
  */
-static int aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
 	char *ids, *idsdump, tok[128];
 	int type = -1, oid = -1;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "ids", ids);
 
@@ -70,7 +71,8 @@ static int aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 								  " ORDER BY intime DESC LIMIT %d OFFSET %d",
 								  NULL, type, CMT_ST_NORMAL, oid, count, offset);
 					sprintf(tok, "%d.%d.cmts", type, oid);
-					mdb_set_rows(q->hdfsnd, db, CMT_COL, tok, -1);
+					err = mdb_set_rows(q->hdfsnd, db, CMT_COL, tok, -1);
+					if (err != STATUS_OK) return nerr_pass(err);
 					mcs_html_escape(hdf_get_child(q->hdfsnd, tok), "content");
 					type = oid = -1;
 				}
@@ -89,7 +91,8 @@ static int aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 						  " ORDER BY intime DESC LIMIT %d OFFSET %d",
 						  NULL, type, CMT_ST_NORMAL, oid, count, offset);
 			sprintf(tok, "%d.%d.cmts", type, oid);
-			mdb_set_rows(q->hdfsnd, db, CMT_COL, tok, -1);
+			err = mdb_set_rows(q->hdfsnd, db, CMT_COL, tok, -1);
+			if (err != STATUS_OK) return nerr_pass(err);
 			mcs_html_escape(hdf_get_child(q->hdfsnd, tok), "content");
 		}
 		
@@ -97,13 +100,14 @@ static int aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		free(idsdump);
 	}
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int aux_cmd_cmtadd(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aux_cmd_cmtadd(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	int type, oid, pid;
 	char *ip, *addr, *author, *content;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "ip", ip);
 	REQ_GET_PARAM_STR(q->hdfrcv, "addr", addr);
@@ -114,55 +118,57 @@ static int aux_cmd_cmtadd(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 	REQ_GET_PARAM_INT(q->hdfrcv, "oid", oid);
 	REQ_FETCH_PARAM_INT(q->hdfrcv, "pid", pid);
 
-	MDB_EXEC_EVT(db, NULL, "INSERT INTO comment "
-				 " (type, oid, pid, ip, addr, author, content) "
-				 " VALUES ($1, $2, $3, $4::varchar(256), "
-				 " $5::varchar(256), $6::varchar(256), $7)",
-				 "iiissss", type, oid, pid, ip, addr, author, content);
-
+	MDB_EXEC(db, NULL, "INSERT INTO comment "
+			 " (type, oid, pid, ip, addr, author, content) "
+			 " VALUES ($1, $2, $3, $4::varchar(256), "
+			 " $5::varchar(256), $6::varchar(256), $7)",
+			 "iiissss", type, oid, pid, ip, addr, author, content);
+	
 	cache_delf(cd, PREFIX_CMTAPP"%d:%d_0", type, oid);
-
-	return REP_OK;
+	
+	return STATUS_OK;
 }
 
-static int aux_cmd_cmtdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aux_cmd_cmtdel(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	int id;
+	NEOERR *err;
 
 	REQ_GET_PARAM_INT(q->hdfrcv, "id", id);
 
-	MDB_EXEC_EVT(db, NULL, "UPDATE comment SET state=%d WHERE id=%d;",
-				 NULL, CMT_ST_DEL, id);
+	MDB_EXEC(db, NULL, "UPDATE comment SET state=%d WHERE id=%d;",
+			 NULL, CMT_ST_DEL, id);
 	
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int aux_cmd_mailadd(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* aux_cmd_mailadd(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	STRING str; string_init(&str);
 	char sum[LEN_MD5], *content;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "content", content);
 	mutil_md5_str(content, sum);
 	hdf_set_value(q->hdfrcv, "checksum", sum);
 
-	if (mcs_build_incol(q->hdfrcv,
-						hdf_get_obj(g_cfg, CONFIG_PATH".InsertCol.email"),
-						&str) != RET_RBTOP_OK) {
-		return REP_ERR_BADPARAM;
-	}
+	err = mcs_build_incol(q->hdfrcv,
+						  hdf_get_obj(g_cfg, CONFIG_PATH".InsertCol.email"),
+						  &str);
+	if (err != STATUS_OK) return nerr_pass(err);
 
-	MDB_EXEC_EVT(db, NULL, "ISNERT INTO mail %s", NULL, str.buf);
+	MDB_EXEC(db, NULL, "ISNERT INTO mail %s", NULL, str.buf);
 
 	string_clear(&str);
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 static void aux_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct aux_entry *e = (struct aux_entry*)entry;
-	int ret = REP_OK;
+	NEOERR *err;
+	int ret;
 	
 	mdb_conn *db = e->db;
 	struct cache *cd = e->cd;
@@ -172,22 +178,22 @@ static void aux_process_driver(struct event_entry *entry, struct queue_entry *q)
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, ret);
+        CASE_SYS_CMD(q->operation, q, cd, err);
 	case REQ_CMD_CMT_GET:
-		ret = aux_cmd_cmtget(q, cd, db);
+		err = aux_cmd_cmtget(q, cd, db);
 		break;
 	case REQ_CMD_CMT_ADD:
-		ret = aux_cmd_cmtadd(q, cd, db);
+		err = aux_cmd_cmtadd(q, cd, db);
 		break;
 	case REQ_CMD_CMT_DEL:
-		ret = aux_cmd_cmtdel(q, cd, db);
+		err = aux_cmd_cmtdel(q, cd, db);
 		break;
 	case REQ_CMD_MAIL_ADD:
-		ret = aux_cmd_mailadd(q, cd, db);
+		err = aux_cmd_mailadd(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
-		ret = REP_OK;
+		err = STATUS_OK;
 		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
 		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
 		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
@@ -197,9 +203,12 @@ static void aux_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	default:
 		st->msg_unrec++;
-		ret = REP_ERR_UNKREQ;
+		err = nerr_raise(REP_ERR_UNKREQ, "unknown command %u", q->operation);
 		break;
 	}
+	
+	NEOERR *neede = mcs_err_valid(err);
+	ret = neede ? err->error : REP_OK;
 	if (PROCESS_OK(ret)) {
 		st->proc_suc++;
 	} else {
@@ -207,7 +216,7 @@ static void aux_process_driver(struct event_entry *entry, struct queue_entry *q)
 		if (ret == REP_ERR_BADPARAM) {
 			st->msg_badparam++;
 		}
-		mtc_err("process %u failed %d", q->operation, ret);
+		TRACE_ERR(q, ret, err);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 		reply_trigger(q, ret);
@@ -231,6 +240,7 @@ static struct event_entry* aux_init_driver(void)
 {
 	struct aux_entry *e = calloc(1, sizeof(struct aux_entry));
 	if (e == NULL) return NULL;
+	NEOERR *err;
 
 	e->base.name = (unsigned char*)strdup(PLUGIN_NAME);
 	e->base.ksize = strlen(PLUGIN_NAME);
@@ -238,12 +248,8 @@ static struct event_entry* aux_init_driver(void)
 	e->base.stop_driver = aux_stop_driver;
 
 	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
-	if (mdb_init(&e->db, dbsn) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->db));
-		goto error;
-	} else {
-		mtc_info("init %s ok", dbsn);
-	}
+	err = mdb_init(&e->db, dbsn);
+	JUMP_NOK(err, error);
 	
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
 	if (e->cd == NULL) {

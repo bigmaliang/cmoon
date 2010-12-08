@@ -29,12 +29,13 @@ struct dyn_entry {
  * return: NORMAL
  * reply : ["oname": "aaa", ...] OR []
  */
-static int dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
+static NEOERR* dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
 						   mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	char *uname, *aname;
 	int uid, aid;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
@@ -46,11 +47,12 @@ static int dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
 	} else {
 		MDB_QUERY_RAW(db, "lcsjoin", JOIN_COL, "uid=%d AND aid=%d ORDER BY id DESC LIMIT %d;",
 					  NULL, uid, aid, 20);
-		mdb_set_rows(q->hdfsnd, db, JOIN_COL, NULL, -1);
+		err = mdb_set_rows(q->hdfsnd, db, JOIN_COL, NULL, -1);
+		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, ONE_MINUTE, PREFIX_DYN"%d_%d", uid, aid);
 	}
 	
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -58,11 +60,12 @@ static int dyn_cmd_joinget(struct queue_entry *q, struct cache *cd,
  * return: NORMAL
  * reply : NULL
  */
-static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
+static NEOERR* dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 						  mdb_conn *db)
 {
 	char *uname, *aname, *oname, *ip, *refer, *url, *title;
 	int id, uid, aid, retcode = 0;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
@@ -81,21 +84,21 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
 	url = url ? url: "";
 	title = title ? title: "";
 
-	MDB_EXEC_EVT(db, NULL, "INSERT INTO lcsjoin (uid, uname, "
-				 " aid, aname, oid, oname, ip, refer, url, title, retcode) "
-				 " VALUES ($1, $2, $3, $4, $5, $6, $7, $8::varchar(256), "
-				 " $9::varchar(256), $10::varchar(256), $11) RETURNING id;",
-				 "isisisssssi", uid, uname, aid, aname,
-				 hash_string(oname), oname, ip, refer, url, title, retcode);
-	
-	if (mdb_get(db, "i", &id) == MDB_ERR_NONE) {
-		hdf_set_int_value(q->hdfsnd, "id", id);
-	}
+	MDB_EXEC(db, NULL, "INSERT INTO lcsjoin (uid, uname, "
+			 " aid, aname, oid, oname, ip, refer, url, title, retcode) "
+			 " VALUES ($1, $2, $3, $4, $5, $6, $7, $8::varchar(256), "
+			 " $9::varchar(256), $10::varchar(256), $11) RETURNING id;",
+			 "isisisssssi", uid, uname, aid, aname,
+			 hash_string(oname), oname, ip, refer, url, title, retcode);
+
+	err = mdb_get(db, "i", &id);
+	if (err != STATUS_OK) return nerr_pass(err);
+	hdf_set_int_value(q->hdfsnd, "id", id);
 
 	//cache delete by timeout
 	//cache_delf(cd, PREFIX_DYN"%d_%d", uid, aid);
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -103,10 +106,10 @@ static int dyn_cmd_joinset(struct queue_entry *q, struct cache *cd,
  * return: NORMAL
  * reply : ["oname": "aaa", ...] OR []
  */
-static int dyn_cmd_visitget(struct queue_entry *q, struct cache *cd,
-							mdb_conn *db)
+static NEOERR* dyn_cmd_visitget(struct queue_entry *q, struct cache *cd,
+								mdb_conn *db)
 {
-	return REP_OK;
+	return STATUS_OK;
 }
 
 /*
@@ -114,29 +117,31 @@ static int dyn_cmd_visitget(struct queue_entry *q, struct cache *cd,
  * return: NORMAL
  * reply : NULL
  */
-static int dyn_cmd_visitset(struct queue_entry *q, struct cache *cd,
+static NEOERR* dyn_cmd_visitset(struct queue_entry *q, struct cache *cd,
 							mdb_conn *db)
 {
 	char *url, *title;
 	int jid;
+	NEOERR *err;
 
 	REQ_GET_PARAM_INT(q->hdfrcv, "jid", jid);
 	REQ_GET_PARAM_STR(q->hdfrcv, "url", url);
 	REQ_GET_PARAM_STR(q->hdfrcv, "title", title);
 
-	MDB_EXEC_EVT(db, NULL, "INSERT INTO visit (jid, url, title) "
-				 " VALUES ($1, $2::varchar(256), $3::varchar(256))",
-				 "iss", jid, url, title);
+	MDB_EXEC(db, NULL, "INSERT INTO visit (jid, url, title) "
+			 " VALUES ($1, $2::varchar(256), $3::varchar(256))",
+			 "iss", jid, url, title);
 
 	cache_delf(cd, PREFIX_VISIT"%d", jid);
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
 static void dyn_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct dyn_entry *e = (struct dyn_entry*)entry;
-	int ret = REP_OK;
+	NEOERR *err;
+	int ret;
 	
 	mdb_conn *db = e->db;
 	struct cache *cd = e->cd;
@@ -146,22 +151,22 @@ static void dyn_process_driver(struct event_entry *entry, struct queue_entry *q)
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, ret);
+        CASE_SYS_CMD(q->operation, q, cd, err);
 	case REQ_CMD_JOINGET:
-		ret = dyn_cmd_joinget(q, cd, db);
+		err = dyn_cmd_joinget(q, cd, db);
 		break;
 	case REQ_CMD_JOINSET:
-		ret = dyn_cmd_joinset(q, cd, db);
+		err = dyn_cmd_joinset(q, cd, db);
 		break;
 	case REQ_CMD_VISITGET:
-		ret = dyn_cmd_visitget(q, cd, db);
+		err = dyn_cmd_visitget(q, cd, db);
 		break;
 	case REQ_CMD_VISITSET:
-		ret = dyn_cmd_visitset(q, cd, db);
+		err = dyn_cmd_visitset(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
-		ret = REP_OK;
+		err = STATUS_OK;
 		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
 		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
 		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
@@ -171,9 +176,12 @@ static void dyn_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	default:
 		st->msg_unrec++;
-		ret = REP_ERR_UNKREQ;
+		err = nerr_raise(REP_ERR_UNKREQ, "unknown command %u", q->operation);
 		break;
 	}
+	
+	NEOERR *neede = mcs_err_valid(err);
+	ret = neede ? err->error : REP_OK;
 	if (PROCESS_OK(ret)) {
 		st->proc_suc++;
 	} else {
@@ -181,7 +189,7 @@ static void dyn_process_driver(struct event_entry *entry, struct queue_entry *q)
         if (ret == REP_ERR_BADPARAM) {
             st->msg_badparam++;
         }
-		mtc_err("process %u failed %d", q->operation, ret);
+		TRACE_ERR(q, ret, err);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 		reply_trigger(q, ret);
@@ -205,6 +213,7 @@ static struct event_entry* dyn_init_driver(void)
 {
 	struct dyn_entry *e = calloc(1, sizeof(struct dyn_entry));
 	if (e == NULL) return NULL;
+	NEOERR *err;
 
 	e->base.name = (unsigned char*)strdup(PLUGIN_NAME);
 	e->base.ksize = strlen(PLUGIN_NAME);
@@ -212,12 +221,8 @@ static struct event_entry* dyn_init_driver(void)
 	e->base.stop_driver = dyn_stop_driver;
 
 	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
-	if (mdb_init(&e->db, dbsn) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->db));
-		goto error;
-	} else {
-		mtc_info("init %s ok", dbsn);
-	}
+	err = mdb_init(&e->db, dbsn);
+	JUMP_NOK(err, error);
 	
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
 	if (e->cd == NULL) {

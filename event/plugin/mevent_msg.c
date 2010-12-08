@@ -23,11 +23,12 @@ struct msg_entry {
 
 #define MSG_COL " mraw "
 
-static int msg_cmd_mysaid(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* msg_cmd_mysaid(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
 	char *name;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
 
@@ -39,18 +40,20 @@ static int msg_cmd_mysaid(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		MMISC_PAGEDIV_SET_N(q->hdfsnd, offset, db, "msg", "mfrom=$1", "s", name);
 		MDB_QUERY_RAW(db, "msg", MSG_COL, "mfrom=$1 ORDER BY intime DESC "
 					  " LIMIT %d OFFSET %d", "s", count, offset, name);
-		mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
+		err = mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
+		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, MSG_CC_SEC, PREFIX_MYSAID"%s_%d", name, offset);
 	}
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int msg_cmd_saytome(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* msg_cmd_saytome(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
 	char *name;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
 
@@ -62,18 +65,20 @@ static int msg_cmd_saytome(struct queue_entry *q, struct cache *cd, mdb_conn *db
 		MMISC_PAGEDIV_SET_N(q->hdfsnd, offset, db, "msg", "mto=$1", "s", name);
 		MDB_QUERY_RAW(db, "msg", MSG_COL, "mto=$1 ORDER BY intime DESC "
 					  " LIMIT %d OFFSET %d", "s", count, offset, name);
-		mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
+		err = mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
+		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, MSG_CC_SEC, PREFIX_SAYTOME"%s_%d", name, offset);
 	}
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int msg_cmd_saywithother(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* msg_cmd_saywithother(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
 	char *name, *name2, key[LEN_MD];
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
 	REQ_GET_PARAM_STR(q->hdfrcv, "name2", name2);
@@ -96,18 +101,20 @@ static int msg_cmd_saywithother(struct queue_entry *q, struct cache *cd, mdb_con
 					  " (mfrom=$3 AND mto=$4)"
 					  " ORDER BY intime DESC LIMIT %d OFFSET %d",
 					  "ssss", count, offset, name, name2, name2, name);
-		mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
+		err = mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
+		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, MSG_CC_SEC, PREFIX_SAYWITHOTHER"%s_%d", key, offset);
 	}
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int msg_cmd_mymsg(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* msg_cmd_mymsg(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
 	int count, offset;
 	char *name;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
 
@@ -121,72 +128,78 @@ static int msg_cmd_mymsg(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 		MDB_QUERY_RAW(db, "msg", MSG_COL, "mfrom=$1 OR mto=$2"
 					  " ORDER BY intime DESC LIMIT %d OFFSET %d",
 					  "ss", count, offset, name, name);
-		mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
+		err = mdb_set_rows(q->hdfsnd, db, NULL, "raws", -1);
+		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, MSG_CC_SEC, PREFIX_MYMSG"%s_%d", name, offset);
 	}
 	
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int msg_cmd_msgset(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* msg_cmd_msgset(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *from, *to, *raw;
 	int type;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "from", from);
 	REQ_GET_PARAM_STR(q->hdfrcv, "to", to);
 	REQ_GET_PARAM_STR(q->hdfrcv, "raw", raw);
 	REQ_GET_PARAM_INT(q->hdfrcv, "type", type);
 
-	MDB_EXEC_EVT(db, NULL, "INSERT INTO msg (mfrom, mto, mtype, mraw) "
-				 " VALUES ($1::varchar(256), $2::varchar(256), "
-				 " $3, $4::varchar(1024));", "ssis", from, to, type, raw);
-
+	MDB_EXEC(db, NULL, "INSERT INTO msg (mfrom, mto, mtype, mraw) "
+			 " VALUES ($1::varchar(256), $2::varchar(256), "
+			 " $3, $4::varchar(1024));", "ssis", from, to, type, raw);
+	
 	/* cache removed by timeout, not here */
-
-	return REP_OK;
+	
+	return STATUS_OK;
 }
 
-static int msg_cmd_del_mysaid(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* msg_cmd_del_mysaid(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *name;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
 
-	MDB_EXEC_EVT(db, NULL, "DELETE FROM msg WHERE mfrom=$1", "s", name);
+	MDB_EXEC(db, NULL, "DELETE FROM msg WHERE mfrom=$1", "s", name);
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int msg_cmd_del_saytome(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* msg_cmd_del_saytome(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *name;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
 
-	MDB_EXEC_EVT(db, NULL, "DELETE FROM msg WHERE mto=$1", "s", name);
+	MDB_EXEC(db, NULL, "DELETE FROM msg WHERE mto=$1", "s", name);
 
-	return REP_OK;
+	return STATUS_OK;
 }
 
-static int msg_cmd_del_both(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+static NEOERR* msg_cmd_del_both(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *name, *name2;
+	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "name", name);
 	REQ_GET_PARAM_STR(q->hdfrcv, "name2", name2);
-
-	MDB_EXEC_EVT(db, NULL, "DELETE FROM msg WHERE "
-				 "(mfrom=$1 AND mto=$2) OR (mfrom=$3 AND mto=$4) ",
-				 "ssss", name, name2, name2, name);
-
-	return REP_OK;
+	
+	MDB_EXEC(db, NULL, "DELETE FROM msg WHERE "
+			 "(mfrom=$1 AND mto=$2) OR (mfrom=$3 AND mto=$4) ",
+			 "ssss", name, name2, name2, name);
+	
+	return STATUS_OK;
 }
 
 static void msg_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct msg_entry *e = (struct msg_entry*)entry;
-	int ret = REP_OK;
+	NEOERR *err;
+	int ret;
 	
 	mdb_conn *db = e->db;
 	struct cache *cd = e->cd;
@@ -196,34 +209,34 @@ static void msg_process_driver(struct event_entry *entry, struct queue_entry *q)
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, ret);
+        CASE_SYS_CMD(q->operation, q, cd, err);
 	case REQ_CMD_MYMSG:
-		ret = msg_cmd_mymsg(q, cd, db);
+		err = msg_cmd_mymsg(q, cd, db);
 		break;
 	case REQ_CMD_MYSAID:
-		ret = msg_cmd_mysaid(q, cd, db);
+		err = msg_cmd_mysaid(q, cd, db);
 		break;
 	case REQ_CMD_SAYTOME:
-		ret = msg_cmd_saytome(q, cd, db);
+		err = msg_cmd_saytome(q, cd, db);
 		break;
 	case REQ_CMD_SAYWITHOTHER:
-		ret = msg_cmd_saywithother(q, cd, db);
+		err = msg_cmd_saywithother(q, cd, db);
 		break;
 	case REQ_CMD_MSGSET:
-		ret = msg_cmd_msgset(q, cd, db);
+		err = msg_cmd_msgset(q, cd, db);
 		break;
 	case REQ_CMD_DEL_MYSAID:
-		ret = msg_cmd_del_mysaid(q, cd, db);
+		err = msg_cmd_del_mysaid(q, cd, db);
 		break;
 	case REQ_CMD_DEL_SAYTOME:
-		ret = msg_cmd_del_saytome(q, cd, db);
+		err = msg_cmd_del_saytome(q, cd, db);
 		break;
 	case REQ_CMD_DEL_BOTH:
-		ret = msg_cmd_del_both(q, cd, db);
+		err = msg_cmd_del_both(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;
-		ret = REP_OK;
+		err = STATUS_OK;
 		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
 		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
 		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
@@ -233,9 +246,12 @@ static void msg_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	default:
 		st->msg_unrec++;
-		ret = REP_ERR_UNKREQ;
+		err = nerr_raise(REP_ERR_UNKREQ, "unknown command %u", q->operation);
 		break;
 	}
+	
+	NEOERR *neede = mcs_err_valid(err);
+	ret = neede ? err->error : REP_OK;
 	if (PROCESS_OK(ret)) {
 		st->proc_suc++;
 	} else {
@@ -243,7 +259,7 @@ static void msg_process_driver(struct event_entry *entry, struct queue_entry *q)
 		if (ret == REP_ERR_BADPARAM) {
 			st->msg_badparam++;
 		}
-		mtc_err("process %u failed %d", q->operation, ret);
+		TRACE_ERR(q, ret, err);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 		reply_trigger(q, ret);
@@ -267,6 +283,7 @@ static struct event_entry* msg_init_driver(void)
 {
 	struct msg_entry *e = calloc(1, sizeof(struct msg_entry));
 	if (e == NULL) return NULL;
+	NEOERR *err;
 
 	e->base.name = (unsigned char*)strdup(PLUGIN_NAME);
 	e->base.ksize = strlen(PLUGIN_NAME);
@@ -274,12 +291,8 @@ static struct event_entry* msg_init_driver(void)
 	e->base.stop_driver = msg_stop_driver;
 
 	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
-	if (mdb_init(&e->db, dbsn) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->db));
-		goto error;
-	} else {
-		mtc_info("init %s ok", dbsn);
-	}
+	err = mdb_init(&e->db, dbsn);
+	JUMP_NOK(err, error);
 	
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
 	if (e->cd == NULL) {

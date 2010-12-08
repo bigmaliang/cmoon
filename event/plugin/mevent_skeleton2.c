@@ -24,7 +24,8 @@ struct skeleton2_entry {
 static void skeleton2_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct skeleton2_entry *e = (struct skeleton2_entry*)entry;
-	int ret = REP_OK;
+	NEOERR *err;
+	int ret;
 	
 	mdb_conn *db = e->db;
 	struct cache *cd = e->cd;
@@ -34,10 +35,10 @@ static void skeleton2_process_driver(struct event_entry *entry, struct queue_ent
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, ret);
+        CASE_SYS_CMD(q->operation, q, cd, err);
 	case REQ_CMD_STATS:
 		st->msg_stats++;
-		ret = REP_OK;
+		err = STATUS_OK;
 		hdf_set_int_value(q->hdfsnd, "msg_total", st->msg_total);
 		hdf_set_int_value(q->hdfsnd, "msg_unrec", st->msg_unrec);
 		hdf_set_int_value(q->hdfsnd, "msg_badparam", st->msg_badparam);
@@ -47,9 +48,12 @@ static void skeleton2_process_driver(struct event_entry *entry, struct queue_ent
 		break;
 	default:
 		st->msg_unrec++;
-		ret = REP_ERR_UNKREQ;
+		err = nerr_raise(REP_ERR_UNKREQ, "unknown command %u", q->operation);
 		break;
 	}
+	
+	NEOERR *neede = mcs_err_valid(err);
+	ret = neede ? err->error : REP_OK;
 	if (PROCESS_OK(ret)) {
 		st->proc_suc++;
 	} else {
@@ -57,7 +61,7 @@ static void skeleton2_process_driver(struct event_entry *entry, struct queue_ent
 		if (ret == REP_ERR_BADPARAM) {
 			st->msg_badparam++;
 		}
-		mtc_err("process %u failed %d", q->operation, ret);
+		TRACE_ERR(q, ret, err);
 	}
 	if (q->req->flags & FLAGS_SYNC) {
 			reply_trigger(q, ret);
@@ -81,6 +85,7 @@ static struct event_entry* skeleton2_init_driver(void)
 {
 	struct skeleton2_entry *e = calloc(1, sizeof(struct skeleton2_entry));
 	if (e == NULL) return NULL;
+	NEOERR *err;
 
 	e->base.name = (unsigned char*)strdup(PLUGIN_NAME);
 	e->base.ksize = strlen(PLUGIN_NAME);
@@ -88,12 +93,8 @@ static struct event_entry* skeleton2_init_driver(void)
 	e->base.stop_driver = skeleton2_stop_driver;
 
 	char *dbsn = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
-	if (mdb_init(&e->db, dbsn) != RET_RBTOP_OK) {
-		wlog("init %s failure %s\n", dbsn, mdb_get_errmsg(e->db));
-		goto error;
-	} else {
-		mtc_info("init %s ok", dbsn);
-	}
+	err = mdb_init(&e->db, dbsn);
+	JUMP_NOK(err, error);
 	
 	e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
 	if (e->cd == NULL) {
