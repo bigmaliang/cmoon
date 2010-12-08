@@ -8,11 +8,16 @@ cd clearsilver &&
 svn checkout http://streamhtmlparser.googlecode.com/svn/trunk/ streamhtmlparser
 cd streamhtmlparser && ./configure && make && make install
 cd ../ && ./autogen.sh --disable-wdb --disable-perl --disable-ruby --disable-java --disable-python && mkdir libs
+
+I
+------------
 vim utl/neo_hdf.c +1623
 while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
 ===>
 while (*s && (isalnum(*s) || *s == '_' || *s == '.' || *(unsigned char*)s > 127)) s++;
 
+II
+------------
 vim utl/neo_err.c +193
 static char *_lookup_errname(NEOERR *err, char *buf, int buflen)
 ===>
@@ -21,6 +26,11 @@ char *_lookup_errname(NEOERR *err, char *buf, int buflen)
 vim utl/neo_err.h +139
 ++++
 char *_lookup_errname(NEOERR *err, char *buf, int buflen);
+
+vim utl/neo_err.h +51
+  char desc[256];
+===>
+  char desc[1024];
 
 make
 make install
