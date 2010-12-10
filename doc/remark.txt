@@ -5,6 +5,12 @@ HTML & JS
 -------------
 $("input[name=permittype]") 或者$("input:radio")
 $("input:[name=permittype]:checked").val()
+if ($("input:checkbox").attr("checked") == true ) ...
+ // Check #x
+ $("#x").attr('checked', 'checked');
+ // Uncheck #x
+ $("#x").removeAttr('checked');
+
 http://visualjquery.com/
 
 div-id-name
