@@ -1,6 +1,4 @@
-#include "mdb-priv.h"
 #include "mheads.h"
-
 #ifndef DROP_SQLITE
 #include <sqlite3.h>
 

@@ -24,11 +24,9 @@
 /* includes for cs, memc */
 #include "ClearSilver.h"
 #include "libmemcached/memcached.h"
-#ifndef DROP_MEVENT
 #include "mevent.h"
 #include "cache.h"
 #include "mkdio.h"
-#endif
 #ifndef DROP_FCGI
 #include "fcgi_stdio.h"
 #endif

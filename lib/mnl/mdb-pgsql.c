@@ -1,5 +1,4 @@
-#include "mdb-priv.h"
-
+#include "mheads.h"
 #ifndef DROP_PG
 #include <libpq-fe.h>
 

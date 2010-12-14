@@ -1,5 +1,4 @@
-#include "mdb-priv.h"
-
+#include "mheads.h"
 #ifndef DROP_MYSQL
 #include <mysql.h>
 
