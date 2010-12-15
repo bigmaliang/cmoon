@@ -181,7 +181,7 @@ static void dyn_process_driver(struct event_entry *entry, struct queue_entry *q)
 	}
 	
 	NEOERR *neede = mcs_err_valid(err);
-	ret = neede ? err->error : REP_OK;
+	ret = neede ? neede->error : REP_OK;
 	if (PROCESS_OK(ret)) {
 		st->proc_suc++;
 	} else {
