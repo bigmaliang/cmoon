@@ -230,15 +230,15 @@ static NEOERR* mysql_mdb_query_geta(mdb_conn* conn, const char* fmt, char* r[])
 	if (res == NULL) return nerr_raise(NERR_DB, "attemp fetch null res");
 
 	if (row_no >= mdb_get_rows(conn)) {
-		if (row_no == 0) return nerr_raise(NERR_DB, "empty result");
-		return nerr_raise(NERR_DB, "last row has fetched");
+		if (row_no == 0) return nerr_raise(NERR_NOT_FOUND, "empty result");
+		return nerr_raise(NERR_OUTOFRANGE, "last row has fetched");
 	}
 
 	int param_count = fmt != NULL ? strlen(fmt) : 0;
 	int i, col = 0;
 
 	row = mysql_fetch_row(res);
-	if (!row) return nerr_raise(NERR_DB, "last row has fetched");
+	if (!row) return nerr_raise(NERR_OUTOFRANGE, "last row has fetched");
 	if (param_count > mysql_num_fields(res))
 		return nerr_raise(NERR_ASSERT, "result col num not match");
 	

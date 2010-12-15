@@ -156,8 +156,8 @@ static NEOERR* pgsql_mdb_query_geta(mdb_conn* conn, const char* fmt, char* r[])
 	if (res == NULL) return nerr_raise(NERR_DB, "attemp fetch null res");
 
 	if (row_no >= mdb_get_rows(conn)) {
-		if (row_no == 0) return nerr_raise(NERR_DB, "empty result");
-		return nerr_raise(NERR_DB, "last row has fetched");
+		if (row_no == 0) return nerr_raise(NERR_NOT_FOUND, "empty result");
+		return nerr_raise(NERR_OUTOFRANGE, "last row has fetched");
 	}
 
 	int param_count = fmt != NULL ? strlen(fmt) : 0;
