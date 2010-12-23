@@ -1,4 +1,4 @@
-tar zcvf libmevent.tar.gz /usr/local/include/mevent.h /usr/local/include/net-const.h /usr/local/lib/libmevent.a /usr/local/lib/libneo_utl.a /usr/local/include/ClearSilver/ /etc/mevent/
+tar zcvf libmevent.tar.gz /usr/local/include/mevent.h /usr/local/include/net-const.h /usr/local/lib/libmevent.a /usr/local/lib/libneo_utl.a /usr/local/include/ClearSilver/ /etc/mevent/ /usr/local/bin/mevent /usr/local/bin/hb /usr/local/lib/mevent_*.so /usr/local/lib/libstreamhtmlparser.*
 
 /usr/local/src/php-5.xx/ext/ext_skel --extname=mevent
 cd mevent

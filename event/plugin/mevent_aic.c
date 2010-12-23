@@ -25,8 +25,8 @@ struct aic_entry {
 	" to_char(intime, 'YYYY-MM-DD') as intime, "						\
 	" to_char(uptime, 'YYYY-MM-DD') as uptime "
 
-#define USERINFO_COL " uid, uname, ip, intime, aid, aname, "	\
-	" to_char(intime, 'YYYY-MM-DD') as intime, "				\
+#define USERINFO_COL " uid, uname, ip, addr, intime, aid, aname, "	\
+	" to_char(intime, 'YYYY-MM-DD') as intime, "					\
 	" to_char(uptime, 'YYYY-MM-DD') as uptime "
 
 /*
@@ -285,25 +285,32 @@ static NEOERR* aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_con
  */
 static NEOERR* aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
-	char *uname, *aname, *ip;
-	int aid;
+	STRING str; string_init(&str);
+	char *aname, *uname;
+	int aid, uid;
 	NEOERR *err;
 
-	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
-	REQ_GET_PARAM_STR(q->hdfrcv, "ip", ip);
+	REQ_GET_PARAM_STR(q->hdfrcv, "uname", uname);
 	aid = hash_string(aname);
+	uid = hash_string(uname);
+
+	hdf_set_int_value(q->hdfrcv, "uid", uid);
+	hdf_set_int_value(q->hdfrcv, "aid", aid);
 
 	err = aic_cmd_appusers(q, cd, db);
 	if (err != STATUS_OK) return nerr_pass(err);
 
 	if (hdf_get_valuef(q->hdfsnd, "userlist.%s.uname", uname))
 		return nerr_raise(REP_ERR_ALREADYJOIN, "%s already join %s", uname, aname);
-	
-	MDB_EXEC(db, NULL, "INSERT INTO userinfo (uid, uname, aid, aname, ip) "
-			 " VALUES ($1, $2::varchar(256), $3, "
-			 " $4::varchar(256), $5::varchar(256));", "isiss",
-			 hash_string(uname), uname, aid, aname, ip);
+
+	err = mcs_build_incol(q->hdfrcv,
+						  hdf_get_obj(g_cfg, CONFIG_PATH".InsertCol.userinfo"),
+						  &str);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+	MDB_EXEC(db, NULL, "INSERT INTO userinfo %s", NULL, str.buf);
+	string_clear(&str);
 	
 	/* TODO delete aid's ALL cache */
 	cache_delf(cd, PREFIX_USERLIST"%d", aid);
@@ -401,7 +408,7 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, err);
+        CASE_SYS_CMD(q->operation, q, e->cd, err);
 	case REQ_CMD_APPINFO:
 		err = aic_cmd_appinfo(q, cd, db);
 		break;

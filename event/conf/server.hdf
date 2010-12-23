@@ -12,6 +12,7 @@ Mevent {
 		4 = place
 		5 = msg
 		6 = aux
+		7 = mtls
 	}
 	smsalarm {
 		db {
@@ -43,9 +44,34 @@ Plugin {
 				state [type=int] = state
 			}
 		}
+		InsertCol {
+			userinfo {
+				uname [maxlen=256, require=true] = uname
+				aname [maxlen=256, require=true] = aname
+				uid [type=int] = uid
+				aid [type=int] = aid
+				ip [maxlen=32, require=true] = ip
+				addr [maxlen=64] = addr
+			}
+		}
 	}
 	dyn {
 		dbsn = pgsql:dbname=lcs_dyn host=localhost user=lcser password=loveu
+		InsertCol {
+			track {
+				type [type=int] = type
+				aname [maxlen=256, require=true] = aname
+				uname [maxlen=256, require=true] = uname
+				oname [maxlen=256] = oname
+				aid [type=int] = aid
+				uid [type=int] = uid
+				oid [type=int] = oid
+				ip [maxlen=32] = ip
+				url [maxlen=256, require=true] = url
+				title [maxlen=256, require=true] = title
+				refer [maxlen=256] = refer
+			}
+		}
 	}
 	place {
 		ipfile = /usr/local/lib/QQWry.Dat
@@ -57,12 +83,22 @@ Plugin {
 		dbsn = pgsql:dbname=lcs_aux host=localhost user=lcser password=loveu
 		InsertCol {
 			email {
-				go [type=int]= gotime
+				go [type=int] = gotime
 				opt [maxlen=512, require=true] = opts
 				sub [maxlen=256, require=true] = subject
 				to [require=true] = sendto
 				content [require=true] = content
 				checksum [require=true, maxlen=64] = checksum
+			}
+		}
+	}
+	mtls {
+		dbsn = pgsql:dbname=lcs_mtool host=localhost user=lcser password=loveu
+		QueryCond {
+			stat {
+				aid [type=int, require=true] = aid=
+				dts = dt >
+				dte = dt <
 			}
 		}
 	}

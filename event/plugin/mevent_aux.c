@@ -158,7 +158,6 @@ static NEOERR* aux_cmd_mailadd(struct queue_entry *q, struct cache *cd, mdb_conn
 	if (err != STATUS_OK) return nerr_pass(err);
 
 	MDB_EXEC(db, NULL, "ISNERT INTO mail %s", NULL, str.buf);
-
 	string_clear(&str);
 
 	return STATUS_OK;
@@ -178,7 +177,7 @@ static void aux_process_driver(struct event_entry *entry, struct queue_entry *q)
 	
 	mtc_dbg("process cmd %u", q->operation);
 	switch (q->operation) {
-        CASE_SYS_CMD(q->operation, q, cd, err);
+        CASE_SYS_CMD(q->operation, q, e->cd, err);
 	case REQ_CMD_CMT_GET:
 		err = aux_cmd_cmtget(q, cd, db);
 		break;
