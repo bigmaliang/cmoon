@@ -3,6 +3,7 @@
 /* global file name for trace info write to */
 static char g_fn[LEN_FN] = "";
 static FILE *g_fp = NULL;
+static char linebuf[2096];
 static char *g_trace_level[TC_LEVELS] = {"DIE", "MESSAGE", "ERROR", "WARNING", "INFO", "DEBUG", "NOISE"};
 
 static void trace_shift_file()
@@ -17,7 +18,7 @@ static void trace_shift_file()
 	char ofn[LEN_FN], nfn[LEN_FN];
 
 	if (g_fp != NULL)
-		FCLOSE(g_fp);
+		fclose(g_fp);
 
 	for (i = TC_MAX_NUM-1; i > 1; i--) {
 		sprintf(ofn, "%s.%d", g_fn, i-1);
@@ -30,7 +31,7 @@ static void trace_shift_file()
 		rename(ofn, nfn);
 	}
 
-	g_fp = FOPEN(g_fn, "a+");
+	g_fp = fopen(g_fn, "a+");
 }
 
 void mtc_init(const char *fn)
@@ -38,15 +39,15 @@ void mtc_init(const char *fn)
 	strncpy(g_fn, fn, sizeof(g_fn)-4);
 	strcat(g_fn, ".log");
 	if (g_fp != NULL)
-		FCLOSE(g_fp);
-	g_fp = FOPEN(g_fn, "a+");
-	if (g_fp != NULL) setvbuf(g_fp, (char *)NULL, _IOLBF, 0);
+		fclose(g_fp);
+	g_fp = fopen(g_fn, "a+");
+	if (g_fp != NULL) setvbuf(g_fp, linebuf, _IOLBF, 2096);
 	atexit(mtc_leave);
 }
 void mtc_leave()
 {
 	if (g_fp != NULL)
-		FCLOSE(g_fp);
+		fclose(g_fp);
 	g_fp = NULL;
 	memset(g_fn, 0x0, sizeof(g_fn));
 }
@@ -66,15 +67,15 @@ bool mtc_msg(const char *func, const char *file, long line,
 	if (!mmisc_getdatetime(tm, sizeof(tm), "%F %T", 0))
 		return false;
 
-	FPRINTF(g_fp, "[%s]", tm);
-	FPRINTF(g_fp, "[%s]", g_trace_level[level]);
-	FPRINTF(g_fp, "[%s:%li %s] ", file, line, func);
+	fprintf(g_fp, "[%s]", tm);
+	fprintf(g_fp, "[%s]", g_trace_level[level]);
+	fprintf(g_fp, "[%s:%li %s] ", file, line, func);
 
 	va_start(ap, (void*)format);
-	VFPRINTF(g_fp, format, ap);
+	vfprintf(g_fp, format, ap);
 	va_end(ap);
 
-	FPRINTF(g_fp, "\n");
+	fprintf(g_fp, "\n");
 
 	trace_shift_file();
 	return true;

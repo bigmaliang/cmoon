@@ -20,18 +20,6 @@ __BEGIN_DECLS
 #define TC_MAX_SIZE	(10*1024*1024)
 #define TC_MAX_NUM	5
 	
-//#ifdef _FCGI_STDIO_NOK
-//#define FOPEN	FCGI_fopen
-//#define FCLOSE	FCGI_fclose
-//#define	FPRINTF	FCGI_fprintf
-//#define VFPRINTF FCGI_vfprintf
-//#else
-#define FOPEN	fopen
-#define FCLOSE	fclose
-#define	FPRINTF	fprintf
-#define VFPRINTF vfprintf
-//#endif
-
 #if defined(USE_C99_VARARG_MACROS)
 #define mtc_die(f,...)													\
 	do {																\
