@@ -5,20 +5,10 @@
 
 __BEGIN_DECLS
 
-#define REQ_GET		"GET"
-#define REQ_PUT		"PUT"
-#define REQ_POST	"POST"
-#define REQ_DEL		"DELETE"
-
 /*
  * With PUT and DELETE, there is a big difference between zero request and one,
  * but there is no difference between one request and ten.
  */
-#define REQ_IS_GET(op)	(!strcmp(op, REQ_GET))
-#define REQ_IS_PUT(op)	(!strcmp(op, REQ_PUT))
-#define REQ_IS_POST(op)	(!strcmp(op, REQ_POST))
-#define REQ_IS_DEL(op)	(!strcmp(op, REQ_DEL))
-
 enum cgi_req_method {
 	CGI_REQ_GET = 0,
 	CGI_REQ_PUT,
