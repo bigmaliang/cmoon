@@ -134,14 +134,6 @@ cp id_rsa* key_backup
 rm id_rsa*
 ssh-keygen -t rsa -C "tekkub@gmail.com"
 
-设计风格
-------
-	http://www.ronniesan.com/work/
-	http://www.douban.com/
-	http://www.dropbox.com/
-	http://photo.163.com/story130@126/big/#aid=191548433&id=5998768727
-	http://www.smashingmagazine.com/2010/11/08/equal-height-columns-using-borders-and-negative-margins-with-css/
-
 codeburner
 ----------
 	http://tools.sitepoint.com/codeburner/

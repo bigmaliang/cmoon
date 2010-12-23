@@ -1,3 +1,32 @@
+设计风格
+------
+	http://www.ronniesan.com/work/
+	http://www.douban.com/
+	http://www.dropbox.com/
+	http://photo.163.com/story130@126/big/#aid=191548433&id=5998768727
+	http://www.smashingmagazine.com/2010/11/08/equal-height-columns-using-borders-and-negative-margins-with-css/
+
+http://www.openclipart.org/
+http://www.deviantart.com/
+http://ffffound.com/
+http://dribbble.com
+http://iconmoon.com/blog2/chinese-designers-dribbble/
+http://hi.baidu.com/madesign/blog
+http://www.coroflot.com
+
+特色站
+-----
+http://www.codewranglers.org
+http://forrst.com/
+http://js1k.com
+http://js1k.com/2010-first/demo/151 [bubble]
+
+个人站
+-----
+http://www.dzlover.net
+
+
+
 http://www.yeeyan.com/articles/view/pestwave/51250
 《创业入门》之--三步打造完美网站
 简介
