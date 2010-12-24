@@ -32,6 +32,7 @@ enum {
 	REQ_CMD_APPUSERS = 2001,	/* who visited my app */
 	REQ_CMD_APPUSERIN,			/* remember sb visited my app */
 	REQ_CMD_APPUSEROUT,			/* remove JiangYou boy */
+	REQ_CMD_APPUSERUP,
 	REQ_CMD_APP_O_USERS = 3001  /* who is my stuff */
 } req_cmd_aic;
 

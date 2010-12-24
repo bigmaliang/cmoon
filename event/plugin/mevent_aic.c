@@ -208,6 +208,7 @@ static NEOERR* aic_cmd_app_getsecy(struct queue_entry *q, struct cache *cd, mdb_
 					  " (aid=%d OR pid=%d) AND tune & %d = %d ",
 					  NULL, aid, aid, LCS_TUNE_SECY, LCS_TUNE_SECY);
 		err = mdb_set_row(q->hdfsnd, db, " aname ", NULL);
+		nerr_handle(&err, NERR_NOT_FOUND);
 		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_SECY"%d", aid);
 	}
@@ -258,18 +259,25 @@ static NEOERR* aic_cmd_app_setsecy(struct queue_entry *q, struct cache *cd, mdb_
 static NEOERR* aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
-	int aid;
+	int aid, lm = 0;
 	char *aname;
 	NEOERR *err;
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+	REQ_FETCH_PARAM_INT(q->hdfrcv, "limit", lm);
 	aid = hash_string(aname);
 	
 	if (cache_getf(cd, &val, &vsize, PREFIX_USERLIST"%d", aid)) {
 		unpack_hdf(val, vsize, &q->hdfsnd);
 	} else {
-		MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
-					  "aid=%d ORDER BY uptime DESC;", NULL, aid);
+		if (lm > 0) {
+			MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
+						  "aid=%d ORDER BY uptime DESC LIMIT %d;",
+						  NULL, aid, lm);
+		} else {
+			MDB_QUERY_RAW(db, "userinfo", USERINFO_COL,
+						  "aid=%d ORDER BY uptime DESC;", NULL, aid);
+		}
 		err = mdb_set_rows(q->hdfsnd, db, USERINFO_COL, "userlist", 1);
 		if (err != STATUS_OK) return nerr_pass(err);
 		CACHE_HDF(q->hdfsnd, AIC_CC_SEC, PREFIX_USERLIST"%d", aid);
@@ -312,17 +320,11 @@ static NEOERR* aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_co
 	MDB_EXEC(db, NULL, "INSERT INTO userinfo %s", NULL, str.buf);
 	string_clear(&str);
 	
-	/* TODO delete aid's ALL cache */
 	cache_delf(cd, PREFIX_USERLIST"%d", aid);
 
 	return STATUS_OK;
 }
 
-/*
- * input : uname(STR) aname(STR)
- * return: NORMAL REP_ERR_NOTJOIN
- * reply : NULL
- */
 static NEOERR* aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	char *uname, *aname;
@@ -342,17 +344,33 @@ static NEOERR* aic_cmd_appuserout(struct queue_entry *q, struct cache *cd, mdb_c
 	MDB_EXEC(db, NULL, "DELETE FROM userinfo WHERE uid=%d AND aid=%d;",
 			 NULL, hash_string(uname), aid);
 
-	/* TODO delete aid's ALL cache */
 	cache_delf(cd, PREFIX_USERLIST"%d", aid);
 
 	return STATUS_OK;
 }
 
-/*
- * input : pname(STR)
- * return: NORMAL
- * reply : [appfoo: ["aid": "293029", "aname": "appfoo", ...]
- */
+static NEOERR* aic_cmd_appuserup(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	STRING str; string_init(&str);
+	int uid, aid;
+	NEOERR *err;
+
+	REQ_GET_PARAM_INT(q->hdfrcv, "uid", uid);
+	REQ_GET_PARAM_INT(q->hdfrcv, "aid", aid);
+
+	err = mcs_build_upcol(q->hdfrcv,
+						  hdf_get_obj(g_cfg, CONFIG_PATH".UpdateCol.userinfo"), &str);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+	MDB_EXEC(db, NULL, "UPDATE userinfo SET %s WHERE uid=%d AND aid=%d;",
+			 NULL, str.buf, uid, aid);
+	string_clear(&str);
+
+	cache_delf(cd, PREFIX_USERLIST"%d", aid);
+	
+	return STATUS_OK;
+}
+
 static NEOERR* aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
@@ -435,6 +453,9 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_APPUSEROUT:
 		err = aic_cmd_appuserout(q, cd, db);
+		break;
+	case REQ_CMD_APPUSERUP:
+		err = aic_cmd_appuserup(q, cd, db);
 		break;
 	case REQ_CMD_APP_O_USERS:
 		err = aic_cmd_appousers(q, cd, db);
