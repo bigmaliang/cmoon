@@ -47,6 +47,9 @@ Algorithms
 	http://www.netzgesta.de/
 	比较实用的js效果, 比如 mapper 像 flash 的中国地图
 
+	http://ajaxload.info/
+	ajax loading 图标制作
+
 
 http://tools.mozilla.com
 ========================
