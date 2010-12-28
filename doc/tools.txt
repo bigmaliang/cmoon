@@ -44,6 +44,9 @@ Algorithms
 	http://vger.kernel.org/~davem/tcp_output.html
 	tcp output engine
 
+	http://www.netzgesta.de/
+	比较实用的js效果, 比如 mapper 像 flash 的中国地图
+
 
 http://tools.mozilla.com
 ========================
