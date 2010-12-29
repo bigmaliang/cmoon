@@ -339,8 +339,8 @@ PHP_FUNCTION(mevent_add_u32)
 PHP_FUNCTION(mevent_trigger)
 {
 	int argc = ZEND_NUM_ARGS();
-	char *key;
-	int key_len, cmd, flags = 0;
+	char *key; int key_len;
+	double cmd, flags = 0;
 	int db_id = -1;
 	int ret = 0;
 	 
@@ -349,7 +349,7 @@ PHP_FUNCTION(mevent_trigger)
 	mevent_t *mevent_p;
    
 
-	if (zend_parse_parameters(argc TSRMLS_CC, "rsll", &db, &key, &key_len, &cmd, &flags) == FAILURE) 
+	if (zend_parse_parameters(argc TSRMLS_CC, "rsdd", &db, &key, &key_len, &cmd, &flags) == FAILURE) 
 		return;
 
 	if (db) {
