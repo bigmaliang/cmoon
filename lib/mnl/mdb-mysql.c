@@ -107,8 +107,7 @@ static NEOERR* mysql_mdb_connect(const char* dsn, mdb_conn **rconn)
 									 pa->pass, pa->name, 0, NULL, 0);
 	mysql_mdb_free_conn_parameter(pa);
 	if (conn->mysql == NULL)
-		return nerr_raise(NERR_SYSTEM, "connect to %s failure %s",
-						  dsn, mysql_error(conn->mysql));
+		return nerr_raise(NERR_SYSTEM, "connect to %s failure", dsn);
 	
 	return STATUS_OK;
 }
