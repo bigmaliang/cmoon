@@ -49,9 +49,9 @@ static NEOERR* aic_cmd_appinfo(struct queue_entry *q, struct cache *cd, mdb_conn
 	} else {
 		hdf_set_value(q->hdfsnd, "pname", aname);
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL, "aid=%d", NULL, aid);
+		err = mdb_set_row(q->hdfsnd, db, APPINFO_COL, NULL);
 		if (nerr_handle(&err, NERR_NOT_FOUND))
 			return nerr_raise(REP_ERR_NREGIST, "%s %d hasn't regist", aname, aid);
-		err = mdb_set_row(q->hdfsnd, db, APPINFO_COL, NULL);
 		if (err != STATUS_OK) return nerr_pass(err);
 		pid = hdf_get_int_value(q->hdfsnd, "pid", 0);
 		if (pid != 0) {
