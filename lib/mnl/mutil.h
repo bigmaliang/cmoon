@@ -42,7 +42,7 @@ void mutil_md5_str(char *in, char out[LEN_MD5]);
 char* mutil_hdf_attr(HDF *hdf, char *name, char*key);
 char* mutil_obj_attr(HDF *hdf, char*key);
 bool mutil_isdigit(char *s);
-bool mutil_makesure_dir(char *file);
+NEOERR* mutil_makesure_dir(char *file);
 
 /*
  * make sure buf big enough please

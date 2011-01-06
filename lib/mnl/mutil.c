@@ -157,9 +157,9 @@ bool mutil_isdigit(char *s)
 	return true;
 }
 
-bool mutil_makesure_dir(char *file)
+NEOERR* mutil_makesure_dir(char *file)
 {
-	if (file == NULL) return true;
+	if (file == NULL) return STATUS_OK;
 
 	char tok[_POSIX_PATH_MAX];
 	char *p = strchr(file, '/');
@@ -168,13 +168,12 @@ bool mutil_makesure_dir(char *file)
 		memset(tok, 0x0, sizeof(tok));
 		strncpy(tok, file, p-file+1);
 		if (mkdir(tok, 0755) != 0 && errno != EEXIST) {
-			mtc_err("mkdir %s failure %s", tok, strerror(errno));
-			return false;
+			return nerr_raise(NERR_IO, "mkdir %s failure %s", tok, strerror(errno));
 		}
 		p = strchr(p+1, '/');
 	}
 	mtc_noise("directory %s ok", tok);
-	return true;
+	return STATUS_OK;
 }
 
 void mutil_real_escape_string(char *to, char *from, size_t len)

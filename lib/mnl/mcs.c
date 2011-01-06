@@ -12,24 +12,21 @@ NEOERR* mcs_strcb(void *ctx, char *s)
 	err = nerr_pass(string_append(str, s));
 	return err;
 }
-bool mcs_str2file(STRING str, const char *file)
+NEOERR* mcs_str2file(STRING str, const char *file)
 {
-	if (file == NULL)
-		return false;
+	if (file == NULL) return nerr_raise(NERR_ASSERT, "paramter null");
 	
 	FILE *fp = fopen(file, "w");
-	if (fp == NULL) {
-		mtc_err("unable to open %s for write", file);
-		return false;
-	}
+	if (!fp) return nerr_raise(NERR_IO, "unable to open %s for write", file);
+
 	size_t ret = fwrite(str.buf, str.len, 1, fp);
 	if (ret < 0) {
-		mtc_err("write str.buf to %s error", file);
 		fclose(fp);
-		return false;
+		return nerr_raise(NERR_IO, "write str.buf to %s error", file);
 	}
+	
 	fclose(fp);
-	return true;
+	return STATUS_OK;
 }
 
 void mcs_rand_string(char *s, int max)

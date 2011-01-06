@@ -97,7 +97,7 @@ __BEGIN_DECLS
 NEOERR* mcs_outputcb(void *ctx, char *s);
 /* because of libneo_cs doesn't have cs_render_to_file */
 NEOERR* mcs_strcb(void *ctx, char *s);
-bool mcs_str2file(STRING str, const char *file);
+NEOERR* mcs_str2file(STRING str, const char *file);
 
 void mcs_rand_string(char *s, int max);
 NEOERR* mcs_register_bitop_functions(CSPARSE *cs);
