@@ -291,7 +291,7 @@ static NEOERR* aic_cmd_appusers(struct queue_entry *q, struct cache *cd, mdb_con
 
 /*
  * input : uname(STR) aname(STR)
- * return: NORMAL REP_ERR_ALREADYJOIN
+ * return: NORMAL
  * reply : NULL
  */
 static NEOERR* aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_conn *db)
@@ -313,7 +313,7 @@ static NEOERR* aic_cmd_appuserin(struct queue_entry *q, struct cache *cd, mdb_co
 	if (err != STATUS_OK) return nerr_pass(err);
 
 	if (hdf_get_valuef(q->hdfsnd, "userlist.%s.uname", uname))
-		return nerr_raise(REP_ERR_ALREADYJOIN, "%s already join %s", uname, aname);
+		return STATUS_OK;
 
 	err = mcs_build_incol(q->hdfrcv,
 						  hdf_get_obj(g_cfg, CONFIG_PATH".InsertCol.userinfo"),
