@@ -2,17 +2,11 @@
 
 int CGI_REQ_METHOD(CGI *cgi)
 {
-	char *opt = hdf_get_value(cgi->hdf, PRE_QUERY".op", "get");
-	if (!strcasecmp(opt, "get")) return CGI_REQ_GET;
-	else if (!strcasecmp(opt, "add")) return CGI_REQ_PUT;
-	else if (!strcasecmp(opt, "del")) return CGI_REQ_DEL;
-	else if (!strcasecmp(opt, "mod")) return CGI_REQ_POST;
-	
-	char *op = hdf_get_value(cgi->hdf, PRE_CGI".RequestMethod", "get");
+	char *op = hdf_get_value(cgi->hdf, PRE_QUERY"._op", "get");
 	if (!strcasecmp(op, "get")) return CGI_REQ_GET;
-	else if (!strcasecmp(op, "put")) return CGI_REQ_PUT;
-	else if (!strcasecmp(op, "post")) return CGI_REQ_POST;
-	else if (!strcasecmp(op, "delete")) return CGI_REQ_DEL;
+	else if (!strcasecmp(op, "mod")) return CGI_REQ_POST;
+	else if (!strcasecmp(op, "add")) return CGI_REQ_PUT;
+	else if (!strcasecmp(op, "del")) return CGI_REQ_DEL;
 	
 	return CGI_REQ_UNKNOWN;
 }
