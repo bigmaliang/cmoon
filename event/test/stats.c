@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	tv.tv_usec = 800000;
 	
 	mevent_add_udp_server(evt, "127.0.0.1", 26000, NULL, &tv);
-	ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_NONE);
+	ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
 	if (PROCESS_OK(ret))
 		hdf_dump(evt->hdfrcv, NULL);
 	else
