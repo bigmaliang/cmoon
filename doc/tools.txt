@@ -57,6 +57,17 @@ http://tools.mozilla.com/
 http://tools.mozilla.com/simple.html
 哪个交互更好? 浏览列表的时候选择一行能跟用户用友好的方式突出这行, 更容易让人接受
 
+about:config  network.dns.disableIPV6 双击 设置成 true
+firebug
+firecookie
+dnsflusher
+measureit
+colorzilla
+
+greasemonkey
+**webmail notifier
+gmail manager
+
 
 SCM
 ---
@@ -200,6 +211,12 @@ jsondiff
 	展现 json 格式数据, 可查看区别.
 
 
+online json paser
+--------
+	http://json.parser.online.fr/
+	在线 json parser
+
+
 jsBeauty
 --------
 	http://jsbeautifier.org/
@@ -209,6 +226,12 @@ jsBeauty
 routetrace
 ----------
 http://tool.chinaz.com/Tracert/	
+
+
+balsamiq mockups
+----------
+	http://balsamiq.com/products/mockups
+	线条原型图， 设计之前
 
 
 scrot
