@@ -255,6 +255,12 @@ tools
 
 	valgrind	调试软件
 		valgrind --leak-check=full ./xxxxx
+
+	gprof		调试软件(输出函数调用次数及时间、打印调用结构图)
+		I, gcc -pg
+		II, ./xxx
+		III, gprof -b ./xxx gmon.out | less
+		IIII, mkgraph & Graphviz 生成可视化调用关系图
 		
 	screen		方便调试后台程序工具
 		screen -S dbg 新开 dbg 终端

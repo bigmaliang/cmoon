@@ -1,0 +1,252 @@
+;;;BigML's .emacs file
+;;Ma Liang
+;;Created on 2004-01-03
+
+
+;;;====================
+;;; require: auctex
+;;; $ln -s ~/web/moon/doc/dotemacs .emacs
+;;; $ln -s ~/web/moon/doc/dotsite-lisp .site-lisp
+;;;====================
+
+
+;;;========== WINDOW ==========
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(set-scroll-bar-mode 'right)
+(when window-system
+  (mwheel-install)
+  (set-selection-coding-system 'compound-text-with-extensions))
+(create-fontset-from-fontset-spec "-xos4-*-medium-r-normal-*-16-*-*-*-*-*-fontset-bigml,\n  chinese-gb2312:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n mule-unicode-0100-24ff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n  mule-unicode-2500-33ff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n  mule-unicode-e000-ffff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*")
+(setq default-frame-alist '((font . "fontset-bigml")))
+(defface font-lock-function-call-face
+  '((t (:foreground "SteelBlue1")))
+  "Font Lock mode face used to highlight function calls."
+  :group 'font-lock-highlighting-faces)
+(defvar font-lock-function-call-face 'font-lock-function-call-face)
+;(setq default-frame-alist '((height . 90) (width . 153)))
+;(setq default-frame-alist '((font . "terminus")))
+
+
+;;;========== EXTEND ==========
+(setq load-path (append load-path '("~bigml/.site-lisp/emacs_lisp")))
+(setq load-path (append load-path '("~bigml/.site-lisp/blogmax")))
+(require 'c-comment-edit)
+(require 'backup-dir)
+(require 'blogmax)
+(require 'color-theme)
+(require 'xcscope)
+(require 'scim-bridge-zh-si)
+(load-library "desktop-menu")
+(load-library "etach")								;use emacs RMAIL to deal with /var/mail/bigml 2006-09-22
+(load-library "smtpmail")							;use smtp mail instead of sendmail to outgoing mail 2006-09-24
+(load-library "cs-mode")							;clearsilver use
+(autoload 'all "all" nil t)
+;(autoload #'espresso-mode "espresso" "Start espresso-mode" t) ;Espresso has been incorporated into GNU Emacs starting with version 23.2 and has been renamed js-mode. espresso-mode will no longer be maintained outside of Emacs proper. This page has been kept only for historical interest.
+;(require 'un-define)								;2006-10-23 use mule-ucs
+;(color-theme-subtle-hacker)
+;(require 'ecb)
+;(require 'tex-site)
+;(require 'erc)
+;(require 'w3-auto)
+;(require 'clipper)
+;(require 'erc-auto)
+;(require 'ctypes)
+;(require 'gnus-load)
+;(require 'easymenu)
+;(easy-menu-add-item  nil '("tools")
+;		     ["IRC" erc-select t])
+;(autoload 'mew "mew" nil t)
+;(autoload 'mew-send "mew" nil t)
+;(autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
+;(autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
+;(autoload 'tidy-save-settings "tidy" "Save settings to `tidy-config-file'" t)
+;(autoload 'tidy-build-menu  "tidy" "Install an options menu for HTML Tidy." t)
+;(autoload 'erc-select "erc" "IRC client." t)
+;(autoload 'comment-out-region "comment" nil t)
+;(autoload 'counter "counter" nil t)
+;(load-library "pinyin")
+;(load-library "javascript")	;javascript from mihai 20081205
+;(autoload 'js2-mode "js2" nil t)
+;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+;(load "preview-latex.el" nil t t)
+;(load "rng-auto.el")		;2007-03-07 use kid nxml-mode
+
+
+;;;========== FUNCTION ==========
+;;scroll screen one line
+(defun hold-line-scroll-up()
+  "Scroll the page with the cursor in the same line"
+  (interactive)
+  (let ((next-screen-context-lines
+	 (- (count-lines
+	     (window-start) (window-end)) 1)))
+    (scroll-up))
+  (line-move 1))
+(defun hold-line-scroll-down()
+  "Scroll the page with the cursor in the same line"
+  (interactive)
+  (let ((next-screen-context-lines
+	 (- (count-lines
+	     (window-start) (window-end)) 1)))
+    (scroll-down))
+  (line-move -1))
+
+
+;;;========== KEY BINDING ==========
+(global-set-key (quote [33554464]) (quote set-mark-command))
+(global-set-key [delete] 'delete-char)
+(global-set-key [kp-delete] 'delete-char)
+(global-set-key [f12] 'list-bookmarks)
+(global-set-key "\C-xg" 'goto-line)	;some buffer already used C-c C-l 2006-04-04
+(global-set-key (kbd "M-n") 'hold-line-scroll-up)
+(global-set-key (kbd "M-p") 'hold-line-scroll-down)
+(global-set-key [\M-down] 'hold-line-scroll-up)
+(global-set-key [\M-up] 'hold-line-scroll-down)
+(define-key global-map "\C-c\C-w" 'rename-file)
+(define-key global-map "\C-c\C-m\C-f" 'facemenu-set-foreground)
+(define-key global-map "\C-c\C-m\C-b" 'facemenu-set-background)
+(define-key global-map "\C-c\C-m\C-i" 'facemenu-set-italic)
+(define-key global-map "\C-cds" 'desktop-menu-save-into)
+(define-key global-map "\C-cdl" 'desktop-menu-load)
+(define-key global-map "\C-cdd" 'desktop-menu)
+(define-key global-map "\C-xvp" 'svn-status)
+(define-key global-map "\C-ci" 'cs-insert-tag)
+(define-key global-map "\C-cm" 'c-comment-edit)
+(if (locate-library "calculator")
+	(progn
+	  (autoload 'calculator "calculator"
+		"Run Emacs Caculator." t)
+	  (global-set-key [(control return)] 'calculator)))
+;(global-set-key "\C-cc" 'counter)
+;(define-key global-map "\C-cdc" 'desktop-clear)
+;(define-key global-map "\C-c\C-l" 'goto-line)	;deprecate in 2006-04-04
+;(define-key global-map "\C-cq" (global-set-key (quote [33554464]) (quote quail-select-current)))
+;(define-key global-map "\C-cm" (global-set-key (quote [33554464]) (quote set-mark-command)))
+
+
+;;;========== CUSTOMIZE ==========
+(setq-default tab-width 4)	;come on, baby!
+(setq c-basic-offset 4)
+(setq require-final-newline t)	;add a new line automatically at the end of the file when it is about to be saved
+(setq c-default-style "K&R")
+(setq html-helper-verbose 'nil)	;disable html-helper-mode's debug message
+
+(color-theme-classic)
+(setq case-fold-search t)	;C-s ingore case match
+(setq Info-enable-edit t)	;enable you edit the info files
+(setq semantic-idle-scheduler-idle-time 432000) ;semantic occupile 100% cpu on emacs-snapshot
+(setq visible-bell t)	;stop audibel-bee instead by visible-bell 2006-04-04
+(setq semanticdb-default-save-directory "~/.semanticdb")	;store all cache file in a seprated directory
+(setq vc-cvs-stay-local nil)	;not make local backup file in vc mode
+(setq mouse-buffer-menu-mode-mult 1)
+(setq tramp-bkup-backup-directory-info bkup-backup-directory-info)
+(setenv "CVS_RSH" "ssh")	;let emacs to use ssh
+(put 'narrow-to-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(global-font-lock-mode t)	;enable global font-lock-mode highlight
+(transient-mark-mode t)		;highlight the region
+(column-number-mode t)		;display the column number in the mode line
+(iswitchb-mode)				;C-x b list the matchs file name
+(auto-image-file-mode t)	;visiting of image files as images
+(auto-compression-mode t)	;when visiting a zip file, unzip it first
+(which-func-mode t)			;which function in c mode
+(desktop-save-mode 1)		;this variable can recover file visited last session, register saved, file-cache saved
+(toggle-uniquify-buffer-names)
+(display-time)
+(setq diary-file "~/doc/diary")
+(diary)
+(setq bkup-backup-directory-info
+      '(("/home/bigml/.*" "/home/bigml/.backups/" ok-create full-path prepend-name)
+		("/mnt/dev/.*" "/home/bigml/.backups" ok-create full-path prepend-name)))
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(fill-column 86))
+;(setq erc-fill-prefix " ")
+;(setq default-directory "/home/bigml/workspace/") ;history before 2005-12-6
+;(setq next-line-add-newlines t)	;inserts newline to avoid 'end of buffer' error
+;(setq js2-allow-member-expr-as-function-name t)
+;(setq js2-bounce-indent-p t)
+;(uniquify-rationalize-file-buffer-names)
+;(setq espresso-auto-indent-flag nil)
+
+
+;;;========== EDIT ==========
+(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+(add-hook 'nxml-mode-hook 'turn-on-auto-fill)
+(add-hook 'LaTeX-mode-hook (lambda ()
+                             (TeX-fold-mode 1)))
+(add-hook 'c-mode-hook
+          (lambda ()
+            (font-lock-add-keywords
+             nil
+	     '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
+(add-hook 'c++-mode-hook
+          (lambda ()
+            (font-lock-add-keywords
+             nil
+	     '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
+(add-hook 'diary-hook 'appt-make-list)
+(add-hook 'after-init-hook 'scim-mode-on)
+(setq auto-mode-alist
+      (cons '("\\.kid$" . html-helper-mode)
+	    auto-mode-alist))
+(setq auto-mode-alist
+      (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\)\\'" . nxml-mode)
+            auto-mode-alist))
+;'("\\<\\(\\sw+\\)[ \t\n)]*(" 1 font-lock-function-call-face)) t))
+;(add-hook 'LaTeX-mode-hook 'flyspell-mode)
+;(add-hook 'LaTeX-mode-hook 'preview-document)
+;(defun linux-c-mode ()
+;  "C mode with adjusted defaults for use with the Linux kernel."
+;  (interactive)
+;  (c-mode)
+;  (c-set-style "K&R")
+;  (setq c-basic-offset 8))
+;(defun gnu-c-mode ()
+;  "C mode with adjusted defaults for use with the GNU software."
+;  (interactive)
+;  (c-mode)
+;  (c-set-style "K&R")
+;  (setq c-basic-offset 2))
+;(defun gnu-c++-mode ()
+;  "C++ mode with adjusted defaults for use with the GNU software."
+;  (interactive)
+;  (c++-mode)
+;  (c-set-style "K&R")
+;  (setq c-basic-offset 2))
+;(setq auto-mode-alist (cons '("/home/bigml/InterestDig/Reference/xpdf/.*/.*\\.[ch][c]$" . gnu-c++-mode)
+;			auto-mode-alist))
+;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
+
+
+;;;========== EMAIL ==========
+(setq user-mail-address "bigmaliang@163.com")
+(setq smtpmail-auth-credentials
+      '(("smtp.163.com"
+	 25
+	 "bigmaliang"
+	 "163161552")))
+(setq smtpmail-default-smtp-server "smtp.163.com")
+(setq smtpmail-smtp-server "smtp.163.com")
+(setq smtpmail-local-domain nil)
+(setq message-send-mail-function 'smtpmail-send-it)
+(setq send-mail-function 'smtpmail-send-it)
+(setq pop3-leave-mail-on-server t)	;leave the pop3 mail on server after fetched by gnus
+(setq erc-auto-query 'buffer)	;default action on erc message for you is to open a new buffer
+(setq erc-default-coding-system (quote (utf-8 . undecided)))
+(setq rmail-file-name "~/Mail/RMAIL")
+;(setq smtpmail-debug-info t)
+;(setq gnus-startup-file "~/.site-lisp/config/newsrc")
+;(setq gnus-init-file "~/.site-lisp/config/gnus-config")
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )

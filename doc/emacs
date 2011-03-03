@@ -2,18 +2,36 @@ FONT
 ====
 apt-get install xfonts-terminus
 
-(create-fontset-from-fontset-spec "-xos4-*-medium-r-normal-*-16-*-*-*-*-*-fontset-bigml,\n  chinese-gb2312:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n mule-unicode-0100-24ff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n  mule-unicode-2500-33ff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n  mule-unicode-e000-ffff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*")
-(setq default-frame-alist '((font . "fontset-bigml")))
-;xos4 == (setq default-frame-alist '((font . "terminus")))
-
-
 
 COLOR
-============
-
+====
 DARK SERIALS
-
+----
 Calm Forest             Artur Hefczyc <kobit@plusnet.pl>
 Robin Hood              Jinwei Shen <shenjw@wam.umd.edu>
 Standard XEmacs         XEmacs Team, added by Alex Schroeder <alex@gnu.org>
 
+
+MODE
+====
+html
+----
+C-c C-i			add > + end tag, place cusor inside. useful for <a href=""C-c C-i
+C-c C-b			add > + blank line + endtag. useful for <pC-c C-b
+
+
+js
+----
+
+
+tex
+----
+C-c C-c			compile/view file
+C-c C-s			insert section, parag...
+C-c C-m			insert macros(ref, space...)
+C-c C-e			insert enviorment(itemize, enumvertate, picture...)
+C-c C-f			insert font(press b for font list)
+
+C-C C-o C-f		enable/disable tex folder mode
+C-c C-o C-e		TeX-fold-env
+C-c C-o i		TeX-fold-clearout-item
