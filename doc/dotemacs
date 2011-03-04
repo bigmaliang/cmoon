@@ -30,10 +30,8 @@
 
 ;;;========== EXTEND ==========
 (setq load-path (append load-path '("~bigml/.site-lisp/emacs_lisp")))
-(setq load-path (append load-path '("~bigml/.site-lisp/blogmax")))
 (require 'c-comment-edit)
 (require 'backup-dir)
-(require 'blogmax)
 (require 'color-theme)
 (require 'xcscope)
 (require 'scim-bridge-zh-si)
@@ -71,6 +69,8 @@
 ;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 ;(load "preview-latex.el" nil t t)
 ;(load "rng-auto.el")		;2007-03-07 use kid nxml-mode
+;(setq load-path (append load-path '("~bigml/.site-lisp/blogmax")))
+;(require 'blogmax)
 
 
 ;;;========== FUNCTION ==========
