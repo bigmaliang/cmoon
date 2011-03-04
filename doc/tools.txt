@@ -91,44 +91,6 @@ git push git@github.com:bigml/cmoon.git ml:master
 git pull --rebase
 在 pull(origin/master) 的基础上再做 commit.
 有时本地的 checkin 没有 push 到 origin/master,
-git st 会提示 master branch and 'origin/master' have diverged
-此时不能成功 pull, 需要先pull origin master:master, 然后再作一次 commit 本地修改
-pull --rebase 就帮我们干这事, 另外还有如下方式：
-
-http://stackoverflow.com/questions/2452226/master-branch-and-origin-master-have-diverged-how-branches-to-undiverge
------------------------------------------
-$ git merge origin/master
-This tells Git to integrate the changes from origin/master into your work and create a merge commit.
-The graph of history now looks like this:
-
-... o ---- o ---- A ---- B  origin/master (upstream work)
-                   \      \
-                    C ---- M  master (your work)
-
-$ git rebase origin/master
-This tells Git to replay commit C (your work) as if you had based it on commit B instead of A.
-CVS and Subversion users routinely rebase their local changes on top of upstream work when they update before commit.
-Git just adds explicit separation between the commit and rebase steps.
-
-The graph of history now looks like this:
-
-... o ---- o ---- A ---- B  origin/master (upstream work)
-                          \
-                           C'  master (your work)
-Commit C' is a new commit created by the git rebase command.
-It is different from C in two ways:
-
-It has a different history: B instead of A.
-It's content accounts for changes in both B and C: it is the same as M from the merge example.
-
-
-The git pull command provides a shorthand way to fetch from origin and rebase local work on it:
-
-$ git pull --rebase
-This combines the above fetch and rebase steps into one command.
-
--------------------------------------------
-
 
 mkdir my_blog_tmp
 cd my_blog_tmp
@@ -142,6 +104,9 @@ git checkout -b event_data origin/event_data
 
 remote
 branch
+
+查看文件的特定版本
+git show 3727ae1d48de841b0ed99467c74172301b6a2c3c:pop/tpl/layout.html
 
 ssh 
 -----

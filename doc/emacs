@@ -20,7 +20,6 @@ single file:
 C-x v =			vc-diff
 C-x v D			vc-root-diff
 C-x v l			vc-print-log
-
 dir mode(skeleton)
 C-x v d			vc-dir
 l	  			vc-print-log (can use any key in single mode - C-x v)
@@ -35,6 +34,7 @@ html
 ----
 C-c C-i			add > + end tag, place cusor inside. useful for <a href=""C-c C-i
 C-c C-b			add > + blank line + endtag. useful for <pC-c C-b
+C-c C-v			toggle validate mode
 
 
 js
