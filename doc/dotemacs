@@ -4,7 +4,7 @@
 
 
 ;;;====================
-;;; require: auctex
+;;; require: auctex, scim-bridge-el
 ;;; $ln -s ~/web/moon/doc/dotemacs .emacs
 ;;; $ln -s ~/web/moon/doc/dotsite-lisp .site-lisp
 ;;;====================
