@@ -11,11 +11,21 @@
 ### SVN RESP: http://trac.enlightenment.org/e/browser/trunk?order=date
 ####################
 
-DEBPKGS="liblua5.1-0-dev libexif-dev libcurl4-openssl-dev"
+DEBPKGS="gettext doxygen wpasupplicant autopoint \
+         libpam-dev libfreetype6-dev libpng-dev libjpeg-dev \
+         libxcursor-dev libxrender-dev libxrandr-dev \
+         libxfixes-dev libxdamage-dev libxcomposite-dev \
+         libxss-dev libxp-dev libxext-dev libxinerama-dev \
+         libxkbfile-dev libxtst-dev libmpd-dev \
+         libzzip-dev \
+         libdbus-1-dev \
+         liblua5.1-0-dev \
+	 libexif-dev libcurl4-openssl-dev \
+         libtiff-dev librsvg2-dev libgif-dev libcurl4-openssl-dev libgnutls-dev"
 EMODEXCEPT="drawer eweather"
 
 set -e
-PREFIX="/usr/local/e17"
+PREFIX="/usr/local/e"
 PROJECTS="eina eet evas ecore embryo edje e_dbus efreet e \
           elementary ethumb eio ephoto exalt emprint \
           E-MODULES-EXTRA"
