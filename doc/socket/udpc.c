@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	unsigned long s_elapsed;
 	int count = 0;
 	timer_start();
-	while (count < 2000 ) {
+	while (count < 400000) {
 		rv = sendto(fd, buf, bsize, 0, (struct sockaddr *) &srvsa, srvlen);
 		if (rv < 1) {
 			perror("send");
@@ -52,8 +52,6 @@ int main(int argc, char *argv[])
 		
 		rv = recv(fd, rcv, bsize, 0);
 		if (rv > 1) {
-			//rv = recv(fd, rcv, bsize, 0);
-			//if (rv > 0)
 			//printf("%d %d, %s\n", count, rv, rcv);
 		} else {
 			perror("rcv");

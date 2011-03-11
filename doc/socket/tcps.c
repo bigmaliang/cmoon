@@ -5,6 +5,8 @@
 #include <arpa/inet.h>		/* htonls() and friends */
 #include <netinet/in.h>		/* INET stuff */
 #include <netinet/udp.h>	/* UDP stuff */
+#include <sys/ioctl.h>
+#include <fcntl.h>
 
 #define MAXPENDING 5    /* Maximum outstanding connection requests */
 #define SBSIZE (68 * 1024)
@@ -16,16 +18,26 @@ void HandleTCPClient(int clntSocket)
     char echoBuffer[SBSIZE];        /* Buffer for echo string */
     int recvMsgSize;                    /* Size of received message */
 
+	int old_flags;
+	
+	old_flags = fcntl(clntSocket, F_GETFL, 0);
+	
+	if (!(old_flags & O_NONBLOCK)) {
+		old_flags |= O_NONBLOCK;
+	}
+	fcntl(clntSocket, F_SETFL, old_flags);
+
+	sleep(1);
     /* Receive message from client */
     if ((recvMsgSize = recv(clntSocket, echoBuffer, SBSIZE, 0)) < 0) {
-        printf("recv() failed");
+        perror("recv() failed");
 		return;
 	}
 
     /* Send received string and receive again until end of transmission */
     while (recvMsgSize > 0)      /* zero indicates end of transmission */
     {
-		//printf("recevied %s\n", echoBuffer);
+		printf("recevied %s\n", echoBuffer);
 		//sleep(10);
 		
         /* Echo message back to client */
@@ -34,12 +46,15 @@ void HandleTCPClient(int clntSocket)
 			return;
 		}
 
+		sleep(1);
         /* See if there is more data to receive */
         if ((recvMsgSize = recv(clntSocket, echoBuffer, SBSIZE, 0)) < 0) {
             printf("recv() failed");
 			return;
 		}
     }
+
+	printf("%d\n", recvMsgSize);
 
     close(clntSocket);    /* Close client socket */
 }

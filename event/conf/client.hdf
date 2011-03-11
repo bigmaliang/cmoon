@@ -67,3 +67,30 @@ mtls {
 		net_timeout_u = 800000
 	}
 }
+
+ape-ext-v {
+	0 {
+		type = udp
+		ip = 127.0.0.1
+		port = 54110
+		non_block = yes
+	}
+}
+
+ape-ext-a {
+	0 {
+		type = udp
+		ip = 127.0.0.1
+		port = 54111
+		non_block = yes
+	}
+}
+
+ape-ext-b {
+	0 {
+		type = udp
+		ip = 127.0.0.1
+		port = 54112
+		non_block = yes
+	}
+}

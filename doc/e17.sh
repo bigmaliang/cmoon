@@ -20,7 +20,7 @@ DEBPKGS="gettext doxygen wpasupplicant autopoint \
          libzzip-dev \
          libdbus-1-dev \
          liblua5.1-0-dev \
-	 libexif-dev libcurl4-openssl-dev \
+         libexif-dev libcurl4-openssl-dev \
          libtiff-dev librsvg2-dev libgif-dev libcurl4-openssl-dev libgnutls-dev"
 EMODEXCEPT="drawer eweather"
 
@@ -68,11 +68,10 @@ for PROJ in $PROJECTS; do
   if [ "$PROJ" = "evas" ]; then
     ./autogen.sh $OPT --enable-xrender-x11
   else
-	./autogen.sh $OPT
+    ./autogen.sh $OPT
   fi
   make
   sudo make install
   cd ../
   sudo ldconfig
 done
-

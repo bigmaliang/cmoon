@@ -1,0 +1,21 @@
+sever
+----
+1, # apt-get install nfs-kernel-server
+
+
+2, vim /etc/exports
+/usr/local/3min/ *(rw,all_squash,anonuid=0,anongid=0)
+/usr/local   192.168.0.1(ro) 192.168.0.2(ro)
+/home        192.168.0.1(rw) 192.168.0.2(rw)
+
+
+
+client
+----
+1, #/etc/fstab
+172.10.7.204:/usr/local/3min	/mnt/dev	nfs	defaults	0	0
+
+OR
+
+ 2, mount 172.10.7.204:/usr/local/3min	/mnt/dev
+  

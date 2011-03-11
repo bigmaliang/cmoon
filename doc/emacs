@@ -52,3 +52,20 @@ C-c C-f			insert font(press b for font list)
 C-C C-o C-f		enable/disable tex folder mode
 C-c C-o C-e		TeX-fold-env
 C-c C-o i		TeX-fold-clearout-item
+
+
+ecb
+----
+M-x ecb-active	[de]active ecb
+C-c . l w		ecb-toggle-ecb-windows (hide/show ecb windows)
+RETURN			see node
+TAB				expand/unexpand node
+Left/Right		up/down node
+
+C-c . m   a/b/d/h/m/s		ecb-maxmize-window-
+	  	  					(analyse/speedbar/directories/history/methods/sources)
+C-c . g 1/a/b/d/h/m/s/l/c	ecb-goto-window-
+	  						(edit1/.../edit-last/comilation)
+C-c . l c/r/t/w				ecb-layout-
+	  						(change/redraw/toggle-layout/toggle-windows)
+C-c . f h/m/s/...			ecb-filter-.... (filter node)

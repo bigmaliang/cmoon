@@ -7,6 +7,8 @@
 #include <netinet/in.h>		/* INET stuff */
 #include <netinet/udp.h>	/* UDP stuff */
 #include <netinet/tcp.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
 
 #include "timer.h"
 
@@ -44,12 +46,20 @@ int main(int argc, char *argv[])
 
 	int one = 1;
 	setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char *) &one, sizeof(one));
+	int old_flags;
+	
+	old_flags = fcntl(fd, F_GETFL, 0);
+	
+	if (!(old_flags & O_NONBLOCK)) {
+		old_flags |= O_NONBLOCK;
+	}
+	fcntl(fd, F_SETFL, old_flags);
 
 	char buf[1024] = "hello man", rcv[1024] = {};
 	int bsize = 200;
 	ssize_t rv;
 
-	sleep(5);
+	//sleep(5);
 	printf("begin\n");
 
 	unsigned long s_elapsed;
@@ -63,6 +73,7 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
+		sleep(1);
 		rv = recv(fd, rcv, bsize, 0);
 		//printf("recv RET %d\n", rv);
 		if (rv > 1) {
