@@ -68,29 +68,29 @@ mtls {
 	}
 }
 
-ape-ext-v {
+ape_ext_v {
 	0 {
 		type = udp
 		ip = 127.0.0.1
-		port = 54110
+		port = 50000
 		non_block = yes
 	}
 }
 
-ape-ext-a {
+ape_ext_a {
 	0 {
 		type = udp
 		ip = 127.0.0.1
-		port = 54111
+		port = 50001
 		non_block = yes
 	}
 }
 
-ape-ext-b {
+ape_ext_b {
 	0 {
 		type = udp
 		ip = 127.0.0.1
-		port = 54112
+		port = 50002
 		non_block = yes
 	}
 }

@@ -1,34 +1,44 @@
+#include "apev.h"
 #include "net.h"
-#include "udp.h"
+
+#include "main.h"
 
 static void time_up(int fd, short flags, void* arg)
 {
 	struct event *ev = (struct event*)arg;
 	struct event_base *base = ev->ev_base;
-	struct timeval t = {.tv_sec = 100, .tv_usec = 0};
+	struct timeval t = {.tv_sec = 10, .tv_usec = 0};
+	static bool initialized = false;
 
-	event_del(ev);
+	if (initialized) event_del(ev);
+	else initialized = true;
+	
 	event_set(ev, -1, 0, time_up, ev);
 	event_base_set(base, ev);
 	event_add(ev, &t);
-	
-	//event_set(ev, -1, 0, time_up, ev);
 
-	fprintf(stderr, "current time %u\n", time(NULL));
+	mtc_dbg("current time %ld", time(NULL)); 
+}
+
+static void net_read(int fd, short event, void *arg)
+{
+	NEOERR *err = udps_recv(fd, 0, NULL);
+	TRACE_NOK(err);
 }
 
 void net_go()
 {
 	struct event_base *base;
 	struct event ev, ev_clock;
-	struct timeval t = {.tv_sec = 100, .tv_usec = 0};
+	struct timeval t = {.tv_sec = 10, .tv_usec = 0};
 	int fd = -1;
 
-	fd = udp_init();
-
+	fd = udps_init(hdf_get_value(g_cfg, "V.ip", "127.0.0.1"),
+				   hdf_get_int_value(g_cfg, "V.port", 50000));
+	
 	base = event_base_new();
 
-	event_set(&ev, fd, EV_READ | EV_PERSIST, udp_recv, &ev);
+	event_set(&ev, fd, EV_READ | EV_PERSIST, net_read, &ev);
 	event_base_set(base, &ev);
 	event_add(&ev, NULL);
 
@@ -41,5 +51,5 @@ void net_go()
 	event_del(&ev);
 	event_del(&ev_clock);
 	
-	udp_close(fd);
+	udps_close(fd);
 }
