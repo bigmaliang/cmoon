@@ -220,9 +220,20 @@ void mmisc_hex2str(unsigned char *hexin, unsigned int inlen, unsigned char *char
 	unsigned int i, j;
 	memset(charout, 0x0, inlen*2+1);
 
-	for (i = 0, j = 0; i < inlen; i++, j += 2) {
-		HEX2STR(hexin[i]>>4, charout[j]);
-		HEX2STR(hexin[i], charout[j+1]);
+	for (i = 0, j = 0; i < inlen; i++) {
+		if (hexin[i] == 9 || hexin[i] == 10 ||
+			(hexin[i] > 31 && hexin[i] < 127)) {
+			/*
+			 * resolve printable charactors
+			 * see man ascii
+			 */
+			charout[j] = hexin[i];
+			j++;
+		} else {
+			HEX2STR(hexin[i]>>4, charout[j]);
+			HEX2STR(hexin[i], charout[j+1]);
+			j += 2;
+		}
 	}
 
 	charout[j+1] = '\0';
