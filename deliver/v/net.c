@@ -17,7 +17,7 @@ static void time_up(int fd, short flags, void* arg)
 	event_base_set(base, ev);
 	event_add(ev, &t);
 
-	mtc_dbg("current time %ld", time(NULL)); 
+	//mtc_dbg("current time %ld", time(NULL)); 
 }
 
 static void net_read(int fd, short event, void *arg)

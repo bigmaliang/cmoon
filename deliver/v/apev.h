@@ -14,6 +14,7 @@
 #include <stdint.h>		/* uint32_t and friends */
 
 #include "ClearSilver.h"
+#include "mevent.h"
 
 #include "udps.h"
 #include "req.h"
@@ -65,5 +66,23 @@
     do {										\
 		ret = hdf_get_value(hdf, key, NULL);	\
     } while (0)
+
+typedef struct _UserEntry {
+	bool online;
+	char *server;
+} UserEntry;
+
+typedef struct _EventEntry {
+	char *name;
+	unsigned int num_online;
+	mevent_t *evt;
+} SnakeEntry;
+
+UserEntry* user_new();
+SnakeEntry* snake_new(char *name);
+
+/*
+ * TODO user_del(), event_del()
+ */
 
 #endif

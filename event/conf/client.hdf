@@ -94,3 +94,12 @@ ape_ext_b {
 		non_block = yes
 	}
 }
+
+ape_ext_c {
+	0 {
+		type = udp
+		ip = 127.0.0.1
+		port = 50003
+		non_block = yes
+	}
+}
