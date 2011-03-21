@@ -1,8 +1,10 @@
 #include "apev.h"
 #include "main.h"
 
+HASH *stbl = NULL;
+static SnakeEntry **slink = NULL;
+static int snake_num = 0;
 static HASH *utbl = NULL;
-static HASH *stbl = NULL;
 
 static NEOERR* ext_cmd_useron(struct queue_entry *q)
 {
@@ -33,6 +35,7 @@ static NEOERR* ext_cmd_useron(struct queue_entry *q)
 		} else {
 			u->server = s->name;
 			s->num_online++;
+			s->state = RUNNING;
 		}
 		
 		s = hash_next(stbl, (void**)&key);
@@ -69,6 +72,7 @@ static NEOERR* ext_cmd_useroff(struct queue_entry *q)
 			MEVENT_TRIGGER_NRET(s->evt, uin, REQ_CMD_USEROFF, FLAGS_NONE);
 		} else {
 			if (s->num_online > 0) s->num_online--;
+			s->state = RUNNING;
 		}
 		
 		s = hash_next(stbl, (void**)&key);
@@ -104,7 +108,13 @@ static NEOERR* ext_cmd_msgsnd(struct queue_entry *q)
 
 	SnakeEntry *s = (SnakeEntry*)hash_lookup(stbl, srcx);
 	if (!s) u->server = strdup(srcx);
-	else u->server = s->name;
+	else {
+		u->server = s->name;
+		if (s->state == DIED) {
+			u->online = false;
+			return nerr_raise(NERR_ASSERT, "%s died", srcx);
+		}
+	}
 
 	/*
 	 * send msg to destnation user
@@ -125,6 +135,42 @@ static NEOERR* ext_cmd_msgsnd(struct queue_entry *q)
 		MEVENT_TRIGGER(s->evt, srcx, REQ_CMD_MSGSND, FLAGS_NONE);
 	}
 	
+	return STATUS_OK;
+}
+
+static NEOERR* ext_cmd_connect(struct queue_entry *q)
+{
+	for (int i = 0; i < snake_num; i++) {
+		if (slink[i]->state == RUNNING) {
+			hdf_set_value(q->hdfsnd, "domain", slink[i]->domain);
+			return STATUS_OK;
+		}
+	}
+
+	return nerr_raise(REP_ERR_ALLDIE, "no body running");
+}
+
+static NEOERR* ext_cmd_hb(struct queue_entry *q)
+{
+	char *srcx;
+	int num;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "srcx", srcx);
+	REQ_GET_PARAM_INT(q->hdfrcv, "num_online", num);
+
+	mtc_dbg("server %s heart beated", srcx);
+
+	SnakeEntry *s = (SnakeEntry*)hash_lookup(stbl, srcx);
+	if (s) {
+		s->idle = g_time;
+		/*
+		 * v restared? reload the load info
+		 */
+		if (s->num_online < num && num < 0x00FFFFFF) {
+			s->num_online = num;
+		}
+	} else return nerr_raise(NERR_ASSERT, "%s not found", srcx);
+
 	return STATUS_OK;
 }
 
@@ -164,6 +210,12 @@ static NEOERR* ext_process_driver(struct event_entry *e, struct queue_entry *q)
 	case REQ_CMD_STATE:
 		err = ext_cmd_state(q);
 		break;
+	case REQ_CMD_CONNECT:
+		err = ext_cmd_connect(q);
+		break;
+	case REQ_CMD_HB:
+		err = ext_cmd_hb(q);
+		break;
 	default:
 		err = nerr_raise(NERR_ASSERT, "unknown command %u", q->operation);
 		break;
@@ -192,7 +244,9 @@ static NEOERR* ext_start_driver()
 		SnakeEntry *s = snake_new(ename);
 		if (s) {
 			mtc_dbg("event %s init ok", ename);
+			s->domain = strdup(hdf_obj_name(node));
 			hash_insert(stbl, (void*)strdup(ename), (void*)s);
+			snake_num++;
 		} else {
 			mtc_err("event %s init failure", ename);
 		}
@@ -210,3 +264,36 @@ struct event_entry ext_entry = {
 	.stop_driver = NULL,
 	.next = NULL,
 };
+
+static int snake_compare(const void *a, const void *b)
+{
+	SnakeEntry *s1 = *(SnakeEntry **)a;
+	SnakeEntry *s2 = *(SnakeEntry **)b;
+
+	return s1->num_online - s2->num_online;
+}
+
+void ext_snake_sort()
+{
+	int i = 0;
+	
+	if (slink == NULL) {
+		char *key = NULL;
+		
+		slink = (SnakeEntry**)calloc(snake_num, sizeof(SnakeEntry));
+		if (!slink) return;
+
+		SnakeEntry *s = (SnakeEntry*)hash_next(stbl, (void**)&key);
+		while (s && i < snake_num) {
+			slink[i++] = s;
+			s = hash_next(stbl, (void**)&key);
+		}
+	}
+
+	qsort((void*)slink, snake_num, sizeof(void*), snake_compare);
+
+	for (i = 0; i < snake_num; i++) {
+		mtc_dbg("%d nd server %s has %d users",
+				i, slink[i]->name, slink[i]->num_online);
+	}
+}

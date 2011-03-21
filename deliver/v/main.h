@@ -4,6 +4,14 @@
 #include "apev.h"
 #include "mheads.h"
 
+#define TIMEUP_SEC	10
+#define ZOMBLE_SEC	300
+//#define TIMEUP_SEC	10
+//#define ZOMBLE_SEC	30
+
+extern volatile time_t g_time;
+extern HASH *stbl;
+
 /* TODO hdf_write_string lead mem_leak */
 #define MEVENT_TRIGGER(evt, key, cmd, flags)							\
 	do {																\

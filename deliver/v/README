@@ -4,36 +4,37 @@ see extend.png for network skeleton
 
 the server v can handle other aped's following request through udp protocol:
 
-user_on		user online
-user_off	user offline
+connect     called before CMD_CONNECT, for load balance.
 
-msg_snd		message across aped
+user_on     user online
+user_off    user offline
+
+msg_snd     message across aped
 
 
 depend
 ------
 
 v currently depend on following libraries:
-	clearsilver		http://www.clearsilver.net/
-	mevent			https://github.com/bigml/cmoon/tree/master/lib/mevent
-	mnl				https://github.com/bigml/cmoon/tree/master/lib/mnl
+    clearsilver     http://www.clearsilver.net/
+    mevent          https://github.com/bigml/cmoon/tree/master/lib/mevent
+    mnl             https://github.com/bigml/cmoon/tree/master/lib/mnl
 
 
 AUTHORS
 -------
-	bigml			 bigmaliang@gmail.com
+    bigml            bigmaliang@gmail.com
 
 
 THANKS
 ------
-	ClearSilver		http://www.clearsilver.net/
-	nmdb			http://blitiri.com.ar/p/nmdb/
-	APE				http://www.ape-project.org/
+    ClearSilver     http://www.clearsilver.net/
+    nmdb            http://blitiri.com.ar/p/nmdb/
+    APE             http://www.ape-project.org/
 
 
 TODO
 ----
-	1, sys_load command for load balance
-	2, msg_brd command for channel message
-	3, v's backup for disaster recovery
-	
+    1, DONE sys_load command for load balance
+    2, msg_brd command for channel message
+    3, v's backup for disaster recovery

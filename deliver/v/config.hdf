@@ -11,4 +11,5 @@ V {
 Aped {
 	0 = ape_ext_a
 	1 = ape_ext_b
+	2 = ape_ext_c
 }

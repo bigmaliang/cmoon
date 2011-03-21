@@ -13,7 +13,8 @@ static NEOERR* parse_event(struct req_info *req)
 	uint32_t esize, rsize;
 	unsigned char *pos;
 	HDF *hdfrcv = NULL;
-	NEOERR *err;
+	NEOERR *err, *neede;
+	int retcode;
 
 	if (!etbl) return nerr_raise(NERR_ASSERT, "v backend hasn't init");
 	
@@ -59,8 +60,27 @@ static NEOERR* parse_event(struct req_info *req)
 			q.req = req;
 		
 			err = e->process_driver(e, &q);
-			if (err != STATUS_OK) return nerr_pass(err);
 
+			/*
+			 * set errorxxx to q.hdfsnd
+			 */
+			neede = err;
+			while (neede && neede != INTERNAL_ERR) {
+				if (neede->error != NERR_PASS) break;
+				neede = neede->next;
+			}
+			retcode = neede ? neede->error: REP_OK;
+			if (PROCESS_NOK(retcode)) {
+				STRING s; string_init(&s);
+				nerr_error_traceback(err, &s);
+				hdf_set_value(q.hdfsnd, "errtrace", s.buf);
+				string_clear(&s);
+				hdf_set_int_value(q.hdfsnd, "errcode", neede->error);
+			}
+
+			/*
+			 * send q.hdfsnd to client if present
+			 */
 			if (hdf_obj_child(q.hdfsnd) != NULL) {
 				unsigned char *buf = calloc(1, MAX_PACKET_LEN);
 				if (!buf) goto done;
@@ -69,7 +89,7 @@ static NEOERR* parse_event(struct req_info *req)
 				vsize = pack_hdf(q.hdfsnd, buf, MAX_PACKET_LEN);
 				if (vsize == 0) goto done;
  
-				q.req->reply_long(q.req, REP_OK, buf, vsize);
+				q.req->reply_long(q.req, retcode, buf, vsize);
 
 				free(buf);
 			}
@@ -78,15 +98,16 @@ static NEOERR* parse_event(struct req_info *req)
 			hdf_destroy(&(q.hdfrcv));
 			hdf_destroy(&(q.hdfsnd));
 
-			break;
+			/*
+			 * return error to caller for trace
+			 */
+			return nerr_pass(err);
 		}
 
 		e = e->next;
 	}
 
-	if (!e)	return nerr_raise(NERR_NOT_FOUND, "%s backend not found", ename);
-
-	return STATUS_OK;
+	return nerr_raise(NERR_NOT_FOUND, "%s backend not found", ename);
 }
 
 NEOERR* parse_regist_v(struct event_entry *e)

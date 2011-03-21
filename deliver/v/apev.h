@@ -72,11 +72,20 @@ typedef struct _UserEntry {
 	char *server;
 } UserEntry;
 
-typedef struct _EventEntry {
+typedef struct _SnakeEntry {
 	char *name;
+	char *domain;
+	time_t idle;
+	int state;
+	
 	unsigned int num_online;
 	mevent_t *evt;
 } SnakeEntry;
+
+enum {
+	RUNNING = 0,
+	DIED
+};
 
 UserEntry* user_new();
 SnakeEntry* snake_new(char *name);

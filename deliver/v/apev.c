@@ -12,6 +12,9 @@ SnakeEntry* snake_new(char *name)
 	SnakeEntry *s = calloc(1, sizeof(SnakeEntry));
 
 	s->name = strdup(name);
+	s->idle = time(NULL);
+	s->state = RUNNING;
+	
 	s->num_online = 0;
 	s->evt = mevent_init_plugin(name);
 
