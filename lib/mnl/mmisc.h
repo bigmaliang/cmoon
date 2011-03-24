@@ -40,6 +40,12 @@ void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_c
 
 void mmisc_pagediv_get(HDF *hdf, char *inprefix, int *count, int *offset);
 void mmisc_str_repchr(char *s, char from, char to);
+/*
+ * return an allocated string, remember to free it
+ * mmisc_str_repchr(s, "from1", "to1", "from2", "to2", ...)
+ * make sure offer suitable rep_count, or, random errors will occur.
+ */
+char* mmisc_str_repstr(int rep_count, char *s, ...);
 char* mmisc_str_strip (char *s, char n);
 unsigned int hash_string(const char *str);
 
@@ -52,6 +58,7 @@ void mmisc_cache_headers(time_t second);
  * make sure charout has inlen*2+1 len
  */
 void mmisc_hex2str(unsigned char *hexin, unsigned int inlen, unsigned char *charout);
+void mmisc_bin2char(unsigned char *in, unsigned int inlen, unsigned char *out);
 
 __END_DECLS
 #endif	/* __MMISC_H__ */
