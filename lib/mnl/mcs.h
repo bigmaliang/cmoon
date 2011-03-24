@@ -5,6 +5,36 @@
 
 __BEGIN_DECLS
 
+/* because of libneo_cs doesn't have cs_render_stdout */
+NEOERR* mcs_outputcb(void *ctx, char *s);
+/* because of libneo_cs doesn't have cs_render_to_file */
+NEOERR* mcs_strcb(void *ctx, char *s);
+NEOERR* mcs_str2file(STRING str, const char *file);
+
+void mcs_rand_string(char *s, int max);
+NEOERR* mcs_register_bitop_functions(CSPARSE *cs);
+NEOERR* mcs_register_mkd_functions(CSPARSE *cs);
+void mcs_hdf_escape_val(HDF *hdf);
+void mcs_html_escape(HDF *hdf, char *name);
+NEOERR* mcs_err_valid(NEOERR *err);
+
+/*
+ * build UPDATE's SET xxxx string
+ * data	:IN val {aname: 'foo', pname: 'bar'}
+ * node :IN key {0: 'aname', 1: 'pname'}
+ * str  :OUT update colum string: aname='foo', pname='bar',
+ */
+NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str);
+NEOERR* mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
+NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str);
+
+#define MLIST_ITERATE(list, item)										\
+	item = list->items[0];												\
+	for (int t_rsv_i = 0; t_rsv_i < list->num; item = list->items[++t_rsv_i])
+
+#define ITERATE_MLIST(ul)								\
+	for (int t_rsv_i = 0; t_rsv_i < ul->num; t_rsv_i++)
+
 #define DIE_NOK_CGI(err)						\
 	if (err != STATUS_OK) {						\
 		STRING zstra;	string_init(&zstra);	\
@@ -85,36 +115,6 @@ __BEGIN_DECLS
 		string_clear(&zstra);					\
 		nerr_ignore(&err);						\
 	}
-
-#define MLIST_ITERATE(list, item)										\
-	item = list->items[0];												\
-	for (int t_rsv_i = 0; t_rsv_i < list->num; item = list->items[++t_rsv_i])
-
-#define ITERATE_MLIST(ul)								\
-	for (int t_rsv_i = 0; t_rsv_i < ul->num; t_rsv_i++)
-
-/* because of libneo_cs doesn't have cs_render_stdout */
-NEOERR* mcs_outputcb(void *ctx, char *s);
-/* because of libneo_cs doesn't have cs_render_to_file */
-NEOERR* mcs_strcb(void *ctx, char *s);
-NEOERR* mcs_str2file(STRING str, const char *file);
-
-void mcs_rand_string(char *s, int max);
-NEOERR* mcs_register_bitop_functions(CSPARSE *cs);
-NEOERR* mcs_register_mkd_functions(CSPARSE *cs);
-void mcs_hdf_escape_val(HDF *hdf);
-void mcs_html_escape(HDF *hdf, char *name);
-NEOERR* mcs_err_valid(NEOERR *err);
-
-/*
- * build UPDATE's SET xxxx string
- * data	:IN val {aname: 'foo', pname: 'bar'}
- * node :IN key {0: 'aname', 1: 'pname'}
- * str  :OUT update colum string: aname='foo', pname='bar',
- */
-NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str);
-NEOERR* mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
-NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str);
 
 __END_DECLS
 #endif	/* __MCS_H__ */

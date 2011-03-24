@@ -68,11 +68,20 @@ typedef struct mevent_t {
 	HDF *hdfrcv;
 } mevent_t;
 
+typedef void (*MeventLog)(const char *func, const char *file, long line, int level, const char *format, ...);
+
 /*
  * 内部使用
  */
 unsigned int srv_get_msg_offset(struct mevent_srv *srv);
 struct mevent_srv *select_srv(mevent_t *evt, const char *key, size_t ksize);
+
+/*
+ * init mevent's error
+ */
+MeventLog mevent_log;
+
+NEOERR *merr_init(MeventLog logf);
 
 /*
  * 初始化数据结构，用过后请使用mevent_free() 释放内存
@@ -113,6 +122,53 @@ mevent_t *mevent_init_plugin(char *ename);
  */
 int mevent_trigger(mevent_t *evt, char *key,
 				   unsigned short cmd, unsigned short flags);
+
+
+/* TODO hdf_write_string lead mem_leak */
+#define MEVENT_TRIGGER(evt, key, cmd, flags)							\
+	do {																\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {		\
+			char *zpa = NULL;											\
+			hdf_write_string(evt->hdfrcv, &zpa);						\
+			return nerr_raise(evt->errcode, "pro %s %d failure %d %s",	\
+							  evt->ename, cmd, evt->errcode, zpa);		\
+		}																\
+	} while(0)
+#define MEVENT_TRIGGER_VOID(evt, key, cmd, flags)						\
+	do {																\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {		\
+			char *zpa = NULL;											\
+			hdf_write_string(evt->hdfrcv, &zpa);						\
+			if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
+									   "pro %s %d failure %d %s",		\
+									   evt->ename, cmd, evt->errcode, zpa); \
+			if (zpa) free(zpa);											\
+			return;														\
+		}																\
+	} while(0)
+#define MEVENT_TRIGGER_RET(ret, evt, key, cmd, flags)					\
+	do {																\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {		\
+			char *zpa = NULL;											\
+			hdf_write_string(evt->hdfrcv, &zpa);						\
+			if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
+									   "pro %s %d failure %d %s",		\
+									   evt->ename, cmd, evt->errcode, zpa); \
+			if (zpa) free(zpa);											\
+			return ret;													\
+		}																\
+	} while(0)
+#define MEVENT_TRIGGER_NRET(evt, key, cmd, flags)						\
+	do {																\
+		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {		\
+			char *zpa = NULL;											\
+			hdf_write_string(evt->hdfrcv, &zpa);						\
+			if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
+									   "pro %s %d failure %d %s",		\
+									   evt->ename, cmd, evt->errcode, zpa); \
+			if (zpa) free(zpa);											\
+		}																\
+	} while(0)
 
 
 #endif	/* __MEVENT_H__ */

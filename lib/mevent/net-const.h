@@ -2,6 +2,8 @@
 #ifndef _NET_CONST_H
 #define _NET_CONST_H
 
+#include "ClearSilver.h"
+
 /*
  * Local network constants.
  * Isolated so it's shared between the server and the library code.
@@ -65,21 +67,21 @@ enum {
 	REQ_CMD_STATS = 1000		/* MAX system command is 1000 */
 } req_cmd_sys;
 
+extern NERR_TYPE REP_ERR;		/* 14 binded with neo_error, see pop/pub/lerr.c */
+extern NERR_TYPE REP_ERR_VER;
+extern NERR_TYPE REP_ERR_SEND;
+extern NERR_TYPE REP_ERR_BROKEN;
+extern NERR_TYPE REP_ERR_UNKREQ;
+extern NERR_TYPE REP_ERR_MEM;
+extern NERR_TYPE REP_ERR_DB;
+extern NERR_TYPE REP_ERR_BUSY;
+extern NERR_TYPE REP_ERR_PACK;
+extern NERR_TYPE REP_ERR_BADPARAM;
+extern NERR_TYPE REP_ERR_CACHE_MISS; /* 24 */
+
 enum {
-	REP_ERR = 100,
-	REP_ERR_VER,
-	REP_ERR_SEND,				/* Error sending data */
-	REP_ERR_BROKEN,				/* Broken request */
-	REP_ERR_UNKREQ,				/* Unknown request */
-	REP_ERR_MEM,				/* Memory allocation error */
-	REP_ERR_DB,					/* Database error */
-	REP_ERR_BUSY,				/* queue full */
-	REP_ERR_PACK,				/* packet data failure */
-	REP_ERR_BADPARAM,			/* parameter error */
-	REP_ERR_CACHE_MISS,			/* req_cmd_cache_get miss */
-	REP_ERR_APP = 500,			/* application error */
 	REP_OK = 1000,				/* ok start point */
-} rep_code_sys;
+};
 
 #endif
 
