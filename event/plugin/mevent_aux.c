@@ -157,7 +157,7 @@ static NEOERR* aux_cmd_mailadd(struct queue_entry *q, struct cache *cd, mdb_conn
 						  &str);
 	if (err != STATUS_OK) return nerr_pass(err);
 
-	MDB_EXEC(db, NULL, "ISNERT INTO mail %s", NULL, str.buf);
+	MDB_EXEC(db, NULL, "INSERT INTO email %s", NULL, str.buf);
 	string_clear(&str);
 
 	return STATUS_OK;

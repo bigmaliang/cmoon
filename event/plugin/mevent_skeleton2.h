@@ -8,9 +8,4 @@ enum req_cmd_skeleton2 {
 	REQ_CMD_SKSET
 };
 
-enum req_code_skeleton2 {
-	REP_ERR_SKGET = 501,
-	REP_OK_SKGET = 1001
-};
-
 #endif	/* __MEVENT_SKELETON2_H__ */

@@ -86,7 +86,7 @@ libsqlite3-dev
 6, modify moon/Make.env(no space left in config line)
    cd lib ; make && cd event; make
 
-7, memcached -d -m 16 -p 11211 -u nobody -l 127.0.0.1
+7, [/usr/local/bin/]memcached -d -m 16 -p 11211 -u nobody -l 127.0.0.1
 
 8, modify event/conf/server.hdf  pop/config.hdf APE_Server/bin/ape.conf loglevel from 7 to 3
 

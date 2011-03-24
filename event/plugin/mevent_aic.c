@@ -94,6 +94,7 @@ static NEOERR* aic_cmd_appnew(struct queue_entry *q, struct cache *cd, mdb_conn 
 	if (pname) pid = hash_string(pname);
 
 	err = aic_cmd_appinfo(q, cd, db);
+	nerr_handle(&err, REP_ERR_NREGIST);
 	if (err != STATUS_OK) return nerr_pass(err);
 
 	if (hdf_get_obj(q->hdfsnd, "state"))
@@ -415,6 +416,42 @@ static NEOERR* aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_co
 	return STATUS_OK;
 }
 
+#define RESET_COL " aname, rlink, to_char(intime, 'YYYY-MM-DD') as intime "
+static NEOERR* aic_cmd_app_getrlink(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	char *aname;
+	NEOERR *err;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+
+	MDB_QUERY_RAW(db, "appreset", RESET_COL, "aname=$1", "s", aname);
+	err = mdb_set_row(q->hdfsnd, db, RESET_COL, NULL);
+	if (nerr_handle(&err, NERR_NOT_FOUND))
+		return nerr_raise(REP_ERR_NRESET, "%s hasn't reseted", aname);
+
+	return nerr_pass(err);
+}
+
+static NEOERR* aic_cmd_app_setrlink(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	char *aname, *rlink;
+	NEOERR *err;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+	REQ_GET_PARAM_STR(q->hdfrcv, "rlink", rlink);
+
+	err = aic_cmd_appinfo(q, cd, db);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+	if (!hdf_get_value(q->hdfsnd, "email", NULL))
+		return nerr_raise(REP_ERR_MISSEMAIL, "%s have no email supplied", aname);
+
+	MDB_EXEC(db, NULL, "SELECT merge_appreset($1::varchar(256), $2::varchar(256));",
+			 "ss", aname, rlink);
+
+	return STATUS_OK;
+}
+
 static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 {
 	struct aic_entry *e = (struct aic_entry*)entry;
@@ -462,6 +499,12 @@ static void aic_process_driver(struct event_entry *entry, struct queue_entry *q)
 		break;
 	case REQ_CMD_APP_O_USERS:
 		err = aic_cmd_appousers(q, cd, db);
+		break;
+	case REQ_CMD_APP_GETRLINK:
+		err = aic_cmd_app_getrlink(q, cd, db);
+		break;
+	case REQ_CMD_APP_SETRLINK:
+		err = aic_cmd_app_setrlink(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;

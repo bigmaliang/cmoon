@@ -33,16 +33,18 @@ enum {
 	REQ_CMD_APPUSERIN,			/* remember sb visited my app */
 	REQ_CMD_APPUSEROUT,			/* remove JiangYou boy */
 	REQ_CMD_APPUSERUP,
-	REQ_CMD_APP_O_USERS = 3001  /* who is my stuff */
+	REQ_CMD_APP_O_USERS = 3001,	/* who is my stuff */
+	REQ_CMD_APP_GETRLINK = 4001,
+ 	REQ_CMD_APP_SETRLINK
 } req_cmd_aic;
 
 enum {
-	REP_ERR_ALREADYREGIST = 501,
-	REP_ERR_NREGIST,
-	REP_ERR_ALREADYJOIN = 511,
-	REP_ERR_NOTJOIN,
-	REP_OK_INSERT = 1001,
-	REP_OK_UPDATE,
+	REP_ERR_NREGIST = 36,
+	REP_ERR_ALREADYREGIST,
+	REP_ERR_MISSEMAIL,
+	REP_ERR_NRESET,
+	REP_ERR_NOTJOIN = 41,
+	REP_ERR_ALREADYJOIN,
 } rep_code_aic;
 
 #endif	/* __MEVENT_AIC_H__ */

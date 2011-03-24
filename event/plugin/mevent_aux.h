@@ -16,9 +16,4 @@ enum req_cmd_aux {
 	REQ_CMD_MAIL_ADD = 2001
 };
 
-enum req_code_aux {
-	REP_ERR_CMTGET = 501,
-	REP_OK_CMTGET = 1001
-};
-
 #endif	/* __MEVENT_AUX_H__ */
