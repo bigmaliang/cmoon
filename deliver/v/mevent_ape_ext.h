@@ -14,8 +14,7 @@ enum {
 } req_cmd_aic;
 
 enum {
-	REP_ERR_ALLDIE = 501,
-	REP_ERR_NREGIST = 511
+	REP_ERR_ALLDIE = 25,
 } rep_code_aic;
 
 void ext_snake_sort();
