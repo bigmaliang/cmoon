@@ -131,10 +131,10 @@ static NEOERR* aic_cmd_appup(struct queue_entry *q, struct cache *cd, mdb_conn *
 	if (tune != -1) {
 		if (hdf_get_int_value(q->hdfrcv, "tuneop", 0)) {
 			/* set tune bit */
-			string_appendf(&str, " tune=tune | %d, ", tune);
+			string_appendf(&str, " tune=tune | %d ", tune);
 		} else {
 			/* unset tune bit */
-			string_appendf(&str, " tune=tune & %d, ", ~tune);
+			string_appendf(&str, " tune=tune & %d ", ~tune);
 		}
 	}
 

@@ -139,6 +139,7 @@
 (setq visible-bell t)	;stop audibel-bee instead by visible-bell 2006-04-04
 (setq semanticdb-default-save-directory "~/.semanticdb")	;store all cache file in a seprated directory
 (setq vc-cvs-stay-local nil)	;not make local backup file in vc mode
+(setq js-auto-indent-flag nil)	;,{}; don't indent js
 (setq mouse-buffer-menu-mode-mult 1)
 (setq tramp-bkup-backup-directory-info bkup-backup-directory-info)
 (setenv "CVS_RSH" "ssh")	;let emacs to use ssh

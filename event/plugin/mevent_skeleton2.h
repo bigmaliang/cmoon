@@ -3,7 +3,7 @@
 
 #define PREFIX_SKLE		"Skele"
 
-enum req_cmd_skeleton2 {
+enum {
 	REQ_CMD_SKGET = 1001,
 	REQ_CMD_SKSET
 };

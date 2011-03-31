@@ -13,6 +13,7 @@ Mevent {
 		5 = msg
 		6 = aux
 		7 = mtls
+		8 = bank
 	}
 	smsalarm {
 		db {
@@ -105,5 +106,8 @@ Plugin {
 				dte = dt <
 			}
 		}
+	}
+	bank {
+		dbsn = pgsql:dbname=lcs_bank host=localhost user=lcser password=loveu
 	}
 }
