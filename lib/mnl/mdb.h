@@ -91,6 +91,14 @@ int mdb_get_last_id(mdb_conn *conn, const char* seq_name);
 		err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);	\
 		if (err != STATUS_OK) return nerr_pass(err);				\
 	} while (0)
+#define MDB_EXEC_TS(conn, affrow, sqlfmt, fmt, ...)					\
+	do {															\
+		err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);	\
+		if (err != STATUS_OK) {										\
+			mdb_rollback(conn);										\
+			return nerr_pass(err);									\
+		} \
+	} while (0)
 
 __END_DECLS
 #endif	/* __MDB_H__ */

@@ -86,10 +86,13 @@ NEOERR* mdb_finish(mdb_conn* conn)
 	if (!conn) return nerr_raise(NERR_ASSERT, "conn null");
 	if (!conn->in_transaction) return nerr_raise(NERR_ASSERT, "not in transaction");
 
-	NEOERR *err = mdb_rollback(conn);
-	if (err != STATUS_OK) return nerr_pass(err);
-	
-	return nerr_pass(mdb_commit(conn));
+	NEOERR *err = mdb_commit(conn);
+	if (err != STATUS_OK) {
+		mdb_rollback(conn);
+		return nerr_pass(err);
+	}
+
+	return STATUS_OK;
 }
 
 /*
