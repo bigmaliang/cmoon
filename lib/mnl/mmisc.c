@@ -106,14 +106,18 @@ void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_c
 	*qr_cnt = cnt;
 }
 
-void mmisc_pagediv_get(HDF *hdf, char *inprefix, int *count, int *offset)
+void mmisc_pagediv(HDF *hdf, char *inprefix, int *count, int *offset,
+				   char *outprefix, HDF *ohdf)
 {
 	char hdfkey[LEN_HDF_KEY];
-	int i, j;
+	int i, j, npg = DFT_PAGE_NUM;
 
 	if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.npp", inprefix);
 	else strcpy(hdfkey, "npp");
 	i = hdf_get_int_value(hdf, hdfkey, DFT_NUM_PERPAGE);
+
+	if (outprefix) hdf_set_valuef(ohdf, "%s.npp=%d", outprefix, i);
+	else hdf_set_int_value(ohdf, "npp", i);
 	
 	if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.nst", inprefix);
 	else strcpy(hdfkey, "nst");
@@ -122,11 +126,18 @@ void mmisc_pagediv_get(HDF *hdf, char *inprefix, int *count, int *offset)
 		if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.npg", inprefix);
 		else strcpy(hdfkey, "npg");
 		j = hdf_get_int_value(hdf, hdfkey, DFT_PAGE_NUM);
+		npg = j;
 		j = (j-1)*i;
 	}
+
+	if (outprefix) hdf_set_valuef(ohdf, "%s.npg=%d", outprefix, npg);
+	else hdf_set_int_value(ohdf, "npg", npg);
 	
 	*count = i;
 	*offset = j;
+
+	if (outprefix) hdf_set_valuef(ohdf, "%s.nst=%d", outprefix, j);
+	else hdf_set_int_value(ohdf, "nst", j);
 }
 
 void mmisc_str_repchr(char *s, char from, char to)
