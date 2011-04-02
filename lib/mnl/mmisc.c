@@ -112,32 +112,32 @@ void mmisc_pagediv(HDF *hdf, char *inprefix, int *count, int *offset,
 	char hdfkey[LEN_HDF_KEY];
 	int i, j, npg = DFT_PAGE_NUM;
 
-	if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.npp", inprefix);
-	else strcpy(hdfkey, "npp");
+	if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s._npp", inprefix);
+	else strcpy(hdfkey, "_npp");
 	i = hdf_get_int_value(hdf, hdfkey, DFT_NUM_PERPAGE);
 
-	if (outprefix) hdf_set_valuef(ohdf, "%s.npp=%d", outprefix, i);
-	else hdf_set_int_value(ohdf, "npp", i);
+	if (outprefix) hdf_set_valuef(ohdf, "%s._npp=%d", outprefix, i);
+	else hdf_set_int_value(ohdf, "_npp", i);
 	
-	if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.nst", inprefix);
-	else strcpy(hdfkey, "nst");
+	if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s._nst", inprefix);
+	else strcpy(hdfkey, "_nst");
 	j = hdf_get_int_value(hdf, hdfkey, -1);
 	if (j == -1) {
-		if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s.npg", inprefix);
-		else strcpy(hdfkey, "npg");
+		if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s._npg", inprefix);
+		else strcpy(hdfkey, "_npg");
 		j = hdf_get_int_value(hdf, hdfkey, DFT_PAGE_NUM);
 		npg = j;
 		j = (j-1)*i;
 	}
 
-	if (outprefix) hdf_set_valuef(ohdf, "%s.npg=%d", outprefix, npg);
-	else hdf_set_int_value(ohdf, "npg", npg);
+	if (outprefix) hdf_set_valuef(ohdf, "%s._npg=%d", outprefix, npg);
+	else hdf_set_int_value(ohdf, "_npg", npg);
 	
 	*count = i;
 	*offset = j;
 
-	if (outprefix) hdf_set_valuef(ohdf, "%s.nst=%d", outprefix, j);
-	else hdf_set_int_value(ohdf, "nst", j);
+	if (outprefix) hdf_set_valuef(ohdf, "%s._nst=%d", outprefix, j);
+	else hdf_set_int_value(ohdf, "_nst", j);
 }
 
 void mmisc_str_repchr(char *s, char from, char to)

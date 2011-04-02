@@ -17,14 +17,14 @@ __BEGIN_DECLS
 		int zinta;														\
 		mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
 		mdb_get(db, "i", &zinta);										\
-		hdf_set_int_value(hdf, "ntt", zinta);							\
+		hdf_set_int_value(hdf, "_ntt", zinta);							\
 	} while (0)
 #define MMISC_PAGEDIV_SET(hdf, outprefix, db, table, condition, sfmt, ...) \
 	do {																\
 		int zinta;														\
 		mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
 		mdb_get(db, "i", &zinta);										\
-		hdf_set_valuef(hdf, "%s.ntt=%d", outprefix, zinta);				\
+		hdf_set_valuef(hdf, "%s._ntt=%d", outprefix, zinta);				\
 	} while (0)
 
 

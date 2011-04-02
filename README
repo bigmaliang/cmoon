@@ -95,4 +95,12 @@ libsqlite3-dev
 ==
 
 1. set tab 4 space width please
+2. RESERVED key in request url
+	/json: output json
+	_op: add, mod, del for ...
+	_ntt: total number
+	_nst: start number
+	_npg: page number (_nst will overwrite _npg)
+	_npp: number perpage
+	
 
