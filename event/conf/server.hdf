@@ -109,5 +109,12 @@ Plugin {
 	}
 	bank {
 		dbsn = pgsql:dbname=lcs_bank host=localhost user=lcser password=loveu
+		QueryCond {
+			bill {
+				aid [type=int, require=true] = aid=
+				tms = intime >
+				tme = intime <
+			}
+		}
 	}
 }

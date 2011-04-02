@@ -386,12 +386,12 @@ static NEOERR* aic_cmd_appousers(struct queue_entry *q, struct cache *cd, mdb_co
 	REQ_GET_PARAM_STR(q->hdfrcv, "pname", pname);
 	pid = hash_string(pname);
 	
-	mmisc_pagediv_get(q->hdfrcv, NULL, &count, &offset);
+	mmisc_pagediv(q->hdfrcv, NULL, &count, &offset, NULL, q->hdfsnd);
 	
 	if (cache_getf(cd, &val, &vsize, PREFIX_APPOUSER"%d_%d", pid, offset)) {
 		unpack_hdf(val, vsize, &q->hdfsnd);
 	} else {
-		MMISC_PAGEDIV_SET_N(q->hdfsnd, offset, db, "appinfo", "pid=%d OR aid=%d",
+		MMISC_PAGEDIV_SET_N(q->hdfsnd, db, "appinfo", "pid=%d OR aid=%d",
 							NULL, pid, pid);
 		MDB_QUERY_RAW(db, "appinfo", APPINFO_COL,
 					  "pid=%d OR aid=%d ORDER BY uptime LIMIT %d OFFSET %d",

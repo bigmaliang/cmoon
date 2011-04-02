@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	hdf_set_value(evt->hdfsnd, "aname", "aaa");
+	hdf_set_value(evt->hdfsnd, "aname", "kol");
 	hdf_set_value(evt->hdfsnd, "uname", "ru_PGFOV");
 	hdf_set_value(evt->hdfsnd, "to", "kol");
 

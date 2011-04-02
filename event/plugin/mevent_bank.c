@@ -25,6 +25,10 @@ struct bank_entry {
 	" to_char(intime, 'YYYY-MM-DD') as intime, "	\
 	" to_char(uptime, 'YYYY-MM-DD') as uptime "
 
+#define BILL_COL "id, aid, aname, btype, fee, remark, " \
+	" to_char(intime, 'YYYY-MM-DD HH:mm:SS') as intime "
+
+
 static NEOERR* bank_cmd_info(struct queue_entry *q, struct cache *cd, mdb_conn *db)
 {
 	unsigned char *val = NULL; size_t vsize = 0;
@@ -44,7 +48,7 @@ static NEOERR* bank_cmd_info(struct queue_entry *q, struct cache *cd, mdb_conn *
 			return nerr_raise(REP_ERR_BANK_NEEDUP, "%s hasn't pay", aname);
 		if (err != STATUS_OK) return nerr_pass(err);
 		
-		CACHE_HDF(q->hdfsnd, BANK_CC_SEC, PREFIX_BANK"%d", aid);
+		CACHE_HDF(q->hdfsnd, BILL_CC_SEC, PREFIX_BANK"%d", aid);
 	}
 	
 	return STATUS_OK;
@@ -127,8 +131,53 @@ finish:
 	else err = mdb_finish(db);
 
 	cache_delf(cd, PREFIX_BANK"%d", aid);
+
+	STRING str; string_init(&str);
+	hdf_set_int_value(q->hdfrcv, "aid", aid);
+	mcs_build_querycond(q->hdfrcv,
+						hdf_get_obj(g_cfg, CONFIG_PATH".QueryCond.bill"),
+						&str, NULL);
+	cache_delf(cd, PREFIX_BILL"%s_0", str.buf);
+	string_clear(&str);
 	
 	return nerr_pass(err);
+}
+
+static NEOERR* bank_cmd_getbill(struct queue_entry *q, struct cache *cd, mdb_conn *db)
+{
+	unsigned char *val = NULL; size_t vsize = 0;
+	STRING str; string_init(&str);
+	int aid, count, offset;
+	char *aname;
+	NEOERR *err;
+
+	REQ_GET_PARAM_STR(q->hdfrcv, "aname", aname);
+	aid = hash_string(aname);
+	hdf_set_int_value(q->hdfrcv, "aid", aid);
+	
+	err = mcs_build_querycond(q->hdfrcv,
+							  hdf_get_obj(g_cfg, CONFIG_PATH".QueryCond.bill"),
+							  &str, NULL);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+	mmisc_pagediv(q->hdfrcv, NULL, &count, &offset, NULL, q->hdfsnd);
+
+	if (cache_getf(cd, &val, &vsize, PREFIX_BILL"%s_%d", str.buf, offset)) {
+		unpack_hdf(val, vsize, &q->hdfsnd);
+	} else {
+		MMISC_PAGEDIV_SET_N(q->hdfsnd, db, "bill", "%s", NULL, str.buf);
+
+		MDB_QUERY_RAW(db, "bill", BILL_COL, "%s ORDER BY id DESC LIMIT %d OFFSET %d",
+					  NULL, str.buf, count, offset);
+		err = mdb_set_rows(q->hdfsnd, db, BILL_COL, "bills", 0);
+		if (err != STATUS_OK) return nerr_pass(err);
+
+		CACHE_HDF(q->hdfsnd, BILL_CC_SEC, PREFIX_BILL"%s_%d", str.buf, offset);
+	}
+
+	string_clear(&str);
+	
+	return STATUS_OK;
 }
 
 static void bank_process_driver(struct event_entry *entry, struct queue_entry *q)
@@ -151,6 +200,9 @@ static void bank_process_driver(struct event_entry *entry, struct queue_entry *q
 		break;
 	case REQ_CMD_BANK_ADDBILL:
 		err = bank_cmd_addbill(q, cd, db);
+		break;
+	case REQ_CMD_BANK_GETBILL:
+		err = bank_cmd_getbill(q, cd, db);
 		break;
 	case REQ_CMD_STATS:
 		st->msg_stats++;

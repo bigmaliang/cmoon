@@ -45,7 +45,7 @@ static NEOERR* aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn 
 
 	REQ_GET_PARAM_STR(q->hdfrcv, "ids", ids);
 
-	mmisc_pagediv_get(q->hdfrcv, NULL, &count, &offset);
+	mmisc_pagediv(q->hdfrcv, NULL, &count, &offset, NULL, q->hdfsnd);
 
 	if (cache_getf(cd, &val, &vsize, PREFIX_CMTAPP"%s_%d", ids, offset)) {
 		unpack_hdf(val, vsize, &q->hdfsnd);
@@ -63,7 +63,7 @@ static NEOERR* aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn 
 				oid = atoi(ids);
 				if (type >= 0 && oid >= 0) {
 					sprintf(tok, "%d.%d", type, oid);
-					MMISC_PAGEDIV_SET(q->hdfsnd, tok, offset, db, "comment",
+					MMISC_PAGEDIV_SET(q->hdfsnd, tok, db, "comment",
 									  "type=%d AND state=%d AND oid=%d",
 									  NULL, type, CMT_ST_NORMAL, oid);
 					MDB_QUERY_RAW(db, "comment", CMT_COL,
@@ -83,7 +83,7 @@ static NEOERR* aux_cmd_cmtget(struct queue_entry *q, struct cache *cd, mdb_conn 
 		oid = atoi(ids);
 		if (type >= 0 && oid >=0) {
 			sprintf(tok, "%d.%d", type, oid);
-			MMISC_PAGEDIV_SET(q->hdfsnd, tok, offset, db, "comment",
+			MMISC_PAGEDIV_SET(q->hdfsnd, tok, db, "comment",
 							  "type=%d AND state=%d AND oid=%d",
 							  NULL, type, CMT_ST_NORMAL, oid);
 			MDB_QUERY_RAW(db, "comment", CMT_COL,
