@@ -95,6 +95,13 @@ Plugin {
 				content [require=true] = content
 				checksum [require=true, maxlen=64] = checksum
 			}
+			improve {
+				aid [type=int, require=true] = aid
+				aname [maxlen=256, require=true] = aname
+				title [maxlen=256, require=true] = title
+				content [maxlen=1024, require=true] = content
+				contact [maxlen=64] = contact
+			}
 		}
 	}
 	mtls {
