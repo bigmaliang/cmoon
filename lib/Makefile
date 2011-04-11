@@ -9,5 +9,8 @@ all: $(subdir)
 clean:
 	@$(MULTIMAKE) -m clean $(SUBDIR)
 
+install:
+	@$(MULTIMAKE) -m install $(SUBDIR)
+
 backup:
 	@$(BACKUPDIR) $(SUBDIR)

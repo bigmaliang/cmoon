@@ -8,3 +8,5 @@ for file in $files
 do
 	./$file
 done
+
+return 0
