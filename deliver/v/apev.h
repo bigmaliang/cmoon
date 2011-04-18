@@ -82,6 +82,16 @@ typedef struct _SnakeEntry {
 	mevent_t *evt;
 } SnakeEntry;
 
+typedef struct _NameEntry {
+	char *name;
+	struct _NameEntry *next;
+} NameEntry;
+
+typedef struct _ChanEntry {
+	char *name;
+	NameEntry *x_missed;
+} ChanEntry;
+
 enum {
 	RUNNING = 0,
 	DIED
@@ -89,6 +99,13 @@ enum {
 
 UserEntry* user_new();
 SnakeEntry* snake_new(char *name);
+ChanEntry* channel_new(char *cname);
+
+NameEntry* name_new(char *name);
+NameEntry* name_push(char *name, NameEntry **entry);
+NameEntry* name_remove(char *name, NameEntry **entry);
+NameEntry* name_find(NameEntry *entry, char *name);
+void name_free(NameEntry *e);
 
 /*
  * TODO user_del(), event_del()
