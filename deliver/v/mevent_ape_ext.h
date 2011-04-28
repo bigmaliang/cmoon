@@ -16,7 +16,7 @@ enum {
 };
 
 enum {
-	REP_ERR_ALLDIE = 25,
+	REP_ERR_ALLDIE = 25
 };
 
 void ext_snake_sort();
