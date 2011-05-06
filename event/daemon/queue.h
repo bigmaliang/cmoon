@@ -37,6 +37,7 @@ struct queue_entry {
 	 */
 };
 
+typedef struct queue_entry QueueEntry;
 
 struct queue *queue_create();
 void queue_free(struct queue *q);

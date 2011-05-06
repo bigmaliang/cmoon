@@ -24,6 +24,8 @@ struct cache {
 	struct cache_chain *table;
 };
 
+typedef struct cache Cache;
+
 struct cache_chain {
 	size_t len;
 	struct cache_entry *first;

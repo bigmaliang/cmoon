@@ -37,11 +37,7 @@ ALL_CFLAGS += -I./ $(INC_MEVENT) $(INC_MNL) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(
 LIBS = -levent -lpthread -lrt -ldl $(LIB_MEVENT) $(LIB_MNL) $(LIB_MEMC) $(LIB_CS) $(LIB_JSON) $(LIB_FCGI) $(LIB_SYSTEM)
 
 
-BASE_SOURCES = $(wildcard ../base/*.c)
-PLUGIN_SOURCES = $(wildcard ../plugin/*.c)
-
 OBJS = mevent.o queue.o log.o net.o parse.o reply.o stats.o config.o common.o syscmd.o smsalarm.o
-OBJS += $(patsubst %.c, %.o, $(BASE_SOURCES))
 OBJS_MAIN = main.o
 OBJS_HB = hb.o
 
@@ -70,16 +66,12 @@ else
 endif
 
 
-LIB_PLUGIN = $(patsubst %.c, %.so, $(PLUGIN_SOURCES))
 default: all
 
-all: $(LIB_PLUGIN) mevent hb
+all: mevent hb
 
 .c.o:
 	$(NICE_CC) $(ALL_CFLAGS) -fPIC -c $< -o $@
-
-mevent_%.so: ../plugin/mevent_%.c
-	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC -o $@ $<
 
 mevent: $(OBJS_MAIN) $(OBJS)
 	$(NICE_CC) $(ALL_CFLAGS) $(OBJS_MAIN) $(OBJS) -o mevent $(LIBS)
@@ -89,7 +81,7 @@ hb: $(OBJS_HB) $(OBJS)
 
 
 
-install-bin: mevent
+install-bin: mevent hb
 	install -d $(PREFIX)/bin
 	install -m 0755 mevent $(PREFIX)/bin/
 	install -m 0755 hb $(PREFIX)/bin/
@@ -98,27 +90,21 @@ install-man:
 	install -d $(PREFIX)/man/man1
 	install -m 0644 mevent.1 $(PREFIX)/man/man1/
 
-install-lib:
-	install -d $(PREFIX)/lib
-	install -m 0644 $(LIB_PLUGIN) $(PREFIX)/lib/
-	install -m 0644 ../plugin/QQWry.Dat $(PREFIX)/lib/
-
-install: install-bin install-man install-lib
+install: install-bin install-man
 
 uninstall:
 	rm -f $(PREFIX)/bin/mevent
 	rm -f $(PREFIX)/man/man1/mevent.1
-	rm -f $(PREFIX)/lib/$(LIB_PLUGIN)
 
 clean: clean-build clean-prof
 
 clean-build:
-	rm -f $(OBJS) $(OBJS_MAIN) $(OBJS_HB) $(LIB_PLUGIN) mevent
+	rm -f $(OBJS) $(OBJS_MAIN) $(OBJS_HB) mevent hb
 
 clean-prof:
 	rm -f *.bb *.bbg *.da *.gcov *.gcda *.gcno gmon.out
 
 .PHONY: default all \
-	install-bin install-man install-lib install uninstall \
+	install-bin install-man install uninstall \
 	clean-build clean-prof clean
 

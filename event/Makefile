@@ -1,7 +1,7 @@
 BASEDIR = ../
 include $(BASEDIR)Make.env
 
-SUBDIR = daemon conf test
+SUBDIR = daemon plugin conf test
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)

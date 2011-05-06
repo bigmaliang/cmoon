@@ -21,7 +21,7 @@ struct skeleton2_entry {
 	struct skeleton2_stats st;
 };
 
-static void skeleton2_process_driver(struct event_entry *entry, struct queue_entry *q)
+static void skeleton2_process_driver(struct event_entry *entry, QueueEntry *q)
 {
 	struct skeleton2_entry *e = (struct skeleton2_entry*)entry;
 	NEOERR *err;
