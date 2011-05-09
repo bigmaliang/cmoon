@@ -1,6 +1,7 @@
 #!/bin/sh
 
-DIR=/home/bigml/web/
+PWD=`pwd`
+DIR=${PWD}../../
 
 echo "sync moon"
 cd ${DIR}moon && git st; git pull && git push

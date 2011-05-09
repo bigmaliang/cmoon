@@ -2,7 +2,8 @@
 
 # sc new.jpg -s -d 3
 
-FPATH=/home/bigml/web/moon/pop/fly/pic/
+PWD=`pwd`
+FPATH=${PWD}/../pop/fly/pic/
 
 FNAME=$1
 shift

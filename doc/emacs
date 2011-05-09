@@ -14,6 +14,11 @@ Standard XEmacs         XEmacs Team, added by Alex Schroeder <alex@gnu.org>
 
 MODE
 ====
+
+gerneal
+----
+C-x C-f /sudo:/etc/fstab	edit file as root
+
 version control
 ----
 single file:
@@ -38,7 +43,7 @@ C-c C-v			toggle validate mode
 
 
 js
-----
+----n
 
 
 tex
