@@ -50,8 +50,6 @@ struct queue_entry {
 	HDF *hdfsnd;
 };
 
-typedef struct queue_entry QueueEntry;
-
 struct event_entry {
 	/*
 	 * different by plugin, init in init_driver()
