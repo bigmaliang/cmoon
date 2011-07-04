@@ -4,9 +4,12 @@
 ### enlightenment 17 install script for debian
 ### create on 2011-03-06
 ### useage:
-###     #mkdir -p /usr/local/src/e; mkdir -p /usr/local/e17; cp e17.sh /usr/local/src/e;
+###     #mkdir -p /usr/local/src/e; mkdir -p /usr/local/e; cp e17.sh /usr/local/src/e;
 ###     #cd /usr/local/src/e/ ; ./e17.sh init
-###     #cp -r /usr/local/e17 /usr/local/e17.bak; cd /usr/local/src/e/; ./e17.sh up
+###     OR
+###     #cp -r /usr/local/e /usr/local/e.bak; cd /usr/local/src/e/; ./e17.sh up
+###     OR
+###     #cd /usr/local/src/e/; ./e17.sh
 ### E17 INST: http://www.enlightenment.org/p.php?p=contribute&l=en
 ### SVN RESP: http://trac.enlightenment.org/e/browser/trunk?order=date
 ####################
@@ -26,8 +29,10 @@ EMODEXCEPT="drawer eweather"
 
 set -e
 PREFIX="/usr/local/e"
-PROJECTS="eina eet evas ecore embryo edje e_dbus efreet e \
-          elementary ethumb eio ephoto exalt emprint \
+#PROJECTS="eina eet evas ecore embryo edje e_dbus efreet e \
+#          ethumb eio elementary ephoto exalt emprint \
+#          E-MODULES-EXTRA"
+PROJECTS="emprint \
           E-MODULES-EXTRA"
 SITE="svn.enlightenment.org"
 SVN="http://$SITE/svn/e/trunk"
@@ -53,6 +58,7 @@ done
 sed -i 's#$@ || exit 1 ;#$@ || echo "make $$d failure" \>\> makeError ; #g' E-MODULES-EXTRA/Makefile.in
 for Q in $EMODEXCEPT; do
   if [ -d "E-MODULES-EXTRA/$Q" ]; then
+    rm -rf E-MODULES-EXTRA/.$Q
     mv -f E-MODULES-EXTRA/$Q E-MODULES-EXTRA/.$Q
   fi
 done

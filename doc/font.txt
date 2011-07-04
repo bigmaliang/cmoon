@@ -1,0 +1,10 @@
+http://www.ffonts.net
+http://www.52font.com 中文字体
+
+emacs 字体
+-xos4-*-medium-r-normal-*-16
+
+手写字体
+PaulMaulBold
+Comic Sans MS
+

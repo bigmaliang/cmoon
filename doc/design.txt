@@ -6,6 +6,7 @@
 	http://photo.163.com/story130@126/big/#aid=191548433&id=5998768727
 	http://www.smashingmagazine.com/2010/11/08/equal-height-columns-using-borders-and-negative-margins-with-css/
 
+
 http://www.openclipart.org/
 http://www.deviantart.com/
 http://ffffound.com/
@@ -16,8 +17,12 @@ http://www.coroflot.com
 
 特色站
 -----
+手写风格
+http://fredhq.com/projects/notebook
 http://www.codewranglers.org
 http://forrst.com/
+http://www.dzlover.net
+
 http://js1k.com
 http://js1k.com/2010-first/demo/151 [bubble]
 

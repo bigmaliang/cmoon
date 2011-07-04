@@ -2,21 +2,22 @@
 =======
 
 moon/
-|-- maketool	编译辅助工具
-|-- Make.env	编译相关宏定义
-|-- Makefile	编译文件
-|-- mtools		常用管理脚本
-|-- doc			文档目录
-|-- lib			库文件目录
+|-- maketool    编译辅助工具
+|-- Make.env    编译相关宏定义
+|-- Makefile    编译文件
+|-- mtools      常用管理脚本
+|-- doc         文档目录
+|-- lib         库文件目录
 |
-|-- rock		应用一: moon 网站主程序应用
-|-- event		应用二: 支持插件的高并发处理缓冲层, 详情请参考该目录文档和代码
-|-- cdata		应用三: 类似浏览量, 点击量等更新频繁的数值型数据的存取接口, 详情请参考该目录文档和代码
-|-- ksa			应用四: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
-!-- pop			应用五: www.bomdoo.com 播豆网
+|-- event       应用二: 支持插件的高并发处理缓冲层, 详情请参考该目录文档和代码
 |
-|-- deliver		Web IM 解决方案 (deliver代码放到 github 上, 参考 deliver/README)
-`-- grabber		获取邮件, msn, qq 好友方案
+|-- rock        应用一: moon 网站主程序应用
+|-- ksa         应用四: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
+!-- pop         应用五: www.bomdoo.com 播豆网
+|-- regae		应用: www.regae.com 送菜网
+|
+|-- deliver     Web IM 解决方案 (deliver代码放到 github 上, 参考 deliver/README)
+`-- grabber     获取邮件, msn, qq 好友方案
 
 
 
@@ -32,9 +33,9 @@ clearsilver-dev
 libfcgi-dev
 libjson0-dev
 libmemcached-dev
-libqdbm-dev	(仅 cdata 依赖)
-libnmdb 	(仅 cdata 依赖. Debian 没有此包, --- 仅需安装 nmdb/libnmdb
-			 需要手动安装: http://blitiri.com.ar/p/nmdb/files/0.22/nmdb-0.22.tar.gz)
+libqdbm-dev (仅 cdata 依赖)
+libnmdb     (仅 cdata 依赖. Debian 没有此包, --- 仅需安装 nmdb/libnmdb
+             需要手动安装: http://blitiri.com.ar/p/nmdb/files/0.22/nmdb-0.22.tar.gz)
 
 数据库(可选, Make.env 中可配置)
 --------------------------
@@ -96,11 +97,11 @@ libsqlite3-dev
 
 1. set tab 4 space width please
 2. RESERVED key in request url
-	/json: output json
-	_op: add, mod, del for ...
-	_ntt: total number
-	_nst: start number
-	_npg: page number (_nst will overwrite _npg)
-	_npp: number perpage
-	
+    /json: output json
+    _op: add, mod, del for ...
+    _ntt: total number
+    _nst: start number
+    _npg: page number (_nst will overwrite _npg)
+    _npp: number perpage
+    
 

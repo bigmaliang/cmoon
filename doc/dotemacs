@@ -157,6 +157,7 @@
 (toggle-uniquify-buffer-names)
 (display-time)
 (setq diary-file "~/doc/diary")
+(setq tex-command "pdftex") ;use pdflatex instead of latex
 (diary)
 (setq bkup-backup-directory-info
       '(("/home/bigml/.*" "/home/bigml/.backups/" ok-create full-path prepend-name)

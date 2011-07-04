@@ -36,5 +36,5 @@ THANKS
 TODO
 ----
     1, DONE sys_load command for load balance
-    2, msg_brd command for channel message
+    2, DONE msg_brd command for channel message
     3, v's backup for disaster recovery
