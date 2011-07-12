@@ -4,31 +4,16 @@ include $(BASEDIR)Make.env
 # prefix for installing the binaries
 PREFIX=/usr/local
 
-# cc command line
-ifneq ($(V), 1)
-	NICE_CC = @echo "  CC  $@"; $(CC)
-else
-	NICE_CC = $(CC)
-endif
-
 # Protocols to enable
 ENABLE_TIPC = 0
 ENABLE_TCP = 1
 ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
-ALL_CFLAGS = -fPIC $(CFLAGS)
-ALL_CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
+CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 		-DENABLE_TCP=$(ENABLE_TCP) \
 		-DENABLE_UDP=$(ENABLE_UDP) \
 		-DENABLE_SCTP=$(ENABLE_SCTP)
-
-ifdef PROFILE
-ALL_CFLAGS += -g -pg -fprofile-arcs -ftest-coverage
-endif
-
-
-ALL_CFLAGS += $(INC_CS)
 
 
 SOURCES = $(wildcard *.c)
@@ -55,12 +40,14 @@ libmevent.pc: libmevent.skel.pc
 		> libmevent.pc
 
 .c.o:
-	$(NICE_CC) $(ALL_CFLAGS) -fPIC -c $< -o $@
+	@echo "$(CC) -o $@"
+	@$(CC) $(CFLAGS) -I /usr/local/include/ClearSilver -c $< -o $@
 
 libs: libmevent.a
 
+# make clean &&  make DYN=1 libmevent.so to make shared library
 libmevent.so: mevent.h $(OBJS)
-	$(NICE_CC) $(ALL_CFLAGS) -shared -fPIC $(OBJS) -o libmevent.so
+	$(CC) $(CFLAGS) $(OBJS) -o libmevent.so
 
 libmevent.a: mevent.h $(OBJS)
 	$(AR) cr libmevent.a $(OBJS)

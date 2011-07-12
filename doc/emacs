@@ -74,3 +74,12 @@ C-c . g 1/a/b/d/h/m/s/l/c	ecb-goto-window-
 C-c . l c/r/t/w				ecb-layout-
 	  						(change/redraw/toggle-layout/toggle-windows)
 C-c . f h/m/s/...			ecb-filter-.... (filter node)
+
+
+
+cscope
+------
+C-c s I			cscope-index-files
+C-c s L			cscope-create-list-of-files-to-index
+C-c s t			cscope-find-this-text-string
+C-c s c			cscope-find-functions-calling-this-function

@@ -1,9 +1,7 @@
 BASEDIR = ../../
 include $(BASEDIR)Make.env
 
-CFLAGS += -fPIC
-
-DEPS	= $(INC_MEVENT) $(INC_MEMC) $(INC_CS) $(INC_JSON) $(INC_FCGI) $(INC_SYSTEM) 
+DEPS	= $(INC_MOON)
 
 SOURCE1 = mconfig.c
 SOURCES = mconfig.c mcs.c md5c.c mdb.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mjson.c mmemc.c mmkd.c mmisc.c mtrace.c mtypes.c mutil.c
@@ -23,11 +21,12 @@ libmnl.a:$(OBJS) $(DEPEND)
 	$(AR) rcs $@ $(OBJS)
 	$(AR) d $@ $(DROPOBJS)
 
+# make clean &&  make DYN=1 libmnl.so to make shared library
+libmnl.so:$(OBJS) $(DEPEND)
+	@$(CC) $(CFLAGS) -o $@ $(OBJS)
+
 include $(DEPEND)
 %.o:%.c
-#	@if [ "$<" = `ls *.c|awk '{print $1}'|sed -n '1p'` ]; then \
-#		echo "=== "$(CFLAGS); \
-#		echo "=== "$(DEPS); fi
 	@if [ "$<" = "$(SOURCE1)" ]; then \
 		echo "=== "$(CFLAGS); \
 		echo "=== "$(DEPS); fi
