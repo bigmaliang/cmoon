@@ -1,11 +1,8 @@
 BASEDIR = ../../
 include $(BASEDIR)Make.env
 
-CC = gcc
-CFLAGS = -g
-
-INCS	= -I../daemon $(INC_MEVENT) $(INC_CS)
-LIBS	= -levent -lpthread -lrt -ldl $(LIB_MEVENT)
+INCS	= -I../daemon $(INC_MOON)
+LIBS	= -levent -lrt $(LIB_MOON)
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))

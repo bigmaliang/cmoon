@@ -4,11 +4,9 @@
 #include <string.h>
 
 #include "mevent.h"
-#include "timer.h"
 
 int main(int argc, char *argv[])
 {
-	unsigned long s_elapsed;
 	mevent_t *evt;
 	int ret;
     char plugin[64] = "uic";

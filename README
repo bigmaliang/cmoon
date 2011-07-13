@@ -9,16 +9,41 @@ moon/
 |-- doc         文档目录
 |-- lib         库文件目录
 |
-|-- event       应用二: 支持插件的高并发处理缓冲层, 详情请参考该目录文档和代码
+|-- event       支持插件的高并发处理缓冲层, 详情请参考该目录文档和代码
 |
-|-- rock        应用一: moon 网站主程序应用
-|-- ksa         应用四: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
-!-- pop         应用五: www.bomdoo.com 播豆网
-|-- regae		应用: www.regae.com 送菜网
+|-- rock        应用一: DEPRECATED
+|-- ksa         应用二: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
+!-- pop         应用三: www.bomdoo.com 播豆网
+|-- regae		应用四: www.regae.com 送菜网
 |
 |-- deliver     Web IM 解决方案 (deliver代码放到 github 上, 参考 deliver/README)
 `-- grabber     获取邮件, msn, qq 好友方案
 
+
+
+新建项目
+======
+I 在moon内部新建
+-------------
+1, git clone voov 分支
+2, mv regae NEWPROJ
+3, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
+4, find -name '*voov*'; rename them
+
+II 在moon外部引用
+--------------
+1, git clone reage的 voov 分支
+2, same as up
+3, same as up
+4, same as up
+5, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录
+6, cd NEWPROJ 修改一下文件和目录的连接路径，指向 moon 所在目录
+	./fly/js/pub
+	./fly/css/pub
+	./xport/daemon
+	./xport/plugin/mevent_plugin.h
+	./xport/plugin/mevent_skeleton.c
+	./xport/plugin/mevent_skeleton.h
 
 
 

@@ -3,7 +3,7 @@
 BASEDIR = ./
 include $(BASEDIR)Make.env
 
-SUBDIR = lib event pop
+SUBDIR = lib event pop regae
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)

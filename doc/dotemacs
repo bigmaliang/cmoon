@@ -161,7 +161,8 @@
 (diary)
 (setq bkup-backup-directory-info
       '(("/home/bigml/.*" "/home/bigml/.backups/" ok-create full-path prepend-name)
-		("/mnt/dev/.*" "/home/bigml/.backups" ok-create full-path prepend-name)))
+		("/mnt/dev/.*" "/home/bigml/.backups" ok-create full-path prepend-name)
+		("/mnt/revive/.*" "/home/bigml/.backups" ok-create full-path prepend-name)))
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
