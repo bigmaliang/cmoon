@@ -25,6 +25,10 @@ NEOERR* mcs_err_valid(NEOERR *err);
  * str  :OUT update colum string: aname='foo', pname='bar',
  */
 NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str);
+/*
+ * str.buf is already escaped
+ * just put them in query by %s, don't need $1(cause error)
+ */
 NEOERR* mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
 NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str);
 
