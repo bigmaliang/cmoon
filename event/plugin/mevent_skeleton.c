@@ -15,20 +15,20 @@ struct skeleton_stats {
 };
 
 struct skeleton_entry {
-	struct event_entry base;
+	EventEntry base;
 	mdb_conn *db;
-	struct cache *cd;
+	Cache *cd;
 	struct skeleton_stats st;
 };
 
-static void skeleton_process_driver(struct event_entry *entry, QueueEntry *q)
+static void skeleton_process_driver(EventEntry *entry, QueueEntry *q)
 {
 	struct skeleton_entry *e = (struct skeleton_entry*)entry;
 	NEOERR *err;
 	int ret;
 	
 	mdb_conn *db = e->db;
-	struct cache *cd = e->cd;
+	Cache *cd = e->cd;
 	struct skeleton_stats *st = &(e->st);
 
 	st->msg_total++;
@@ -68,7 +68,7 @@ static void skeleton_process_driver(struct event_entry *entry, QueueEntry *q)
 	}
 }
 
-static void skeleton_stop_driver(struct event_entry *entry)
+static void skeleton_stop_driver(EventEntry *entry)
 {
 	struct skeleton_entry *e = (struct skeleton_entry*)entry;
 
@@ -81,7 +81,7 @@ static void skeleton_stop_driver(struct event_entry *entry)
 
 
 
-static struct event_entry* skeleton_init_driver(void)
+static EventEntry* skeleton_init_driver(void)
 {
 	struct skeleton_entry *e = calloc(1, sizeof(struct skeleton_entry));
 	if (e == NULL) return NULL;
@@ -102,7 +102,7 @@ static struct event_entry* skeleton_init_driver(void)
 		goto error;
 	}
 	
-	return (struct event_entry*)e;
+	return (EventEntry*)e;
 	
 error:
 	if (e->base.name) free(e->base.name);

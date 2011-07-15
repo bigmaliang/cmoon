@@ -50,6 +50,7 @@ struct event_driver {
 	struct event_entry* (*init_driver)(void);
 };
 
+typedef struct event_entry EventEntry;
 
 /*
  * public
