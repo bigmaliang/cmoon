@@ -50,6 +50,13 @@ NEOERR* mdb_commit(mdb_conn *conn);
 NEOERR* mdb_rollback(mdb_conn *conn);
 NEOERR* mdb_finish(mdb_conn *conn);
 
+/*
+ * exec a sql
+ * sql_fmt	: userid=$1 AND time<'$2' AND type=%d
+ *            ('' is optional on postgres, but require on mysql backend)
+ * fmt		: "ss"
+ * ...		: type, userid, time (%x first, then $x)
+ */
 NEOERR* mdb_exec(mdb_conn *conn, int *affectrow, const char* sql_fmt,
 				 const char* fmt, ...);
 NEOERR* mdb_put(mdb_conn *conn, const char* fmt, ...);

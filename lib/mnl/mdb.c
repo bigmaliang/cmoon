@@ -218,7 +218,7 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
 	do {																\
 		memset(hdfkey, 0x0, sizeof(hdfkey));							\
 		if (prefix) snprintf(hdfkey, sizeof(hdfkey), "%s.", prefix);	\
-		if (keycol > 0) {												\
+		if (keycol >= 0) {												\
 			strncat(hdfkey, col[keycol], sizeof(hdfkey));				\
 		} else {														\
 			snprintf(tok, sizeof(tok), "%d", rowsn);					\
