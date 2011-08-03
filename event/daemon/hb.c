@@ -7,14 +7,14 @@
  * 处理错误 0x800 时 短信上报
  * 网络,客户端错误时  短信上报 trigger return
  */
-#include <stdio.h>		/* printf() */
-#include <unistd.h>		/* malloc(), fork() and getopt() */
-#include <stdlib.h>		/* atoi() */
-#include <sys/types.h>	/* for pid_t */
-#include <string.h>		/* for strcpy() and strlen() */
-#include <pthread.h>	/* for pthread_t */
+#include <stdio.h>        /* printf() */
+#include <unistd.h>        /* malloc(), fork() and getopt() */
+#include <stdlib.h>        /* atoi() */
+#include <sys/types.h>    /* for pid_t */
+#include <string.h>        /* for strcpy() and strlen() */
+#include <pthread.h>    /* for pthread_t */
 
-#include "mevent.h"		/* api's mevent.h */
+#include "mevent.h"        /* api's mevent.h */
 
 #include "common.h"
 #include "net.h"
@@ -26,56 +26,56 @@
 
 int main(int argc, char *argv[])
 {
-	int ret;
+    int ret;
 
-	if (argc != 5) {
-		printf("Usage: %s HOST PORT EVENT_NAME CONFIG_FILE\n", argv[0]);
-		return 1;
-	}
+    if (argc != 5) {
+        printf("Usage: %s HOST PORT EVENT_NAME CONFIG_FILE\n", argv[0]);
+        return 1;
+    }
 
-	settings.smsalarm = 1;
-	//settings.logfname = "-";
-	log_init();
-	if (config_parse_file(argv[4], &g_cfg) != 1) {
-		printf("parse config file %s failure", argv[3]);
-			return 1;
-	}
-	
-	mevent_t *evt = mevent_init(argv[3]);
-	if (evt == NULL) {
-		printf("init error\n");
-		SMS_ALARM("mevent_init error");
-		return 1;
-	}
+    settings.smsalarm = 1;
+    //settings.logfname = "-";
+    log_init();
+    if (config_parse_file(argv[4], &g_cfg) != 1) {
+        printf("parse config file %s failure", argv[3]);
+            return 1;
+    }
+    
+    mevent_t *evt = mevent_init(argv[3]);
+    if (evt == NULL) {
+        printf("init error\n");
+        SMS_ALARM("mevent_init error");
+        return 1;
+    }
 
-	struct timeval tv;
-	tv.tv_sec = 0;
-	tv.tv_usec = 800000;
-	
-	mevent_add_udp_server(evt, argv[1], atoi(argv[2]), NULL, &tv);
-	ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
-	if (PROCESS_OK(ret)) {
-		hdf_dump(evt->hdfrcv, NULL);
-	} else {
-		int try = 0;
-		
-	redo:
-		sleep(10);
-		ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
-		if (PROCESS_NOK(ret) && try < 3) {
-			try++;
-			goto redo;
-		}
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 800000;
+    
+    mevent_add_udp_server(evt, argv[1], atoi(argv[2]), NULL, &tv);
+    ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
+    if (PROCESS_OK(ret)) {
+        hdf_dump(evt->hdfrcv, NULL);
+    } else {
+        int try = 0;
+        
+    redo:
+        sleep(10);
+        ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
+        if (PROCESS_NOK(ret) && try < 3) {
+            try++;
+            goto redo;
+        }
 
-		if (PROCESS_NOK(ret) && try >= 3) {
-			printf("process failure %d\n", ret);
-			SMS_ALARM("process failure %d, restarted", ret);
-			system("killall -9 mevent && sleep 2 && /usr/local/bin/mevent -c /etc/mevent/server.hdf");
-		} else {
-			printf("process temproray error %d, %d", ret, try);
-		}
-	}
+        if (PROCESS_NOK(ret) && try >= 3) {
+            printf("process failure %d\n", ret);
+            SMS_ALARM("process failure %d, restarted", ret);
+            system("killall -9 mevent && sleep 2 && /usr/local/bin/mevent -c /etc/mevent/server.hdf");
+        } else {
+            printf("process temproray error %d, %d", ret, try);
+        }
+    }
 
-	mevent_free(evt);
-	return 0;
+    mevent_free(evt);
+    return 0;
 }

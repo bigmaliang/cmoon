@@ -36,12 +36,12 @@
 (require 'xcscope)
 (require 'scim-bridge-zh-si)
 (load-library "desktop-menu")
-(load-library "etach")								;use emacs RMAIL to deal with /var/mail/bigml 2006-09-22
-(load-library "smtpmail")							;use smtp mail instead of sendmail to outgoing mail 2006-09-24
-(load-library "cs-mode")							;clearsilver use
+(load-library "etach")                                ;use emacs RMAIL to deal with /var/mail/bigml 2006-09-22
+(load-library "smtpmail")                            ;use smtp mail instead of sendmail to outgoing mail 2006-09-24
+(load-library "cs-mode")                            ;clearsilver use
 (autoload 'all "all" nil t)
 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t) ;Espresso has been incorporated into GNU Emacs starting with version 23.2 and has been renamed js-mode. espresso-mode will no longer be maintained outside of Emacs proper. This page has been kept only for historical interest.
-;(require 'un-define)								;2006-10-23 use mule-ucs
+;(require 'un-define)                                ;2006-10-23 use mule-ucs
 ;(color-theme-subtle-hacker)
 ;(require 'ecb)
 ;(require 'tex-site)
@@ -53,7 +53,7 @@
 ;(require 'gnus-load)
 ;(require 'easymenu)
 ;(easy-menu-add-item  nil '("tools")
-;		     ["IRC" erc-select t])
+;             ["IRC" erc-select t])
 ;(autoload 'mew "mew" nil t)
 ;(autoload 'mew-send "mew" nil t)
 ;(autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
@@ -64,11 +64,11 @@
 ;(autoload 'comment-out-region "comment" nil t)
 ;(autoload 'counter "counter" nil t)
 ;(load-library "pinyin")
-;(load-library "javascript")	;javascript from mihai 20081205
+;(load-library "javascript")    ;javascript from mihai 20081205
 ;(autoload 'js2-mode "js2" nil t)
 ;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 ;(load "preview-latex.el" nil t t)
-;(load "rng-auto.el")		;2007-03-07 use kid nxml-mode
+;(load "rng-auto.el")        ;2007-03-07 use kid nxml-mode
 ;(setq load-path (append load-path '("~bigml/.site-lisp/blogmax")))
 ;(require 'blogmax)
 
@@ -79,16 +79,16 @@
   "Scroll the page with the cursor in the same line"
   (interactive)
   (let ((next-screen-context-lines
-	 (- (count-lines
-	     (window-start) (window-end)) 1)))
+     (- (count-lines
+         (window-start) (window-end)) 1)))
     (scroll-up))
   (line-move 1))
 (defun hold-line-scroll-down()
   "Scroll the page with the cursor in the same line"
   (interactive)
   (let ((next-screen-context-lines
-	 (- (count-lines
-	     (window-start) (window-end)) 1)))
+     (- (count-lines
+         (window-start) (window-end)) 1)))
     (scroll-down))
   (line-move -1))
 
@@ -98,7 +98,7 @@
 (global-set-key [delete] 'delete-char)
 (global-set-key [kp-delete] 'delete-char)
 (global-set-key [f12] 'list-bookmarks)
-(global-set-key "\C-xg" 'goto-line)	;some buffer already used C-c C-l 2006-04-04
+(global-set-key "\C-xg" 'goto-line)    ;some buffer already used C-c C-l 2006-04-04
 (global-set-key (kbd "M-n") 'hold-line-scroll-up)
 (global-set-key (kbd "M-p") 'hold-line-scroll-down)
 (global-set-key [\M-down] 'hold-line-scroll-up)
@@ -114,46 +114,47 @@
 (define-key global-map "\C-ci" 'cs-insert-tag)
 (define-key global-map "\C-cm" 'c-comment-edit)
 (if (locate-library "calculator")
-	(progn
-	  (autoload 'calculator "calculator"
-		"Run Emacs Caculator." t)
-	  (global-set-key [(control return)] 'calculator)))
+    (progn
+      (autoload 'calculator "calculator"
+        "Run Emacs Caculator." t)
+      (global-set-key [(control return)] 'calculator)))
 ;(global-set-key "\C-cc" 'counter)
 ;(define-key global-map "\C-cdc" 'desktop-clear)
-;(define-key global-map "\C-c\C-l" 'goto-line)	;deprecate in 2006-04-04
+;(define-key global-map "\C-c\C-l" 'goto-line)    ;deprecate in 2006-04-04
 ;(define-key global-map "\C-cq" (global-set-key (quote [33554464]) (quote quail-select-current)))
 ;(define-key global-map "\C-cm" (global-set-key (quote [33554464]) (quote set-mark-command)))
 
 
 ;;;========== CUSTOMIZE ==========
-(setq-default tab-width 4)	;come on, baby!
+(setq-default tab-width 4)    ;come on, baby!
+(setq-default indent-tabs-mode nil)        ;fill tab by space, insert TAB by C-q tab
 (setq c-basic-offset 4)
-(setq require-final-newline t)	;add a new line automatically at the end of the file when it is about to be saved
+(setq require-final-newline t)    ;add a new line automatically at the end of the file when it is about to be saved
 (setq c-default-style "K&R")
-(setq html-helper-verbose 'nil)	;disable html-helper-mode's debug message
+(setq html-helper-verbose 'nil)    ;disable html-helper-mode's debug message
 
 (color-theme-classic)
-(setq case-fold-search t)	;C-s ingore case match
-(setq Info-enable-edit t)	;enable you edit the info files
+(setq case-fold-search t)    ;C-s ingore case match
+(setq Info-enable-edit t)    ;enable you edit the info files
 (setq semantic-idle-scheduler-idle-time 432000) ;semantic occupile 100% cpu on emacs-snapshot
-(setq visible-bell t)	;stop audibel-bee instead by visible-bell 2006-04-04
-(setq semanticdb-default-save-directory "~/.semanticdb")	;store all cache file in a seprated directory
-(setq vc-cvs-stay-local nil)	;not make local backup file in vc mode
-(setq js-auto-indent-flag nil)	;,{}; don't indent js
+(setq visible-bell t)    ;stop audibel-bee instead by visible-bell 2006-04-04
+(setq semanticdb-default-save-directory "~/.semanticdb")    ;store all cache file in a seprated directory
+(setq vc-cvs-stay-local nil)    ;not make local backup file in vc mode
+(setq js-auto-indent-flag nil)    ;,{}; don't indent js
 (setq mouse-buffer-menu-mode-mult 1)
 (setq tramp-bkup-backup-directory-info bkup-backup-directory-info)
-(setenv "CVS_RSH" "ssh")	;let emacs to use ssh
+(setenv "CVS_RSH" "ssh")    ;let emacs to use ssh
 (put 'narrow-to-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-(global-font-lock-mode t)	;enable global font-lock-mode highlight
-(transient-mark-mode t)		;highlight the region
-(column-number-mode t)		;display the column number in the mode line
-(iswitchb-mode)				;C-x b list the matchs file name
-(auto-image-file-mode t)	;visiting of image files as images
-(auto-compression-mode t)	;when visiting a zip file, unzip it first
-(which-func-mode t)			;which function in c mode
-(desktop-save-mode 1)		;this variable can recover file visited last session, register saved, file-cache saved
+(global-font-lock-mode t)    ;enable global font-lock-mode highlight
+(transient-mark-mode t)        ;highlight the region
+(column-number-mode t)        ;display the column number in the mode line
+(iswitchb-mode)                ;C-x b list the matchs file name
+(auto-image-file-mode t)    ;visiting of image files as images
+(auto-compression-mode t)    ;when visiting a zip file, unzip it first
+(which-func-mode t)            ;which function in c mode
+(desktop-save-mode 1)        ;this variable can recover file visited last session, register saved, file-cache saved
 (toggle-uniquify-buffer-names)
 (display-time)
 (setq diary-file "~/doc/diary")
@@ -161,8 +162,8 @@
 (diary)
 (setq bkup-backup-directory-info
       '(("/home/bigml/.*" "/home/bigml/.backups/" ok-create full-path prepend-name)
-		("/mnt/dev/.*" "/home/bigml/.backups" ok-create full-path prepend-name)
-		("/mnt/revive/.*" "/home/bigml/.backups" ok-create full-path prepend-name)))
+        ("/mnt/dev/.*" "/home/bigml/.backups" ok-create full-path prepend-name)
+        ("/mnt/revive/.*" "/home/bigml/.backups" ok-create full-path prepend-name)))
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -171,7 +172,7 @@
  '(fill-column 86))
 ;(setq erc-fill-prefix " ")
 ;(setq default-directory "/home/bigml/workspace/") ;history before 2005-12-6
-;(setq next-line-add-newlines t)	;inserts newline to avoid 'end of buffer' error
+;(setq next-line-add-newlines t)    ;inserts newline to avoid 'end of buffer' error
 ;(setq js2-allow-member-expr-as-function-name t)
 ;(setq js2-bounce-indent-p t)
 ;(uniquify-rationalize-file-buffer-names)
@@ -187,17 +188,17 @@
           (lambda ()
             (font-lock-add-keywords
              nil
-	     '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
+         '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
 (add-hook 'c++-mode-hook
           (lambda ()
             (font-lock-add-keywords
              nil
-	     '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
+         '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
 (add-hook 'diary-hook 'appt-make-list)
 (add-hook 'after-init-hook 'scim-mode-on)
 (setq auto-mode-alist
       (cons '("\\.kid$" . html-helper-mode)
-	    auto-mode-alist))
+        auto-mode-alist))
 (setq auto-mode-alist
       (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\)\\'" . nxml-mode)
             auto-mode-alist))
@@ -223,7 +224,7 @@
 ;  (c-set-style "K&R")
 ;  (setq c-basic-offset 2))
 ;(setq auto-mode-alist (cons '("/home/bigml/InterestDig/Reference/xpdf/.*/.*\\.[ch][c]$" . gnu-c++-mode)
-;			auto-mode-alist))
+;            auto-mode-alist))
 ;(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
 ;(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 
@@ -232,16 +233,16 @@
 (setq user-mail-address "bigmaliang@163.com")
 (setq smtpmail-auth-credentials
       '(("smtp.163.com"
-	 25
-	 "bigmaliang"
-	 "163161552")))
+     25
+     "bigmaliang"
+     "163161552")))
 (setq smtpmail-default-smtp-server "smtp.163.com")
 (setq smtpmail-smtp-server "smtp.163.com")
 (setq smtpmail-local-domain nil)
 (setq message-send-mail-function 'smtpmail-send-it)
 (setq send-mail-function 'smtpmail-send-it)
-(setq pop3-leave-mail-on-server t)	;leave the pop3 mail on server after fetched by gnus
-(setq erc-auto-query 'buffer)	;default action on erc message for you is to open a new buffer
+(setq pop3-leave-mail-on-server t)    ;leave the pop3 mail on server after fetched by gnus
+(setq erc-auto-query 'buffer)    ;default action on erc message for you is to open a new buffer
 (setq erc-default-coding-system (quote (utf-8 . undecided)))
 (setq rmail-file-name "~/Mail/RMAIL")
 ;(setq smtpmail-debug-info t)

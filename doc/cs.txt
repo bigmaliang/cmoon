@@ -8,18 +8,18 @@ EscapeModes <? escape: "html/js/url..." 无法扩展
 )
 -------------------
 
-	cs_register_function(cs, "bitop.and", 2, _builtin_bitop_and);
-	cs_register_function(cs, "bitop.or", 2, _builtin_bitop_or);
-	cs_register_function(cs, "bitop.xor", 2, _builtin_bitop_xor);
+    cs_register_function(cs, "bitop.and", 2, _builtin_bitop_and);
+    cs_register_function(cs, "bitop.or", 2, _builtin_bitop_or);
+    cs_register_function(cs, "bitop.xor", 2, _builtin_bitop_xor);
 
 类似 cs builtin <?cs if: string.find(Output.appinfo.intime, "2010") == -1 ?>
 为 cs 添加函数 <? cs var: bitop.and() ?> <? cs if: bitop.and() ?>....
 扩展原理见 csparse.c cs_init_internal()
 
 cs 官方扩展例子：
-	cgi.c cgi_register_strfuncs()：
-		cs_register_esc_strfunc(parse, "html_escape", html_escape_strfunc);
-		cs_register_esc_strfunc(parse, "js_escape", js_escape_strfunc);
+    cgi.c cgi_register_strfuncs()：
+        cs_register_esc_strfunc(parse, "html_escape", html_escape_strfunc);
+        cs_register_esc_strfunc(parse, "js_escape", js_escape_strfunc);
 
 这种方式类似 cs_register_function()， 只是仅仅限于 escape 字符串。
 注：如果是没有用到 cgi 模块的程序， 请手动调用该函数， 以让 cs 模板有效。  见 pop/pub/ltpl.c ltpl_parse_file()
@@ -29,51 +29,51 @@ cs 官方扩展例子：
 register[_xxx]_func() 系列函数的区别：
 -------------------
 
-	NEOERR *cs_register_esc_strfunc(CSPARSE *parse, char *funcname,
-	                                CSSTRFUNC str_func)
-	{
-	  NEOERR *err;
-	
-	  err = cs_register_strfunc(parse, funcname, str_func);
-	  if (err) return nerr_pass(err);
-	  parse->functions->escape = NEOS_ESCAPE_FUNCTION;
-	
-	  return STATUS_OK;
-	}
-	NEOERR *cs_register_strfunc(CSPARSE *parse, char *funcname, CSSTRFUNC str_func)
-	{
-	  NEOERR *err;
-	
-	  err = cs_register_function(parse, funcname, 1, _str_func_wrapper);
-	  if (err) return nerr_pass(err);
-	  parse->functions->str_func = str_func;
-	
-	  return STATUS_OK;
-	}
+    NEOERR *cs_register_esc_strfunc(CSPARSE *parse, char *funcname,
+                                    CSSTRFUNC str_func)
+    {
+      NEOERR *err;
+    
+      err = cs_register_strfunc(parse, funcname, str_func);
+      if (err) return nerr_pass(err);
+      parse->functions->escape = NEOS_ESCAPE_FUNCTION;
+    
+      return STATUS_OK;
+    }
+    NEOERR *cs_register_strfunc(CSPARSE *parse, char *funcname, CSSTRFUNC str_func)
+    {
+      NEOERR *err;
+    
+      err = cs_register_function(parse, funcname, 1, _str_func_wrapper);
+      if (err) return nerr_pass(err);
+      parse->functions->str_func = str_func;
+    
+      return STATUS_OK;
+    }
 
 register_esc_strfunc() > register_strfunc() > register_function()
 
 register[_xxx]_func() 仅接受两类函数指针：
-	typedef NEOERR* (*CSFUNCTION)(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
-	                              CSARG *result);
-	typedef NEOERR* (*CSSTRFUNC)(const char *str, char **ret);
+    typedef NEOERR* (*CSFUNCTION)(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
+                                  CSARG *result);
+    typedef NEOERR* (*CSSTRFUNC)(const char *str, char **ret);
 如：
-	static NEOERR* _builtin_bitop_or(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
-									 CSARG *result)
-	{
-		NEOERR *err;
-		long int n1 = 0;
-		long int n2 = 0;
-	
-		result->op_type = CS_TYPE_NUM;
-		result->n = 0;
-	
-		err = cs_arg_parse(parse, args, "ii", &n1, &n2);
-		if (err) return nerr_pass(err);
-		result->n = n1 | n2;
-	
-		return STATUS_OK;
-	}
+    static NEOERR* _builtin_bitop_or(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
+                                     CSARG *result)
+    {
+        NEOERR *err;
+        long int n1 = 0;
+        long int n2 = 0;
+    
+        result->op_type = CS_TYPE_NUM;
+        result->n = 0;
+    
+        err = cs_arg_parse(parse, args, "ii", &n1, &n2);
+        if (err) return nerr_pass(err);
+        result->n = n1 | n2;
+    
+        return STATUS_OK;
+    }
 
 
 

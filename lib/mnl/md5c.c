@@ -176,7 +176,7 @@ void MD5Final (unsigned char digest[16], md5_ctx *context) {
 }
 
 void md5_signature(const unsigned char *key, unsigned int length,
-				   unsigned char result[16])
+                   unsigned char result[16])
 {
     md5_ctx my_md5;
 

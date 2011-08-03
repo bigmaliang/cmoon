@@ -5,27 +5,27 @@
 
 __BEGIN_DECLS
 
-#define SAFE_FREE(str)							\
-	do {										\
-		if (str != NULL)						\
-			free(str);							\
-	} while (0)
+#define SAFE_FREE(str)                            \
+    do {                                        \
+        if (str != NULL)                        \
+            free(str);                            \
+    } while (0)
 
 /* table, condition MUST be string literal, not variable */
-#define MMISC_PAGEDIV_SET_N(hdf, db, table, condition, sfmt, ...)		\
-	do {																\
-		int zinta;														\
-		mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
-		mdb_get(db, "i", &zinta);										\
-		hdf_set_int_value(hdf, "_ntt", zinta);							\
-	} while (0)
+#define MMISC_PAGEDIV_SET_N(hdf, db, table, condition, sfmt, ...)        \
+    do {                                                                \
+        int zinta;                                                        \
+        mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
+        mdb_get(db, "i", &zinta);                                        \
+        hdf_set_int_value(hdf, "_ntt", zinta);                            \
+    } while (0)
 #define MMISC_PAGEDIV_SET(hdf, outprefix, db, table, condition, sfmt, ...) \
-	do {																\
-		int zinta;														\
-		mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
-		mdb_get(db, "i", &zinta);										\
-		hdf_set_valuef(hdf, "%s._ntt=%d", outprefix, zinta);				\
-	} while (0)
+    do {                                                                \
+        int zinta;                                                        \
+        mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
+        mdb_get(db, "i", &zinta);                                        \
+        hdf_set_valuef(hdf, "%s._ntt=%d", outprefix, zinta);                \
+    } while (0)
 
 
 void exiting(void);
@@ -37,7 +37,7 @@ int  mmisc_compare_inta(const void *a, const void *b);
 void mmisc_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_cnt);
 
 void mmisc_pagediv(HDF *hdf, char *inprefix, int *count, int *offset,
-				   char *outprefix, HDF *ohdf);
+                   char *outprefix, HDF *ohdf);
 void mmisc_str_repchr(char *s, char from, char to);
 /*
  * return an allocated string, remember to free it
@@ -60,4 +60,4 @@ void mmisc_hex2str(unsigned char *hexin, unsigned int inlen, unsigned char *char
 void mmisc_bin2char(unsigned char *in, unsigned int inlen, unsigned char *out);
 
 __END_DECLS
-#endif	/* __MMISC_H__ */
+#endif    /* __MMISC_H__ */

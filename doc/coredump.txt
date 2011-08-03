@@ -4,11 +4,11 @@
 0, $export MALLOC_CHECK_=0 再执行程序可以取消double_free() 之类错误的 core dump
 
 1, 普通程序可以通过以下两种方式 之一 确保生成 core 文件
-	a, ulimit -S -c unlimit
+    a, ulimit -S -c unlimit
     
     b, 程序内部写
     #include <sys/resource.h>
-	struct rlimit rl;
+    struct rlimit rl;
 
     rl.rlim_cur = 10240;
     rl.rlim_max = 10240;
@@ -16,10 +16,10 @@
     
 2, 调用了 setuid() setgid() 改变运行身份的程序需要额外通过以下方式确保
 
-	#include <sys/prctl.h>
+    #include <sys/prctl.h>
     ...
     setuid(xxx);
-	prctl(PR_SET_DUMPABLE, 1);
+    prctl(PR_SET_DUMPABLE, 1);
 
 3, 若系统生成的core文件不带其它任何扩展名称, 则全部命名为core.
    新的core文件生成将覆盖原来的core文件.
@@ -34,13 +34,13 @@
    如:
    /corefile/core-aped-18184-1253100745
 
-	%p - insert pid into filename 添加pid
-	%u - insert current uid into filename 添加当前uid
-	%g - insert current gid into filename 添加当前gid
-	%s - insert signal that caused the coredump into the filename 添加导致产生core的信号
-	%t - insert UNIX time that the coredump occurred into filename 添加core文件生成时的unix时间
-	%h - insert hostname where the coredump happened into filename 添加主机名
-	%e - insert coredumping executable name into filename 添加命令名
+    %p - insert pid into filename 添加pid
+    %u - insert current uid into filename 添加当前uid
+    %g - insert current gid into filename 添加当前gid
+    %s - insert signal that caused the coredump into the filename 添加导致产生core的信号
+    %t - insert UNIX time that the coredump occurred into filename 添加core文件生成时的unix时间
+    %h - insert hostname where the coredump happened into filename 添加主机名
+    %e - insert coredumping executable name into filename 添加命令名
 
 5, 调试命令 gdb [exec file] [core file]
 

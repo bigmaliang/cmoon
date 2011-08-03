@@ -48,12 +48,12 @@ PHP_FUNCTION(nevent_add_u32);
 PHP_FUNCTION(nevent_trigger);
 PHP_FUNCTION(nevent_result);
 /* 
-  	Declare any global variables you may need between the BEGIN
-	and END macros here:     
+      Declare any global variables you may need between the BEGIN
+    and END macros here:     
 
 ZEND_BEGIN_MODULE_GLOBALS(nmdb)
-	long  global_value;
-	char *global_string;
+    long  global_value;
+    char *global_string;
 ZEND_END_MODULE_GLOBALS(nmdb)
 */
 
@@ -76,7 +76,7 @@ ZEND_END_MODULE_GLOBALS(nmdb)
 #define PHP_NEVENT_RES_NAME "nevent descriptor"
 #define PHP_NEVENT_BUFFER_SIZE 131072
 
-#endif	/* PHP_NMDB_H */
+#endif    /* PHP_NMDB_H */
 
 
 

@@ -13,9 +13,9 @@ sever
 client
 ----
 1, #/etc/fstab
-172.10.7.204:/usr/local/3min	/mnt/dev	nfs	defaults	0	0
+172.10.7.204:/usr/local/3min    /mnt/dev    nfs    defaults    0    0
 
 OR
 
- 2, mount 172.10.7.204:/usr/local/3min	/mnt/dev
+ 2, mount 172.10.7.204:/usr/local/3min    /mnt/dev
   

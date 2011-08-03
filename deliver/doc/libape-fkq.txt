@@ -23,12 +23,12 @@
     用户被列为该群黑名单时返回错误
  *3,{"raw":"CHANNEL","data":
         {"users":[
-		    {"casttype":"uni","pubid":"dedd36d25f96b13c338889280aa4f112","properties":{"nick":"walker","uin":"1708931"},"level":1},
-		    {"casttype":"uni","pubid":"f4fe0a87e9cfb93225521f3b3cfb2118","properties":{"nick":"bluker","uin":"1206839"},"level":1}],
-		"pipe":{"casttype":"multi","pubid":"c6c37b0ba30b3a4b6f3d5deef4f8c76e","properties":{"name":"fangkequnpipe1206839"}}
-		}
+            {"casttype":"uni","pubid":"dedd36d25f96b13c338889280aa4f112","properties":{"nick":"walker","uin":"1708931"},"level":1},
+            {"casttype":"uni","pubid":"f4fe0a87e9cfb93225521f3b3cfb2118","properties":{"nick":"bluker","uin":"1206839"},"level":1}],
+        "pipe":{"casttype":"multi","pubid":"c6c37b0ba30b3a4b6f3d5deef4f8c76e","properties":{"name":"fangkequnpipe1206839"}}
+        }
     }
-	访客群频道信息
+    访客群频道信息
  *4,{"raw":"DATA", "data":""}
     该群最近 20 条聊天信息
  */
@@ -87,10 +87,10 @@
  *1,{"raw":"ERR","data":{"code":"009","value":"ERR_UIN_NEXIST"}}
  *2,{"raw":"FKQ_VISITLIST","data":
         {"visit":[
-		    {"name":"name1","href":"href1","title":"title1","target":"_blank"},
-			{"name":"name2","href":"href2","title":"title2","target":"_blank"}],
-		 "hostUin":"1227829"}
-		}
+            {"name":"name1","href":"href1","title":"title1","target":"_blank"},
+            {"name":"name2","href":"href2","title":"title2","target":"_blank"}],
+         "hostUin":"1227829"}
+        }
  *    visit: 访问历史列表
  *    hostUin: 访问历史群号
  */

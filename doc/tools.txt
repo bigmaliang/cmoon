@@ -3,52 +3,52 @@
 
 译言
 ---
-	http://www.yeeyan.com/beta
+    http://www.yeeyan.com/beta
 
 jQuery中的this
 -------------
-	http://www.cnblogs.com/hacker84/archive/2009/04/22/1441536.html
+    http://www.cnblogs.com/hacker84/archive/2009/04/22/1441536.html
 
 DTD
 ---
-	http://www.w3school.com.cn/dtd/index.asp DTD学习
-	http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd 实例
+    http://www.w3school.com.cn/dtd/index.asp DTD学习
+    http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd 实例
 
 unlink
 ------
-	unlink 函数主要和mkstemp一起使用用来创建一个临时文件, 然后通过 unlink 删掉这个文件的
-	目录入口, 保证临时文件不被其他用户查看, 所以临时文件还是可以通过文件描述符访问,
-	直到最后一个打开的进程关闭文件操作符或者程序退出后临时文件被彻底的删除.
+    unlink 函数主要和mkstemp一起使用用来创建一个临时文件, 然后通过 unlink 删掉这个文件的
+    目录入口, 保证临时文件不被其他用户查看, 所以临时文件还是可以通过文件描述符访问,
+    直到最后一个打开的进程关闭文件操作符或者程序退出后临时文件被彻底的删除.
 
 Algorithms
 ----------
-	http://www.algosort.com/
-	Computer Programming Algorithms Directory
-	Encryption Sorting Search Tree Phonetic ...
+    http://www.algosort.com/
+    Computer Programming Algorithms Directory
+    Encryption Sorting Search Tree Phonetic ...
 
-	http://www.itl.nist.gov/div897/sqg/dads/terms.html
-	Dictionary of Algorithms and Data Structures
+    http://www.itl.nist.gov/div897/sqg/dads/terms.html
+    Dictionary of Algorithms and Data Structures
 
-	http://eternallyconfuzzled.com/jsw_home.aspx
-	Data Structure, Algorithms, Languages
+    http://eternallyconfuzzled.com/jsw_home.aspx
+    Data Structure, Algorithms, Languages
 
-	http://c-algorithms.sourceforge.net/
-	Implementations of many common data structures and algorithms.
+    http://c-algorithms.sourceforge.net/
+    Implementations of many common data structures and algorithms.
 
-	http://www.partow.net/programming/hashfunctions
-	General Purpose Hash Function Algorithms
+    http://www.partow.net/programming/hashfunctions
+    General Purpose Hash Function Algorithms
 
-	http://osdir.com
-	mailing list archive
-	
-	http://vger.kernel.org/~davem/tcp_output.html
-	tcp output engine
+    http://osdir.com
+    mailing list archive
+    
+    http://vger.kernel.org/~davem/tcp_output.html
+    tcp output engine
 
-	http://www.netzgesta.de/
-	比较实用的js效果, 比如 mapper 像 flash 的中国地图
+    http://www.netzgesta.de/
+    比较实用的js效果, 比如 mapper 像 flash 的中国地图
 
-	http://ajaxload.info/
-	ajax loading 图标制作
+    http://ajaxload.info/
+    ajax loading 图标制作
 
 
 http://tools.mozilla.com
@@ -118,85 +118,85 @@ ssh-keygen -t rsa -C "tekkub@gmail.com"
 
 codeburner
 ----------
-	http://tools.sitepoint.com/codeburner/
-	查找 HTML, CSS 各个标签的标准用法和浏览器兼容性, 带实例.
+    http://tools.sitepoint.com/codeburner/
+    查找 HTML, CSS 各个标签的标准用法和浏览器兼容性, 带实例.
 
 
 imagemagick
 -----------
-	http://www.imagemagick.org/Usage/
-	http://www.ioncannon.net/linux/81/5-imagemagick-command-line-examples-part-1/
+    http://www.imagemagick.org/Usage/
+    http://www.ioncannon.net/linux/81/5-imagemagick-command-line-examples-part-1/
 
 
 Pencil
 ------
-	http://www.evolus.vn/Pencil/
-	针对 HTML 的xfig/inkscape?
+    http://www.evolus.vn/Pencil/
+    针对 HTML 的xfig/inkscape?
 
 
 Favoicon
 --------
-	http://favicon-generator.org/
-	生成 favorate icon
+    http://favicon-generator.org/
+    生成 favorate icon
 
-	http://spritegen.website-performance.org/
-	CSS 图片自动合并工具以减少http请求
+    http://spritegen.website-performance.org/
+    CSS 图片自动合并工具以减少http请求
 
 
 jQuery Tools
 ------------
-	http://flowplayer.org/tools/index.html
-	页卡(tabs), 提示(tips), 醒目(expose), 弹出框(overlay), 滚动(scrollable), 嵌入Flash(flashembed)
+    http://flowplayer.org/tools/index.html
+    页卡(tabs), 提示(tips), 醒目(expose), 弹出框(overlay), 滚动(scrollable), 嵌入Flash(flashembed)
 
-	Uploadify
-	---------
-	http://www.uploadify.com/
-	JS 上传图片
-	
-	Jcrop
-	-----
-	http://deepliquid.com/content/Jcrop.html
-	JS 裁剪图片
+    Uploadify
+    ---------
+    http://www.uploadify.com/
+    JS 上传图片
+    
+    Jcrop
+    -----
+    http://deepliquid.com/content/Jcrop.html
+    JS 裁剪图片
 
 
 Visual Event
 ------------
-	http://www.sprymedia.co.uk/article/Visual+Event
-	又一个配合jQuery使用NB的工具, 可以看到当前页面有哪些事件.
+    http://www.sprymedia.co.uk/article/Visual+Event
+    又一个配合jQuery使用NB的工具, 可以看到当前页面有哪些事件.
 
-	http://www.westciv.com/xray/
-	http://www.sprymedia.co.uk/article/Rule
-	两个小工具, 盒子和尺子
+    http://www.westciv.com/xray/
+    http://www.sprymedia.co.uk/article/Rule
+    两个小工具, 盒子和尺子
 
 
 jsondiff
 --------
-	http://tlrobinson.net/projects/js/jsondiff/
-	http://json.parser.online.fr/
-	展现 json 格式数据, 可查看区别.
+    http://tlrobinson.net/projects/js/jsondiff/
+    http://json.parser.online.fr/
+    展现 json 格式数据, 可查看区别.
 
 
 online json paser
 --------
-	http://json.parser.online.fr/
-	在线 json parser
+    http://json.parser.online.fr/
+    在线 json parser
 
 
 jsBeauty
 --------
-	http://jsbeautifier.org/
-	压缩后的js代码还原, 便于阅读.
+    http://jsbeautifier.org/
+    压缩后的js代码还原, 便于阅读.
 
 
 routetrace
 ----------
-http://tool.chinaz.com/Tracert/	
+http://tool.chinaz.com/Tracert/    
 
 
 balsamiq mockups
 ----------
-	http://balsamiq.com/products/mockups
-	线条原型图， 设计之前
+    http://balsamiq.com/products/mockups
+    线条原型图， 设计之前
 
 
 scrot
@@ -215,27 +215,27 @@ scrot -u x.jpg
 
 tools
 -----
-	scrot		抓屏软件
-		scrot -d 3 -s x.jpg 延迟3秒，选择抓屏，存到x.jpg中
+    scrot        抓屏软件
+        scrot -d 3 -s x.jpg 延迟3秒，选择抓屏，存到x.jpg中
 
-	valgrind	调试软件
-		valgrind --leak-check=full ./xxxxx
+    valgrind    调试软件
+        valgrind --leak-check=full ./xxxxx
 
-	gprof		调试软件(输出函数调用次数及时间、打印调用结构图)
-		I, gcc -pg
-		II, ./xxx
-		III, gprof -b ./xxx gmon.out | less
-		IIII, mkgraph & Graphviz 生成可视化调用关系图
-		
-	screen		方便调试后台程序工具
-		screen -S dbg 新开 dbg 终端
-		screen -r dbg attach 到 dbg 终端
-		C+a c 新建、 n 切换、 d detach
+    gprof        调试软件(输出函数调用次数及时间、打印调用结构图)
+        I, gcc -pg
+        II, ./xxx
+        III, gprof -b ./xxx gmon.out | less
+        IIII, mkgraph & Graphviz 生成可视化调用关系图
+        
+    screen        方便调试后台程序工具
+        screen -S dbg 新开 dbg 终端
+        screen -r dbg attach 到 dbg 终端
+        C+a c 新建、 n 切换、 d detach
 
-	ack-grep	代码grep				http://betterthangrep.com/
-		ack-grep -f --hh  仅打印文件名
-		ack-grep --hh 'RBTOP_OK'  * 仅在头文件中查找 RBTOP_OK
+    ack-grep    代码grep                http://betterthangrep.com/
+        ack-grep -f --hh  仅打印文件名
+        ack-grep --hh 'RBTOP_OK'  * 仅在头文件中查找 RBTOP_OK
 
-	eMail		命令行发smpt邮件		https://github.com/deanproxy/email
+    eMail        命令行发smpt邮件        https://github.com/deanproxy/email
 
-	z			目录关键字跳转			https://github.com/rupa/z
+    z            目录关键字跳转            https://github.com/rupa/z

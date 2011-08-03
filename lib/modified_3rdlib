@@ -1,22 +1,22 @@
 cs/cgi/cgi.c 643
-	if (type && !strcmp(type, "application/x-www-form-urlencoded"))
+    if (type && !strcmp(type, "application/x-www-form-urlencoded"))
 
-	===>
+    ===>
 
-	if (type && !strncmp(type, "application/x-www-form-urlencoded", 33))
+    if (type && !strncmp(type, "application/x-www-form-urlencoded", 33))
 
-	有些插件搞得 contentype 成了(可能是jquery.form.js搞的)
-626	  pcb = cgi->parse_callbacks;
+    有些插件搞得 contentype 成了(可能是jquery.form.js搞的)
+626      pcb = cgi->parse_callbacks;
 (gdb) p type
 $1 = 0x962d978 "application/x-www-form-urlencoded; charset=UTF-8"
 (gdb) p method
-$2 = 0x962dbf0 "POST"	
+$2 = 0x962dbf0 "POST"    
 
 cs/utl/neo_str.c 234
-	if (f != p)
-	{
-	再进行字符串入list
-	}
+    if (f != p)
+    {
+    再进行字符串入list
+    }
 因为以 分割符开头的源字符串进行切割时会把第一个item内容置为""
 
 去掉分隔符结尾的字符及字符串

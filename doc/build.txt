@@ -22,23 +22,23 @@ moon 依赖于以下库:
 编译选项
 ======
 
-make cflag(o)	显示当前目录编译的 gcc 相关参数
-make clean		清扫当前目录
-make backup		备份当前目录, 备份前会先清扫
+make cflag(o)    显示当前目录编译的 gcc 相关参数
+make clean        清扫当前目录
+make backup        备份当前目录, 备份前会先清扫
 
-make RLS=1		编译去掉调试信息的release版本, 包含js文件用jsmin合成
-make NPG=1(o)	去掉对 lib/mnl 中 数据库后端对postgresql的支持
+make RLS=1        编译去掉调试信息的release版本, 包含js文件用jsmin合成
+make NPG=1(o)    去掉对 lib/mnl 中 数据库后端对postgresql的支持
 
 注: (o) 表示不是所有的目录都有此编译选项
 
 
-	If you ever happen to want to link against installed libraries
-	in a given directory, LIBDIR, you must either use libtool, and
-	specify the full pathname of the library, or use the `-LLIBDIR'
-	flag during linking and do at least one of the following:
-	   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
-	     during execution
-	   - add LIBDIR to the `LD_RUN_PATH' environment variable
-	     during linking
-	   - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
-	   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
+    If you ever happen to want to link against installed libraries
+    in a given directory, LIBDIR, you must either use libtool, and
+    specify the full pathname of the library, or use the `-LLIBDIR'
+    flag during linking and do at least one of the following:
+       - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
+         during execution
+       - add LIBDIR to the `LD_RUN_PATH' environment variable
+         during linking
+       - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
+       - have your system administrator add LIBDIR to `/etc/ld.so.conf'

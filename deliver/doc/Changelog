@@ -25,15 +25,15 @@ channel.c 新增 getchanf 函数
 
 hash.c
 --------
-		if (strcasecmp(hDbl->key, key) == 0) {
-			free(hTmp->key);
+        if (strcasecmp(hDbl->key, key) == 0) {
+            free(hTmp->key);
 hashtbl_append() CHANGE TO
-		if (strcasecmp(hDbl->key, key) == 0) {
-        		htbl->first = hTmp->lnext;
-			free(hTmp->key);
+        if (strcasecmp(hDbl->key, key) == 0) {
+                htbl->first = hTmp->lnext;
+            free(hTmp->key);
 
 users.c
-	check_timeout() 改变了删除超时/关闭 subusers 的方式, delsubuser() 参数变化, clear_subuusers()等发生变化
+    check_timeout() 改变了删除超时/关闭 subusers 的方式, delsubuser() 参数变化, clear_subuusers()等发生变化
 
     free_raw(raw);
 send_raw_inline() CHANGED TO
@@ -45,10 +45,10 @@ double free's core dump
 
 raw.c
 ------
-	if (--(fraw->refcount) <= 0) {
+    if (--(fraw->refcount) <= 0) {
 free_raw() CHANGE TO
         if (fraw == NULL) return 0;
-	if (--(fraw->refcount) == 0) {
+    if (--(fraw->refcount) == 0) {
 
 send_raws() ADD
         /*
@@ -56,13 +56,13 @@ send_raws() ADD
          * or, check timeout->delsubuser->destroy_raw_pool->free_raw'll core dump
          */
 
-	user->raw_pools.high.nraw = 0;
-	user->raw_pools.low.nraw = 0;
-	user->raw_pools.nraw = 0;
+    user->raw_pools.high.nraw = 0;
+    user->raw_pools.low.nraw = 0;
+    user->raw_pools.nraw = 0;
 CHANGED TO
-	user->raw_pools.high.nraw = 0;
-	user->raw_pools.low.nraw = 0;
-	user->raw_pools.nraw = 0;
+    user->raw_pools.high.nraw = 0;
+    user->raw_pools.low.nraw = 0;
+    user->raw_pools.nraw = 0;
 
         pool = user->raw_pools.high.rawhead;
         while (pool != NULL) {
@@ -75,18 +75,18 @@ CHANGED TO
             pool = pool->next;
         }
 
-	    free_raw(pool->raw);
+        free_raw(pool->raw);
 destroy_raw_pool() CHANGED TO
-	    free_raw(pool->raw);
+        free_raw(pool->raw);
             pool->raw = NULL;
 
 users.c
 --------
-	destroy_raw_pool(del->raw_pools.low.rawhead);
-	destroy_raw_pool(del->raw_pools.high.rawhead);
+    destroy_raw_pool(del->raw_pools.low.rawhead);
+    destroy_raw_pool(del->raw_pools.high.rawhead);
 delsubuser() CHANGED TO
-	destroy_raw_pool(del->raw_pools.low.rawhead);
-	destroy_raw_pool(del->raw_pools.high.rawhead);
+    destroy_raw_pool(del->raw_pools.low.rawhead);
+    destroy_raw_pool(del->raw_pools.high.rawhead);
         del->raw_pools.low.rawhead = NULL;
         del->raw_pools.low.rawfoot = NULL;
         del->raw_pools.high.rawhead = NULL;
@@ -96,9 +96,9 @@ delsubuser() CHANGED TO
 callbacks 添加了delsubuser.
 
 json_item_copy()
-	obj->jchild.head->next = new_item;
+    obj->jchild.head->next = new_item;
 CHANGED TO
         new_item->next = obj->jchild.child;
         obj->jchild.child = new_item;
-	//obj->jchild.head->next = new_item;
+    //obj->jchild.head->next = new_item;
 

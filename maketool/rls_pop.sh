@@ -20,8 +20,8 @@ sudo make RLS=1 NFCGI=0 install
 echo "\n******** TAR ********"
 sleep 2
 tar zcvf ${TODAY}_pop.tar.gz /usr/local/lib/mevent_*.so \
-	/usr/local/bin/mevent /usr/local/bin/hb /etc/mevent/ \
-	/usr/local/moon/
+    /usr/local/bin/mevent /usr/local/bin/hb /etc/mevent/ \
+    /usr/local/moon/
 
 echo "\n******** RESTORE ********"
 sleep 2

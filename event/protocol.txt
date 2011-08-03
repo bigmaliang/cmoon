@@ -1,8 +1,8 @@
 ====
 =注=
 ====
-	1, 使用 udp 方式工作时， 整包长度不能超过 64k bytes。
-	2, 为简化操作，所有包里的业务数据（命令参数、业务返回值）全放在字符串中，mevent处理后放在 hdfsnd, hdfrcv 中，应用直接使用 clearsilver 提供的HDF函数进行操作。
+    1, 使用 udp 方式工作时， 整包长度不能超过 64k bytes。
+    2, 为简化操作，所有包里的业务数据（命令参数、业务返回值）全放在字符串中，mevent处理后放在 hdfsnd, hdfrcv 中，应用直接使用 clearsilver 提供的HDF函数进行操作。
 
 
 
@@ -109,9 +109,9 @@ Request ID (32 bits)
 
 Reply Code (32 bits)
     操作结果，当前分为：
-	REP_ERR_xxx		14 ~ 24
-	REP_ERR_APP_xxx	25 ~ 999
-	REP_OK_xxx		1000 ~
+    REP_ERR_xxx        14 ~ 24
+    REP_ERR_APP_xxx    25 ~ 999
+    REP_OK_xxx        1000 ~
     当除了操作结果外，后端插件无其他数据返回时，返回包到此结束。
 
 vsize (32 bits)

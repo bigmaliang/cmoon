@@ -6,15 +6,15 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-#include <strings.h>			/* strcasecmp() */
+#include <strings.h>            /* strcasecmp() */
 #include <stdbool.h>
 #include <time.h>
-#include <ctype.h>				/* isdigit() */
+#include <ctype.h>                /* isdigit() */
 #include <inttypes.h>
 #include <stdint.h>             /* uint32_t... */
 #include <sys/types.h>
-#include <dlfcn.h>				/* dlope()... */
-#include <dirent.h>				/* scandir()... */
+#include <dlfcn.h>                /* dlope()... */
+#include <dirent.h>                /* scandir()... */
 #include <iconv.h>
 
 #include <stdarg.h>
@@ -77,9 +77,9 @@
 /*
  * or, we can use following form
  *
- * #define mtc_err(X)					\
- * 		mtc_set_info(__FILE__, __LINE__, TC_ERROR);	\
- * 		mtc_msg X
+ * #define mtc_err(X)                    \
+ *         mtc_set_info(__FILE__, __LINE__, TC_ERROR);    \
+ *         mtc_msg X
  */
 #endif
 
@@ -91,7 +91,7 @@
 /* includes for mnl */
 #include "json.h"
 #include "mnum.h"
-#include "mcfg.h"		/* cfg.h must be the first one */
+#include "mcfg.h"        /* cfg.h must be the first one */
 #include "mmkd.h"
 #include "mtypes.h"
 #include "mconfig.h"
@@ -106,4 +106,4 @@
 #include "mmisc.h"
 #include "mglobal.h"
 
-#endif	/* __MHEADS_H__ */
+#endif    /* __MHEADS_H__ */

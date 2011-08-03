@@ -3,16 +3,16 @@
 
 int tcp_init(void)
 {
-	return -1;
+    return -1;
 }
 
 void tcp_close(int fd)
 {
-	return;
+    return;
 }
 
 void tcp_recv(int fd, short event, void *arg)
 {
-	return;
+    return;
 }
 

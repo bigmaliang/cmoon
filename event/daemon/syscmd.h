@@ -12,23 +12,23 @@
 #include "packet.h"
 #include "netutils.h"
 
-#define VNAME_CACHE_KEY	"cachekey" 		/* DATA_TYPE_STRING */
-#define VNAME_CACHE_VAL	"cacheval"      /* DATA_TYPE_ANY */
+#define VNAME_CACHE_KEY    "cachekey"         /* DATA_TYPE_STRING */
+#define VNAME_CACHE_VAL    "cacheval"      /* DATA_TYPE_ANY */
 
 #define CASE_SYS_CMD(cmd, q, cd, err)               \
-    {												\
-    case REQ_CMD_CACHE_GET:							\
+    {                                                \
+    case REQ_CMD_CACHE_GET:                            \
         err = sys_cmd_cache_get(q, cd, false);      \
-        break;										\
-    case REQ_CMD_CACHE_SET:							\
+        break;                                        \
+    case REQ_CMD_CACHE_SET:                            \
         err = sys_cmd_cache_set(q, cd, false);      \
-        break;										\
-    case REQ_CMD_CACHE_DEL:							\
+        break;                                        \
+    case REQ_CMD_CACHE_DEL:                            \
         err = sys_cmd_cache_del(q, cd, false);      \
-        break;										\
-    case REQ_CMD_CACHE_EMPTY:						\
+        break;                                        \
+    case REQ_CMD_CACHE_EMPTY:                        \
         err = sys_cmd_cache_empty(q, &cd, false);   \
-        break;										\
+        break;                                        \
     }
         
 NEOERR* sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply);

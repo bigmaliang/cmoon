@@ -17,55 +17,55 @@
 #define _ENABLE_SCTP ++CONFIG_ENABLE_SCTP++
 
 
-#include <sys/types.h>		/* socket defines */
-#include <sys/socket.h>		/* socklen_t */
+#include <sys/types.h>        /* socket defines */
+#include <sys/socket.h>        /* socklen_t */
 
 #if _ENABLE_TIPC
-#include <linux/tipc.h>		/* struct sockaddr_tipc */
+#include <linux/tipc.h>        /* struct sockaddr_tipc */
 #endif
 
 #if (_ENABLE_TCP || _ENABLE_UDP || _ENABLE_SCTP)
-#include <netinet/in.h>		/* struct sockaddr_in */
+#include <netinet/in.h>        /* struct sockaddr_in */
 #endif
 
 struct mevent_srv {
-	int fd;
-	int type;
-	union {
+    int fd;
+    int type;
+    union {
 
 #if _ENABLE_TIPC
-		struct {
-			unsigned int port;
-			struct sockaddr_tipc srvsa;
-			socklen_t srvlen;
-		} tipc;
+        struct {
+            unsigned int port;
+            struct sockaddr_tipc srvsa;
+            socklen_t srvlen;
+        } tipc;
 #endif
 
 #if (_ENABLE_TCP || _ENABLE_UDP || _ENABLE_SCTP)
-		struct {
-			struct sockaddr_in srvsa;
-			socklen_t srvlen;
-		} in;
+        struct {
+            struct sockaddr_in srvsa;
+            socklen_t srvlen;
+        } in;
 #endif
 
-	} info;
+    } info;
 };
 
 typedef struct mevent_t {
-	unsigned int nservers;
-	struct mevent_srv *servers;
-	int cmd;
-	int flags;
-	int errcode;
-	char *ename;
-	char *key;					/* key for select_srv() */
-	int packed;
-	HDF *hdfsnd;
-	unsigned char *payload;
-	size_t psize;
-	
-	unsigned char *rcvbuf;
-	HDF *hdfrcv;
+    unsigned int nservers;
+    struct mevent_srv *servers;
+    int cmd;
+    int flags;
+    int errcode;
+    char *ename;
+    char *key;                    /* key for select_srv() */
+    int packed;
+    HDF *hdfsnd;
+    unsigned char *payload;
+    size_t psize;
+    
+    unsigned char *rcvbuf;
+    HDF *hdfrcv;
 } mevent_t;
 
 typedef void (*MeventLog)(const char *func, const char *file, long line, int level, const char *format, ...);
@@ -94,9 +94,9 @@ void mevent_free(void *evt);
  */
 int mevent_add_tipc_server(mevent_t *evt, int port);
 int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port,
-						  const char *nblock, void *tv);
+                          const char *nblock, void *tv);
 int mevent_add_udp_server(mevent_t *evt, const char *addr, int port,
-						  const char *nblock, void *tv);
+                          const char *nblock, void *tv);
 int mevent_add_sctp_server(mevent_t *evt, const char *addr, int port);
 
 
@@ -121,54 +121,54 @@ mevent_t *mevent_init_plugin(char *ename);
  * 如果服务业务端有其他数据返回时, 返回数据存储在 evt->rcvdata 中
  */
 int mevent_trigger(mevent_t *evt, char *key,
-				   unsigned short cmd, unsigned short flags);
+                   unsigned short cmd, unsigned short flags);
 
 
 /* TODO hdf_write_string lead mem_leak */
-#define MEVENT_TRIGGER(evt, key, cmd, flags)							\
-	do {																\
-		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {		\
-			char *zpa = NULL;											\
-			hdf_write_string(evt->hdfrcv, &zpa);						\
-			return nerr_raise(evt->errcode, "pro %s %d failure %d %s",	\
-							  evt->ename, cmd, evt->errcode, zpa);		\
-		}																\
-	} while(0)
-#define MEVENT_TRIGGER_VOID(evt, key, cmd, flags)						\
-	do {																\
-		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {		\
-			char *zpa = NULL;											\
-			hdf_write_string(evt->hdfrcv, &zpa);						\
-			if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
-									   "pro %s %d failure %d %s",		\
-									   evt->ename, cmd, evt->errcode, zpa); \
-			if (zpa) free(zpa);											\
-			return;														\
-		}																\
-	} while(0)
-#define MEVENT_TRIGGER_RET(ret, evt, key, cmd, flags)					\
-	do {																\
-		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {		\
-			char *zpa = NULL;											\
-			hdf_write_string(evt->hdfrcv, &zpa);						\
-			if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
-									   "pro %s %d failure %d %s",		\
-									   evt->ename, cmd, evt->errcode, zpa); \
-			if (zpa) free(zpa);											\
-			return ret;													\
-		}																\
-	} while(0)
-#define MEVENT_TRIGGER_NRET(evt, key, cmd, flags)						\
-	do {																\
-		if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {		\
-			char *zpa = NULL;											\
-			hdf_write_string(evt->hdfrcv, &zpa);						\
-			if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
-									   "pro %s %d failure %d %s",		\
-									   evt->ename, cmd, evt->errcode, zpa); \
-			if (zpa) free(zpa);											\
-		}																\
-	} while(0)
+#define MEVENT_TRIGGER(evt, key, cmd, flags)                            \
+    do {                                                                \
+        if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
+            char *zpa = NULL;                                            \
+            hdf_write_string(evt->hdfrcv, &zpa);                        \
+            return nerr_raise(evt->errcode, "pro %s %d failure %d %s",    \
+                              evt->ename, cmd, evt->errcode, zpa);        \
+        }                                                                \
+    } while(0)
+#define MEVENT_TRIGGER_VOID(evt, key, cmd, flags)                        \
+    do {                                                                \
+        if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
+            char *zpa = NULL;                                            \
+            hdf_write_string(evt->hdfrcv, &zpa);                        \
+            if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
+                                       "pro %s %d failure %d %s",        \
+                                       evt->ename, cmd, evt->errcode, zpa); \
+            if (zpa) free(zpa);                                            \
+            return;                                                        \
+        }                                                                \
+    } while(0)
+#define MEVENT_TRIGGER_RET(ret, evt, key, cmd, flags)                    \
+    do {                                                                \
+        if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
+            char *zpa = NULL;                                            \
+            hdf_write_string(evt->hdfrcv, &zpa);                        \
+            if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
+                                       "pro %s %d failure %d %s",        \
+                                       evt->ename, cmd, evt->errcode, zpa); \
+            if (zpa) free(zpa);                                            \
+            return ret;                                                    \
+        }                                                                \
+    } while(0)
+#define MEVENT_TRIGGER_NRET(evt, key, cmd, flags)                        \
+    do {                                                                \
+        if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
+            char *zpa = NULL;                                            \
+            hdf_write_string(evt->hdfrcv, &zpa);                        \
+            if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
+                                       "pro %s %d failure %d %s",        \
+                                       evt->ename, cmd, evt->errcode, zpa); \
+            if (zpa) free(zpa);                                            \
+        }                                                                \
+    } while(0)
 
 
-#endif	/* __MEVENT_H__ */
+#endif    /* __MEVENT_H__ */

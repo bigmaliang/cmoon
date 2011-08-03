@@ -6,5 +6,5 @@ sessid=`wget -q -O - "http://0.push.mangoq.com:6969/2/?[{\"cmd\": \"CONNECT\", \
 echo ${sessid} >> ${logfile}
 sleep 3
 while true; do
-	wget -q -O - "http://0.push.mangoq.com:6969/2/?[{\"cmd\": \"CHECK\", \"chl\": 1, \"sessid\": \"$sessid\"}] " 2>&1 >> ${logfile} & sleep 18;
+    wget -q -O - "http://0.push.mangoq.com:6969/2/?[{\"cmd\": \"CHECK\", \"chl\": 1, \"sessid\": \"$sessid\"}] " 2>&1 >> ${logfile} & sleep 18;
 done

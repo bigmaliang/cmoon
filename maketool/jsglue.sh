@@ -11,17 +11,17 @@ useage()
 
 
 if [ $# -lt 2 ]; then
-	useage
+    useage
 fi
 
 # process parameter
 while getopts 'p:' OPT; do
-	case $OPT in
-		p)
-			JSMIN="$OPTARG";;
-		?)
-			useage
-	esac
+    case $OPT in
+        p)
+            JSMIN="$OPTARG";;
+        ?)
+            useage
+    esac
 done
 shift $(($OPTIND - 1))
 
@@ -29,5 +29,5 @@ JSFILES=$*
 
 for file in $JSFILES
 do
-	${JSMIN} <$file
+    ${JSMIN} <$file
 done

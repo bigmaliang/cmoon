@@ -8,4 +8,4 @@ __BEGIN_DECLS
 NEOERR* mkd_esc_str(const char *in, char **out);
 
 __END_DECLS
-#endif	/* __MMKD_H__ */
+#endif    /* __MMKD_H__ */

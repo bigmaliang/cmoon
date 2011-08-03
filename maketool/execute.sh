@@ -6,7 +6,7 @@ files=$*
 
 for file in $files
 do
-	./$file
+    ./$file
 done
 
 return 0

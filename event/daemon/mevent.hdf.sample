@@ -1,18 +1,18 @@
 Mevent {
-	trace_level = 5
-	plugins {
-		0 = skeleton
-		1 = db_community
-	}
+    trace_level = 5
+    plugins {
+        0 = skeleton
+        1 = db_community
+    }
 }
 
 Plugin {
-	db_community {
-		logfile = /tmp/logs/db_community
-		ip = 127.0.0.1
-		user = test
-		pass = test
-		name = test
-	}
+    db_community {
+        logfile = /tmp/logs/db_community
+        ip = 127.0.0.1
+        user = test
+        pass = test
+        name = test
+    }
 }
 

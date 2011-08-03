@@ -1,87 +1,87 @@
 APE_JSF事件处理API
 ================
-	'mootools-core', 'Core/Events', 'Pipe/Pipe', 'Pipe/PipeProxy', 'Pipe/PipeMulti', 'Pipe/PipeSingle',
-	'Core/Core', 'Core/Utility', 'Core/Session'
+    'mootools-core', 'Core/Events', 'Pipe/Pipe', 'Pipe/PipeProxy', 'Pipe/PipeMulti', 'Pipe/PipeSingle',
+    'Core/Core', 'Core/Utility', 'Core/Session'
 绑定好事件后, 调用this.core.start() or ape.start() 进入 ape 事件处理循环(Lauche the connect request)
 
 APE_Events
-	fireEvent: function(type, args, delay) {
-	addEvent: function(type, fn, internal) {
-	onRaw: function(type, fn, internal) {
-	onCmd: function(type, fn, internal) {                                  
-	onError: function(type, fn, internal) {                                
+    fireEvent: function(type, args, delay) {
+    addEvent: function(type, fn, internal) {
+    onRaw: function(type, fn, internal) {
+    onCmd: function(type, fn, internal) {                                  
+    onError: function(type, fn, internal) {                                
 
 APE_Pipe
-	send: function(data){
-	request: function(raw, param, sessid, options){
-	getPubid: function(){
+    send: function(data){
+    request: function(raw, param, sessid, options){
+    getPubid: function(){
 
 APE_PipeProxy
-		this.fireEvent('pipeCreate', [this.type, this, options]);
-				this.fireEvent('proxyRead', data);
-				this.fireEvent('proxyConnect');
-				this.fireEvent('proxyClose');
-	init: function(options){
-	open: function(hostname, port){
-	send: function(data){
-	rawProxyEvent: function(resp, pipe){
-	callback: function(raw){
+        this.fireEvent('pipeCreate', [this.type, this, options]);
+                this.fireEvent('proxyRead', data);
+                this.fireEvent('proxyConnect');
+                this.fireEvent('proxyClose');
+    init: function(options){
+    open: function(hostname, port){
+    send: function(data){
+    rawProxyEvent: function(resp, pipe){
+    callback: function(raw){
 
 APE_PipeMulti
-		this.fireEvent('pipeCreate', [this.type, this, options]);
-		this.fireEvent('userJoin', [u, this]);
-		this.fireEvent('userLeft', [u, this]);
-	rawJoin: function(raw, pipe){
-	rawLeft: function(raw, pipe){
-	addUser: function(pubid, user){
-	delUser: function(pubid){
-	getUser: function(pubid){
+        this.fireEvent('pipeCreate', [this.type, this, options]);
+        this.fireEvent('userJoin', [u, this]);
+        this.fireEvent('userLeft', [u, this]);
+    rawJoin: function(raw, pipe){
+    rawLeft: function(raw, pipe){
+    addUser: function(pubid, user){
+    delUser: function(pubid){
+    getUser: function(pubid){
 
 APE_PipeSingle
-		this.fireEvent('pipeCreate',[this.type, this, options]);
+        this.fireEvent('pipeCreate',[this.type, this, options]);
 
 APE_Core
-		this.fireEvent('loaded', this);
-			this.fireEvent('apeDisconnect');
-				this.fireEvent('apeReconnect');
-		this.fireEvent('pipeDelete', [pipe.type, pipe]);
-		this.fireEvent('init');
-	fireEvent: function(type, args, delay){
-	onError: function(type, fn, internal){
-	onRaw: function(type, fn, internal){
-	onCmd: function(type, fn, internal){
-	pooler: function(){
-	startPooler: function(){
-	stopPooler: function(){
-	parseParam: function(param){
-	request: function(raw, param, sessid, options, noWatch){
-	cancelRequest: function(){
-	xhrFail: function(args, failStatus) {
-	parseResponse: function(raws, callback){
-	callRaw: function(raw){
-	newPipe: function(type, options) {
-	addPipe: function(pubid, pipe){
-	getPipe: function(pubid){
-	delPipe: function(pubid){
-	start: function(options){
-	check: function(callback){
-	connect: function(options){
-	join: function(chan){
-	left: function(pubid){
-	quit: function(){
-	setPubid: function(pubid){
-	getPubid: function(){
-	getSessid:function(){
-	setSessid: function(sessid){
-	setSession: function(key, value, options){
-	getSession: function(key,callback){
-	rawIdent: function(raw){
-	rawLogin: function(param){
-	rawErr: function(err){
-	requestObserver: function(){
-	clearSession:function(){
+        this.fireEvent('loaded', this);
+            this.fireEvent('apeDisconnect');
+                this.fireEvent('apeReconnect');
+        this.fireEvent('pipeDelete', [pipe.type, pipe]);
+        this.fireEvent('init');
+    fireEvent: function(type, args, delay){
+    onError: function(type, fn, internal){
+    onRaw: function(type, fn, internal){
+    onCmd: function(type, fn, internal){
+    pooler: function(){
+    startPooler: function(){
+    stopPooler: function(){
+    parseParam: function(param){
+    request: function(raw, param, sessid, options, noWatch){
+    cancelRequest: function(){
+    xhrFail: function(args, failStatus) {
+    parseResponse: function(raws, callback){
+    callRaw: function(raw){
+    newPipe: function(type, options) {
+    addPipe: function(pubid, pipe){
+    getPipe: function(pubid){
+    delPipe: function(pubid){
+    start: function(options){
+    check: function(callback){
+    connect: function(options){
+    join: function(chan){
+    left: function(pubid){
+    quit: function(){
+    setPubid: function(pubid){
+    getPubid: function(){
+    getSessid:function(){
+    setSessid: function(sessid){
+    setSession: function(key, value, options){
+    getSession: function(key,callback){
+    rawIdent: function(raw){
+    rawLogin: function(param){
+    rawErr: function(err){
+    requestObserver: function(){
+    clearSession:function(){
 
-	
+    
 raw_
 onRaw
 callRaw

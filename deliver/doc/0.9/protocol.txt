@@ -2,11 +2,11 @@
 [
 {"raw":"LOGIN","time":"1248446278","datas":{"sessid":"527ebd7506d57421a01894e7e92add48"}},
 {"raw":"IDENT","time":"1248446278","datas":{
-	"user":{
-		"properties":{"name":"nicka"},
-		"casttype":"uni",
-		"pubid":"51c64a2b6563fea042e4c2102905ca47"
-	}
+    "user":{
+        "properties":{"name":"nicka"},
+        "casttype":"uni",
+        "pubid":"51c64a2b6563fea042e4c2102905ca47"
+    }
 }}
 ]
 
@@ -15,12 +15,12 @@
 /?JOIN & 8c6ddc795f704f1478b671da8b6ce46d & test & 1248335432213
 [
 {"raw":"CHANNEL","time":"1248446278","datas":{
-	"pipe":{
-		"properties":{"name":"test"},
-		"casttype":"multi",
-		"pubid":"264c6cd279bcdc284626f9c7822a2c7a"
-	},
-	"users":[{"level":"1","properties":{"name":"nicka"},"casttype":"uni","pubid":"51c64a2b6563fea042e4c2102905ca47"}]
+    "pipe":{
+        "properties":{"name":"test"},
+        "casttype":"multi",
+        "pubid":"264c6cd279bcdc284626f9c7822a2c7a"
+    },
+    "users":[{"level":"1","properties":{"name":"nicka"},"casttype":"uni","pubid":"51c64a2b6563fea042e4c2102905ca47"}]
 }}
 ]
 

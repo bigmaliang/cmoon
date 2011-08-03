@@ -6,16 +6,16 @@ NEOERR* sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
     unsigned char *val = NULL;
     size_t vsize = 0;
     char *key;
-	NEOERR *err = STATUS_OK;
+    NEOERR *err = STATUS_OK;
 
     if (q == NULL || cd == NULL) {
-		err = nerr_raise(REP_ERR, "param null");
+        err = nerr_raise(REP_ERR, "param null");
         goto done;
     }
 
-	key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
+    key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
     if (!key) {
-		err = nerr_raise(REP_ERR_BADPARAM, "need %s", VNAME_CACHE_KEY);
+        err = nerr_raise(REP_ERR_BADPARAM, "need %s", VNAME_CACHE_KEY);
         goto done;
     }
 
@@ -32,7 +32,7 @@ NEOERR* sys_cmd_cache_get(struct queue_entry *q, struct cache *cd, bool reply)
     } else {
         if (err == STATUS_OK && val != NULL && vsize > 0) {
             /* if we don't reply to client, store them in replydata */
-			hdf_set_value(q->hdfsnd, VNAME_CACHE_VAL, (char*)val);
+            hdf_set_value(q->hdfsnd, VNAME_CACHE_VAL, (char*)val);
         }
     }
 
@@ -44,29 +44,29 @@ NEOERR* sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
     char *val = NULL;
     size_t vsize = 0;
     char *key;
-	NEOERR *err = STATUS_OK;
+    NEOERR *err = STATUS_OK;
 
     if (q == NULL || cd == NULL) {
-		err = nerr_raise(REP_ERR, "param null");
+        err = nerr_raise(REP_ERR, "param null");
         goto done;
     }
 
-	key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
+    key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
     if (!key) {
-		err = nerr_raise(REP_ERR_BADPARAM, "need %s", VNAME_CACHE_KEY);
+        err = nerr_raise(REP_ERR_BADPARAM, "need %s", VNAME_CACHE_KEY);
         goto done;
     }
 
-	HDF *node = hdf_get_obj(q->hdfrcv, VNAME_CACHE_VAL);
+    HDF *node = hdf_get_obj(q->hdfrcv, VNAME_CACHE_VAL);
     if (!node) {
-		err = nerr_raise(REP_ERR_BADPARAM, "need %s", VNAME_CACHE_VAL);
+        err = nerr_raise(REP_ERR_BADPARAM, "need %s", VNAME_CACHE_VAL);
         goto done;
     }
-	
-	val = hdf_obj_value(node);
-	vsize = strlen(val)+1;
+    
+    val = hdf_obj_value(node);
+    vsize = strlen(val)+1;
     cache_set(cd, (unsigned char*)key, strlen((char*)key),
-			  (unsigned char*)val, vsize, 0);
+              (unsigned char*)val, vsize, 0);
 
  done:
     if (reply) {
@@ -80,16 +80,16 @@ NEOERR* sys_cmd_cache_set(struct queue_entry *q, struct cache *cd, bool reply)
 NEOERR* sys_cmd_cache_del(struct queue_entry *q, struct cache *cd, bool reply)
 {
     char *key;
-	NEOERR *err = STATUS_OK;
+    NEOERR *err = STATUS_OK;
 
     if (q == NULL || cd == NULL) {
-		err = nerr_raise(REP_ERR, "param null");
+        err = nerr_raise(REP_ERR, "param null");
         goto done;
     }
 
-	key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
+    key = hdf_get_value(q->hdfrcv, VNAME_CACHE_KEY, NULL);
     if (!key) {
-		err = nerr_raise(REP_ERR_BADPARAM, "need %s", VNAME_CACHE_KEY);
+        err = nerr_raise(REP_ERR_BADPARAM, "need %s", VNAME_CACHE_KEY);
         goto done;
     }
     cache_del(cd, (unsigned char*)key, strlen(key));
@@ -104,11 +104,11 @@ NEOERR* sys_cmd_cache_del(struct queue_entry *q, struct cache *cd, bool reply)
 
 NEOERR* sys_cmd_cache_empty(struct queue_entry *q, struct cache **cd, bool reply)
 {
-	NEOERR *err = STATUS_OK;
+    NEOERR *err = STATUS_OK;
     size_t num;
 
     if (q == NULL || cd == NULL || *cd == NULL) {
-		err = nerr_raise(REP_ERR, "param null");
+        err = nerr_raise(REP_ERR, "param null");
         goto done;
     }
 

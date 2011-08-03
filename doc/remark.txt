@@ -99,38 +99,38 @@ css
 ===
 position
 一般与 left, top 属性并用
-	static    默认属性。 块级元素生成一矩形框，作为文档流的一部分。 行内元素创建一个或多个行框，置于其父元素中。
-	relative  偏移某个距离。 原本占有的空间保留。
-	absolute  元素从文档流中删除， 并相对于其包含块定位。 元素在正常文档流中占用的空间将会关闭， 等同于不存在。
-	          元素定位后生成一个块级框， 无论在正常流中生成何种框。
-	fixed     类似 absolute， 除了包含块是视窗本身。
+    static    默认属性。 块级元素生成一矩形框，作为文档流的一部分。 行内元素创建一个或多个行框，置于其父元素中。
+    relative  偏移某个距离。 原本占有的空间保留。
+    absolute  元素从文档流中删除， 并相对于其包含块定位。 元素在正常文档流中占用的空间将会关闭， 等同于不存在。
+              元素定位后生成一个块级框， 无论在正常流中生成何种框。
+    fixed     类似 absolute， 除了包含块是视窗本身。
 display
-	inline <span>
-	inline-block <a>
-	block <div>
+    inline <span>
+    inline-block <a>
+    block <div>
 
 background属性:
 http://www.w3school.com.cn/css/pr_background.asp
 background: background-color background-image background-repeat background-attachment background-position
-	按顺序就可以了， 没有的可以省略。
-	color: #ee0000 之类
-	image: url(images/body_bg.gif)
-	repeat: 是否以及如何重复背景图像。 默认repeat. [repeat-x repeat-y no-repeat inherit]
-	attachment: 背景图像是否固定，或者随元素的滚动而滚动。 只有当背景图像小于元素尺寸、且元素有滚动条时才有用。 默认 scroll [fixed inherit]
-	position: 设置背景图像放在元素中的位置。
-		三种情况(可以混用)：
-		1		  top/center/bottom left/center/right
-		2         %x      %y
-		3         xpos    ypos
-	   -100px -200px 背景图像放在元素的左边100px, 上边200px。 也可以说从这个位置开始放。
-	   100%  100%    背景图片放在元素的右下角。
+    按顺序就可以了， 没有的可以省略。
+    color: #ee0000 之类
+    image: url(images/body_bg.gif)
+    repeat: 是否以及如何重复背景图像。 默认repeat. [repeat-x repeat-y no-repeat inherit]
+    attachment: 背景图像是否固定，或者随元素的滚动而滚动。 只有当背景图像小于元素尺寸、且元素有滚动条时才有用。 默认 scroll [fixed inherit]
+    position: 设置背景图像放在元素中的位置。
+        三种情况(可以混用)：
+        1          top/center/bottom left/center/right
+        2         %x      %y
+        3         xpos    ypos
+       -100px -200px 背景图像放在元素的左边100px, 上边200px。 也可以说从这个位置开始放。
+       100%  100%    背景图片放在元素的右下角。
 
 overflow: 内容溢出时元素的表现：
-	visible 默认， 内容显示在元素框之外
-	hidden  内容被裁减，且其余内容不可见
-	scroll  内容被裁减，但有滚动条可以查看
-	auto    同上
-	inherit
+    visible 默认， 内容显示在元素框之外
+    hidden  内容被裁减，且其余内容不可见
+    scroll  内容被裁减，但有滚动条可以查看
+    auto    同上
+    inherit
 
 
 C

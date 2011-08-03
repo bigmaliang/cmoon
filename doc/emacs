@@ -17,29 +17,29 @@ MODE
 
 gerneal
 ----
-C-x C-f /sudo:/etc/fstab	edit file as root
+C-x C-f /sudo:/etc/fstab    edit file as root
 
 version control
 ----
 single file:
-C-x v =			vc-diff
-C-x v D			vc-root-diff
-C-x v l			vc-print-log
+C-x v =            vc-diff
+C-x v D            vc-root-diff
+C-x v l            vc-print-log
 dir mode(skeleton)
-C-x v d			vc-dir
-l	  			vc-print-log (can use any key in single mode - C-x v)
-TAB				vc-dir-next-directory
-M	  			vc-dir-mark-all-files
-U				vc-dir-unmark-all-files
-x				vc-dir-hide-up-to-date (refresh)
-v				vc-next-action
+C-x v d            vc-dir
+l                  vc-print-log (can use any key in single mode - C-x v)
+TAB                vc-dir-next-directory
+M                  vc-dir-mark-all-files
+U                vc-dir-unmark-all-files
+x                vc-dir-hide-up-to-date (refresh)
+v                vc-next-action
 
 
 html
 ----
-C-c C-i			add > + end tag, place cusor inside. useful for <a href=""C-c C-i
-C-c C-b			add > + blank line + endtag. useful for <pC-c C-b
-C-c C-v			toggle validate mode
+C-c C-i            add > + end tag, place cusor inside. useful for <a href=""C-c C-i
+C-c C-b            add > + blank line + endtag. useful for <pC-c C-b
+C-c C-v            toggle validate mode
 
 
 js
@@ -48,38 +48,38 @@ js
 
 tex
 ----
-C-c C-c			compile/view file
-C-c C-s			insert section, parag...
-C-c C-m			insert macros(ref, space...)
-C-c C-e			insert enviorment(itemize, enumvertate, picture...)
-C-c C-f			insert font(press b for font list)
+C-c C-c            compile/view file
+C-c C-s            insert section, parag...
+C-c C-m            insert macros(ref, space...)
+C-c C-e            insert enviorment(itemize, enumvertate, picture...)
+C-c C-f            insert font(press b for font list)
 
-C-C C-o C-f		enable/disable tex folder mode
-C-c C-o C-e		TeX-fold-env
-C-c C-o i		TeX-fold-clearout-item
+C-C C-o C-f        enable/disable tex folder mode
+C-c C-o C-e        TeX-fold-env
+C-c C-o i        TeX-fold-clearout-item
 
 
 ecb
 ----
-M-x ecb-active	[de]active ecb
-C-c . l w		ecb-toggle-ecb-windows (hide/show ecb windows)
-RETURN			see node
-TAB				expand/unexpand node
-Left/Right		up/down node
+M-x ecb-active    [de]active ecb
+C-c . l w        ecb-toggle-ecb-windows (hide/show ecb windows)
+RETURN            see node
+TAB                expand/unexpand node
+Left/Right        up/down node
 
-C-c . m   a/b/d/h/m/s		ecb-maxmize-window-
-	  	  					(analyse/speedbar/directories/history/methods/sources)
-C-c . g 1/a/b/d/h/m/s/l/c	ecb-goto-window-
-	  						(edit1/.../edit-last/comilation)
-C-c . l c/r/t/w				ecb-layout-
-	  						(change/redraw/toggle-layout/toggle-windows)
-C-c . f h/m/s/...			ecb-filter-.... (filter node)
+C-c . m   a/b/d/h/m/s        ecb-maxmize-window-
+                                (analyse/speedbar/directories/history/methods/sources)
+C-c . g 1/a/b/d/h/m/s/l/c    ecb-goto-window-
+                              (edit1/.../edit-last/comilation)
+C-c . l c/r/t/w                ecb-layout-
+                              (change/redraw/toggle-layout/toggle-windows)
+C-c . f h/m/s/...            ecb-filter-.... (filter node)
 
 
 
 cscope
 ------
-C-c s I			cscope-index-files
-C-c s L			cscope-create-list-of-files-to-index
-C-c s t			cscope-find-this-text-string
-C-c s c			cscope-find-functions-calling-this-function
+C-c s I            cscope-index-files
+C-c s L            cscope-create-list-of-files-to-index
+C-c s t            cscope-find-this-text-string
+C-c s c            cscope-find-functions-calling-this-function

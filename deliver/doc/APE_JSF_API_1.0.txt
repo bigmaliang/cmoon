@@ -3,154 +3,154 @@ APE_JSF事件处理API 1.0
 Core
 ----
 Core
-	initialize: function(options){
-	selectTransport: function() {
-	poller: function() {
-	startPoller: function() {
-	stopPoller: function() {
-	stopRequest: function() {
-	parseParam: function(param) {
-	cancelRequest: function() {
-	requestFail: function(args, failStatus, request) {
-	parseResponse: function(raws, callback){
-	callRaw: function(raw) {
-	newPipe: function(type, options){
-	addPipe: function(pubid, pipe){
-	getPipe: function(pubid){
-	delPipe: function(pubid){
-	check: function(){
-	start: function(options, sendStack){
-	connect: function(options, sendStack){
-	join: function(channel){
-	left: function(pubid){
-	quit: function(){
-	getPubid: function(){
-	setSession: function(obj, options) {
-	getSession: function(key, callback){
-	rawIdent: function(raw){
-	rawLogin: function(param){
-	rawErr: function(err){
+    initialize: function(options){
+    selectTransport: function() {
+    poller: function() {
+    startPoller: function() {
+    stopPoller: function() {
+    stopRequest: function() {
+    parseParam: function(param) {
+    cancelRequest: function() {
+    requestFail: function(args, failStatus, request) {
+    parseResponse: function(raws, callback){
+    callRaw: function(raw) {
+    newPipe: function(type, options){
+    addPipe: function(pubid, pipe){
+    getPipe: function(pubid){
+    delPipe: function(pubid){
+    check: function(){
+    start: function(options, sendStack){
+    connect: function(options, sendStack){
+    join: function(channel){
+    left: function(pubid){
+    quit: function(){
+    getPubid: function(){
+    setSession: function(obj, options) {
+    getSession: function(key, callback){
+    rawIdent: function(raw){
+    rawLogin: function(param){
+    rawErr: function(err){
 
 Events
-	onRaw: function(type, fn, internal) {
-	onCmd: function(type, fn, internal) {                                  
-	onError: function(type, fn, internal) {
+    onRaw: function(type, fn, internal) {
+    onCmd: function(type, fn, internal) {                                  
+    onError: function(type, fn, internal) {
 
 Session
-	initialize: function(options){
-	restoreUniPipe: function(resp){
-	init: function(){
-	restoreCallback: function(resp){
-	connect: function(options){
-	getInstance: function(identifier) {
-	removeInstance: function(identifier){
-	initCookie: function(){
-	createInstance: function(cookie) {
-	createCookie: function(){
-	saveCookie: function(){
-	clearSession: function(){
-	removeCookie: function(){
+    initialize: function(options){
+    restoreUniPipe: function(resp){
+    init: function(){
+    restoreCallback: function(resp){
+    connect: function(options){
+    getInstance: function(identifier) {
+    removeInstance: function(identifier){
+    initCookie: function(){
+    createInstance: function(cookie) {
+    createCookie: function(){
+    saveCookie: function(){
+    clearSession: function(){
+    removeCookie: function(){
 
 Utility
-	addSlashes: function(){
-	stripSlashes: function(){
-	encode: function(ba){
-	decode: function(str){
+    addSlashes: function(){
+    stripSlashes: function(){
+    encode: function(ba){
+    decode: function(str){
 
 
 Pipe
 ----
 Pipe
-	initialize: function(ape, options){
-	initRequestMethod: function() {
-	                send: function() {
-	                        add: function() {
-	                        add: function() {
-	parsePipeCmd: function() {
-	send: function(data){
-	left: function() {
-	getPubid: function(){
-	fireGlobalEvent: function(type, fn, internal) {
+    initialize: function(ape, options){
+    initRequestMethod: function() {
+                    send: function() {
+                            add: function() {
+                            add: function() {
+    parsePipeCmd: function() {
+    send: function(data){
+    left: function() {
+    getPubid: function(){
+    fireGlobalEvent: function(type, fn, internal) {
 
 PipeSingle
-	initialize: function(core, options){
+    initialize: function(core, options){
 
 PipeMulti
-	initialize: function(core, options) {
-	rawJoin: function(raw, pipe) {
-	rawLeft: function(raw, pipe) {
-	addUser: function(pubid, user) {
-	delUser: function(pubid) {
-	getUser: function(pubid) {
-	getUserPipe: function(user) {
+    initialize: function(core, options) {
+    rawJoin: function(raw, pipe) {
+    rawLeft: function(raw, pipe) {
+    addUser: function(pubid, user) {
+    delUser: function(pubid) {
+    getUser: function(pubid) {
+    getUserPipe: function(user) {
 
 PipeProxy
-	initialize: function(core, options){
-	init: function(options){
-	reset: function() {
-	close: function() {
-	open: function(hostname, port){
-	send: function(data){
-	rawProxyEvent: function(resp, pipe){
-	callback: function(raw){
+    initialize: function(core, options){
+    init: function(options){
+    reset: function() {
+    close: function() {
+    open: function(hostname, port){
+    send: function(data){
+    rawProxyEvent: function(resp, pipe){
+    callback: function(raw){
 
 
 Request
 -------
 Request
-	initialize: function(ape) {
-	setOptions: function(options) {
-	send: function(cmd, params, sessid, options, noWatch) {
-	parseCmd: function(cmd, params, sessid, options) {
-	escapeParams: function(params) {
-	requestObserver: function(){
+    initialize: function(ape) {
+    setOptions: function(options) {
+    send: function(cmd, params, sessid, options, noWatch) {
+    parseCmd: function(cmd, params, sessid, options) {
+    escapeParams: function(params) {
+    requestObserver: function(){
 
 Request.Stack
-	initialize: function(ape) {
-	add: function(cmd, params, sessid, options) {
-	send: function() {
+    initialize: function(ape) {
+    add: function(cmd, params, sessid, options) {
+    send: function() {
 
 Request.CycledStack
-	initialize: function(ape) {
-	add: function(cmd, params, sessid) {
-	setTime: function(time, now) {
-	send: function() {
+    initialize: function(ape) {
+    add: function(cmd, params, sessid) {
+    setTime: function(time, now) {
+    send: function() {
 
 
 Transport
 ---------
 Transport.JSONP
-	initialize: function(ape) {
-	send: function(queryString, options, args) {
-	clearRequest: function(request) {
-	readSSE: function(data) {
-	read: function(resp) {
-	cancel: function() {
-	running: function() {
+    initialize: function(ape) {
+    send: function(queryString, options, args) {
+    clearRequest: function(request) {
+    readSSE: function(data) {
+    read: function(resp) {
+    cancel: function() {
+    running: function() {
 
 Transport.longPolling
-	onStateChange: function() {
-	initialize: function(ape) { 
-	send: function(queryString, options, args) {
-	                onComplete: function(resp) {
-	running: function() {
-	cancel: function() {
+    onStateChange: function() {
+    initialize: function(ape) { 
+    send: function(queryString, options, args) {
+                    onComplete: function(resp) {
+    running: function() {
+    cancel: function() {
 
 Transport.SSE
-	initSSE: function(queryString, options, readCallback) {
+    initSSE: function(queryString, options, readCallback) {
 
 Transport.XHRStreaming
-	onStateChange: function() {
-	onProgress: function(){
-	progress: function(text, xml){
-	initialize: function(ape){ 
-	send: function(queryString, options, args) {
-	                                onComplete: function(resp) {
-	doRequest: function(queryString, options, args) {
-	                onComplete: function(resp) {
-	readSSE: function(data) {
-	readFragment: function(text){
-	running: function() {
-	checkStream: function() {
-	newStream: function() {
-	cancel: function(){
+    onStateChange: function() {
+    onProgress: function(){
+    progress: function(text, xml){
+    initialize: function(ape){ 
+    send: function(queryString, options, args) {
+                                    onComplete: function(resp) {
+    doRequest: function(queryString, options, args) {
+                    onComplete: function(resp) {
+    readSSE: function(data) {
+    readFragment: function(text){
+    running: function() {
+    checkStream: function() {
+    newStream: function() {
+    cancel: function(){

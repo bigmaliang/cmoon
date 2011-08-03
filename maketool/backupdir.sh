@@ -11,7 +11,7 @@ useage()
 
 
 if [ $# -lt 1 ]; then
-	useage
+    useage
 fi
 
 TODAY=`date +%Y%m%d`
@@ -21,7 +21,7 @@ DIRNAME=$(basename "$PWD")
 DIRS=$*
 for dir in $DIRS
 do
-	make -C $dir clean
+    make -C $dir clean
 done
 
 tar zcvf ${DIRNAME}_${TODAY}.tar.gz ${DIRS}

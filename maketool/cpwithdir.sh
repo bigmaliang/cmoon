@@ -11,17 +11,17 @@ useage()
 
 
 if [ $# -lt 1 ]; then
-	useage
+    useage
 fi
 
 # process parameter
 while getopts ':p:' OPT; do
-	case $OPT in
-		p)
-			PATH_DST="$OPTARG";;
-		?)
-			useage
-	esac
+    case $OPT in
+        p)
+            PATH_DST="$OPTARG";;
+        ?)
+            useage
+    esac
 done
 shift $(($OPTIND - 1))
 
@@ -29,8 +29,8 @@ FILES=$*
 
 for file in $FILES
 do
-	DIR=$(dirname "$file")
-	F=$(basename "$file")
-	mkdir -p $PATH_DST/$DIR
-	cp -f $file $PATH_DST/$DIR
+    DIR=$(dirname "$file")
+    F=$(basename "$file")
+    mkdir -p $PATH_DST/$DIR
+    cp -f $file $PATH_DST/$DIR
 done

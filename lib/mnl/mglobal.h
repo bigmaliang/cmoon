@@ -7,4 +7,4 @@ __BEGIN_DECLS
 extern HDF *g_cfg;
 
 __END_DECLS
-#endif	/* __MGLOBAL_H__ */
+#endif    /* __MGLOBAL_H__ */

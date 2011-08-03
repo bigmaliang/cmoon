@@ -10,25 +10,25 @@ __BEGIN_DECLS
  * but there is no difference between one request and ten.
  */
 enum cgi_req_method {
-	CGI_REQ_GET = 0,
-	CGI_REQ_PUT,
-	CGI_REQ_POST,
-	CGI_REQ_DEL,
-	CGI_REQ_UNKNOWN
+    CGI_REQ_GET = 0,
+    CGI_REQ_PUT,
+    CGI_REQ_POST,
+    CGI_REQ_DEL,
+    CGI_REQ_UNKNOWN
 };
 
 int CGI_REQ_METHOD(CGI *cgi);
 
-#define TGT_PARENT	"parent."
-#define TGT_OPENNER	"opener."
-#define TGT_TOP		"top."
-#define TGT_SELF	"self."
+#define TGT_PARENT    "parent."
+#define TGT_OPENNER    "opener."
+#define TGT_TOP        "top."
+#define TGT_SELF    "self."
 
-#define URL_BLANK	"location.href='/blank.html'"
-#define URL_RELOAD	"location.reload()"
-#define URL_CLOSE	"close()"
-#define URL_BACK	"history.back(-1)"
-#define URL_HREF	""
+#define URL_BLANK    "location.href='/blank.html'"
+#define URL_RELOAD    "location.reload()"
+#define URL_CLOSE    "close()"
+#define URL_BACK    "history.back(-1)"
+#define URL_HREF    ""
 
 
 /* res must have enough capacity */
@@ -61,4 +61,4 @@ int write_cb(void *ptr, const char *data, int size);
 #endif
 
 __END_DECLS
-#endif	/* __MUTIL_H__ */
+#endif    /* __MUTIL_H__ */

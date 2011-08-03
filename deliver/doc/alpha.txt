@@ -4,19 +4,19 @@ http://home.hunantv.com/blog/admin/fkq/1206839
 
 需配 host:
 =========
-192.168.8.190 	home.hunantv.com
-192.168.8.190 	js.hunantv.com
-192.168.8.190 	css.hunantv.com
+192.168.8.190     home.hunantv.com
+192.168.8.190     js.hunantv.com
+192.168.8.190     css.hunantv.com
 
-192.168.8.54	0.push.hunantv.com
-192.168.8.54	1.push.hunantv.com
-192.168.8.54	2.push.hunantv.com
-192.168.8.54	3.push.hunantv.com
-192.168.8.54	4.push.hunantv.com
-192.168.8.54	5.push.hunantv.com
-192.168.8.54	6.push.hunantv.com
-192.168.8.54	7.push.hunantv.com
-192.168.8.54	8.push.hunantv.com
-192.168.8.54	9.push.hunantv.com
-192.168.8.54 	10.push.hunantv.com
+192.168.8.54    0.push.hunantv.com
+192.168.8.54    1.push.hunantv.com
+192.168.8.54    2.push.hunantv.com
+192.168.8.54    3.push.hunantv.com
+192.168.8.54    4.push.hunantv.com
+192.168.8.54    5.push.hunantv.com
+192.168.8.54    6.push.hunantv.com
+192.168.8.54    7.push.hunantv.com
+192.168.8.54    8.push.hunantv.com
+192.168.8.54    9.push.hunantv.com
+192.168.8.54     10.push.hunantv.com
 

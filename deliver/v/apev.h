@@ -9,9 +9,9 @@
 #include <event.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>		/* htonls() and friends */
-#include <netinet/in.h>		/* INET stuff */
-#include <stdint.h>		/* uint32_t and friends */
+#include <arpa/inet.h>        /* htonls() and friends */
+#include <netinet/in.h>        /* INET stuff */
+#include <stdint.h>        /* uint32_t and friends */
 
 #include "ClearSilver.h"
 #include "mevent.h"
@@ -23,78 +23,78 @@
 #include "net-const.h"
 #include "mevent_ape_ext.h"
 
-#define REQ_GET_PARAM_INT(hdf, key, ret)							\
-    do {															\
-		if (!hdf_get_value(hdf, key, NULL)) {						\
-			return nerr_raise(REP_ERR_BADPARAM, "need %s", key);	\
-		}															\
-		ret = hdf_get_int_value(hdf, key, 0);						\
+#define REQ_GET_PARAM_INT(hdf, key, ret)                            \
+    do {                                                            \
+        if (!hdf_get_value(hdf, key, NULL)) {                        \
+            return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
+        }                                                            \
+        ret = hdf_get_int_value(hdf, key, 0);                        \
     } while (0)
 
-#define REQ_GET_PARAM_LONG(hdf, key, ret)							\
-    do {															\
-		if (!hdf_get_value(hdf, key, NULL)) {						\
-			return nerr_raise(REP_ERR_BADPARAM, "need %s", key);	\
-		}															\
-		ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);		\
+#define REQ_GET_PARAM_LONG(hdf, key, ret)                            \
+    do {                                                            \
+        if (!hdf_get_value(hdf, key, NULL)) {                        \
+            return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
+        }                                                            \
+        ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);        \
     } while (0)
 
-#define REQ_GET_PARAM_STR(hdf, key, ret)							\
-    do {															\
-		ret = hdf_get_value(hdf, key, NULL);						\
-		if (!ret || *ret == '\0') {									\
-			return nerr_raise(REP_ERR_BADPARAM, "need %s", key);	\
-		}															\
+#define REQ_GET_PARAM_STR(hdf, key, ret)                            \
+    do {                                                            \
+        ret = hdf_get_value(hdf, key, NULL);                        \
+        if (!ret || *ret == '\0') {                                    \
+            return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
+        }                                                            \
     } while (0)
 
 
-#define REQ_FETCH_PARAM_INT(hdf, key, ret)			\
-    do {											\
-		if (hdf_get_value(hdf, key, NULL)) {		\
-			ret = hdf_get_int_value(hdf, key, 0);	\
-		}											\
+#define REQ_FETCH_PARAM_INT(hdf, key, ret)            \
+    do {                                            \
+        if (hdf_get_value(hdf, key, NULL)) {        \
+            ret = hdf_get_int_value(hdf, key, 0);    \
+        }                                            \
     } while (0)
 
-#define REQ_FETCH_PARAM_LONG(hdf, key, ret)							\
-    do {															\
-		if (hdf_get_value(hdf, key, NULL)) {						\
-			ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10); \
-		}															\
+#define REQ_FETCH_PARAM_LONG(hdf, key, ret)                            \
+    do {                                                            \
+        if (hdf_get_value(hdf, key, NULL)) {                        \
+            ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10); \
+        }                                                            \
     } while (0)
 
-#define REQ_FETCH_PARAM_STR(hdf, key, ret)		\
-    do {										\
-		ret = hdf_get_value(hdf, key, NULL);	\
+#define REQ_FETCH_PARAM_STR(hdf, key, ret)        \
+    do {                                        \
+        ret = hdf_get_value(hdf, key, NULL);    \
     } while (0)
 
 typedef struct _UserEntry {
-	bool online;
-	char *server;
+    bool online;
+    char *server;
 } UserEntry;
 
 typedef struct _SnakeEntry {
-	char *name;
-	char *domain;
-	time_t idle;
-	int state;
-	
-	unsigned int num_online;
-	mevent_t *evt;
+    char *name;
+    char *domain;
+    time_t idle;
+    int state;
+    
+    unsigned int num_online;
+    mevent_t *evt;
 } SnakeEntry;
 
 typedef struct _NameEntry {
-	char *name;
-	struct _NameEntry *next;
+    char *name;
+    struct _NameEntry *next;
 } NameEntry;
 
 typedef struct _ChanEntry {
-	char *name;
-	NameEntry *x_missed;
+    char *name;
+    NameEntry *x_missed;
 } ChanEntry;
 
 enum {
-	RUNNING = 0,
-	DIED
+    RUNNING = 0,
+    DIED
 };
 
 UserEntry* user_new();

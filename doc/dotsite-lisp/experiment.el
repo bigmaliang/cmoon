@@ -134,19 +134,19 @@ Don't use this command in Lisp programs!
   (push-mark)
   (let ((size (- (point-max) (point-min))))
     (goto-char (if arg
-		   (+ (point-min)
-		      (if (> size 10000)
-			  ;; Avoid overflow for large buffer sizes!
-			  (* (prefix-numeric-value arg)
-			     (/ size 10))
-			(/ (+ 10 (* size (prefix-numeric-value arg))) 10)))
-		 (point-min))))
+           (+ (point-min)
+              (if (> size 10000)
+              ;; Avoid overflow for large buffer sizes!
+              (* (prefix-numeric-value arg)
+                 (/ size 10))
+            (/ (+ 10 (* size (prefix-numeric-value arg))) 10)))
+         (point-min))))
   (if arg (forward-line 1)))
 
 (defun prefix-experiment (arg)
   "Find out what is the different between P & N"
-  (interactive "P") 					;;P,raw's purpose  p, N
-  (message "The value you passed is %s" arg))		;;(prefix-numeric-value arg)))
+  (interactive "P")                     ;;P,raw's purpose  p, N
+  (message "The value you passed is %s" arg))        ;;(prefix-numeric-value arg)))
 
 (prefix-numeric-value '(3))
 
@@ -155,10 +155,10 @@ Don't use this command in Lisp programs!
   (interactive "P")
   (if NUMBER
       (if (> NUMBER fill-column)
-	  (message "Your number is LARGER than fill-column. %d < %d" NUMBER fill-column)
-	(message "Your number is SMALLER than fill-column. %d < %d" NUMBER fill-column))
+      (message "Your number is LARGER than fill-column. %d < %d" NUMBER fill-column)
+    (message "Your number is SMALLER than fill-column. %d < %d" NUMBER fill-column))
     (if (> 35 fill-column)
-	(message "35 is LARGER than fill-column")
+    (message "35 is LARGER than fill-column")
       (message "35 is SMALLER than fill-column"))))
 
 (defun excursion-restriction ()
@@ -166,28 +166,28 @@ Don't use this command in Lisp programs!
   (interactive)
   (save-restriction
       (save-excursion
-	(widen)
-	(switch-to-buffer (other-buffer))
-	(switch-to-buffer (other-buffer)))))
+    (widen)
+    (switch-to-buffer (other-buffer))
+    (switch-to-buffer (other-buffer)))))
 
 
 (defun what-line-modify ()
   "Print the current buffer line number and narrowed line number of point."
   (interactive)
   (let ((opoint (point)) start)
-    (save-restriction					;;modified the order of re.&ex.
+    (save-restriction                    ;;modified the order of re.&ex.
       (save-excursion
-	(goto-char (point-min))
-	(widen)
-	(forward-line 0)
-	(setq start (point))
-	(goto-char opoint)
-	(forward-line 0)
-	(if (/= start 1)
-	    (message "line %d (narrowed line %d)"
-		     (1+ (count-lines 1 (point)))
-		     (1+ (count-lines start (point))))
-	  (message "Line %d" (1+ (count-lines 1 (point)))))))))
+    (goto-char (point-min))
+    (widen)
+    (forward-line 0)
+    (setq start (point))
+    (goto-char opoint)
+    (forward-line 0)
+    (if (/= start 1)
+        (message "line %d (narrowed line %d)"
+             (1+ (count-lines 1 (point)))
+             (1+ (count-lines start (point))))
+      (message "Line %d" (1+ (count-lines 1 (point)))))))))
 
 
 (scroll-bar-mode t)

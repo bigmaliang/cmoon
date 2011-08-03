@@ -3,16 +3,16 @@
 
 int sctp_init(void)
 {
-	return -1;
+    return -1;
 }
 
 void sctp_close(int fd)
 {
-	return;
+    return;
 }
 
 void sctp_recv(int fd, short event, void *arg)
 {
-	return;
+    return;
 }
 

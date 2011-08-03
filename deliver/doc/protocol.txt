@@ -1,27 +1,27 @@
 社区 push 通信过程
 ================
 
-	ape 服务器是一个特殊的 http 服务器, 用来接收和处理客户端发起的 http 连接请求,
-	服务器与浏览器之间数据以 json 格式来传送.
+    ape 服务器是一个特殊的 http 服务器, 用来接收和处理客户端发起的 http 连接请求,
+    服务器与浏览器之间数据以 json 格式来传送.
 
 *CONNECT*
 --> http://0.push.hunantv.com/0/?[{"cmd":"CONNECT","chl":1,"params":{"uin":"1708931"}}]
 <-- [{"time":"1256830418","raw":"LOGIN","data":{"sessid":"4366cc5317bbf5ae366f9984eeec0bda"}},{"time":"1256830418","raw":"IDENT","data":{"user":{"casttype":"uni","pubid":"4977b3130256e5a716d16cca00c71f8c","properties":{"uin":"1708931"}}}},{"time":"1256830418","raw":"CHANNEL","data":{"pipe":{"casttype":"multi","pubid":"f5a1e1b5a61e12c9ef1a13b8ad523359","properties":{"name":"*friendpipe1708931"}}}}]
-	发起 CONNECT 请求
-	第一个 0 表示浏览器的 tab 号(ape 用tab号来区分同一个用户的不同实例)
-	第二个 0 表示长连接方式(参考 delever.txt 中cometd的多种通信方式),
-		0: long polling, 1 : XHRStreaming, 2: JSONP, 3 SSE / JSONP, 4 : SSE / XHR
-	? 后, [ ]内的内容是请求的命令数组(可以一次发起多个命令), 该数组内的每个对象为一个命令,
-	每个命令对象由以下几个成员组成:
-		cmd:	命令名
-		chl:	命令序列(ape 会为我们自动递增), 用来标志每条命令的序列号, 方便客户端回调
-				为每个命令注册的回调函数.
-		params: 命令的参数对象, 注意 json 数据传送的时候是分类敏感的,
-				比如这里的 uin 不能为 1708931, 而需要是 "1708931".
+    发起 CONNECT 请求
+    第一个 0 表示浏览器的 tab 号(ape 用tab号来区分同一个用户的不同实例)
+    第二个 0 表示长连接方式(参考 delever.txt 中cometd的多种通信方式),
+        0: long polling, 1 : XHRStreaming, 2: JSONP, 3 SSE / JSONP, 4 : SSE / XHR
+    ? 后, [ ]内的内容是请求的命令数组(可以一次发起多个命令), 该数组内的每个对象为一个命令,
+    每个命令对象由以下几个成员组成:
+        cmd:    命令名
+        chl:    命令序列(ape 会为我们自动递增), 用来标志每条命令的序列号, 方便客户端回调
+                为每个命令注册的回调函数.
+        params: 命令的参数对象, 注意 json 数据传送的时候是分类敏感的,
+                比如这里的 uin 不能为 1708931, 而需要是 "1708931".
 
-	CONNECT 命令的返回, 对应用有意义的数据如下:
-		sessid: 服务器端用来标志本次连接及后续通讯的唯一标识, 后续命令一般都需要带上这个标识
-		CHANNEL:系统为该用户建立的通信管道的唯一标识, 后续有消息要推送给好友的时候需要带上
+    CONNECT 命令的返回, 对应用有意义的数据如下:
+        sessid: 服务器端用来标志本次连接及后续通讯的唯一标识, 后续命令一般都需要带上这个标识
+        CHANNEL:系统为该用户建立的通信管道的唯一标识, 后续有消息要推送给好友的时候需要带上
 
 
 
@@ -30,9 +30,9 @@
 <-- [{"time":"1262862362","raw":"IDENT","data":{"user":{"casttype":"uni","pubid":"e9a8a0803921fe29ef9162ca7983711c","properties":{"uin":"1708931"}}}},{"time":"1262862362","raw":"CHANNEL","data":{"pipe":{"casttype":"multi","pubid":"02b199728f9e42e87d04624423d0b422","properties":{"name":"*friendpipe1708931"}}}},{"time":"1262862362","raw":"CHANNEL","data":{"users":[{"casttype":"uni","pubid":"e9a8a0803921fe29ef9162ca7983711c","properties":{"uin":"1708931"},"level":1},{"casttype":"uni","pubid":"d389da734ba2076ce36727c31baeb32e","properties":{"uin":"1206839"},"level":1}],"pipe":{"casttype":"multi","pubid":"c7e39e5def7c54e4eec5fe42076c3fb5","properties":{"name":"fangkequnpipe1708931"}}}},{"time":"1262862362","raw":"SESSIONS","data":{"sessions":{"uniPipe":"null"},"chl":1}}]
 
     SESSION 命令用于获取用户session 信息.  当client端刷新了页面,
-	或者新开了Tab页来连接 ape 服务器的时候, 不用每次都发送 CONNECT 命令.
-	SESSION 命令用来获取当前用户加入的管道之类的信息
-	(可以认为session 命令是 connect 命令的刷新页面版).
+    或者新开了Tab页来连接 ape 服务器的时候, 不用每次都发送 CONNECT 命令.
+    SESSION 命令用来获取当前用户加入的管道之类的信息
+    (可以认为session 命令是 connect 命令的刷新页面版).
 
 
 
@@ -40,39 +40,39 @@
 *REGCLASS*
 --> http://0.push.hunantv.com/0/?[{"cmd":"REGCLASS","chl":2,"params":{"apps":"1x2x3","pipe":"f5a1e1b5a61e12c9ef1a13b8ad523359"},"sessid":"4366cc5317bbf5ae366f9984eeec0bda"}]
 <-- [{"time":"1256830418","raw":"REGCLASS","data":{"pageclass":[{"id":"3"},{"id":"2"},{"id":"1"}]}}]
-	客户端收到 CONNECT 返回, 确认建立了好友通信管道后, 调用这个命令, 设置本页面接受的数据类型.
-		apps: 该页面需要接受的数据类型, 如桌面接受通知, 好友邀请, 和好友动态(1x2x3),
-			  而其他页面不接受好友动态(1x2)
-	REGCLASS 命令是可以重复调用的, 设置动作是追加, 而不是覆盖(比如第一次传1x2x3, 第二次传4,
-	该页面会接受1x2x3x4)
+    客户端收到 CONNECT 返回, 确认建立了好友通信管道后, 调用这个命令, 设置本页面接受的数据类型.
+        apps: 该页面需要接受的数据类型, 如桌面接受通知, 好友邀请, 和好友动态(1x2x3),
+              而其他页面不接受好友动态(1x2)
+    REGCLASS 命令是可以重复调用的, 设置动作是追加, 而不是覆盖(比如第一次传1x2x3, 第二次传4,
+    该页面会接受1x2x3x4)
 
-	设置成功后, 返回该页面设置接受类型的 id 列表
+    设置成功后, 返回该页面设置接受类型的 id 列表
 
 
 
 *CHECK*
 --> http://0.push.hunantv.com/0/?[{"cmd":"CHECK","chl":3,"sessid":"4366cc5317bbf5ae366f9984eeec0bda"}]
 <-- [{"time":"1256830444","raw":"CLOSE","data":{"value":"null"}}] 或
-	[{"time":"1256661360","raw":"DATA","data":{"pageclass":1,"msg":{"pageclass":1,"type":1,"content":"xcvsdfsdfsdfsd"}}}]
-	CHECK 命令用来查询当前页面是不是有最新消息可以获取, 社区页面常态下会一直有一个 CHECK 连接保持
-	CHECK 命令的返回, 第一条是无消息是的返回, 后面是有消息传送的返回
+    [{"time":"1256661360","raw":"DATA","data":{"pageclass":1,"msg":{"pageclass":1,"type":1,"content":"xcvsdfsdfsdfsd"}}}]
+    CHECK 命令用来查询当前页面是不是有最新消息可以获取, 社区页面常态下会一直有一个 CHECK 连接保持
+    CHECK 命令的返回, 第一条是无消息是的返回, 后面是有消息传送的返回
 
 
 *SEND*
 --> http://0.push.hunantv.com/0/?[{"cmd":"SEND","chl":3,"sessid":"4366cc5317bbf5ae366f9984eeec0bda", "params":{"pageclass":1,"type":2,"content":"xcvsdfsdfsdfsd"}}]
 <-- [{"time":"1256830444","raw":"CLOSE","data":{"value":"null"}}]
-	客户端发送消息的请求和返回,
-		pageclass: 指定消息的域类型. 1: 通知, 2: 好友邀请, 3: 好友动态
-		type: 指定好友动态的类型. 1: 日志, 2: 图片, 3, 分享....
+    客户端发送消息的请求和返回,
+        pageclass: 指定消息的域类型. 1: 通知, 2: 好友邀请, 3: 好友动态
+        type: 指定好友动态的类型. 1: 日志, 2: 图片, 3, 分享....
 
 
 *FKQ_JOIN*
 --> http://0.push.hunantv.com/0/?[{"cmd":"FKQ_JOIN","chl":2,"params":{"hostUin":"1708931"},"sessid":"dffc4bf90dbb7f6b496ad024ef775838"}]
 <-- [{"time":"1262863862","raw":"CHANNEL","data":{"users":[{"casttype":"uni","pubid":"2f410f3da48d5888d49e62c38aa9a342","properties":{"uin":"1708931"},"level":1},{"casttype":"uni","pubid":"d389da734ba2076ce36727c31baeb32e","properties":{"uin":"1206839"},"level":1}],"pipe":{"casttype":"multi","pubid":"c7e39e5def7c54e4eec5fe42076c3fb5","properties":{"name":"fangkequnpipe1708931"}}}}]
-	FKQ_JOIN 用来发起加入群请求
+    FKQ_JOIN 用来发起加入群请求
 
 
 *FKQ_SEND*
 --> http://0.push.hunantv.com/0/?[{"cmd":"FKQ_SEND","chl":5,"params":{"msg":"sdf","pipe":"c7e39e5def7c54e4eec5fe42076c3fb5"},"sessid":"326a9b4b65a5cb95cf5abb377f81b924"}]
 <-- 跟 *CHECK* 一样
-	FKQ_SEND 用来向群组发送消息
+    FKQ_SEND 用来向群组发送消息

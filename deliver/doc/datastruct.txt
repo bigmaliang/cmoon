@@ -43,10 +43,10 @@ cmd
 网络部分
 =======
 events
-	类似于libevent的功能, 网络模型的底层
+    类似于libevent的功能, 网络模型的底层
 
 sock
-	结合events, tickts 实现整个服务器的网络主循环
+    结合events, tickts 实现整个服务器的网络主循环
 
 ape server(servers.h/c, sock.h/c, http.h/c, transport.h/c) ape 服务器
 dns server(dns.h)

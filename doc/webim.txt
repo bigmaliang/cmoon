@@ -5,26 +5,26 @@ comet
 -----
 http://cometdproject.dojotoolkit.org/
 
-	http://www.ibm.com/developerworks/cn/web/wa-lo-comet/
-	Comet：基于 HTTP 长连接的“服务器推”技术
-	Bayeux Protocol -- Bayeux 1.0draft1
+    http://www.ibm.com/developerworks/cn/web/wa-lo-comet/
+    Comet：基于 HTTP 长连接的“服务器推”技术
+    Bayeux Protocol -- Bayeux 1.0draft1
 
 
 
 pushlet
 -------
-http://www.pushlets.com/	
-	一个 coment 的java实现
+http://www.pushlets.com/    
+    一个 coment 的java实现
 
-	http://www.matrix.org.cn/resource/article/2007-01-16/bcc2c490-a502-11db-8440-755941c7293d.html
-	Think in Pushlet
+    http://www.matrix.org.cn/resource/article/2007-01-16/bcc2c490-a502-11db-8440-755941c7293d.html
+    Think in Pushlet
 
 
 ape
 ---
 http://www.ape-project.org/
-	Real time data streaming
-	
+    Real time data streaming
+    
 
 http://blog.csdn.net/yyri/archive/2008/02/22/2113976.aspx
 Comet简介及实际使用

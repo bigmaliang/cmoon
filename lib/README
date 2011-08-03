@@ -8,9 +8,9 @@ lib 目录存放 moon 依赖的公共库文件(不包含第三方库，如mysql�
 ======
 
 lib/
-|-- mevent		高速数据后端客户端 API (mevent.skel.h)
-|-- mnl			moon library, moon 自己编写的C库文件 (mheads.h)
-`-- js			公用js文件
+|-- mevent        高速数据后端客户端 API (mevent.skel.h)
+|-- mnl            moon library, moon 自己编写的C库文件 (mheads.h)
+`-- js            公用js文件
 
 
 约定

@@ -7,12 +7,12 @@
 
 int main(int argc, char *argv[])
 {
-	mevent_t *evt = mevent_init("unknown");
-	if (evt == NULL) {
-		printf("init error\n");
-		return 1;
-	}
+    mevent_t *evt = mevent_init("unknown");
+    if (evt == NULL) {
+        printf("init error\n");
+        return 1;
+    }
 
-	mevent_free(evt);
-	return 0;
+    mevent_free(evt);
+    return 0;
 }

@@ -3,46 +3,46 @@ APE_JSF
 jsf 主要分为 source 和 clients 两个目录,
 
 source
-	'mootools-core', 'Core/Events', 'Pipe/Pipe', 'Pipe/PipeProxy', 'Pipe/PipeMulti', 'Pipe/PipeSingle',
-	'Core/Core', 'Core/Utility', 'Core/Session'
-	jsf 的基石 (Ape 对象) , 包括对事件, 管道, session, 时长监控(25s中断连接, 重新发起), command, raw 的封装.
+    'mootools-core', 'Core/Events', 'Pipe/Pipe', 'Pipe/PipeProxy', 'Pipe/PipeMulti', 'Pipe/PipeSingle',
+    'Core/Core', 'Core/Utility', 'Core/Session'
+    jsf 的基石 (Ape 对象) , 包括对事件, 管道, session, 时长监控(25s中断连接, 重新发起), command, raw 的封装.
 
 client
-	1, 封装了一个 APE 对象
-	
-	2, 配合 demo/config.js 用来装载整个 Ape 基石(用另开一个iframe的方式),
-	进行 APE 对象的初始化(初始化方式请参考扩展的实现):
-	
-	3, 用户的插件 APE.plugin 里面可以直接调用
-	ape/this.addEvent
-	ape/tis.fireEvent
-	ape/this.onRaw
-	ape/this.onCommand
-	....
-	(详细事件处理请参考 APE_JSF_API.txt)
-	来对可信赖事件进行处理, 完成特定的插件功能 (ape为普通js 函数扩展方式, this 为mootools方式).
+    1, 封装了一个 APE 对象
+    
+    2, 配合 demo/config.js 用来装载整个 Ape 基石(用另开一个iframe的方式),
+    进行 APE 对象的初始化(初始化方式请参考扩展的实现):
+    
+    3, 用户的插件 APE.plugin 里面可以直接调用
+    ape/this.addEvent
+    ape/tis.fireEvent
+    ape/this.onRaw
+    ape/this.onCommand
+    ....
+    (详细事件处理请参考 APE_JSF_API.txt)
+    来对可信赖事件进行处理, 完成特定的插件功能 (ape为普通js 函数扩展方式, this 为mootools方式).
 
 关于插件的实现
-	插件是基于 client 的基础之上的, 插件可以用 mootools 和普通 js 两种方式来实现,
-	mootools 方式:
-		client/mootools-core.js, client/MooTools.js, demo/config.js 配合装载Ape,
-	普通 js 方式:
-		client 目录的 JavaScript.js 和 demo/config.js 配合装载了整个Ape,
+    插件是基于 client 的基础之上的, 插件可以用 mootools 和普通 js 两种方式来实现,
+    mootools 方式:
+        client/mootools-core.js, client/MooTools.js, demo/config.js 配合装载Ape,
+    普通 js 方式:
+        client 目录的 JavaScript.js 和 demo/config.js 配合装载了整个Ape,
 
-	插件的工作是在整个 Ape 初始化好了后以 client.complete 回调函数的方式实现的
+    插件的工作是在整个 Ape 初始化好了后以 client.complete 回调函数的方式实现的
 
 扩展的实现方法:
-	1, MooTools 方式
-	APE.plugin = new Class({inlitialize: function(core, options), xxx})
-	再用
-	var client = APE.client()
-	client.load({xxx, complete: function(ape) {new APE.plugin(ape, {});}});
-	初始化
+    1, MooTools 方式
+    APE.plugin = new Class({inlitialize: function(core, options), xxx})
+    再用
+    var client = APE.client()
+    client.load({xxx, complete: function(ape) {new APE.plugin(ape, {});}});
+    初始化
 
 
-	2, 普通 js 方式
-	function plugin(ape, options) {this.initialize = function(){} xxx}
-	再用
-	client.load({complete: function(ape, opts){new plugin(ape, opts).initialize(); }})
-	初始化
+    2, 普通 js 方式
+    function plugin(ape, options) {this.initialize = function(){} xxx}
+    再用
+    client.load({complete: function(ape, opts){new plugin(ape, opts).initialize(); }})
+    初始化
 

@@ -13,12 +13,12 @@ PING 117.34.90.81 (117.34.90.81) 56(84) bytes of data.
 64 bytes from 117.34.90.81: icmp_seq=9 ttl=53 time=108 ms
 
 
-cpu family	: 6
-model		: 26
-model name	: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz
-stepping	: 5
-cpu MHz		: 2251.199
-cache size	: 8192 KB
+cpu family    : 6
+model        : 26
+model name    : Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz
+stepping    : 5
+cpu MHz        : 2251.199
+cache size    : 8192 KB
 
 
 
@@ -31,15 +31,15 @@ wget http://mirrors.geekbone.org/debian/pool/main/e/emacs23/emacs23-el_23.1+1-5_
 firebug:
 http://117.34.90.81/base.js
 191.1 KB
-	开始
-	0	0	域名解析
-	0	0	建立连接
-	0	0	阻挡
-	0	0	发送请求
-	0	178ms	等待响应
-	+178ms	625ms	接收数据
-	+812ms	'DOMContentLoaded' (事件)
-	+835ms	'load' (事件)
+    开始
+    0    0    域名解析
+    0    0    建立连接
+    0    0    阻挡
+    0    0    发送请求
+    0    178ms    等待响应
+    +178ms    625ms    接收数据
+    +812ms    'DOMContentLoaded' (事件)
+    +835ms    'load' (事件)
 
 
 diahosting()

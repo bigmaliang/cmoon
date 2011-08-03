@@ -1,24 +1,24 @@
 Config {
-	trace_level = 5
+    trace_level = 5
 }
 
 Mevent {
-	logfile = /data/logs/mevent
-	plugins {
-		0 = skeleton
-	}
-	smsalarm {
-		db {
-			dbsn = pgsql:dbname=lcs_mtool host=localhost user=lcser password=loveu
-		}
-		leader {
-			ml = 15111231681
-		}
-	}
+    logfile = /data/logs/mevent
+    plugins {
+        0 = skeleton
+    }
+    smsalarm {
+        db {
+            dbsn = pgsql:dbname=lcs_mtool host=localhost user=lcser password=loveu
+        }
+        leader {
+            ml = 15111231681
+        }
+    }
 }
 
 Plugin {
-	skeleton {
-		dbsn = pgsql:dbname=lcs_msg host=localhost user=lcser password=loveu
-	}
+    skeleton {
+        dbsn = pgsql:dbname=lcs_msg host=localhost user=lcser password=loveu
+    }
 }

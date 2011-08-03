@@ -2,26 +2,26 @@
 ====
 
 系统要求
-	Linux 2.6 以上内核
-	libmysqlclient
+    Linux 2.6 以上内核
+    libmysqlclient
 
 
 库文件安装
-	/usr/local/lib/libaped.so
+    /usr/local/lib/libaped.so
     /usr/local/ape/modules/lib/libmod_push.so
     /usr/local/ape/modules/lib/libmod_mysql.so
 
 执行文件
-	/usr/local/ape/bin/aped
+    /usr/local/ape/bin/aped
     /usr/local/ape/bin/aped.conf
     /usr/local/ape/bin/mod_push.conf
     /usr/local/ape/bin/mod_mysql.conf
 
-	拷贝这些文件到新部署机器， 修改mevent.hdf配置文件。
-	执行 /usr/local/ape/bin/aped
+    拷贝这些文件到新部署机器， 修改mevent.hdf配置文件。
+    执行 /usr/local/ape/bin/aped
 
 
-	cd xxx/ape/ && tar zcvf ape.tar.gz bin/aped bin/ape.conf bin/mod_mysql.conf bin/mod_push.conf modules/lib/libmod_push.so modules/lib/libmod_mysql.so
+    cd xxx/ape/ && tar zcvf ape.tar.gz bin/aped bin/ape.conf bin/mod_mysql.conf bin/mod_push.conf modules/lib/libmod_push.so modules/lib/libmod_mysql.so
     cd / && tar zcvf libape.tar.gz /usr/local/lib/libmevent_server.so /usr/local/lib/libneo_utl.so /usr/local/lib/libaped.so /etc/mevent/client.hdf
 
     修改 mod_mysql.conf mod_push.conf client.hdf
