@@ -17,8 +17,8 @@ enum memc_op
     MMC_OP_DEC
 };
 
-#define MEMC_IP        (mcfg_getvalue("memc_ip", "127.0.0.1"))
-#define MEMC_PORT    (mcfg_getvalue("memc_port", "11211"))
+#define MEMC_IP   (mcfg_getvalue("memc_ip", "127.0.0.1"))
+#define MEMC_PORT (mcfg_getvalue("memc_port", "11211"))
 
 memcached_return mmc_store(int op, const char *key, char *value,
                            size_t len, time_t exp, uint32_t flags);

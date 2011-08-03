@@ -32,92 +32,92 @@ NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str);
 NEOERR* mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
 NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str);
 
-#define MLIST_ITERATE(list, item)                                        \
-    item = list->items[0];                                                \
+#define MLIST_ITERATE(list, item)                                       \
+    item = list->items[0];                                              \
     for (int t_rsv_i = 0; t_rsv_i < list->num; item = list->items[++t_rsv_i])
 
-#define ITERATE_MLIST(ul)                                \
+#define ITERATE_MLIST(ul)                               \
     for (int t_rsv_i = 0; t_rsv_i < ul->num; t_rsv_i++)
 
 #define DIE_NOK_CGI(err)                        \
-    if (err != STATUS_OK) {                        \
-        STRING zstra;    string_init(&zstra);    \
-        nerr_error_traceback(err, &zstra);        \
-        mtc_err("%s", zstra.buf);                \
-        string_clear(&zstra);                    \
+    if (err != STATUS_OK) {                     \
+        STRING zstra;    string_init(&zstra);   \
+        nerr_error_traceback(err, &zstra);      \
+        mtc_err("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
         cgi_neo_error(cgi, err);                \
-        nerr_ignore(&err);                        \
-        exit(-1);                                \
+        nerr_ignore(&err);                      \
+        exit(-1);                               \
     }
 
 #define JUMP_NOK_CGI(err, label)                \
-    if (err != STATUS_OK) {                        \
-        STRING zstra;    string_init(&zstra);    \
-        nerr_error_traceback(err, &zstra);        \
-        mtc_err("%s", zstra.buf);                \
-        string_clear(&zstra);                    \
+    if (err != STATUS_OK) {                     \
+        STRING zstra;    string_init(&zstra);   \
+        nerr_error_traceback(err, &zstra);      \
+        mtc_err("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
         cgi_neo_error(cgi, err);                \
-        nerr_ignore(&err);                        \
-        goto label;                                \
+        nerr_ignore(&err);                      \
+        goto label;                             \
     }
 
 #define JUMP_NOK(err, label)                    \
-    if (err != STATUS_OK) {                        \
-        STRING zstra;    string_init(&zstra);    \
-        nerr_error_traceback(err, &zstra);        \
-        mtc_err("%s", zstra.buf);                \
-        string_clear(&zstra);                    \
-        nerr_ignore(&err);                        \
-        goto label;                                \
+    if (err != STATUS_OK) {                     \
+        STRING zstra;    string_init(&zstra);   \
+        nerr_error_traceback(err, &zstra);      \
+        mtc_err("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
+        nerr_ignore(&err);                      \
+        goto label;                             \
     }
 
 #define DIE_NOK_MTL(err)                        \
-    if (err != STATUS_OK) {                        \
-        STRING zstra;    string_init(&zstra);    \
-        nerr_error_traceback(err, &zstra);        \
-        mtc_err("%s", zstra.buf);                \
-        string_clear(&zstra);                    \
-        nerr_ignore(&err);                        \
-        exit(-1);                                \
+    if (err != STATUS_OK) {                     \
+        STRING zstra;    string_init(&zstra);   \
+        nerr_error_traceback(err, &zstra);      \
+        mtc_err("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
+        nerr_ignore(&err);                      \
+        exit(-1);                               \
     }
 
-#define CONTINUE_NOK(err)                        \
-    if (err != STATUS_OK) {                        \
-        STRING zstra;    string_init(&zstra);    \
-        nerr_error_traceback(err, &zstra);        \
-        mtc_err("%s", zstra.buf);                \
-        string_clear(&zstra);                    \
-        nerr_ignore(&err);                        \
-        continue;                                \
+#define CONTINUE_NOK(err)                       \
+    if (err != STATUS_OK) {                     \
+        STRING zstra;    string_init(&zstra);   \
+        nerr_error_traceback(err, &zstra);      \
+        mtc_err("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
+        nerr_ignore(&err);                      \
+        continue;                               \
     }
 
-#define RETURN_NOK(err)                            \
-    if (err != STATUS_OK) {                        \
-        STRING zstra;    string_init(&zstra);    \
-        nerr_error_traceback(err, &zstra);        \
-        mtc_err("%s", zstra.buf);                \
-        string_clear(&zstra);                    \
-        nerr_ignore(&err);                        \
-        return;                                    \
+#define RETURN_NOK(err)                         \
+    if (err != STATUS_OK) {                     \
+        STRING zstra;    string_init(&zstra);   \
+        nerr_error_traceback(err, &zstra);      \
+        mtc_err("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
+        nerr_ignore(&err);                      \
+        return;                                 \
     }
 
 #define RETURN_V_NOK(err, v)                    \
-    if (err != STATUS_OK) {                        \
-        STRING zstra;    string_init(&zstra);    \
-        nerr_error_traceback(err, &zstra);        \
-        mtc_err("%s", zstra.buf);                \
-        string_clear(&zstra);                    \
-        nerr_ignore(&err);                        \
-        return v;                                \
+    if (err != STATUS_OK) {                     \
+        STRING zstra;    string_init(&zstra);   \
+        nerr_error_traceback(err, &zstra);      \
+        mtc_err("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
+        nerr_ignore(&err);                      \
+        return v;                               \
     }
 
-#define TRACE_NOK(err)                            \
-    if (err != STATUS_OK) {                        \
-        STRING zstra;    string_init(&zstra);    \
-        nerr_error_traceback(err, &zstra);        \
-        mtc_err("%s", zstra.buf);                \
-        string_clear(&zstra);                    \
-        nerr_ignore(&err);                        \
+#define TRACE_NOK(err)                          \
+    if (err != STATUS_OK) {                     \
+        STRING zstra;    string_init(&zstra);   \
+        nerr_error_traceback(err, &zstra);      \
+        mtc_err("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
+        nerr_ignore(&err);                      \
     }
 
 __END_DECLS

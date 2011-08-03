@@ -126,9 +126,9 @@ libsqlite3-dev
 注:
 ==
 
-1. set tab 4 space width please
+1. use 4 spaces as TAB, set (setq-default indent-tabs-mode nil) in ~/.emacs
 2. RESERVED key in request url
-    /json: output json
+    /json/xxx: output json
     _op: add, mod, del for ...
     _ntt: total number
     _nst: start number

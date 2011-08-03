@@ -128,46 +128,46 @@ int mevent_trigger(mevent_t *evt, char *key,
 #define MEVENT_TRIGGER(evt, key, cmd, flags)                            \
     do {                                                                \
         if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
-            char *zpa = NULL;                                            \
+            char *zpa = NULL;                                           \
             hdf_write_string(evt->hdfrcv, &zpa);                        \
-            return nerr_raise(evt->errcode, "pro %s %d failure %d %s",    \
-                              evt->ename, cmd, evt->errcode, zpa);        \
-        }                                                                \
+            return nerr_raise(evt->errcode, "pro %s %d failure %d %s",  \
+                              evt->ename, cmd, evt->errcode, zpa);      \
+        }                                                               \
     } while(0)
-#define MEVENT_TRIGGER_VOID(evt, key, cmd, flags)                        \
+#define MEVENT_TRIGGER_VOID(evt, key, cmd, flags)                       \
     do {                                                                \
         if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
-            char *zpa = NULL;                                            \
+            char *zpa = NULL;                                           \
             hdf_write_string(evt->hdfrcv, &zpa);                        \
             if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
-                                       "pro %s %d failure %d %s",        \
+                                       "pro %s %d failure %d %s",       \
                                        evt->ename, cmd, evt->errcode, zpa); \
-            if (zpa) free(zpa);                                            \
-            return;                                                        \
-        }                                                                \
+            if (zpa) free(zpa);                                         \
+            return;                                                     \
+        }                                                               \
     } while(0)
-#define MEVENT_TRIGGER_RET(ret, evt, key, cmd, flags)                    \
+#define MEVENT_TRIGGER_RET(ret, evt, key, cmd, flags)                   \
     do {                                                                \
         if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
-            char *zpa = NULL;                                            \
+            char *zpa = NULL;                                           \
             hdf_write_string(evt->hdfrcv, &zpa);                        \
             if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
-                                       "pro %s %d failure %d %s",        \
+                                       "pro %s %d failure %d %s",       \
                                        evt->ename, cmd, evt->errcode, zpa); \
-            if (zpa) free(zpa);                                            \
-            return ret;                                                    \
-        }                                                                \
+            if (zpa) free(zpa);                                         \
+            return ret;                                                 \
+        }                                                               \
     } while(0)
-#define MEVENT_TRIGGER_NRET(evt, key, cmd, flags)                        \
+#define MEVENT_TRIGGER_NRET(evt, key, cmd, flags)                       \
     do {                                                                \
         if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
-            char *zpa = NULL;                                            \
+            char *zpa = NULL;                                           \
             hdf_write_string(evt->hdfrcv, &zpa);                        \
             if (mevent_log) mevent_log(__PRETTY_FUNCTION__,__FILE__,__LINE__, 2, \
-                                       "pro %s %d failure %d %s",        \
+                                       "pro %s %d failure %d %s",       \
                                        evt->ename, cmd, evt->errcode, zpa); \
-            if (zpa) free(zpa);                                            \
-        }                                                                \
+            if (zpa) free(zpa);                                         \
+        }                                                               \
     } while(0)
 
 

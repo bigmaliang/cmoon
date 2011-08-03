@@ -5,26 +5,26 @@
 
 __BEGIN_DECLS
 
-#define SAFE_FREE(str)                            \
+#define SAFE_FREE(str)                          \
     do {                                        \
         if (str != NULL)                        \
-            free(str);                            \
+            free(str);                          \
     } while (0)
 
 /* table, condition MUST be string literal, not variable */
-#define MMISC_PAGEDIV_SET_N(hdf, db, table, condition, sfmt, ...)        \
+#define MMISC_PAGEDIV_SET_N(hdf, db, table, condition, sfmt, ...)       \
     do {                                                                \
-        int zinta;                                                        \
+        int zinta;                                                      \
         mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
-        mdb_get(db, "i", &zinta);                                        \
-        hdf_set_int_value(hdf, "_ntt", zinta);                            \
+        mdb_get(db, "i", &zinta);                                       \
+        hdf_set_int_value(hdf, "_ntt", zinta);                          \
     } while (0)
 #define MMISC_PAGEDIV_SET(hdf, outprefix, db, table, condition, sfmt, ...) \
     do {                                                                \
-        int zinta;                                                        \
+        int zinta;                                                      \
         mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
-        mdb_get(db, "i", &zinta);                                        \
-        hdf_set_valuef(hdf, "%s._ntt=%d", outprefix, zinta);                \
+        mdb_get(db, "i", &zinta);                                       \
+        hdf_set_valuef(hdf, "%s._ntt=%d", outprefix, zinta);            \
     } while (0)
 
 

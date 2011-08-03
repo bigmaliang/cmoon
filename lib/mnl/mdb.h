@@ -87,7 +87,7 @@ int mdb_get_last_id(mdb_conn *conn, const char* seq_name);
  * LDB_QUERY_RAW(dbtjt, "tjt_%d", TJT_QUERY_COL, "fid=%d ORDER BY uptime "
  * " LIMIT %d OFFSET %d", NULL, aid, fid, count, offset);
  */
-#define MDB_QUERY_RAW(conn, table, col, condition, sfmt, ...)            \
+#define MDB_QUERY_RAW(conn, table, col, condition, sfmt, ...)           \
     do {                                                                \
         err = mdb_exec(conn, NULL, "SELECT " col " FROM " table " WHERE " condition ";", \
                        sfmt, ##__VA_ARGS__);                            \
@@ -95,16 +95,16 @@ int mdb_get_last_id(mdb_conn *conn, const char* seq_name);
     } while (0)
 #define MDB_EXEC(conn, affrow, sqlfmt, fmt, ...)                    \
     do {                                                            \
-        err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);    \
+        err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);   \
         if (err != STATUS_OK) return nerr_pass(err);                \
     } while (0)
-#define MDB_EXEC_TS(conn, affrow, sqlfmt, fmt, ...)                    \
+#define MDB_EXEC_TS(conn, affrow, sqlfmt, fmt, ...)                 \
     do {                                                            \
-        err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);    \
-        if (err != STATUS_OK) {                                        \
-            mdb_rollback(conn);                                        \
-            return nerr_pass(err);                                    \
-        } \
+        err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);   \
+        if (err != STATUS_OK) {                                     \
+            mdb_rollback(conn);                                     \
+            return nerr_pass(err);                                  \
+        }                                                           \
     } while (0)
 
 __END_DECLS

@@ -58,5 +58,4 @@ typedef struct {
 void MD5Init(md5_ctx *);
 void MD5Update(md5_ctx *, unsigned char *, unsigned int);
 void MD5Final(unsigned char [16], md5_ctx *);
-void md5_signature(const unsigned char *, unsigned int,
-                   unsigned char [16]);
+void md5_signature(const unsigned char *, unsigned int, unsigned char [16]);

@@ -9,8 +9,8 @@
  * Isolated so it's shared between the server and the library code.
  */
 
-#define MAX_MEMPACK_LEN    (6*1024*1024)
-#define MAX_PACKET_LEN    (68*1024)
+#define MAX_MEMPACK_LEN (6*1024*1024)
+#define MAX_PACKET_LEN  (68*1024)
 #define RESERVE_SIZE    512
 
 /* TIPC server type (hardcoded) and default instance. */
@@ -41,11 +41,11 @@
 #define PROTO_VER 1
 
 /* Possible request flags (which can be applied to the documented requests) */
-#define FLAGS_NONE        0
+#define FLAGS_NONE       0
 #define FLAGS_CACHE_ONLY 1    /* get, set, del, cas, incr */
-#define FLAGS_SYNC        2    /* set, del */
+#define FLAGS_SYNC       2    /* set, del */
 
-#define PROCESS_OK(ret)    (ret >= REP_OK)
+#define PROCESS_OK(ret)  (ret >= REP_OK)
 #define PROCESS_NOK(ret) (ret < REP_OK)
 
 enum {

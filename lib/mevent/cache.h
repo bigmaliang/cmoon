@@ -4,7 +4,7 @@
 
 /* Generic cache layer. See cache.c for more information. */
 
-#include <sys/types.h>        /* for size_t */
+#include <sys/types.h>     /* for size_t */
 #include <stdint.h>        /* for int64_t */
 
 #define MAX_CACHEKEY_LEN    1024
