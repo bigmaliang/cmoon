@@ -7,9 +7,9 @@ COLOR
 ====
 DARK SERIALS
 ----
-Calm Forest             Artur Hefczyc <kobit@plusnet.pl>
-Robin Hood              Jinwei Shen <shenjw@wam.umd.edu>
-Standard XEmacs         XEmacs Team, added by Alex Schroeder <alex@gnu.org>
+Calm Forest        Artur Hefczyc <kobit@plusnet.pl>
+Robin Hood         Jinwei Shen <shenjw@wam.umd.edu>
+Standard XEmacs    XEmacs Team, added by Alex Schroeder <alex@gnu.org>
 
 
 MODE
@@ -18,6 +18,7 @@ MODE
 gerneal
 ----
 C-x C-f /sudo:/etc/fstab    edit file as root
+M-i                insert tab/spaces (tab-to-tab-stop) ~= C-q TAB
 
 version control
 ----
@@ -30,9 +31,9 @@ C-x v d            vc-dir
 l                  vc-print-log (can use any key in single mode - C-x v)
 TAB                vc-dir-next-directory
 M                  vc-dir-mark-all-files
-U                vc-dir-unmark-all-files
-x                vc-dir-hide-up-to-date (refresh)
-v                vc-next-action
+U                  vc-dir-unmark-all-files
+x                  vc-dir-hide-up-to-date (refresh)
+v                  vc-next-action
 
 
 html
@@ -56,23 +57,23 @@ C-c C-f            insert font(press b for font list)
 
 C-C C-o C-f        enable/disable tex folder mode
 C-c C-o C-e        TeX-fold-env
-C-c C-o i        TeX-fold-clearout-item
+C-c C-o i          TeX-fold-clearout-item
 
 
 ecb
 ----
-M-x ecb-active    [de]active ecb
-C-c . l w        ecb-toggle-ecb-windows (hide/show ecb windows)
-RETURN            see node
+M-x ecb-active     [de]active ecb
+C-c . l w          ecb-toggle-ecb-windows (hide/show ecb windows)
+RETURN             see node
 TAB                expand/unexpand node
-Left/Right        up/down node
+Left/Right         up/down node
 
 C-c . m   a/b/d/h/m/s        ecb-maxmize-window-
-                                (analyse/speedbar/directories/history/methods/sources)
+                                 (analyse/speedbar/directories/history/methods/sources)
 C-c . g 1/a/b/d/h/m/s/l/c    ecb-goto-window-
-                              (edit1/.../edit-last/comilation)
-C-c . l c/r/t/w                ecb-layout-
-                              (change/redraw/toggle-layout/toggle-windows)
+                                (edit1/.../edit-last/comilation)
+C-c . l c/r/t/w              ecb-layout-
+                                (change/redraw/toggle-layout/toggle-windows)
 C-c . f h/m/s/...            ecb-filter-.... (filter node)
 
 

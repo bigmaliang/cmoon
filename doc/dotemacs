@@ -36,8 +36,8 @@
 (require 'xcscope)
 (require 'scim-bridge-zh-si)
 (load-library "desktop-menu")
-(load-library "etach")                                ;use emacs RMAIL to deal with /var/mail/bigml 2006-09-22
-(load-library "smtpmail")                            ;use smtp mail instead of sendmail to outgoing mail 2006-09-24
+(load-library "etach")                              ;use emacs RMAIL to deal with /var/mail/bigml 2006-09-22
+(load-library "smtpmail")                           ;use smtp mail instead of sendmail to outgoing mail 2006-09-24
 (load-library "cs-mode")                            ;clearsilver use
 (autoload 'all "all" nil t)
 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t) ;Espresso has been incorporated into GNU Emacs starting with version 23.2 and has been renamed js-mode. espresso-mode will no longer be maintained outside of Emacs proper. This page has been kept only for historical interest.
@@ -126,35 +126,35 @@
 
 
 ;;;========== CUSTOMIZE ==========
-(setq-default tab-width 4)    ;come on, baby!
-(setq-default indent-tabs-mode nil)        ;fill tab by space, insert TAB by C-q tab
+(setq-default tab-width 4) ;come on, baby!
+(setq-default indent-tabs-mode nil) ;fill tab by space, insert TAB by C-q tab
 (setq c-basic-offset 4)
-(setq require-final-newline t)    ;add a new line automatically at the end of the file when it is about to be saved
+(setq require-final-newline t) ;add a new line automatically at the end of the file when it is about to be saved
 (setq c-default-style "K&R")
-(setq html-helper-verbose 'nil)    ;disable html-helper-mode's debug message
+(setq html-helper-verbose 'nil) ;disable html-helper-mode's debug message
 
 (color-theme-classic)
-(setq case-fold-search t)    ;C-s ingore case match
-(setq Info-enable-edit t)    ;enable you edit the info files
+(setq case-fold-search t) ;C-s ingore case match
+(setq Info-enable-edit t) ;enable you edit the info files
 (setq semantic-idle-scheduler-idle-time 432000) ;semantic occupile 100% cpu on emacs-snapshot
-(setq visible-bell t)    ;stop audibel-bee instead by visible-bell 2006-04-04
+(setq visible-bell t) ;stop audibel-bee instead by visible-bell 2006-04-04
 (setq semanticdb-default-save-directory "~/.semanticdb")    ;store all cache file in a seprated directory
-(setq vc-cvs-stay-local nil)    ;not make local backup file in vc mode
-(setq js-auto-indent-flag nil)    ;,{}; don't indent js
+(setq vc-cvs-stay-local nil) ;not make local backup file in vc mode
+(setq js-auto-indent-flag nil) ;,{}; don't indent js
 (setq mouse-buffer-menu-mode-mult 1)
 (setq tramp-bkup-backup-directory-info bkup-backup-directory-info)
-(setenv "CVS_RSH" "ssh")    ;let emacs to use ssh
+(setenv "CVS_RSH" "ssh") ;let emacs to use ssh
 (put 'narrow-to-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-(global-font-lock-mode t)    ;enable global font-lock-mode highlight
-(transient-mark-mode t)        ;highlight the region
-(column-number-mode t)        ;display the column number in the mode line
-(iswitchb-mode)                ;C-x b list the matchs file name
-(auto-image-file-mode t)    ;visiting of image files as images
-(auto-compression-mode t)    ;when visiting a zip file, unzip it first
-(which-func-mode t)            ;which function in c mode
-(desktop-save-mode 1)        ;this variable can recover file visited last session, register saved, file-cache saved
+(global-font-lock-mode t) ;enable global font-lock-mode highlight
+(transient-mark-mode t) ;highlight the region
+(column-number-mode t) ;display the column number in the mode line
+(iswitchb-mode) ;C-x b list the matchs file name
+(auto-image-file-mode t) ;visiting of image files as images
+(auto-compression-mode t) ;when visiting a zip file, unzip it first
+(which-func-mode t) ;which function in c mode
+(desktop-save-mode 1) ;this variable can recover file visited last session, register saved, file-cache saved
 (toggle-uniquify-buffer-names)
 (display-time)
 (setq diary-file "~/doc/diary")
