@@ -196,6 +196,10 @@
          '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
 (add-hook 'diary-hook 'appt-make-list)
 (add-hook 'after-init-hook 'scim-mode-on)
+;(add-hook 'gdb-mode-hook '(lambda ()
+;                            (define-key c-mode-base-map [(f5)] 'gud-go)
+;                            (define-key c-mode-base-map [(f7)] 'gud-next)
+;                            (define-key c-mode-base-map [(f8)] 'gud-step)))
 (setq auto-mode-alist
       (cons '("\\.kid$" . html-helper-mode)
         auto-mode-alist))

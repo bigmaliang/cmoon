@@ -20,6 +20,25 @@ gerneal
 C-x C-f /sudo:/etc/fstab    edit file as root
 M-i                insert tab/spaces (tab-to-tab-stop) ~= C-q TAB
 
+debug
+----
+M-x gdb --annotate=3 xxx
+
+C-x <SPC>       添加断点
+C-x C-a C-b     添加断点
+C-x C-a C-d     删除断点
+C-x C-a C-n     单步执行，无视函数
+C-x C-a C-s     单步执行，进入函数
+C-x C-a C-f     跳出当前函数
+C-x C-a C-u     运行到光标所在语句
+C-x C-a C-r     继续运行程序
+C-x C-a C-w     观察复杂结构提变量的值
+
+(setq gdb-many-windows t)       可查看局部变量
+(setq gud-tooltip-mode t)       鼠标显示变量值
+(setq gdb-use-separate-io-buffer t)     输入输出单独窗口
+
+
 version control
 ----
 single file:
