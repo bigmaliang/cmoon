@@ -10,46 +10,49 @@
 
 #define REQ_GET_PARAM_INT(hdf, key, ret)                            \
     do {                                                            \
-        if (!hdf_get_value(hdf, key, NULL)) {                        \
+        if (!hdf_get_value(hdf, key, NULL)) {                       \
             return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
-        }                                                            \
-        ret = hdf_get_int_value(hdf, key, 0);                        \
+        }                                                           \
+        ret = hdf_get_int_value(hdf, key, 0);                       \
     } while (0)
 
-#define REQ_GET_PARAM_LONG(hdf, key, ret)                            \
+#define REQ_GET_PARAM_LONG(hdf, key, ret)                           \
     do {                                                            \
-        if (!hdf_get_value(hdf, key, NULL)) {                        \
+        if (!hdf_get_value(hdf, key, NULL)) {                       \
             return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
-        }                                                            \
-        ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);        \
+        }                                                           \
+        ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10);     \
     } while (0)
 
 #define REQ_GET_PARAM_STR(hdf, key, ret)                            \
     do {                                                            \
         ret = hdf_get_value(hdf, key, NULL);                        \
-        if (!ret || *ret == '\0') {                                    \
+        if (!ret || *ret == '\0') {                                 \
             return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
-        }                                                            \
+        }                                                           \
     } while (0)
 
 
-#define REQ_FETCH_PARAM_INT(hdf, key, ret)            \
+#define REQ_FETCH_PARAM_INT(hdf, key, ret)          \
     do {                                            \
         if (hdf_get_value(hdf, key, NULL)) {        \
-            ret = hdf_get_int_value(hdf, key, 0);    \
-        }                                            \
+            ret = hdf_get_int_value(hdf, key, 0);   \
+        }                                           \
     } while (0)
 
-#define REQ_FETCH_PARAM_LONG(hdf, key, ret)                            \
+#define REQ_FETCH_PARAM_LONG(hdf, key, ret)                         \
     do {                                                            \
         if (hdf_get_value(hdf, key, NULL)) {                        \
             ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10); \
-        }                                                            \
+        }                                                           \
     } while (0)
 
-#define REQ_FETCH_PARAM_STR(hdf, key, ret)        \
-    do {                                        \
-        ret = hdf_get_value(hdf, key, NULL);    \
+#define REQ_FETCH_PARAM_STR(hdf, key, ret)                  \
+    do {                                                    \
+        if (hdf_get_value(hdf, key, NULL) &&                \
+            strcmp(hdf_get_value(hdf, key, NULL), "")) {    \
+            ret = hdf_get_value(hdf, key, NULL);            \
+        }                                                   \
     } while (0)
 
 extern struct mevent *mevent;
