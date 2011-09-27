@@ -1,0 +1,121 @@
+INITING	index_new()/index_load()
+
+INDEXING index_add()
+	PARSING makeindex() mlparse, postings
+    DUMPING postings_dump()
+
+MERGING index_commit() pyramid
+
+|-- include
+|   `-- index.h                 API 接口
+|-- scripts
+|   |-- metric.py               生成算法源文件脚本
+|   `-- mime.py
+|-- setup.py.in
+|-- src
+|   |-- compat
+|   |-- cosine.metric
+|   |-- dirichlet.metric
+|   |-- hawkapi.metric
+|   |-- include
+|   |   |-- _btbucket.h
+|   |   |-- _chash.h
+|   |   |-- _docmap.h
+|   |   |-- _index.h
+|   |   |-- _mem.h
+|   |   |-- _postings.h
+|   |   |-- _reposset.h
+|   |   |-- _uri.h
+|   |   |-- alloc.h             memory alloc wrappers
+|   |   |-- ascii.h             allow categorisation of ASCII values in case statements(usefull in parsers)
+|   |   |-- binsearch.h         
+|   |   |-- bit.h
+|   |   |-- btbucket.h
+|   |   |-- btbulk.h            allows efficient (time and space) construction of a prefixed b+tree via bulk loading
+|   |   |-- bucket.h            store variable length lists with variable length keys into buckets
+|   |   |-- chash.h
+|   |   |-- compat
+|   |   |   |-- zglob.h
+|   |   |   |-- zstdint.h
+|   |   |   `-- zvalgrind.h
+|   |   |-- config_h.in
+|   |   |-- crc.h
+|   |   |-- cygwin
+|   |   |   `-- firstinclude.h
+|   |   |-- darwin
+|   |   |   `-- firstinclude.h
+|   |   |-- def.h               引擎参数调整
+|   |   |-- docmap.h            所有文档信息，根据docno查找对应的文档原始信息（文件，及文件中的位置）
+|   |   |-- error.h
+|   |   |-- fdset.h
+|   |   |-- freebsd
+|   |   |   `-- firstinclude.h
+|   |   |-- freemap.h
+|   |   |-- getlongopt.h
+|   |   |-- getmaxfsize.h
+|   |   |-- heap.h
+|   |   |-- impact.h            impact ordered search
+|   |   |-- impact_build.h
+|   |   |-- index_querybuild.h  index_querybuild() ===> get_vocab_vector()
+|   |   |-- iobtree.h           store vocabulary in io btree, use buckets
+|   |   |-- lcrand.h
+|   |   |-- linux
+|   |   |   `-- firstinclude.h
+|   |   |-- makeindex.h         procedures to create postings from input documents
+|   |   |-- mem.h
+|   |   |-- merge.h
+|   |   |-- metric.h
+|   |   |-- mime.h
+|   |   |-- mlparse.h           (SG/XM/)ML / pure txt file parser for makeindex() use
+|   |   |-- mlparse_wrap.h
+|   |   |-- objalloc.h
+|   |   |-- poolalloc.h
+|   |   |-- postings.h          generates postings(inverted lists) in a form
+                                that is compatible with merger.[ch]
+                                所有单词对应文档信息的 inverted (postings) list
+|   |   |-- psettings.h         ml parser settings (type, tag, attr)
+|   |   |-- pyramid.h           merger.h
+|   |   |-- queryparse.h
+|   |   |-- rbtree.h
+|   |   |-- reposset.h
+|   |   |-- search.h
+|   |   |-- signals.h
+|   |   |-- stack.h
+|   |   |-- staticalloc.h
+|   |   |-- stem.h
+|   |   |-- stop.h
+|   |   |-- storagep.h
+|   |   |-- str.h
+|   |   |-- stream.h
+|   |   |-- summarise.h
+|   |   |-- sunos
+|   |   |   `-- firstinclude.h
+|   |   |-- svnversion.h
+|   |   |-- test.h
+|   |   |-- testutils.h
+|   |   |-- timings.h
+|   |   |-- trec_eval.h
+|   |   |-- uri.h
+|   |   |-- vec.h
+|   |   |-- vocab.h             vocabulary entries compression and decomression
+|   |   `-- win32
+|   |       |-- config.h
+|   |       `-- firstinclude.h
+|   |-- libtextcodec
+|   |-- okapi_k3.metric
+|   |-- pcosine.metric
+|   |-- pyzet
+|   |   |-- pzet.py
+|   |-- test
+|-- tools
+|-- txt
+|   |-- README
+|   `-- moby.txt
+`-- win32
+    `-- visualc6
+        |-- libzet.dsp
+        |-- zet.dsp
+        |-- zet_cat.dsp
+        |-- zet_diff.dsp
+        |-- zet_trec.dsp
+        `-- zettair.dsw

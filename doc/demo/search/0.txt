@@ -1,0 +1,101 @@
+
+<doc>
+<docno>5</docno>
+00007
+ccc
+天津
+天津
+生活 娱乐
+只能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5位只 能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5位只 能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5位只 能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5位只 能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5 位
+</doc>
+
+<doc>
+<docno>9</docno>
+cattail
+文华
+湖北
+宜昌 宜昌市
+电影
+我是 毛毛虫
+</doc>
+
+<doc>
+<docno>11</docno>
+dingliang
+bluker
+湖南
+长沙 长沙市
+搓 麻将
+4242432affagagagagagg 4242432affagagagagagg只能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5位只 能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5位只 能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5位只 能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5位只 能 包含 大小写 字母、 数字 和 下划线 ， 不少于 5 5 位 asdasdjkl asdasdjkl
+</doc>
+
+<doc>
+<docno>13</docno>
+luzhe
+luzhe
+湖南
+长沙 长沙市
+
+
+</doc>
+
+<doc>
+<docno>15</docno>
+Voldemort
+伏地魔
+湖南
+长沙 长沙市
+
+Voldemort Voldemort
+</doc>
+
+<doc>
+<docno>17</docno>
+sleepingcat
+sleepingcat
+湖南
+长沙 长沙市
+
+奶妈 一 枚 … …
+</doc>
+
+<doc>
+<docno>21</docno>
+walker
+walker
+湖南
+长沙 长沙市
+搞 飞机
+dsfasdf dsfasdf
+</doc>
+
+<doc>
+<docno>25</docno>
+25
+hjj1982
+湖南
+长沙 长沙市
+
+
+</doc>
+
+<doc>
+<docno>27</docno>
+27
+狈狈
+湖南
+长沙 长沙市
+
+
+</doc>
+
+<doc>
+<docno>29</docno>
+29
+gettyying
+湖南
+长沙 长沙市
+
+
+</doc>
+

@@ -1,0 +1,4 @@
+<doc>
+<docno>222</docno>
+bar
+</doc>

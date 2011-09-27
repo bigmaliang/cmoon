@@ -1,0 +1,19 @@
+仅取各字符的和
+-----------
+
+sum = sum | ( (*p&0xFF) << (b*8) )
+pos = pos + sum
+
+217309 line seted
+159532 distinct word
+
+73.4%
+
+
+加上长度
+------
+
+    pos += c;
+same as up
+
+

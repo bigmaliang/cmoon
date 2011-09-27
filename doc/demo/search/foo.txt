@@ -1,0 +1,4 @@
+<doc>
+<docno>111</docno>
+foo
+</doc>
