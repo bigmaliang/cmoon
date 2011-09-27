@@ -214,41 +214,90 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
     return STATUS_OK;
 }
 
-#define BUILD_HDF_FMT()                                                    \
+#define BUILD_HDF_FMT()                                                 \
     do {                                                                \
-        memset(hdfkey, 0x0, sizeof(hdfkey));                            \
-        if (prefix) snprintf(hdfkey, sizeof(hdfkey), "%s.", prefix);    \
-        if (keycol >= 0) {                                                \
-            strncat(hdfkey, col[keycol], sizeof(hdfkey));                \
+        bool smatch = false;                                            \
+        string_clear(&hdfkey);                                          \
+        if (prefix) string_appendf(&hdfkey, "%s.", prefix);             \
+        if (keycol >= 0) {                                              \
+            string_append(&hdfkey, col[keycol]);                        \
         } else {                                                        \
-            snprintf(tok, sizeof(tok), "%d", rowsn);                    \
-            strncat(hdfkey, tok, sizeof(hdfkey));                        \
-        }                                                                \
-        if (cols) {                                                        \
-            strcat(hdfkey, ".");                                        \
-            strncat(hdfkey, qrarray[i], sizeof(hdfkey));                \
-        }                                                                \
-        strcat(hdfkey, "=%s");                                            \
+            string_appendf(&hdfkey, "%d", rowsn);                       \
+        }                                                               \
+        if (cols) {                                                     \
+            string_append_char(&hdfkey, '.');                           \
+            if (slavenum > 0) {                                         \
+                for (int si = 0; si < slavenum; si++) {                 \
+                    if (i == slavekey[si]) {                            \
+                        smatch = true;                                  \
+                        si = slaveval[si];                              \
+                        string_appendf(&hdfkey, "%s.%s.%s", qrarray[si], col[si], qrarray[i]); \
+                        break;                                          \
+                    }                                                   \
+                }                                                       \
+            }                                                           \
+            if (!smatch) {                                              \
+                string_append(&hdfkey, qrarray[i]);                     \
+            }                                                           \
+        }                                                               \
+        string_append(&hdfkey, "=%s");                                  \
     } while (0)
 
 NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
-                     char *prefix, int keycol)
+                     char *prefix, char *keyspec)
 {
     if (!conn || !hdf) return nerr_raise(NERR_ASSERT, "param error");
 
     int qrcnt = 1, i;
     char qrarray[QR_NUM_MAX][LEN_ST];
-    char *col[QR_NUM_MAX];
-    char fmt[LEN_ST] = {0}, hdfkey[LEN_HDF_KEY] = {0}, tok[LEN_ST];
+    char *col[QR_NUM_MAX], fmt[LEN_ST], *ps;
+	STRING hdfkey; string_init(&hdfkey);
+    int keycol, slavekey[QR_NUM_MAX], slaveval[QR_NUM_MAX], slavenum = 0;
     NEOERR *err;
     
     memset(fmt, 0x0, sizeof(fmt));
     memset(qrarray, 0x0, sizeof(qrarray));
+    memset(slavekey, 0x0, sizeof(slavekey));
+    memset(slaveval, 0x0, sizeof(slaveval));
 
     if (cols) mmisc_set_qrarray(cols, qrarray, &qrcnt);
     memset(fmt, 's', qrcnt);
-    if (keycol > qrcnt) keycol = 0;
 
+    if (keyspec && atoi(keyspec) < qrcnt) {
+        keycol = atoi(keyspec);
+        /*
+         * decode key spec
+         */
+        keyspec = strdup(keyspec);
+        ps = keyspec;
+
+        while (*ps && *ps++ != ';') {;}
+
+        if (*ps) {
+            ULIST *list;
+            string_array_split(&list, ps, ",", QR_NUM_MAX);
+            
+            int k, v;
+            
+            ITERATE_MLIST(list) {
+                k = -1; v = -1;
+                ps = list->items[t_rsv_i];
+
+                k = atoi(ps);
+                while (*ps && *ps++ != ':') {;}
+                if (*ps) v = atoi(ps);
+                
+                if (k >=0 && v >= 0) {
+                    slavekey[slavenum] = k;
+                    slaveval[slavenum++] = v;
+                }
+            }
+            
+            uListDestroy(&list, ULIST_FREE);
+        }
+        free(keyspec);
+    } else keycol = -1;
+    
     /* append to last child */
     int rowsn = 0;
     if (prefix) {
@@ -262,11 +311,19 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
     while ( (err = mdb_geta(conn, fmt, col)) == STATUS_OK ){
         for (i = 0; i < qrcnt; i++) {
             BUILD_HDF_FMT();
-            hdf_set_valuef(hdf, hdfkey, col[i]);
+            hdf_set_valuef(hdf, hdfkey.buf, col[i]);
         }
         rowsn++;
     }
-    nerr_ignore(&err);
+
+    string_clear(&hdfkey);
+
+    /*
+     * last row has fetched
+     */
+    nerr_handle(&err, NERR_OUTOFRANGE);
+    if (err != STATUS_OK) return nerr_pass(err);
+    //nerr_ignore(&err);
 
     return STATUS_OK;
 }

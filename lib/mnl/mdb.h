@@ -66,14 +66,84 @@ NEOERR* mdb_geta(mdb_conn *conn, const char* fmt, char* res[]);
 NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
 /*
  * set db rows result into hdf
- * hdf     :OUT result store into
+ * hdf    :OUT result store into
  * conn  :IN db
  * cols  :IN SET which colums(hdf key) {aid, aname}, NULL for single col
  * prefix:IN store in hdf whith prefix (Output)
- * keycol:IN use which colum as hdf's key(exec, not cols), start with 0. -1 for number
+ * keyspec:IN use which colum[s] as hdf's key
+ *         keyspec format is
+ *         1, NULL for number as hdf key
+ *         2, "n" for cols[n] as hdf key
+ *         3, "n;x:q,y:q,z:q..." for
+ *            cols[n].cols[q].val[q].cols[x/y/z] as hdf key
+ *         e.g.
+ * snum    course  score   level
+ * 35      1       86      B
+ * 35      2       93      B
+ * 27      1       76      C
+ * 27      2       82      B
+ * 
+ * mdb_set_rows(hdf, conn, "snum, course, score, level",
+ *              "Output.students", "0;1:1,2:1,3:1")
+ * ===>
+ * 
+ * students.35.snum = 35
+ * students.35.curse.1.curse = 1
+ * students.35.curse.1.score = 86
+ * students.35.curse.1.level = B
+ * 
+ * students.35.curse.2.curse = 2
+ * students.35.curse.2.score = 93
+ * students.35.curse.2.level = B
+ * 
+ * students.27.snum = 27
+ * students.27.curse.1.curse = 1
+ * students.27.curse.1.score = 76
+ * students.27.curse.1.level = C
+ * 
+ * students.27.curse.2.curse = 2
+ * students.27.curse.2.score = 82
+ * students.27.curse.2.level = B
+ * 
+ * ===>
+ * 
+ * Output {
+ *     students {
+ *         35 {
+ *             snum = 35
+ *             curse {
+ *                 1 {
+ *                     curse = 1
+ *                     score = 86
+ *                     level = B
+ *                 }
+ *                 2 {
+ *                     curse = 2
+ *                 	score = 93
+ *                     level = B
+ *                 }
+ *             }
+ *         }
+ *         27 {
+ *             snum = 27
+ *             curse {
+ *                 1 {
+ *                     curse = 1
+ *                     score = 76
+ *                     level = C
+ *                 }
+ *                 2 {
+ *                     curse = 2
+ *                 	score = 82
+ *                     level = B
+ *                 }
+ *             }
+ *         }
+ *     }
+ * }
  */
 NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
-                     char *prefix, int keycol);
+                     char *prefix, char *keyspec);
 int mdb_get_rows(mdb_conn *conn);
 int mdb_get_affect_rows(mdb_conn *conn);
 int mdb_get_last_id(mdb_conn *conn, const char* seq_name);

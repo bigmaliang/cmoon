@@ -11,3 +11,6 @@ cd ${DIR}APE_Server && git st; git pull && git push
 
 echo "sync APE_JSF"
 cd ${DIR}APE_JSF && git st; git pull && git push
+
+echo "sync zettair"
+cd ${DIR}zettair && git st; git pull && git push
