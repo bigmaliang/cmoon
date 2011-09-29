@@ -225,20 +225,28 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
             string_appendf(&hdfkey, "%d", rowsn);                       \
         }                                                               \
         if (cols) {                                                     \
-            string_append_char(&hdfkey, '.');                           \
+            /* is this col in slaveval[][]? */                          \
             if (slavenum > 0) {                                         \
+                int key = 0;                                            \
                 for (int si = 0; si < slavenum; si++) {                 \
-                    if (i == slavekey[si]) {                            \
-                        smatch = true;                                  \
-                        si = slaveval[si];                              \
-                        string_appendf(&hdfkey, "%s.%s.%s", qrarray[si], col[si], qrarray[i]); \
+                    key = slavekey[si];                                 \
+                    smatch = false;                                     \
+                    for (int sj = 0; sj < QR_NUM_MAX; sj++) {           \
+                        if (i == slaveval[si][sj]) {                    \
+                            smatch = true;                              \
+                            break;                                      \
+                        }                                               \
+                    }                                                   \
+                    if (smatch) {                                       \
+                        /* in slaveval[si], append key, and continue */ \
+                        string_appendf(&hdfkey, ".%s.%s", qrarray[key], col[key]); \
+                    } else {                                            \
+                        /* not in, break */                             \
                         break;                                          \
                     }                                                   \
                 }                                                       \
             }                                                           \
-            if (!smatch) {                                              \
-                string_append(&hdfkey, qrarray[i]);                     \
-            }                                                           \
+            string_appendf(&hdfkey, ".%s", qrarray[i]);                 \
         }                                                               \
         string_append(&hdfkey, "=%s");                                  \
     } while (0)
@@ -252,7 +260,7 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
     char qrarray[QR_NUM_MAX][LEN_ST];
     char *col[QR_NUM_MAX], fmt[LEN_ST], *ps;
 	STRING hdfkey; string_init(&hdfkey);
-    int keycol, slavekey[QR_NUM_MAX], slaveval[QR_NUM_MAX], slavenum = 0;
+    int keycol, slavekey[QR_NUM_MAX], slaveval[QR_NUM_MAX][QR_NUM_MAX], slavenum = 0;
     NEOERR *err;
     
     memset(fmt, 0x0, sizeof(fmt));
@@ -264,7 +272,11 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
     memset(fmt, 's', qrcnt);
 
     if (keyspec && atoi(keyspec) < qrcnt) {
-        keycol = atoi(keyspec);
+        /*
+         * 0;2:2,3,4,5,6;4:4,5,6
+         */
+        keycol = atoi(keyspec); /* 0 */
+
         /*
          * decode key spec
          */
@@ -272,12 +284,19 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
         ps = keyspec;
 
         while (*ps && *ps++ != ';') {;}
+        /*
+         * 2:2,3,4,5,6;4:4,5,6
+         */
 
         if (*ps) {
             ULIST *list;
-            string_array_split(&list, ps, ",", QR_NUM_MAX);
+            string_array_split(&list, ps, ";", QR_NUM_MAX);
+            /*
+             * 2:2,3,4,5,6
+             * 4:4,5,6
+             */
             
-            int k, v;
+            int k, v, cnt;
             
             ITERATE_MLIST(list) {
                 k = -1; v = -1;
@@ -285,11 +304,20 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
 
                 k = atoi(ps);
                 while (*ps && *ps++ != ':') {;}
-                if (*ps) v = atoi(ps);
                 
-                if (k >=0 && v >= 0) {
+                if (k >=0 && *ps) {
                     slavekey[slavenum] = k;
-                    slaveval[slavenum++] = v;
+
+                    /* 2,3,4,5,6 */
+                    cnt = 0;
+                    while (*ps && cnt < QR_NUM_MAX-1) {
+                        slaveval[slavenum][cnt++] = atoi(ps);
+                        while (*ps && *ps++ != ',') {;}
+                    }
+
+                    while (cnt < QR_NUM_MAX) {slaveval[slavenum][cnt++] = -1;}
+                    
+                    slavenum++;
                 }
             }
             

@@ -74,73 +74,30 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
  *         keyspec format is
  *         1, NULL for number as hdf key
  *         2, "n" for cols[n] as hdf key
- *         3, "n;x:q,y:q,z:q..." for
- *            cols[n].cols[q].val[q].cols[x/y/z] as hdf key
+ *         3, "n;x:x,y,z;y:y,z..." for
+ *            cols[n].cols[x].val[x].cols[y].val[y].cols[z] as hdf key
  *         e.g.
- * snum    course  score   level
- * 35      1       86      B
- * 35      2       93      B
- * 27      1       76      C
- * 27      2       82      B
+ * snum    sex  year pos     course  score   level
+ * 35      0    1991 22      1       86      B
+ * 35      0    1991 22      2       88      B
+ * 35      0    1992 20      1       90      A
+ * 35      0    1992 20      2       93      A
+
+ * 27      1    1991 34      1       76      C
  * 
  * mdb_set_rows(hdf, conn, "snum, course, score, level",
- *              "Output.students", "0;1:1,2:1,3:1")
+ *              "Output.students", "0;2:2,3,4,5,6;4:4,5,6")
  * ===>
  * 
  * students.35.snum = 35
- * students.35.curse.1.curse = 1
- * students.35.curse.1.score = 86
- * students.35.curse.1.level = B
+ * students.35.sex = 0
+ * students.35.year.1991.year = 1991
+ * students.35.year.1991.pos = 22
+ * students.35.year.1991.course = 1
+ * students.35.year.1991.course.1.score = 86
+ * students.35.year.1991.course.1.level = B
+ * ...
  * 
- * students.35.curse.2.curse = 2
- * students.35.curse.2.score = 93
- * students.35.curse.2.level = B
- * 
- * students.27.snum = 27
- * students.27.curse.1.curse = 1
- * students.27.curse.1.score = 76
- * students.27.curse.1.level = C
- * 
- * students.27.curse.2.curse = 2
- * students.27.curse.2.score = 82
- * students.27.curse.2.level = B
- * 
- * ===>
- * 
- * Output {
- *     students {
- *         35 {
- *             snum = 35
- *             curse {
- *                 1 {
- *                     curse = 1
- *                     score = 86
- *                     level = B
- *                 }
- *                 2 {
- *                     curse = 2
- *                 	score = 93
- *                     level = B
- *                 }
- *             }
- *         }
- *         27 {
- *             snum = 27
- *             curse {
- *                 1 {
- *                     curse = 1
- *                     score = 76
- *                     level = C
- *                 }
- *                 2 {
- *                     curse = 2
- *                 	score = 82
- *                     level = B
- *                 }
- *             }
- *         }
- *     }
- * }
  */
 NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
                      char *prefix, char *keyspec);
