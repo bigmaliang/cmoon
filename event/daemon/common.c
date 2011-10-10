@@ -21,6 +21,8 @@ void clock_handler(const int fd, const short which, void *arg)
     struct timeval t = {.tv_sec = 1, .tv_usec = 0};
     static bool initialized = false;
     struct event *clock_evt = (struct event*) arg;
+    static unsigned int intime = 0;
+    intime++;
 
     if (initialized) {
         /* only delete the event if it's actually there. */
@@ -31,6 +33,25 @@ void clock_handler(const int fd, const short which, void *arg)
 
     evtimer_set(clock_evt, clock_handler, clock_evt);
     evtimer_add(clock_evt, &t);
+
+    struct event_chain *c;
+    struct event_entry *e;
+    for (size_t i = 0; i < mevent->hashlen; i++) {
+        c = mevent->table + i;
+
+        e = c->first;
+        while (e) {
+            struct timer_entry *t = e->timers;
+            while (t && t->timeout > 0) {
+                if (intime % t->timeout == 0) {
+                    t->timer(e, intime);
+                    if (!t->repeat) t->timeout = 0;
+                }
+                t = t->next;
+            }
+            e = e->next;
+        }
+    }
 
     set_current_time();
 }

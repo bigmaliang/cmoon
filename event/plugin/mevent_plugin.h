@@ -24,19 +24,19 @@
 
 #include "mheads.h"
 
-#define CACHE_HDF(hdf, timeout, fmt, ...)                                \
-    if ((val = calloc(1, MAX_PACKET_LEN)) == NULL)                        \
-        return nerr_raise(REP_ERR_MEM, "alloc mem for cache failure");    \
-    vsize = pack_hdf(hdf, val, MAX_PACKET_LEN);                            \
+#define CACHE_HDF(hdf, timeout, fmt, ...)                               \
+    if ((val = calloc(1, MAX_PACKET_LEN)) == NULL)                      \
+        return nerr_raise(REP_ERR_MEM, "alloc mem for cache failure");  \
+    vsize = pack_hdf(hdf, val, MAX_PACKET_LEN);                         \
     cache_setf(cd, val, vsize, timeout, fmt, ##__VA_ARGS__);            \
     free(val);
 
-#define TRACE_ERR(q, ret, err)                                        \
-    STRING zstra;    string_init(&zstra);                            \
-    nerr_error_traceback(err, &zstra);                                \
-    mtc_err("pro %u failed %d %s", q->operation, ret, zstra.buf);    \
-    hdf_set_value(q->hdfsnd, PRE_ERRTRACE, zstra.buf);                \
-    string_clear(&zstra);                                            \
+#define TRACE_ERR(q, ret, err)                                      \
+    STRING zstra;    string_init(&zstra);                           \
+    nerr_error_traceback(err, &zstra);                              \
+    mtc_err("pro %u failed %d %s", q->operation, ret, zstra.buf);   \
+    hdf_set_value(q->hdfsnd, PRE_ERRTRACE, zstra.buf);              \
+    string_clear(&zstra);                                           \
     nerr_ignore(&err);
 
 #endif    /* __MEVENT_PLUGIN_H__ */

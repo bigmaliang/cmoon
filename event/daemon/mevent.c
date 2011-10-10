@@ -235,6 +235,21 @@ void mevent_stop(struct mevent *evt)
     free(evt);
 }
 
+void mevent_add_timer(struct timer_entry **timers, int timeout, bool repeat,
+                      void (*timer)(struct event_entry *e, unsigned int upsec))
+{
+    if (!timers || !timer) return;
+
+    struct timer_entry *t = calloc(1, sizeof(struct timer_entry));
+    if (t) {
+        t->timeout = timeout;
+        t->repeat = repeat;
+        t->timer = timer;
+        t->next = *timers;
+        *timers = t;
+    }
+}
+
 struct event_entry* find_entry_in_table(struct mevent *evt, const unsigned char *key, size_t ksize)
 {
     uint32_t h;

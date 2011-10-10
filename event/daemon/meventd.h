@@ -3,6 +3,7 @@
 
 #include <sys/types.h>        /* for size_t */
 #include <stdint.h>        /* for int64_t */
+#include <stdbool.h>
 #include "queue.h"
 
 /*
@@ -22,6 +23,13 @@ struct event_chain {
     struct event_entry *last;
 };
 
+struct timer_entry {
+    int timeout;
+    bool repeat;
+    void (*timer)(struct event_entry *e, unsigned int upsec);
+    struct timer_entry *next;
+};
+
 struct event_entry {
     /*
      * public, init in mevent_start_driver()
@@ -32,6 +40,7 @@ struct event_entry {
     int loop_should_stop;
     struct event_entry *prev;
     struct event_entry *next;
+    struct timer_entry *timers;
 
     /*
      * different by plugin, init in init_driver()
@@ -57,6 +66,8 @@ typedef struct event_entry EventEntry;
  */
 struct mevent* mevent_start();
 void mevent_stop(struct mevent *evt);
+void mevent_add_timer(struct timer_entry **timers, int timeout, bool repeat,
+                      void (*timer)(struct event_entry *e, unsigned int upsec));
 
 struct event_entry* find_entry_in_table(struct mevent *evt, const unsigned char *key, size_t ksize);
 

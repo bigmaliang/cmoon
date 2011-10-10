@@ -1,4 +1,5 @@
 cs/cgi/cgi.c 643
+================
     if (type && !strcmp(type, "application/x-www-form-urlencoded"))
 
     ===>
@@ -13,6 +14,7 @@ $1 = 0x962d978 "application/x-www-form-urlencoded; charset=UTF-8"
 $2 = 0x962dbf0 "POST"    
 
 cs/utl/neo_str.c 234
+================
     if (f != p)
     {
     再进行字符串入list
@@ -31,10 +33,12 @@ cs/utl/neo_str.c 234
 
 
 Clearsilver.h 26
+================
 #define hash_destroy ne_hash_destroy
 ++#define hash_insert ne_hash_insert
 
 cs/utl/neo_hash.c
+================
 146
     node = _hash_lookup_node(hash, key, NULL);
 ===>
@@ -45,3 +49,11 @@ add
   if (node != 0)
   {
   }
+
+cs/utl/neo_hdf.c
+================
+1623
+      while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
+===>      
+      while (*s && (isalnum(*s) || *s == '_' || *s == '.' || *(unsigned char*)s > 127)) s++;
+让 hdf 的 key 支持中文（在 read_string 的时候）
