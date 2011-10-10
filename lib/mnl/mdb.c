@@ -328,7 +328,7 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
     
     /* append to last child */
     int rowsn = 0;
-    if (prefix) {
+    if (prefix && keycol < 0) {
         HDF *res = hdf_get_child(hdf, prefix);
         while (res != NULL) {
             rowsn++;
