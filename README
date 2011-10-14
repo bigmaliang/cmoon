@@ -28,7 +28,7 @@ moon/
 I 在moon内部新建
 -------------
 1, git clone voov 分支
-2, mv regae NEWPROJ
+2, cp regae NEWPROJ
 3, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
 4, find -name '*voov*'; rename them
 5, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
