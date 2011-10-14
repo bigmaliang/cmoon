@@ -2,9 +2,9 @@
 =======
 
 moon/
-|-- maketool    编译辅助工具
 |-- Make.env    编译相关宏定义
 |-- Makefile    编译文件
+|-- maketool    编译辅助工具
 |-- mtools      常用管理脚本
 |-- doc         文档目录(杂七杂八)
 |-- res         设计资源(杂七杂八)
@@ -12,14 +12,18 @@ moon/
 |
 |-- event       支持插件的高并发处理缓冲层后台, 详情请参考该目录文档和代码
 |-- deliver     web push 解决方案 (参考 deliver/README)
+|-- eii         中文分词工具(暂无内容)
+|-- grabber     获取邮件, msn, qq 好友方案
 |
-!-- pop         应用: www.bomdoo.com 播豆网
-|-- regae       应用: www.regae.com 送菜网(建设中。。。)
+|-- regae       应用初始框架(skeleton)
 |-- ksa         应用: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
-|-- ksc         DEPRECATED
-|-- rock        DEPRECATED
+!-- pop         应用: www.bomdoo.com 播豆网
+|-- dada        应用: 相邀网
 |
-`-- grabber     获取邮件, msn, qq 好友方案
+`-- memorypark  已作废应用(墓地)
+    |-- funk    www.regae.com 送菜网(建设中。。。(暂作废))
+    |-- ksc     DEPRECATED
+    `-- rock    DEPRECATED
 
 
 
