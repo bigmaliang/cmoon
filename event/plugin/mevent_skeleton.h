@@ -1,7 +1,7 @@
 #ifndef __MEVENT_SKELETON_H__
 #define __MEVENT_SKELETON_H__
 
-#define PREFIX_SKLE        "Skele"
+#define PREFIX_SKLE     "Skele"
 
 enum {
     REQ_CMD_SKGET = 1001,

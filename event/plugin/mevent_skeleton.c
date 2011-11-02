@@ -27,8 +27,6 @@ static void skeleton_process_driver(EventEntry *entry, QueueEntry *q)
     NEOERR *err;
     int ret;
     
-    mdb_conn *db = e->db;
-    Cache *cd = e->cd;
     struct skeleton_stats *st = &(e->st);
 
     st->msg_total++;
