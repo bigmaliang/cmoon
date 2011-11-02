@@ -81,6 +81,17 @@ var tm = Date(eval(raw.time)).match(/\d{1,2}:\d{1,2}:\d{1,2}/)[0];
     bindEnter("msn");
 
 
+$.getJSON('http://otherdomain.com/cgi?callback=?', {data}, function() {});
+能实现真正的跨域获取数据
+
+
+var data = {name: 'foo', age: 10}
+
+data.name ===> foo
+data['name'] ===> foo
+data[name] ===> undefined
+
+
 
 PHP, JS
 ========

@@ -1,3 +1,8 @@
+MISC
+====
+删除行尾空格 M-x delete-trailing-whitespace <RET>
+插入自增计数器 c-x ( F3 xxx)
+
 FONT
 ====
 apt-get install xfonts-terminus
