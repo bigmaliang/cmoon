@@ -192,7 +192,7 @@ NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str)
         clen = mutil_obj_attr(node, "maxlen");
         type = mutil_obj_attr(node, "type");
         if (val && *val) {
-            if (type == NULL || strcmp(type, "int")) {
+            if (type == NULL || !strcmp(type, "str")) {
                 mutil_real_escape_string_nalloc(&esc, val, strlen(val));
                 if (sa.len <= 0) {
                     string_appendf(&sa, " (%s ", col);
@@ -210,13 +210,21 @@ NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str)
                         string_appendf(&sb, ", '%s' ", esc);
                 }
                 free(esc);
-            } else {
+            } else if (!strcmp(type, "int")) {
                 if (sa.len <= 0) {
                     string_appendf(&sa, " (%s ", col);
                     string_appendf(&sb, " VALUES (%d ", atoi(val));
                 } else {
                     string_appendf(&sa, ", %s ", col);
                     string_appendf(&sb, ", %d ", atoi(val));
+                }
+            } else if (!strcmp(type, "float")) {
+                if (sa.len <= 0) {
+                    string_appendf(&sa, " (%s ", col);
+                    string_appendf(&sb, " VALUES (%f ", atof(val));
+                } else {
+                    string_appendf(&sa, ", %s ", col);
+                    string_appendf(&sb, ", %f ", atof(val));
                 }
             }
         } else if (require && !strcmp(require, "true")) {

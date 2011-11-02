@@ -150,17 +150,17 @@ ssize_t ssend(int fd, const unsigned char *buf, size_t count, int flags)
 /*
  * mevent system error
  */
-int REP_ERR = 0;            /* 14 */
-int REP_ERR_VER = 0;        /* 15 */
-int REP_ERR_SEND = 0;        /* 16 */
-int REP_ERR_BROKEN = 0;        /* 17 */
-int REP_ERR_UNKREQ = 0;        /* 18 */
-int REP_ERR_MEM = 0;        /* 19 */
-int REP_ERR_DB = 0;            /* 20 */
-int REP_ERR_BUSY = 0;        /* 21 */
-int REP_ERR_PACK = 0;        /* 22 */
-int REP_ERR_BADPARAM = 0;    /* 23 */
-int REP_ERR_CACHE_MISS = 0;    /* 24 */
+int REP_ERR = 0;                /* 14 */
+int REP_ERR_VER = 0;            /* 15 */
+int REP_ERR_SEND = 0;           /* 16 */
+int REP_ERR_BROKEN = 0;         /* 17 */
+int REP_ERR_UNKREQ = 0;         /* 18 */
+int REP_ERR_MEM = 0;            /* 19 */
+int REP_ERR_DB = 0;             /* 20 */
+int REP_ERR_BUSY = 0;           /* 21 */
+int REP_ERR_PACK = 0;           /* 22 */
+int REP_ERR_BADPARAM = 0;       /* 23 */
+int REP_ERR_CACHE_MISS = 0;     /* 24 */
 
 static int merr_inited = 0;
 
