@@ -107,6 +107,7 @@ int mdb_get_last_id(mdb_conn *conn, const char* seq_name);
 
 
 /*
+ * select data from table
  * col, table, condition MUST be string literal, not variable
  * "tjt_%d" OK
  * char *table NOK
@@ -120,6 +121,9 @@ int mdb_get_last_id(mdb_conn *conn, const char* seq_name);
                        sfmt, ##__VA_ARGS__);                            \
         if (err != STATUS_OK) return nerr_pass(err);                    \
     } while (0)
+/*
+ * normally used on insert, update
+ */
 #define MDB_EXEC(conn, affrow, sqlfmt, fmt, ...)                    \
     do {                                                            \
         err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);   \

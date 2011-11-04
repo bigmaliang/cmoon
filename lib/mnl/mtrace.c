@@ -97,7 +97,7 @@ NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str)
         clen = mutil_obj_attr(node, "maxlen");
         type = mutil_obj_attr(node, "type");
         if (val && *val) {
-            if (type == NULL || strcmp(type, "int")) {
+            if (type == NULL || !strcmp(type, "str")) {
                 mutil_real_escape_string_nalloc(&esc, val, strlen(val));
                 if (str->len <= 0) {
                     if (clen)
@@ -114,11 +114,23 @@ NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str)
                         string_appendf(str, " , %s='%s' ", col, esc);
                     free(esc);
                 }
-            } else {
+            } else if (!strcmp(type, "int")) {
                 if (str->len <= 0)
                     string_appendf(str, " %s=%d ", col, atoi(val));
                 else
                     string_appendf(str, " , %s=%d ", col, atoi(val));
+            } else if (!strcmp(type, "float")) {
+                if (str->len <= 0)
+                    string_appendf(str, " %s=%f ", col, atof(val));
+                else
+                    string_appendf(str, " , %s=%f ", col, atof(val));
+            } else if (!strcmp(type, "point")) {
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                if (str->len <= 0)
+                    string_appendf(str, " %s= point '%s' ", col, esc);
+                else
+                    string_appendf(str, " , %s= point '%s' ", col, esc);
+                free(esc);
             }
         } else if (require && !strcmp(require, "true")) {
             return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
@@ -226,6 +238,16 @@ NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str)
                     string_appendf(&sa, ", %s ", col);
                     string_appendf(&sb, ", %f ", atof(val));
                 }
+            } else if (!strcmp(type, "point")) {
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                if (sa.len <= 0) {
+                    string_appendf(&sa, " (%s ", col);
+                    string_appendf(&sb, " VALUES (point '%s' ", esc);
+                } else {
+                    string_appendf(&sa, ", %s ", col);
+                    string_appendf(&sb, ", point '%s' ", esc);
+                }
+                free(esc);
             }
         } else if (require && !strcmp(require, "true")) {
             string_clear(&sa);
