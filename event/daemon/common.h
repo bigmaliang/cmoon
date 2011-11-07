@@ -32,6 +32,22 @@
         }                                                           \
     } while (0)
 
+#define REQ_GET_PARAM_OBJ(hdf, key, ret)                            \
+    do {                                                            \
+        ret = hdf_get_obj(hdf, key);                                \
+        if (!ret) {                                                 \
+            return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
+        }                                                           \
+    } while (0)
+
+#define REQ_GET_PARAM_CHILD(hdf, key, ret)                          \
+    do {                                                            \
+        ret = hdf_get_child(hdf, key);                              \
+        if (!ret) {                                                 \
+            return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
+        }                                                           \
+    } while (0)
+
 
 #define REQ_FETCH_PARAM_INT(hdf, key, ret)          \
     do {                                            \
@@ -53,6 +69,11 @@
             strcmp(hdf_get_value(hdf, key, NULL), "")) {    \
             ret = hdf_get_value(hdf, key, NULL);            \
         }                                                   \
+    } while (0)
+
+#define REQ_FETCH_PARAM_OBJ(hdf, key, ret)      \
+    do {                                        \
+        ret = hdf_get_obj(hdf, key);            \
     } while (0)
 
 extern struct mevent *mevent;
