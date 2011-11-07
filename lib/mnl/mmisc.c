@@ -216,6 +216,17 @@ unsigned int hash_string(const char *str)
         return (hash & 0x7FFFFFFF);
 }
 
+unsigned int hash_string_rev(const char *str)
+{
+    int hash = 5381;
+    int x = strlen(str) - 1;
+    
+    while (x >= 0 && str[x] != '\0')
+        hash = ((hash << 5) + hash) + tolower(str[x--]);
+    
+    return (hash & 0x7FFFFFFF);
+}
+
 
 /*
  * IE: make sure timezone & time set correct on web server

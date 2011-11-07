@@ -47,6 +47,7 @@ void mmisc_str_repchr(char *s, char from, char to);
 char* mmisc_str_repstr(int rep_count, char *s, ...);
 char* mmisc_str_strip (char *s, char n);
 unsigned int hash_string(const char *str);
+unsigned int hash_string_rev(const char *str);
 
 /*
  * IE: make sure timezone & time set correct on web server
