@@ -85,11 +85,14 @@ $.getJSON('http://otherdomain.com/cgi?callback=?', {data}, function() {});
 能实现真正的跨域获取数据
 
 
-var data = {name: 'foo', age: 10}
+var data = {name: 'foo', age: 10};
+var type = age;
 
 data.name ===> foo
 data['name'] ===> foo
 data[name] ===> undefined
+data[type] ===> 10
+data.type ===> reference error
 
 
 
