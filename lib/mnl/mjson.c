@@ -108,3 +108,84 @@ void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
 
     json_object_put(out);
 }
+
+/*
+ *  plan = {
+ *             "id": "4301",
+ *             "name": "foo",
+ *             "dad": [
+ *                 {"x": 1, "y": 2},
+ *                 {"x": 1, "y": 2},
+ *              ],
+ *             "mum": ["foo", "bar"]
+ *  }
+ *
+ * plan.id = 4301
+ * plan.name = foo
+ * plan.dad.0.x = 1
+ * plan.dad.0.y = 2
+ * plan.dad.1.x = 1
+ * plan.dad.1.y = 2
+ * plan.mun.0 = foo
+ * plan.mun.1 = bar
+ *
+ */
+void mjson_str2hdf(HDF *node, struct json_object *o)
+{
+    if (!node) return;
+    
+    char *s = hdf_obj_value(node);
+    
+    struct json_object *obj;
+    struct array_list *list;
+    enum json_type type;
+    HDF *cnode;
+    char tok[64];
+    int i;
+    
+    char *key; struct json_object *val; struct lh_entry *entry;
+    
+    obj = o;
+
+    if (!obj) {
+        obj = json_tokener_parse(s);
+    }
+    if (!obj || (int)obj < 0) return;
+
+    type = json_object_get_type(obj);
+
+    switch (type) {
+    case json_type_boolean:
+        hdf_set_int_value(node, NULL, json_object_get_boolean(obj));
+        return;
+    case json_type_int:
+        hdf_set_int_value(node, NULL, json_object_get_int(obj));
+        return;
+    case json_type_double:
+        sprintf(tok, "%f", json_object_get_double(obj));
+        hdf_set_value(node, NULL, tok);
+        return;
+    case json_type_string:
+        hdf_set_value(node, NULL, json_object_get_string(obj));
+        return;
+    case json_type_array:
+        list = json_object_get_array(obj);
+        for (i = 0; i < list->length; i++) {
+            sprintf(tok, "%d", i);
+            hdf_get_node(node, tok, &cnode);
+            mjson_str2hdf(cnode, (struct json_object*)list->array[i]);
+        }
+        return;
+    case json_type_object:
+        for(entry = json_object_get_object(obj)->head;
+            (entry ? (key = (char*)entry->k,
+                      val = (struct json_object*)entry->v, entry) : 0);
+            entry = entry->next) {
+            hdf_get_node(node, key, &cnode);
+            mjson_str2hdf(cnode, val);
+        }
+        return;
+    default:
+        return;
+    }
+}

@@ -97,40 +97,39 @@ NEOERR* mcs_build_upcol(HDF *data, HDF *node, STRING *str)
         clen = mutil_obj_attr(node, "maxlen");
         type = mutil_obj_attr(node, "type");
         if (val && *val) {
+            if (str->len > 0) {
+                string_appendf(str, " , ");
+            }
             if (type == NULL || !strcmp(type, "str")) {
                 mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-                if (str->len <= 0) {
-                    if (clen)
-                        string_appendf(str, " %s='%s'::varchar(%d) ",
-                                       col, esc, atoi(clen));
-                    else
-                        string_appendf(str, " %s='%s' ", col, esc);
-                    free(esc);
-                } else {
-                    if (clen)
-                        string_appendf(str, " , %s='%s'::varchar(%d) ",
-                                       col, esc, atoi(clen));
-                    else
-                        string_appendf(str, " , %s='%s' ", col, esc);
-                    free(esc);
-                }
+                if (clen)
+                    string_appendf(str, " %s='%s'::varchar(%d) ",
+                                   col, esc, atoi(clen));
+                else
+                    string_appendf(str, " %s='%s' ", col, esc);
+                free(esc);
+
             } else if (!strcmp(type, "int")) {
-                if (str->len <= 0)
-                    string_appendf(str, " %s=%d ", col, atoi(val));
-                else
-                    string_appendf(str, " , %s=%d ", col, atoi(val));
+                string_appendf(str, " %s=%d ", col, atoi(val));
+
             } else if (!strcmp(type, "float")) {
-                if (str->len <= 0)
-                    string_appendf(str, " %s=%f ", col, atof(val));
-                else
-                    string_appendf(str, " , %s=%f ", col, atof(val));
+                string_appendf(str, " %s=%f ", col, atof(val));
+
             } else if (!strcmp(type, "point")) {
                 mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-                if (str->len <= 0)
-                    string_appendf(str, " %s= point '%s' ", col, esc);
-                else
-                    string_appendf(str, " , %s= point '%s' ", col, esc);
+                string_appendf(str, " %s= point '%s' ", col, esc);
                 free(esc);
+
+            } else if (!strcmp(type, "box")) {
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s= box '%s' ", col, esc);
+                free(esc);
+
+            } else if (!strcmp(type, "path")) {
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s= path '%s' ", col, esc);
+                free(esc);
+
             }
         } else if (require && !strcmp(require, "true")) {
             return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
@@ -204,49 +203,43 @@ NEOERR* mcs_build_incol(HDF *data, HDF *node, STRING *str)
         clen = mutil_obj_attr(node, "maxlen");
         type = mutil_obj_attr(node, "type");
         if (val && *val) {
+            
+            if (sa.len <= 0) {
+                string_appendf(&sa, " (%s ", col);
+                string_appendf(&sb, " VALUES (");
+            } else {
+                string_appendf(&sa, ", %s ", col);
+                string_appendf(&sb, ", ");
+            }
+
             if (type == NULL || !strcmp(type, "str")) {
                 mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-                if (sa.len <= 0) {
-                    string_appendf(&sa, " (%s ", col);
-                    if (clen)
-                        string_appendf(&sb, " VALUES ('%s'::varchar(%d) ",
-                                       esc, atoi(clen));
-                    else
-                        string_appendf(&sb, " VALUES ('%s' ", esc);
-                } else {
-                    string_appendf(&sa, ", %s ", col);
-                    if (clen)
-                        string_appendf(&sb, ", '%s'::varchar(%d) ",
-                                       esc, atoi(clen));
-                    else
-                        string_appendf(&sb, ", '%s' ", esc);
-                }
+                if (clen)
+                    string_appendf(&sb, " '%s'::varchar(%d) ",
+                                   esc, atoi(clen));
+                else
+                    string_appendf(&sb, " '%s' ", esc);
                 free(esc);
+
             } else if (!strcmp(type, "int")) {
-                if (sa.len <= 0) {
-                    string_appendf(&sa, " (%s ", col);
-                    string_appendf(&sb, " VALUES (%d ", atoi(val));
-                } else {
-                    string_appendf(&sa, ", %s ", col);
-                    string_appendf(&sb, ", %d ", atoi(val));
-                }
+                string_appendf(&sb, "%d", atoi(val));
+
             } else if (!strcmp(type, "float")) {
-                if (sa.len <= 0) {
-                    string_appendf(&sa, " (%s ", col);
-                    string_appendf(&sb, " VALUES (%f ", atof(val));
-                } else {
-                    string_appendf(&sa, ", %s ", col);
-                    string_appendf(&sb, ", %f ", atof(val));
-                }
+                string_appendf(&sb, "%f", atof(val));
+
             } else if (!strcmp(type, "point")) {
                 mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-                if (sa.len <= 0) {
-                    string_appendf(&sa, " (%s ", col);
-                    string_appendf(&sb, " VALUES (point '%s' ", esc);
-                } else {
-                    string_appendf(&sa, ", %s ", col);
-                    string_appendf(&sb, ", point '%s' ", esc);
-                }
+                string_appendf(&sb, "point '%s' ", esc);
+                free(esc);
+
+            } else if (!strcmp(type, "box")) {
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(&sb, "box '%s' ", esc);
+                free(esc);
+
+            } else if (!strcmp(type, "path")) {
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(&sb, "path '%s' ", esc);
                 free(esc);
             }
         } else if (require && !strcmp(require, "true")) {
