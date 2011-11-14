@@ -138,5 +138,6 @@ libsqlite3-dev
     _nst: start number
     _npg: page number (_nst will overwrite _npg)
     _npp: number perpage
+    _type_xx: 请求中包含对象时，_type_xxx: 'object' 让 viki 将xxx当作对象解析
     
 
