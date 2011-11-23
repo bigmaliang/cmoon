@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    settings.smsalarm = 1;
+    settings.smsalarm = 0;
     //settings.logfname = "-";
     log_init();
     if (config_parse_file(argv[4], &g_cfg) != 1) {
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
         if (PROCESS_NOK(ret) && try >= 3) {
             printf("process failure %d\n", ret);
             SMS_ALARM("process failure %d, restarted", ret);
-            system("killall -9 mevent && sleep 2 && /usr/local/bin/mevent -c /etc/mevent/server.hdf");
+            system("killall -9 mevent; sleep 2; /usr/local/revive/xport/daemon/mevent -c /usr/local/revive/xport/conf/server.hdf");
         } else {
             printf("process temproray error %d, %d", ret, try);
         }
