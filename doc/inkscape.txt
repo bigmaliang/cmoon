@@ -1,0 +1,4 @@
+cut bitmap
+----------
+  Group everything in the graphic, then draw the circle you want over everything.
+  Select both the group and the circle and choose "Clip > Set" from the "Object" menu.

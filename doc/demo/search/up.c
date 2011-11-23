@@ -50,24 +50,20 @@ int main(int argc, char *argv[])
     }
 
     printf("before UP\n");
-    struct postings *pst = idx->post;
-    unsigned long int docno = pst->docno;
-    pst->docno = 1;
-    pst->update_required = 1;
 
-    postings_addword(pst, "HAHAHA", 8);
-
-    struct postings_docstats stats;
-    postings_update(pst, &stats);
-
-    pst->docno = docno;
+    unsigned int docs;
+    unsigned long int docno;
+    struct index_add_opt aopt = {0};
+    struct index_commit_opt copt = {0};
+    if (!index_add(idx, "bar.txt", NULL, &docno, &docs,
+                   INDEX_ADD_NOOPT, &aopt, INDEX_COMMIT_NOOPT, &copt)) {
+        printf("failure\n");
+        return 1;
+    }
 
 
     printf("before commit SE %s\n", strerror(errno));
     
-    unsigned int docs;
-    struct index_add_opt aopt = {0};
-    struct index_commit_opt copt = {0};
     if (!index_commit(idx, INDEX_COMMIT_NOOPT, &copt, INDEX_ADD_NOOPT, &aopt)) {
         printf("error while commiting");
         return 1;

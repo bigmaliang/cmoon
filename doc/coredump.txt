@@ -47,3 +47,10 @@
 
 6, screen 可以用来调试长期才出错的程序
 http://www.ibm.com/developerworks/cn/linux/l-cn-screen/
+#screen -S debug
+#do some staff
+#C-a d
+
+#screen -r dbg
+#check some thing
+#C-d OR C-a d

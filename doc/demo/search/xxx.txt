@@ -1,0 +1,4 @@
+<doc>
+<docno>333</docno>
+xxx yyy
+</doc>
