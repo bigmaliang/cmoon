@@ -110,7 +110,7 @@ void mjson_str2hdf(HDF *node, struct json_object *o)
     if (!obj) {
         obj = json_tokener_parse(s);
     }
-    if (!obj || (int)obj < 0) return;
+    if (!obj || obj < 0) return;
 
     type = json_object_get_type(obj);
 
