@@ -63,9 +63,11 @@ NEOERR* mdb_put(mdb_conn *conn, const char* fmt, ...);
 NEOERR* mdb_get(mdb_conn *conn, const char* fmt, ...);
 /* store data to res[], fmt must be '[sS]+' */
 NEOERR* mdb_geta(mdb_conn *conn, const char* fmt, char* res[]);
+/* note: avoid '%' in prefix, cols, dbcol[i]... please */
 NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
 /*
  * set db rows result into hdf
+ * note: avoid '%' in prefix, cols, dbcol[i]... please
  * hdf    :OUT result store into
  * conn  :IN db
  * cols  :IN SET which colums(hdf key) {aid, aname}, NULL for single col
