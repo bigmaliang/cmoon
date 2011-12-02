@@ -159,18 +159,32 @@ NEOERR* mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
         require = mutil_obj_attr(node, "require");
         type = mutil_obj_attr(node, "type");
         if (val && *val) {
-            if (type == NULL || strcmp(type, "int")) {
+            if (str->len > 0) string_append(str, " AND ");
+            
+            if (type == NULL || !strcmp(type, "str")) {
                 mutil_real_escape_string_nalloc(&esc, val, strlen(val));
-                if (str->len <= 0)
-                    string_appendf(str, " %s '%s' ", col, esc);
-                else
-                    string_appendf(str, " AND %s '%s' ", col, esc);
+                string_appendf(str, " %s '%s' ", col, esc);
                 free(esc);
-            } else {
-                if (str->len <= 0)
-                    string_appendf(str, " %s %d ", col, atoi(val));
-                else
-                    string_appendf(str, " AND %s %d ", col, atoi(val));
+            } else if (!strcmp(type, "int")){
+                string_appendf(str, " %s %d ", col, atoi(val));
+
+            } else if (!strcmp(type, "float")){
+                string_appendf(str, " %s %d ", col, atof(val));
+
+            } else if (!strcmp(type, "point")){
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s point '%s' ", col, esc);
+                free(esc);
+
+            } else if (!strcmp(type, "box")){
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s box '%s' ", col, esc);
+                free(esc);
+
+            } else if (!strcmp(type, "path")){
+                mutil_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s path '%s' ", col, esc);
+                free(esc);
             }
         } else if (require && !strcmp(require, "true")) {
             return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
