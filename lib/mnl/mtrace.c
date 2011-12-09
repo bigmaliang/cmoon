@@ -169,7 +169,7 @@ NEOERR* mcs_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
                 string_appendf(str, " %s %d ", col, atoi(val));
 
             } else if (!strcmp(type, "float")){
-                string_appendf(str, " %s %d ", col, atof(val));
+                string_appendf(str, " %s %f ", col, atof(val));
 
             } else if (!strcmp(type, "point")){
                 mutil_real_escape_string_nalloc(&esc, val, strlen(val));
