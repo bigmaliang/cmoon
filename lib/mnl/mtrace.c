@@ -296,6 +296,28 @@ void mcs_html_escape(HDF *node, char *name)
     }
 }
 
+void mcs_html_unescape(HDF *node, char *name)
+{
+    if (!node || !name) return;
+    char *s, *os;
+    
+    while (node) {
+        s = hdf_get_value(node, name, NULL);
+        if (s && *s) {
+            os = mmisc_str_repstr(3, s,
+                                  "&amp;", "&",
+                                  "&gt;", ">",
+                                  "&lt;", "<");
+            if (os) {
+                hdf_set_value(node, name, os);
+                free(os);
+            }
+        }
+        
+        node = hdf_obj_next(node);
+    }
+}
+
 NEOERR* mcs_err_valid(NEOERR *err)
 {
     NEOERR *r = err;

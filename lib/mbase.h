@@ -20,6 +20,7 @@
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <sys/shm.h>
+#include <sys/resource.h>
 
 /* Fix Up for systems that don't define these standard things */
 #ifndef __BEGIN_DECLS

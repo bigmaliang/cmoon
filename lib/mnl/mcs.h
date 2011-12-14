@@ -16,6 +16,7 @@ NEOERR* mcs_register_bitop_functions(CSPARSE *cs);
 NEOERR* mcs_register_mkd_functions(CSPARSE *cs);
 void mcs_hdf_escape_val(HDF *hdf);
 void mcs_html_escape(HDF *hdf, char *name);
+void mcs_html_unescape(HDF *hdf, char *name);
 NEOERR* mcs_err_valid(NEOERR *err);
 
 /*

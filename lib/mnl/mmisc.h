@@ -40,6 +40,7 @@ void mmisc_pagediv(HDF *hdf, char *inprefix, int *count, int *offset,
                    char *outprefix, HDF *ohdf);
 void mmisc_str_repchr(char *s, char from, char to);
 /*
+ * string replace
  * return an allocated string, remember to free it
  * mmisc_str_repchr(s, "from1", "to1", "from2", "to2", ...)
  * make sure offer suitable rep_count, or, random errors will occur.

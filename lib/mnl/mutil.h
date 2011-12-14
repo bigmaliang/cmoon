@@ -43,6 +43,7 @@ char* mutil_hdf_attr(HDF *hdf, char *name, char*key);
 char* mutil_obj_attr(HDF *hdf, char*key);
 bool mutil_isdigit(char *s);
 NEOERR* mutil_makesure_dir(char *file);
+void mutil_makesure_coredump();
 
 /*
  * make sure buf big enough please

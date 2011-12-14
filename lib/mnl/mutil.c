@@ -170,6 +170,15 @@ NEOERR* mutil_makesure_dir(char *file)
     return STATUS_OK;
 }
 
+void mutil_makesure_coredump()
+{
+    struct rlimit rl;
+
+    rl.rlim_cur = 50*1024*1024;
+    rl.rlim_max = 50*1024*1024;
+    setrlimit(RLIMIT_CORE, &rl);
+}
+
 void mutil_real_escape_string(char *to, char *from, size_t len)
 {
     char escape = 0;
