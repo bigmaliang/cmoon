@@ -26,12 +26,12 @@ __BEGIN_DECLS
         mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DIE,f,##__VA_ARGS__); \
         exit(-1);                                                       \
     } while(0)
-#define mtc_foo(f,...)        mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_FOO,f,##__VA_ARGS__)
-#define mtc_err(f,...)        mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_ERROR,f,##__VA_ARGS__)
-#define mtc_warn(f,...)        mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_WARNING,f,##__VA_ARGS__)
-#define mtc_dbg(f,...)        mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DEBUG,f,##__VA_ARGS__)
-#define mtc_info(f,...)        mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_INFO,f,##__VA_ARGS__)
-#define mtc_noise(f,...)    mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,##__VA_ARGS__)
+#define mtc_foo(f,...)  mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_FOO,f,##__VA_ARGS__)
+#define mtc_err(f,...)  mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_ERROR,f,##__VA_ARGS__)
+#define mtc_warn(f,...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_WARNING,f,##__VA_ARGS__)
+#define mtc_dbg(f,...)  mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DEBUG,f,##__VA_ARGS__)
+#define mtc_info(f,...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_INFO,f,##__VA_ARGS__)
+#define mtc_noise(f,...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,##__VA_ARGS__)
     
 #elif defined(USE_GNUC_VARARG_MACROS)
 #define mtc_die(f,a...)                                                 \
@@ -39,12 +39,12 @@ __BEGIN_DECLS
         mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DIE,f,##a);    \
         exit(-1);                                                       \
     } while(0)
-#define mtc_foo(f,a...)        mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_FOO,f,##a)
-#define mtc_err(f,a...)        mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_ERROR,f,##a)
-#define mtc_warn(f,a...)    mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_WARNING,f,##a)
-#define mtc_dbg(f,a...)        mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DEBUG,f,##a)
-#define mtc_info(f,a...)    mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_INFO,f,##a)
-#define mtc_noise(f,a...)    mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,##a)
+#define mtc_foo(f,a...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_FOO,f,##a)
+#define mtc_err(f,a...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_ERROR,f,##a)
+#define mtc_warn(f,a...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_WARNING,f,##a)
+#define mtc_dbg(f,a...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_DEBUG,f,##a)
+#define mtc_info(f,a...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_INFO,f,##a)
+#define mtc_noise(f,a...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,##a)
 #endif
 
 /*

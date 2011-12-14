@@ -9,7 +9,7 @@ void mjson_asm_objs(HDF *hdf, struct json_object **out)
     char *val, *type;
     bool array = false;
 
-    type = mutil_obj_attr(hdf, "type");
+    type = mcs_obj_attr(hdf, "type");
     if (type && !strcmp(type, "array")) {
         array = true;
         jret = json_object_new_array();
@@ -23,7 +23,7 @@ void mjson_asm_objs(HDF *hdf, struct json_object **out)
         jso = NULL;
         
         if ((val = hdf_obj_value(hdf)) != NULL) {
-            type = mutil_obj_attr(hdf, "type");
+            type = mcs_obj_attr(hdf, "type");
             if (type != NULL && !strcmp(type, "int")) {
                 jso = json_object_new_int(atoi(val));
             } else {
@@ -52,7 +52,7 @@ void mjson_asm_objs(HDF *hdf, struct json_object **out)
 void mjson_output_hdf(HDF *hdf, time_t second)
 {
     if (second > 0) {
-        mmisc_cache_headers(second);
+        mhttp_cache_headers(second);
     }
     
     NEOERR *err = cgiwrap_writef("Content-Type: text/html; charset=UTF-8\r\n\r\n");
@@ -72,7 +72,7 @@ void mjson_output_hdf(HDF *hdf, time_t second)
 void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
 {
     if (second > 0) {
-        mmisc_cache_headers(second);
+        mhttp_cache_headers(second);
     }
     
     NEOERR *err = cgiwrap_writef("Content-Type: text/html; charset=UTF-8\r\n\r\n");

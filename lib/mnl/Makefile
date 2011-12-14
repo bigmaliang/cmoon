@@ -3,11 +3,8 @@ include $(BASEDIR)Make.env
 
 DEPS	= $(INC_MOON)
 
-SOURCE1 = mconfig.c
-SOURCES = mconfig.c mcs.c md5c.c mdb.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mjson.c mmemc.c mmkd.c mmisc.c mtrace.c mtypes.c mutil.c
-ifneq ($(NMYSQL), 1)
-	SOURCES += fdb.c
-endif
+SOURCE1 = mcfg.c
+SOURCES = mcfg.c md5c.c mmkd.c mtrace.c mmemc.c mjson.c mhttp.c mdb.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mcs.c mstr.c mutil.c
 OBJS	= $(patsubst %.c, %.o, $(SOURCES))
 DEPEND	= .depend
 

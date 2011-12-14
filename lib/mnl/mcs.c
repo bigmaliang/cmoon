@@ -5,6 +5,7 @@ NEOERR* mcs_outputcb(void *ctx, char *s)
     printf ("%s", s);
     return STATUS_OK;
 }
+
 NEOERR* mcs_strcb(void *ctx, char *s)
 {
     STRING *str = (STRING*)ctx;
@@ -12,6 +13,7 @@ NEOERR* mcs_strcb(void *ctx, char *s)
     err = nerr_pass(string_append(str, s));
     return err;
 }
+
 NEOERR* mcs_str2file(STRING str, const char *file)
 {
     if (file == NULL) return nerr_raise(NERR_ASSERT, "paramter null");
@@ -27,19 +29,6 @@ NEOERR* mcs_str2file(STRING str, const char *file)
     
     fclose(fp);
     return STATUS_OK;
-}
-
-void mcs_rand_string(char *s, int max)
-{
-    int size;
-    int x = 0;
-
-    size = neo_rand(max-1);
-    for (x = 0; x < size; x++)
-    {
-        s[x] = (char)(65 + neo_rand(90-65));
-    }
-    s[x] = '\0';
 }
 
 static NEOERR* _builtin_bitop_and(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
@@ -112,29 +101,43 @@ NEOERR* mcs_register_mkd_functions(CSPARSE *cs)
     return nerr_pass(cs_register_esc_strfunc(cs, "mkd.escape", mkd_esc_str));
 }
 
-void mcs_hdf_escape_val(HDF *hdf)
+char* mcs_hdf_attr(HDF *hdf, char *name, char*key)
 {
-    char *esc = NULL, *val = NULL;
-    HDF *child, *next;
+    if (hdf == NULL || name == NULL || key == NULL)
+        return NULL;
     
-    if (!hdf) return;
-
-    val = hdf_obj_value(hdf);
-    if (val) {
-        if (mutil_real_escape_string_nalloc(&esc, val, strlen(val))) {
-            hdf_set_value(hdf, NULL, esc);
-            free(esc);
+    HDF_ATTR *attr = hdf_get_attr(hdf, name);
+    while (attr != NULL) {
+        if (!strcmp(attr->key, key)) {
+            return attr->value;
         }
+        attr = attr->next;
     }
+    return NULL;
+}
+char* mcs_obj_attr(HDF *hdf, char*key)
+{
+    if (hdf == NULL || key == NULL)
+        return NULL;
+    
+    HDF_ATTR *attr = hdf_obj_attr(hdf);
+    while (attr != NULL) {
+        if (!strcmp(attr->key, key)) {
+            return attr->value;
+        }
+        attr = attr->next;
+    }
+    return NULL;
+}
 
-    child = hdf_obj_child(hdf);
-    if (child) {
-        mcs_hdf_escape_val(child);
-    }
+NEOERR* mcs_err_valid(NEOERR *err)
+{
+    NEOERR *r = err;
 
-    next = hdf_obj_next(hdf);
-    while (next) {
-        mcs_hdf_escape_val(next);
-        next = hdf_obj_next(next);
+    while (r && r != INTERNAL_ERR) {
+        if (r->error != NERR_PASS) break;
+        r = r->next;
     }
+    
+    return r;
 }

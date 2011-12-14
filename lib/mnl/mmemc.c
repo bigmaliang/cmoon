@@ -83,11 +83,11 @@ memcached_return mmc_store(int op, const char *key, char *value, size_t len, tim
         rc = MEMCACHED_SUCCESS;
     }
     if (rc != MEMCACHED_SUCCESS && (op == MMC_OP_APP || op == MMC_OP_PRE)) {
-        mtc_warn("%s:%s append or prepend '%s=%s' %s", MEMC_IP, MEMC_PORT, key, value, memcached_strerror(mc, rc));
+        mtc_warn("append or prepend '%s=%s' %s", key, value, memcached_strerror(mc, rc));
         rc = memcached_add(mc, key, strlen(key), value, vallen, exp, flags);
     }
     if (rc != MEMCACHED_SUCCESS) {
-        mtc_err("%s:%s store '%s=%s' %s", MEMC_IP, MEMC_PORT, key, value, memcached_strerror(mc, rc));
+        mtc_err("store '%s=%s' %s", key, value, memcached_strerror(mc, rc));
     }
     //memcached_free(mc);
     return rc;
@@ -133,7 +133,7 @@ memcached_return mmc_count(int op, const char *key, uint32_t offset,
         rc = memcached_set(mc, dupkey, strlen(dupkey), tval, strlen(tval), exp, flags);
     }
     if (rc != MEMCACHED_SUCCESS) {
-        mtc_err("%s:%s count '%s' %s", MEMC_IP, MEMC_PORT, key, memcached_strerror(mc, rc));
+        mtc_err("count '%s' %s", key, memcached_strerror(mc, rc));
     }
     free(dupkey);
     //memcached_free(mc);
@@ -161,7 +161,7 @@ char* mmc_get(const char *key, size_t *vallen, uint32_t *flags)
         plf = flags;
     value = memcached_get(mc, key, strlen(key), plv, plf, &rc);
     if (value == NULL || *plv < 1) {
-        mtc_info("get %s from %s:%s %s", key, MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
+        mtc_info("get %s from %s", key, memcached_strerror(mc, rc));
         //memcached_free(mc);
         return NULL;
     }
@@ -213,14 +213,14 @@ memcached_return mmc_mget(const char **keys, char *vals[], int num,
     }
     rc = memcached_mget(mc, keys, keys_len, (unsigned int)num);
     if (rc != MEMCACHED_SUCCESS) {
-        mtc_info("%s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
+        mtc_info("%s", memcached_strerror(mc, rc));
         //memcached_free(mc);
         return rc;
     }
     for (i = 0; i < num; i++) {
         vals[i] = memcached_fetch(mc, (char*)keys[i], &keys_len[i], plen[i], pflg[i], &rc);
         if (rc == MEMCACHED_END) {
-            mtc_info("%s:%s %s", MEMC_IP, MEMC_PORT, memcached_strerror(mc, rc));
+            mtc_info("%s", memcached_strerror(mc, rc));
             break;
         }
     }
@@ -240,7 +240,7 @@ memcached_return mmc_delete(const char *key, time_t exp)
     }
     rc = memcached_delete(mc, key, strlen(key), exp);
     if (rc != MEMCACHED_SUCCESS) {
-        mtc_info("%s:%s %s %s", MEMC_IP, MEMC_PORT, key, memcached_strerror(mc, rc));
+        mtc_info("%s %s", key, memcached_strerror(mc, rc));
     }
     //memcached_free(mc);
     return rc;

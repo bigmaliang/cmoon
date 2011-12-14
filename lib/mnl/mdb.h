@@ -41,6 +41,44 @@ struct _mdb_driver
     int (*query_get_last_id)(mdb_conn* conn, const char* seq_name);
 };
 
+
+/*
+ * select data from table
+ * col, table, condition MUST be string literal, not variable
+ * "tjt_%d" OK
+ * char *table NOK
+ * e.g.
+ * LDB_QUERY_RAW(dbtjt, "tjt_%d", TJT_QUERY_COL, "fid=%d ORDER BY uptime "
+ * " LIMIT %d OFFSET %d", NULL, aid, fid, count, offset);
+ */
+#define MDB_QUERY_RAW(conn, table, col, condition, sfmt, ...)           \
+    do {                                                                \
+        err = mdb_exec(conn, NULL, "SELECT " col " FROM " table " WHERE " condition ";", \
+                       sfmt, ##__VA_ARGS__);                            \
+        if (err != STATUS_OK) return nerr_pass(err);                    \
+    } while (0)
+
+/*
+ * normally used on insert, update
+ */
+#define MDB_EXEC(conn, affrow, sqlfmt, fmt, ...)                    \
+    do {                                                            \
+        err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);   \
+        if (err != STATUS_OK) return nerr_pass(err);                \
+    } while (0)
+
+/*
+ * exec sql, rollback on failure
+ */
+#define MDB_EXEC_TS(conn, affrow, sqlfmt, fmt, ...)                 \
+    do {                                                            \
+        err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);   \
+        if (err != STATUS_OK) {                                     \
+            mdb_rollback(conn);                                     \
+            return nerr_pass(err);                                  \
+        }                                                           \
+    } while (0)
+
 NEOERR* mdb_init(mdb_conn **conn, char *dsn);
 void mdb_destroy(mdb_conn *conn);
 const char* mdb_get_backend(mdb_conn *conn);
@@ -107,38 +145,51 @@ int mdb_get_rows(mdb_conn *conn);
 int mdb_get_affect_rows(mdb_conn *conn);
 int mdb_get_last_id(mdb_conn *conn, const char* seq_name);
 
+/*
+ * extract the col NAME from SQL statment.
+ * e.g. Hash Title Sort1 InsertTime ....
+ */
+void mdb_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_cnt);
 
 /*
- * select data from table
- * col, table, condition MUST be string literal, not variable
- * "tjt_%d" OK
- * char *table NOK
- * e.g.
- * LDB_QUERY_RAW(dbtjt, "tjt_%d", TJT_QUERY_COL, "fid=%d ORDER BY uptime "
- * " LIMIT %d OFFSET %d", NULL, aid, fid, count, offset);
+ * build UPDATE's SET xxxx string
+ * data    :IN val {aname: 'foo', pname: 'bar'}
+ * node :IN key {0: 'aname', 1: 'pname'}
+ * str  :OUT update colum string: aname='foo', pname='bar',
  */
-#define MDB_QUERY_RAW(conn, table, col, condition, sfmt, ...)           \
-    do {                                                                \
-        err = mdb_exec(conn, NULL, "SELECT " col " FROM " table " WHERE " condition ";", \
-                       sfmt, ##__VA_ARGS__);                            \
-        if (err != STATUS_OK) return nerr_pass(err);                    \
-    } while (0)
+NEOERR* mdb_build_upcol(HDF *data, HDF *node, STRING *str);
 /*
- * normally used on insert, update
+ * str.buf is already escaped
+ * just put them in query by %s, don't need $1(cause error)
  */
-#define MDB_EXEC(conn, affrow, sqlfmt, fmt, ...)                    \
-    do {                                                            \
-        err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);   \
-        if (err != STATUS_OK) return nerr_pass(err);                \
+NEOERR* mdb_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
+NEOERR* mdb_build_incol(HDF *data, HDF *node, STRING *str);
+
+/*
+ * set _ntt into hdf
+ * table, condition MUST be string literal, not variable
+ */
+#define MDB_PAGEDIV_SET_N(hdf, db, table, condition, sfmt, ...)         \
+    do {                                                                \
+        int zinta;                                                      \
+        mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
+        mdb_get(db, "i", &zinta);                                       \
+        hdf_set_int_value(hdf, "_ntt", zinta);                          \
     } while (0)
-#define MDB_EXEC_TS(conn, affrow, sqlfmt, fmt, ...)                 \
-    do {                                                            \
-        err = mdb_exec(conn, affrow, sqlfmt, fmt, ##__VA_ARGS__);   \
-        if (err != STATUS_OK) {                                     \
-            mdb_rollback(conn);                                     \
-            return nerr_pass(err);                                  \
-        }                                                           \
+#define MDB_PAGEDIV_SET(hdf, outprefix, db, table, condition, sfmt, ...) \
+    do {                                                                \
+        int zinta;                                                      \
+        mdb_exec(db, NULL, "SELECT COUNT(*) FROM " table " WHERE " condition ";", sfmt, ##__VA_ARGS__); \
+        mdb_get(db, "i", &zinta);                                       \
+        hdf_set_valuef(hdf, "%s._ntt=%d", outprefix, zinta);            \
     } while (0)
+
+/*
+ * set _npp, _nst, _npg into ohdf
+ */
+void mdb_pagediv(HDF *hdf, char *inprefix, int *count, int *offset,
+                 char *outprefix, HDF *ohdf);
+
 
 __END_DECLS
 #endif    /* __MDB_H__ */

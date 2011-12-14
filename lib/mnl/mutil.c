@@ -1,16 +1,5 @@
 #include "mheads.h"
 
-int CGI_REQ_METHOD(CGI *cgi)
-{
-    char *op = hdf_get_value(cgi->hdf, PRE_QUERY"._op", "get");
-    if (!strcasecmp(op, "get")) return CGI_REQ_GET;
-    else if (!strcasecmp(op, "mod")) return CGI_REQ_POST;
-    else if (!strcasecmp(op, "add")) return CGI_REQ_PUT;
-    else if (!strcasecmp(op, "del")) return CGI_REQ_DEL;
-    
-    return CGI_REQ_UNKNOWN;
-}
-
 bool mutil_client_attack(HDF *hdf, char *action, char *cname, uint64_t limit, time_t exp)
 {
     uint64_t cntcn, cntip; cntcn = cntip = 0;
@@ -48,7 +37,7 @@ bool mutil_client_attack_cookie(HDF *hdf, char *action, uint64_t limit, time_t e
     snprintf(tok, sizeof(tok), PRE_COOKIE".%s", sdur);
     char *dur = hdf_get_value(hdf, tok, NULL);
     if (dur == NULL) {
-        mmisc_getdatetime_gmt(tm, sizeof(tm), "%A, %d-%b-%Y %T GMT", exp);
+        mutil_getdatetime_gmt(tm, sizeof(tm), "%A, %d-%b-%Y %T GMT", exp);
         dur = tm;
         cgi_cookie_set(NULL, sdur, dur, NULL, NULL, dur, 1, 0);
     }
@@ -57,98 +46,13 @@ bool mutil_client_attack_cookie(HDF *hdf, char *action, uint64_t limit, time_t e
     return false;
 }
 
-void mutil_redirect(const char *msg, const char *target, const char *url, bool header)
+void mutil_makesure_coredump()
 {
-    char outstr[LEN_MD];
-    char tok[LEN_SM];
-    
-    if (header) {
-        printf("Content-Type: text/html; charset=UTF-8\n\n");
-    }
-    strcpy(outstr, "<script language='javascript'>");
-    
-    if (msg != NULL) {
-        snprintf(tok, sizeof(tok), "alert('%s');", msg);
-        strcat(outstr, tok);
-    }
-    
-    strcat(outstr, "window.");
-    
-    if (target != NULL) {
-        strncat(outstr, target, sizeof(tok));
-    } else {
-        strcat(outstr, TGT_SELF);
-    }
-    
-    if (!strcmp(url, URL_BLANK) ||
-        !strcmp(url, URL_RELOAD) ||
-        !strcmp(url, URL_CLOSE) ||
-        !strcmp(url, URL_BACK)) {
-        strncat(outstr, url, sizeof(tok));
-    } else {
-        snprintf(tok, sizeof(tok), "location.href='%s'", url);
-        strcat(outstr, tok);
-    }
-    strcat(outstr, ";</script>\n");
+    struct rlimit rl;
 
-    printf(outstr);
-}
-
-void mutil_md5_str(char *in, char out[LEN_MD5])
-{
-    if (!in) return;
-    
-    md5_ctx my_md5;
-    unsigned char hexres[16];
-
-    MD5Init(&my_md5);
-    MD5Update(&my_md5, (unsigned char*)in, (unsigned int)strlen(in));
-    MD5Final(hexres, &my_md5);
-
-    mmisc_hex2str(hexres, 16, (unsigned char*)out);
-}
-
-char* mutil_hdf_attr(HDF *hdf, char *name, char*key)
-{
-    if (hdf == NULL || name == NULL || key == NULL)
-        return NULL;
-    
-    HDF_ATTR *attr = hdf_get_attr(hdf, name);
-    while (attr != NULL) {
-        if (!strcmp(attr->key, key)) {
-            return attr->value;
-        }
-        attr = attr->next;
-    }
-    return NULL;
-}
-char* mutil_obj_attr(HDF *hdf, char*key)
-{
-    if (hdf == NULL || key == NULL)
-        return NULL;
-    
-    HDF_ATTR *attr = hdf_obj_attr(hdf);
-    while (attr != NULL) {
-        if (!strcmp(attr->key, key)) {
-            return attr->value;
-        }
-        attr = attr->next;
-    }
-    return NULL;
-}
-
-bool mutil_isdigit(char *s)
-{
-    if (s == NULL)
-        return false;
-    
-    char *p = s;
-    while (*p != '\0') {
-        if (!isdigit((int)*p))
-            return false;
-        p++;
-    }
-    return true;
+    rl.rlim_cur = 50*1024*1024;
+    rl.rlim_max = 50*1024*1024;
+    setrlimit(RLIMIT_CORE, &rl);
 }
 
 NEOERR* mutil_makesure_dir(char *file)
@@ -170,77 +74,37 @@ NEOERR* mutil_makesure_dir(char *file)
     return STATUS_OK;
 }
 
-void mutil_makesure_coredump()
+bool mutil_getdatetime(char *res, int len, const char *fmt, time_t second)
 {
-    struct rlimit rl;
-
-    rl.rlim_cur = 50*1024*1024;
-    rl.rlim_max = 50*1024*1024;
-    setrlimit(RLIMIT_CORE, &rl);
+    memset(res, 0x0, len);
+    time_t tm = time(NULL) + second;
+    struct tm *stm = localtime(&tm);
+    if (strftime(res, len, fmt, stm) == 0)
+        return false;
+    return true;
 }
 
-void mutil_real_escape_string(char *to, char *from, size_t len)
+bool mutil_getdatetime_gmt(char *res, int len, const char *fmt, time_t second)
 {
-    char escape = 0;
+    memset(res, 0x0, len);
+    time_t tm = time(NULL) + second;
+      struct tm *stm = gmtime(&tm);
+    if (strftime(res, len, fmt, stm) == 0)
+        return false;
+    return true;
+}
+
+int mutil_compare_int(const void *a, const void *b)
+{
+    int *i = (int*)a;
+    int *j = (int*)b;
+    return *i-*j;
+}
+
+int mutil_compare_inta(const void *a, const void *b)
+{
+    int *i = (int*)a;
+    char *j = (char*)b;
     
-    for (size_t i = 0; i < len; i++) {
-        escape = 0;
-        switch (*(from+i)) {
-        case 0:                             /* Must be escaped for 'mysql' */
-            escape = '0';
-            break;
-        case '\n':                          /* Must be escaped for logs */
-            escape = 'n';
-            break;
-        case '\r':
-            escape = 'r';
-            break;
-        case '\\':
-            escape = '\\';
-            break;
-        case '\'':
-            escape = '\'';
-            break;
-        case '"':                           /* Better safe than sorry */
-            escape = '"';
-            break;
-        case '\032':                        /* This gives problems on Win32 */
-            escape = 'Z';
-            break;
-        case ';':
-            escape = ';';
-            break;
-        }
-        if (escape) {
-            *to++ = '\\';
-            *to++= escape;
-        } else {
-            *to++= *(from+i);
-        }
-    }
+    return *i - atoi(j);
 }
-
-char* mutil_real_escape_string_nalloc(char **to, char *from, size_t len)
-{
-    if (!to || !from) return NULL;
-
-    char *s = calloc(1, len*2+4);
-    if (!s) return NULL;
-
-    mutil_real_escape_string(s, from, len);
-    *to = s;
-
-    return s;
-}
-
-#ifndef DROP_FCGI
-int read_cb(void *ptr, char *data, int size) {
-    return fread(data, sizeof(char), size, FCGI_stdin);
-}
-int printf_cb(void *ptr, const char *format, va_list ap) {
-    return vprintf(format, ap);
-}
-int write_cb(void *ptr, const char *data, int size) {
-    return fwrite((void *)data, sizeof(char), size, FCGI_stdout);
-}
-#endif

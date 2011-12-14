@@ -194,7 +194,7 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
     memset(fmt, 0x0, sizeof(fmt));
     memset(qrarray, 0x0, sizeof(qrarray));
     
-    mmisc_set_qrarray(cols, qrarray, &qrcnt);
+    mdb_set_qrarray(cols, qrarray, &qrcnt);
     memset(fmt, 's', qrcnt);
 
     err = mdb_geta(conn, fmt, col);
@@ -268,7 +268,7 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
     memset(slavekey, 0x0, sizeof(slavekey));
     memset(slaveval, 0x0, sizeof(slaveval));
 
-    if (cols) mmisc_set_qrarray(cols, qrarray, &qrcnt);
+    if (cols) mdb_set_qrarray(cols, qrarray, &qrcnt);
     memset(fmt, 's', qrcnt);
 
     if (keyspec && atoi(keyspec) < qrcnt) {
@@ -375,4 +375,306 @@ int mdb_get_last_id(mdb_conn* conn, const char* seq_name)
     if (!conn) return -1;
 
     return conn->driver->query_get_last_id(conn, seq_name);
+}
+
+/*
+ * util function
+ */
+void mdb_set_qrarray(char *qrcol, char qr_array[QR_NUM_MAX][LEN_ST], int *qr_cnt)
+{
+    char src[LEN_ML], tok[LEN_ST];
+
+    int cnt = 0;
+    char *p;
+    char *b, *e, *bp;
+    int pos, level;
+
+    /*
+     * prepare src string for strtok. (exactly qrcol string without '(...)')
+     * in : Direction, Actor, CONCAT(Sort1,';',Sort2,';',Sort3,';',Sort4,';',Sort5) AS Sort1, ceil(date_part('epoch', intime)*1000) as   intime
+     * out: Direction, Actor, CONCAT AS Sort1, ceil as    intime
+     */
+    memset(src, 0x0, sizeof(src));
+    p = qrcol;
+    pos = level = 0;
+    while (*p && pos < LEN_ML) {
+        if (*p != '(' && *p != ')' && level == 0) src[pos++] = *p;
+        else {
+            if (*p == '(') level++;
+            else if (*p == ')') level--;
+        }
+        p++;
+    }
+    
+    p = strtok(src, ",");
+    while (p != NULL) {
+        //mtc_noise("parse %dst token: '%s'", cnt, p);
+        memset(tok,0,sizeof(tok));
+        strncpy(tok, p, sizeof(tok)-1);
+        b = tok;
+        while(*b && (*b == '\t' || *b == ' ' || *b == '\r' || *b == '\n')) {
+            b++;
+        }
+        e = tok;
+        if (strlen(tok) >= 1)
+            e += strlen(tok)-1;
+        while(*e && (*e == '\t' || *e == ' ' || *e == '\r' || *e == '\n')) {
+            e--;
+        }
+        if (*b == '\0' || *e == '\0') {
+            p = strtok(NULL, ",");
+            continue;
+        }
+        strncpy(qr_array[cnt], b, e-b+1);
+        //mtc_noise("get tok '%s'", qr_array[cnt]);
+
+        strcpy(tok, qr_array[cnt]);
+        bp = strcasestr(tok, " as ");
+        if (bp != NULL) {
+            //mtc_noise("token '%s' contain ' as '", qr_array[cnt]);
+            bp = bp + 4;
+            while(*bp && (*bp == '\t' || *bp == ' ' || *bp == '\r' || *bp == '\n')) {
+                bp++;
+            }
+            strncpy(qr_array[cnt], bp, sizeof(qr_array[cnt])-1);
+            mtc_info("get tok truely '%s'", qr_array[cnt]);
+        }
+        
+        cnt++;
+        p = strtok(NULL, ",");
+    }
+    *qr_cnt = cnt;
+}
+
+
+NEOERR* mdb_build_upcol(HDF *data, HDF *node, STRING *str)
+{
+    if (!data || !node || !str) return nerr_raise(NERR_ASSERT, "param err");
+    
+    char *name, *col, *val, *esc, *require, *clen, *type;
+
+    node = hdf_obj_child(node);
+    
+    while (node) {
+        name = hdf_obj_name(node);
+        col = hdf_obj_value(node);
+        val = hdf_get_value(data, name, NULL);
+        require = mcs_obj_attr(node, "require");
+        clen = mcs_obj_attr(node, "maxlen");
+        type = mcs_obj_attr(node, "type");
+        if (val && *val) {
+            if (str->len > 0) {
+                string_appendf(str, " , ");
+            }
+            if (type == NULL || !strcmp(type, "str")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                if (clen)
+                    string_appendf(str, " %s='%s'::varchar(%d) ",
+                                   col, esc, atoi(clen));
+                else
+                    string_appendf(str, " %s='%s' ", col, esc);
+                free(esc);
+
+            } else if (!strcmp(type, "int")) {
+                string_appendf(str, " %s=%d ", col, atoi(val));
+
+            } else if (!strcmp(type, "float")) {
+                string_appendf(str, " %s=%f ", col, atof(val));
+
+            } else if (!strcmp(type, "point")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s= point '%s' ", col, esc);
+                free(esc);
+
+            } else if (!strcmp(type, "box")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s= box '%s' ", col, esc);
+                free(esc);
+
+            } else if (!strcmp(type, "path")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s= path '%s' ", col, esc);
+                free(esc);
+
+            }
+        } else if (require && !strcmp(require, "true")) {
+            return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
+        }
+        
+        node = hdf_obj_next(node);
+    }
+
+    if (str->len <= 0)
+        return nerr_raise(NERR_ASSERT, "str len 0");
+
+    return STATUS_OK;
+}
+
+NEOERR* mdb_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
+{
+    if (!data || !node || !str) return nerr_raise(NERR_ASSERT, "param err");
+    
+    char *name, *col, *val, *esc, *require, *type;
+
+    node = hdf_obj_child(node);
+    
+    while (node) {
+        name = hdf_obj_name(node);
+        col = hdf_obj_value(node);
+        val = hdf_get_value(data, name, NULL);
+        require = mcs_obj_attr(node, "require");
+        type = mcs_obj_attr(node, "type");
+        if (val && *val) {
+            if (str->len > 0) string_append(str, " AND ");
+            
+            if (type == NULL || !strcmp(type, "str")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s '%s' ", col, esc);
+                free(esc);
+            } else if (!strcmp(type, "int")){
+                string_appendf(str, " %s %d ", col, atoi(val));
+
+            } else if (!strcmp(type, "float")){
+                string_appendf(str, " %s %f ", col, atof(val));
+
+            } else if (!strcmp(type, "point")){
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s point '%s' ", col, esc);
+                free(esc);
+
+            } else if (!strcmp(type, "box")){
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s box '%s' ", col, esc);
+                free(esc);
+
+            } else if (!strcmp(type, "path")){
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s path '%s' ", col, esc);
+                free(esc);
+            }
+        } else if (require && !strcmp(require, "true")) {
+            return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
+        }
+        
+        node = hdf_obj_next(node);
+    }
+    
+    if (str->len <= 0 && defstr) string_append(str, defstr);
+
+    return STATUS_OK;
+}
+
+NEOERR* mdb_build_incol(HDF *data, HDF *node, STRING *str)
+{
+    if (!data || !node || !str) return nerr_raise(NERR_ASSERT, "param err");
+    
+    char *name, *col, *val, *esc, *require, *clen, *type;
+    STRING sa, sb;
+    string_init(&sa);
+    string_init(&sb);
+
+    node = hdf_obj_child(node);
+    
+    while (node) {
+        name = hdf_obj_name(node);
+        col = hdf_obj_value(node);
+        val = hdf_get_value(data, name, NULL);
+        require = mcs_obj_attr(node, "require");
+        clen = mcs_obj_attr(node, "maxlen");
+        type = mcs_obj_attr(node, "type");
+        if (val && *val) {
+            
+            if (sa.len <= 0) {
+                string_appendf(&sa, " (%s ", col);
+                string_appendf(&sb, " VALUES (");
+            } else {
+                string_appendf(&sa, ", %s ", col);
+                string_appendf(&sb, ", ");
+            }
+
+            if (type == NULL || !strcmp(type, "str")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                if (clen)
+                    string_appendf(&sb, " '%s'::varchar(%d) ",
+                                   esc, atoi(clen));
+                else
+                    string_appendf(&sb, " '%s' ", esc);
+                free(esc);
+
+            } else if (!strcmp(type, "int")) {
+                string_appendf(&sb, "%d", atoi(val));
+
+            } else if (!strcmp(type, "float")) {
+                string_appendf(&sb, "%f", atof(val));
+
+            } else if (!strcmp(type, "point")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(&sb, "point '%s' ", esc);
+                free(esc);
+
+            } else if (!strcmp(type, "box")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(&sb, "box '%s' ", esc);
+                free(esc);
+
+            } else if (!strcmp(type, "path")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(&sb, "path '%s' ", esc);
+                free(esc);
+            }
+        } else if (require && !strcmp(require, "true")) {
+            string_clear(&sa);
+            string_clear(&sb);
+            return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
+        }
+        
+        node = hdf_obj_next(node);
+    }
+
+    if (sa.len <= 0) {
+        string_clear(&sa);
+        string_clear(&sb);
+        return nerr_raise(NERR_ASSERT, "str len 0");
+    }
+
+    string_appendf(str, "%s)  %s)", sa.buf, sb.buf);
+
+    string_clear(&sa);
+    string_clear(&sb);
+    
+    return STATUS_OK;
+}
+
+void mdb_pagediv(HDF *hdf, char *inprefix, int *count, int *offset,
+                 char *outprefix, HDF *ohdf)
+{
+    char hdfkey[LEN_HDF_KEY];
+    int i, j, npg = DFT_PAGE_NUM;
+
+    if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s._npp", inprefix);
+    else strcpy(hdfkey, "_npp");
+    i = hdf_get_int_value(hdf, hdfkey, DFT_NUM_PERPAGE);
+
+    if (outprefix) hdf_set_valuef(ohdf, "%s._npp=%d", outprefix, i);
+    else hdf_set_int_value(ohdf, "_npp", i);
+    
+    if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s._nst", inprefix);
+    else strcpy(hdfkey, "_nst");
+    j = hdf_get_int_value(hdf, hdfkey, -1);
+    if (j == -1) {
+        if (inprefix) snprintf(hdfkey, sizeof(hdfkey), "%s._npg", inprefix);
+        else strcpy(hdfkey, "_npg");
+        j = hdf_get_int_value(hdf, hdfkey, DFT_PAGE_NUM);
+        npg = j;
+        j = (j-1)*i;
+    }
+
+    if (outprefix) hdf_set_valuef(ohdf, "%s._npg=%d", outprefix, npg);
+    else hdf_set_int_value(ohdf, "_npg", npg);
+    
+    *count = i;
+    *offset = j;
+
+    if (outprefix) hdf_set_valuef(ohdf, "%s._nst=%d", outprefix, j);
+    else hdf_set_int_value(ohdf, "_nst", j);
 }
