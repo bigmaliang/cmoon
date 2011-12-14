@@ -10,8 +10,8 @@
     #include <sys/resource.h>
     struct rlimit rl;
 
-    rl.rlim_cur = 10240;
-    rl.rlim_max = 10240;
+    rl.rlim_cur = 50*1024*1024;
+    rl.rlim_max = 50*1024*1024;
     setrlimit(RLIMIT_CORE, &rl);
     
 2, 调用了 setuid() setgid() 改变运行身份的程序需要额外通过以下方式确保
