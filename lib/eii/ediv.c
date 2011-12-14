@@ -141,6 +141,7 @@ NEOERR* ediv_init_from_file(char **bm, char *path, int *wnum)
             ediv_word_set(*bm, line);
             if (wnum) (*wnum)++;
         }
+        fclose(fp);
     } else return nerr_raise(NERR_IO, "Unable to open %s for reading", path);
 
     return STATUS_OK;
