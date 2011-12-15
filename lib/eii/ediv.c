@@ -47,7 +47,8 @@
                 ( (*_p & 0xE0) != 0xE0 ||                           \
                   (*(_p+1) & 0x80) != 0x80 ||                       \
                   (*(_p+2) & 0x80) != 0x80) ) {                     \
-                pos = pos + *_p;                                    \
+                pos = ((pos << 5) + 5381) + *_p;                    \
+                pos = (pos & 0xFFFFFFF) | ((_tc & 0xF) << 28);      \
                 _p++;                                               \
                 continue;                                           \
             }                                                       \
@@ -170,6 +171,18 @@ void ediv_word_set(char *bm, char *w)
     BITMAP_SET(bm, pos);
 }
 
+unsigned int ediv_word_distinct(char *bm)
+{
+    unsigned int cnt = 0;
+    
+    for (unsigned int i = 0; i < 0xFFFFFFFF; i++) {
+        if (BITMAP_GET(bm, i)) cnt++;
+    }
+    
+    return cnt;
+}
+
+
 NEOERR* ediv_word_split(char *bm, char *ts, size_t len, int *wnum,
                         void(*cbk)(char *w, size_t len), int opt)
 {
@@ -182,7 +195,7 @@ NEOERR* ediv_word_split(char *bm, char *ts, size_t len, int *wnum,
 
     s = ts;
 
-    while (*s) {
+    while (s - ts < len && *s) {
         es = NULL;
         t = s;
         r = len - (s - ts);
@@ -196,31 +209,49 @@ NEOERR* ediv_word_split(char *bm, char *ts, size_t len, int *wnum,
                 if (wnum) (*wnum)++;
             }
 
-            /*
-             * is this a utf8 chinese char?
-             */
-            while (*e && e - ts < len) {
+            if (opt & EDIV_SOPT_SKIP_NUTF) {
+                /*
+                 * skip non-utf8 chinese char
+                 */
+                while (e - ts < len && *e) {
+                    if ((*e & 0xE0) != 0xE0 ||
+                        (*(e+1) & 0x80) != 0x80 ||
+                        (*(e+2) & 0x80) != 0x80) {
+                        if (!es) es = e;
+                        e++;
+                    } else break;
+                }
+                if (e != s + i) {
+                    /* "ES...E" are non-utf8 chinese characters */
+                    if (i == 0) {
+                        t = e;
+                        /* prevent duplicate cbk on engStart */
+                        if (!(opt & EDIV_SOPT_ONLY_MAXMATCH) && cbk && es) {
+                            cbk(es, e - es);
+                            es = NULL;
+                        }
+                        if (wnum) (*wnum)++;
+                    }
+                    i = i + (e - es);
+                    r = r - (e - es);
+                } else {
+                    /* step E to next utf8 chinese char */
+                    i = i + 3;
+                    r = r - 3;
+                }
+            } else {
+                /*
+                 * split non-utf8 chinese word also
+                 */
                 if ((*e & 0xE0) != 0xE0 ||
                     (*(e+1) & 0x80) != 0x80 ||
                     (*(e+2) & 0x80) != 0x80) {
-                    if (!es) es = e;
-                    e++;
-                } else break;
-            }
-            if (e != s + i) {
-                /* "ES...E" are non-utf8 chinese characters */
-                if (i == 0) {
-                    t = e;
-                    /* prevent duplicate cbk on engStart */
-                    if (cbk && es != s) cbk(es, e - es);
-                    if (wnum) (*wnum)++;
+                    i++;
+                    r--;
+                } else {
+                    i += 3;
+                    r -= 3;
                 }
-                i = i + (e - es);
-                r = r - (e - es);
-            } else {
-                /* step E to next utf8 chinese char */
-                i = i + 3;
-                r = r - 3;
             }
         }
 
@@ -229,8 +260,14 @@ NEOERR* ediv_word_split(char *bm, char *ts, size_t len, int *wnum,
             if ((opt & EDIV_SOPT_ONLY_MAXMATCH) && cbk) cbk(s, t - s);
             s = t;
         } else {
-            if (!(opt & EDIV_SOPT_THROW_UNKNOWN) && cbk) cbk(s, 3);
-            s = s + 3;
+            if ((*s & 0xE0) == 0xE0 &&
+                (*(s+1) & 0x80) == 0x80 &&
+                (*(s+2) & 0x80) == 0x80)
+                r = 3;
+            else r = 1;
+            
+            if (!(opt & EDIV_SOPT_THROW_UNKNOWN) && cbk) cbk(s, r);
+            s = s + r;
         }
     }
 

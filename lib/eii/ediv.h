@@ -33,10 +33,16 @@ void ediv_destroy(char **bm);
  */
 void ediv_word_set(char *bm, char *w);
 
+/*
+ * return the distinct word number
+ */
+unsigned int ediv_word_distinct(char *bm);
+
 enum {
     EDIV_SOPT_NONE = 0,
-    EDIV_SOPT_ONLY_MAXMATCH = (1 << 0),
-    EDIV_SOPT_THROW_UNKNOWN = (1 << 1)
+    EDIV_SOPT_ONLY_MAXMATCH = (1 << 0), /* max matches dictionary's word */
+    EDIV_SOPT_THROW_UNKNOWN = (1 << 1), /* throw away chars not in dictionary */
+    EDIV_SOPT_SKIP_NUTF = (1 << 2)      /* don't split non utf8 chinese characters */
 };
 
 /*
