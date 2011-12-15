@@ -8,9 +8,7 @@
 #include "mevent.h"
 #include "cache.h"
 #include "mkdio.h"
-#ifdef USE_FASTCGI
 #include "fcgi_stdio.h"
-#endif
 #include "json.h"
 
 #include "mglobal.h"

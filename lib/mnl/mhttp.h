@@ -25,11 +25,12 @@ int http_req_method(CGI *cgi);
  */
 void mhttp_cache_headers(time_t second);
 
-#ifdef USE_FASTCGI
+/*
+ * called by cgiwrap_init_emu() for fastcgi use
+ */
 int read_cb(void *ptr, char *data, int size);
 int printf_cb(void *ptr, const char *format, va_list ap);
 int write_cb(void *ptr, const char *data, int size);
-#endif
 
 __END_DECLS
 #endif    /* __MHTTP_H__ */

@@ -45,14 +45,12 @@ void mhttp_cache_headers(time_t second)
     */
 }
 
-#ifdef USE_FASTCGI
 int read_cb(void *ptr, char *data, int size) {
-    return fread(data, sizeof(char), size, FCGI_stdin);
+    return fread(data, sizeof(char), size, stdin);
 }
 int printf_cb(void *ptr, const char *format, va_list ap) {
     return vprintf(format, ap);
 }
 int write_cb(void *ptr, const char *data, int size) {
-    return fwrite((void *)data, sizeof(char), size, FCGI_stdout);
+    return fwrite((void *)data, sizeof(char), size, stdout);
 }
-#endif
