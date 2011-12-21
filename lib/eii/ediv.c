@@ -207,6 +207,7 @@ NEOERR* ediv_word_split(char *bm, char *ts, size_t len, int *wnum,
                 t = s + i;
                 if (!(opt & EDIV_SOPT_ONLY_MAXMATCH) && cbk) cbk(s, e - s);
                 if (wnum) (*wnum)++;
+                if (opt & EDIV_SOPT_ONLY_MINMATCH); break;
             }
 
             if (opt & EDIV_SOPT_SKIP_NUTF) {
