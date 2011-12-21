@@ -11,3 +11,34 @@ grep -a -B 50 -A 60 'some string in the file' /dev/sda1 > result.txt
 批量替换
 ------
 sed -i "s/oldstring/newstring/g" `grep oldstring -rl yourdir`
+
+
+日期处理
+------
+输出当前秒数
+date +%s
+
+输出某特定时刻的秒数
+date -d "2011-11-15 00:00:00" +%s
+
+今天的日期
+TODAY=`date +%Y%m%d`
+
+
+
+创建密匙
+ssh-keygen -t rsa -C "bigmaliang@gmail.com"
+
+
+scrot
+-----
+抓屏软件
+
+scrot -d 3 x.jpg
+scrot -d 3 -s x.jpg
+scrot -u x.jpg
+
+  -s, --select              interactively choose a window or rectangle
+                            with the mouse
+  -b, --border              When selecting a window, grab wm border too
+  -u, --focused             use the currently focused window

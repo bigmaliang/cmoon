@@ -25,7 +25,7 @@ typedef enum {
 } OpCode;
 
 HDF *g_cfg = NULL;
-static int err_inited = 0;
+static int m_err_inited = 0;
 
 static NEOERR* function_namef(EventEntry *entry, OpCode op,
                               const char *fmt, ...)
