@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# Debian system
-
 cd /usr/local/src &&
 svn checkout http://clearsilver.googlecode.com/svn/trunk/ clearsilver
 cd clearsilver &&
@@ -49,13 +47,15 @@ cd /usr/local/src
 git clone git://github.com/Orc/discount.git
 cd discount; ./configure.sh; make; sudo make install
 
+# Debian system
+
 sudo apt-get install libfcgi-dev libjson0-dev libqdbm-dev libevent-dev
 sudo apt-get install libmysqlclient-dev libpq-dev libsqlite3-dev
 
-cd /usr/local/src/
-wget http://memcached.googlecode.com/files/memcached-1.4.5.tar.gz
-wget http://launchpad.net/libmemcached/1.0/0.44/+download/libmemcached-0.44.tar.gz
-tar zxvf mem.....
+#cd /usr/local/src/
+#wget http://memcached.googlecode.com/files/memcached-1.4.5.tar.gz
+#wget http://launchpad.net/libmemcached/1.0/0.44/+download/libmemcached-0.44.tar.gz
+#tar zxvf mem.....
 
 # Other Linux distribution
 if [ 1 == 2 ]; then
