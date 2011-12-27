@@ -23,6 +23,8 @@ MODE
 gerneal
 ----
 C-x C-f /sudo:/etc/fstab    edit file as root
+C-x C-f /METHOD:USER@HOST#PORT:FILENAME edit remote file
+
 M-i                insert tab/spaces (tab-to-tab-stop) ~= C-q TAB
 
 debug

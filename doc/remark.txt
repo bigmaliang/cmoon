@@ -161,4 +161,9 @@ JS
 类    ClassName
 
 
+firefox
+=======
+about:config
 
+dom.allow_scripts_to_close_windows; true 让用户脚本关闭窗口
+network.dns.disableIPv6; true    解决dns解析超慢
