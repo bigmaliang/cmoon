@@ -50,8 +50,8 @@ void mutil_makesure_coredump()
 {
     struct rlimit rl;
 
-    rl.rlim_cur = 50*1024*1024;
-    rl.rlim_max = 50*1024*1024;
+    rl.rlim_cur = 500*1024*1024;
+    rl.rlim_max = 500*1024*1024;
     setrlimit(RLIMIT_CORE, &rl);
 }
 

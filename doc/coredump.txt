@@ -3,16 +3,19 @@
 
 0, $export MALLOC_CHECK_=0 再执行程序可以取消double_free() 之类错误的 core dump
 
-1, 普通程序可以通过以下两种方式 之一 确保生成 core 文件
-    a, ulimit -S -c unlimit
+1, 普通程序可以通过以下方式确保生成 core 文件
+    a, ulimit -S -c 9999999999
     
     b, 程序内部写
     #include <sys/resource.h>
     struct rlimit rl;
 
-    rl.rlim_cur = 50*1024*1024;
-    rl.rlim_max = 50*1024*1024;
+    rl.rlim_cur = 500*1024*1024;
+    rl.rlim_max = 500*1024*1024;
     setrlimit(RLIMIT_CORE, &rl);
+
+    c, #mkdir /corefile && chown www-data:www-data /corefile
+       #echo "/corefile/core-%e-%p-%t" > /proc/sys/kernel/core_pattern
     
 2, 调用了 setuid() setgid() 改变运行身份的程序需要额外通过以下方式确保
 
