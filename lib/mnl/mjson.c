@@ -107,7 +107,7 @@ void mjson_str2hdf(HDF *node, struct json_object *o)
     
     obj = o;
 
-    if (!obj) {
+    if (!obj && s && *s) {
         obj = json_tokener_parse(s);
     }
     if (!obj || obj < 0) return;
