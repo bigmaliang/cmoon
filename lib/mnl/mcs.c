@@ -101,6 +101,28 @@ NEOERR* mcs_register_mkd_functions(CSPARSE *cs)
     return nerr_pass(cs_register_esc_strfunc(cs, "mkd.escape", mkd_esc_str));
 }
 
+unsigned int mcs_get_uint_value(HDF *hdf, const char *name, unsigned int defval)
+{
+    char *val, *n;
+    unsigned int v;
+    
+    val = hdf_get_value(hdf, name, NULL);
+    if (val) {
+        v = strtoul(val, &n, 10);
+        if (val == n) v = defval;
+        return v;
+    }
+    return defval;
+}
+
+NEOERR* mcs_set_uint_value(HDF *hdf, const char *name, unsigned int value)
+{
+  char buf[256];
+
+  snprintf(buf, sizeof(buf), "%u", value);
+  return nerr_pass(hdf_set_value(hdf, name, buf));
+}
+
 char* mcs_hdf_attr(HDF *hdf, char *name, char*key)
 {
     if (hdf == NULL || name == NULL || key == NULL)
