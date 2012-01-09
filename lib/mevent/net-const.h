@@ -10,7 +10,7 @@
  */
 
 #define MAX_MEMPACK_LEN (6*1024*1024)
-#define MAX_PACKET_LEN  (68*1024)
+#define MAX_PACKET_LEN  (64*1024)
 #define RESERVE_SIZE    512
 
 /* TIPC server type (hardcoded) and default instance. */
