@@ -135,6 +135,8 @@ libsqlite3-dev
     /json/xxx: output json
     /image/xxx: output image
     _op: add, mod, del for ...
+    _nmax: max number
+    _nmin: min number
     _ntt: total number
     _nst: start number
     _npg: page number (_nst will overwrite _npg)
