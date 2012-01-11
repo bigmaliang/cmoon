@@ -115,11 +115,33 @@ unsigned int mcs_get_uint_value(HDF *hdf, const char *name, unsigned int defval)
     return defval;
 }
 
+float mcs_get_float_value(HDF *hdf, const char *name, float defval)
+{
+    char *val, *n;
+    float v;
+    
+    val = hdf_get_value(hdf, name, NULL);
+    if (val) {
+        v = strtof(val, &n);
+        if (val == n) v = defval;
+        return v;
+    }
+    return defval;
+}
+
 NEOERR* mcs_set_uint_value(HDF *hdf, const char *name, unsigned int value)
 {
   char buf[256];
 
   snprintf(buf, sizeof(buf), "%u", value);
+  return nerr_pass(hdf_set_value(hdf, name, buf));
+}
+
+NEOERR* mcs_set_float_value(HDF *hdf, const char *name, float value)
+{
+  char buf[256];
+
+  snprintf(buf, sizeof(buf), "%f", value);
   return nerr_pass(hdf_set_value(hdf, name, buf));
 }
 

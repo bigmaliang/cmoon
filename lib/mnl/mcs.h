@@ -27,7 +27,9 @@ NEOERR* mcs_register_bitop_functions(CSPARSE *cs);
 NEOERR* mcs_register_mkd_functions(CSPARSE *cs);
 
 unsigned int mcs_get_uint_value(HDF *hdf, const char *name, unsigned int defval);
+float mcs_get_float_value(HDF *hdf, const char *name, float defval);
 NEOERR* mcs_set_uint_value(HDF *hdf, const char *name, unsigned int value);
+NEOERR* mcs_set_float_value(HDF *hdf, const char *name, float value);
 
 char* mcs_hdf_attr(HDF *hdf, char *name, char*key);
 char* mcs_obj_attr(HDF *hdf, char*key);
