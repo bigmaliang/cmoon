@@ -12,6 +12,12 @@ __BEGIN_DECLS
 #define ITERATE_MLIST(ul)                               \
     for (int t_rsv_i = 0; t_rsv_i < ul->num; t_rsv_i++)
 
+#define MCS_NOT_NULLA(pa)                                       \
+    if (!pa) return nerr_raise(NERR_ASSERT, "paramter null");
+#define MCS_NOT_NULLB(pa, pb)                                           \
+    if (!pa || !pb) return nerr_raise(NERR_ASSERT, "paramter null");
+#define MCS_NOT_NULLC(pa, pb, pc)                                       \
+    if (!pa || !pb || !pc) return nerr_raise(NERR_ASSERT, "paramter null");
 
 
 /*
