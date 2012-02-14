@@ -4,18 +4,21 @@ NEOERR* mkd_esc_str(const char *in, char **out)
 {
     if (!in || !out) return STATUS_OK;
 
+    int len = 0;
     *out = NULL;
     
-    char *s;
+    char *s = NULL;
     MMIOT *m = mkd_string((char*)in, strlen(in), 0);
     if (m) {
         if (mkd_compile(m, 0)) {
-            mkd_document(m, &s);
-            if (s) *out = strdup(s);
+            len = mkd_document(m, &s);
+            if (s) {
+                *out = strndup(s, len);
+            }
             mkd_cleanup(m);
         }
         return STATUS_OK;
     }
 
-    return INTERNAL_ERR;
+    return nerr_raise(NERR_SYSTEM, "mkd_string() error %s", in);
 }
