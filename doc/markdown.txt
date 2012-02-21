@@ -25,6 +25,26 @@ markdown 是一种方便书写的语法。  我们可以将其用在html 编辑�
         同上， 不过是入库前做。
     但这样有个弱点： 用户需要修改时，暂时无法还原用户的原始输入（或者需要其他方法）。
 
+***注***
+2012-02-20
+----------
+    正常的图片 markdown 为: ![desc](http://url.jpg "title")
+    
+    <?cs var: mkd.escape(html_escape(xxx)) ?> 会有如下影响:
+    xxx:
+    ![tupian1](http://www.dididada.org/data/57/57abded4f05c1f34f08231edf9ef106e.jpg "57abded4f05c1f34f08231edf9ef106e.jpg")
+    
+    html_escape(xxx):
+    ![tupian1](http://www.dididada.org/data/57/57abded4f05c1f34f08231edf9ef106e.jpg &quot;57abded4f05c1f34f08231edf9ef106e.jpg&quot;)
+
+    mkd.escape(html_escape(xxx)):
+    <p><img src=\"http://www.dididada.org/data/57/57abded4f05c1f34f08231edf9ef106e.jpg%20&amp;quot;57abded4f05c1f34f08231edf9ef106e.jpg&amp;quot;\" alt=\"tupian1\" /></p>
+
+    html_escape() 会转义"，而其在markdown中有特殊含义。所以，我们不能简单的先 html_escape()，再mkd.escape()。
+
+    通过调试，我们发现，discount 在 mkd_compile() 函数时可以提供参数 MKD_NOHTML，可以生成安全的 html 页面内容。
+
+    故，多数情况下，我们只需 <?cs var: mkd.escape(xxx) ?> 即可。
 
 
 几个工具
