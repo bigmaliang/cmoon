@@ -52,7 +52,7 @@ void mstr_html_unescape(HDF *node, char *name)
     }
 }
 
-void mstr_md5_str(char *in, char out[LEN_MD5])
+void mstr_md5_buf(unsigned char *in, size_t len, char out[LEN_MD5])
 {
     if (!in) return;
     
@@ -60,10 +60,16 @@ void mstr_md5_str(char *in, char out[LEN_MD5])
     unsigned char hexres[16];
 
     MD5Init(&my_md5);
-    MD5Update(&my_md5, (unsigned char*)in, (unsigned int)strlen(in));
+    MD5Update(&my_md5, in, (unsigned int)len);
+    memset(hexres, 0x0, 16);
     MD5Final(hexres, &my_md5);
-
+    
     mstr_hex2str(hexres, 16, (unsigned char*)out);
+}
+
+void mstr_md5_str(char *in, char out[LEN_MD5])
+{
+    return mstr_md5_buf((unsigned char*)in, strlen(in), out);
 }
 
 bool mstr_isdigit(char *s)

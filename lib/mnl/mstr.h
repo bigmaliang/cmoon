@@ -10,6 +10,7 @@ void mstr_html_escape(HDF *hdf, char *name);
 void mstr_html_unescape(HDF *hdf, char *name);
 
 /* out must be 33 length */
+void mstr_md5_buf(unsigned char *in, size_t len, char out[LEN_MD5]);
 void mstr_md5_str(char *in, char out[LEN_MD5]);
 bool mstr_isdigit(char *s);
 
