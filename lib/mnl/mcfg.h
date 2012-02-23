@@ -9,6 +9,7 @@ __BEGIN_DECLS
 #define DFT_PAGE_NUM    1
 
 #define QR_NUM_MAX      50
+#define IMAGE_MD5_SIZE  (1024*1024)
 
 #define LEN_INT     16        // int max length
 #define LEN_LONG    20

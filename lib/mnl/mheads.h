@@ -13,6 +13,13 @@
 #endif
 #include "json.h"
 
+#include "gd.h"
+#include "gdfontt.h"
+#include "gdfonts.h"
+#include "gdfontmb.h"
+#include "gdfontl.h"
+#include "gdfontg.h"
+
 #include "mglobal.h"
 #include "mcfg.h"
 #include "md5.h"
@@ -26,5 +33,6 @@
 #include "mcs.h"
 #include "mstr.h"
 #include "mutil.h"
+#include "mimg.h"
 
 #endif    /* __MHEADS_H__ */
