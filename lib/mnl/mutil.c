@@ -74,6 +74,47 @@ NEOERR* mutil_makesure_dir(char *file)
     return STATUS_OK;
 }
 
+NEOERR* mutil_file_openf(FILE **fp, const char *mode, char *fmt, ...)
+{
+	NEOERR *err;
+    
+    MCS_NOT_NULLC(fp, mode, fmt);
+
+    char fname[LEN_FN];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(fname, sizeof(fname), fmt, ap);
+    va_end(ap);
+    
+    err = mutil_makesure_dir(fname);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    FILE *fpout = fopen(fname, mode);
+    if (!fpout) return nerr_raise(NERR_SYSTEM, "create %s failre", fname);
+
+    *fp = fpout;
+
+    return STATUS_OK;
+}
+
+NEOERR* mutil_file_copy(FILE *dst, FILE *src)
+{
+    char buf[1048576];
+    size_t len;
+    
+    MCS_NOT_NULLB(dst, src);
+
+    fseek(dst, 0, SEEK_SET);
+    fseek(src, 0, SEEK_SET);
+
+    while ((len = fread(buf, 1, sizeof(buf), src)) > 0) {
+        fwrite(buf, 1, len, dst);
+    }
+
+    return STATUS_OK;
+}
+
 bool mutil_getdatetime(char *res, int len, const char *fmt, time_t second)
 {
     memset(res, 0x0, len);

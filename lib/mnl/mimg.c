@@ -59,10 +59,9 @@ NEOERR* mimg_output(void *pic)
 NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5])
 {
 	NEOERR *err;
-    FILE *fp = cgi_filehandle(cgi, NULL);
+    FILE *fp = cgi_filehandle(cgi, NULL), *fpout;
     unsigned char data[IMAGE_MD5_SIZE];
     unsigned int bytes;
-    char fname[LEN_FN];
     char tok[3] = {0};
 
     MCS_NOT_NULLB(cgi->hdf, fp);
@@ -76,19 +75,71 @@ NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5])
     mstr_md5_buf(data, bytes, result);
 
     strncpy(tok, result, 2);
-    snprintf(fname, sizeof(fname), "%s/%s/%s.jpg", imgroot, tok, result);
-
-    err = mutil_makesure_dir(fname);
+    err = mutil_file_openf(&fpout, "w+", "%s/%s/%s.jpg", imgroot, tok, result);
 	if (err != STATUS_OK) return nerr_pass(err);
 
-    FILE *fpout = fopen(fname, "w+");
-    if (!fpout) return nerr_raise(NERR_SYSTEM, "create %s failre", fname);
-    fwrite(data, 1, bytes, fpout);
-    
-    if (bytes >= IMAGE_MD5_SIZE-10) {
-        while ((bytes = fread(data, 1, sizeof(data), fp)) > 0)
-            fwrite(data, 1, bytes, fpout);
+    if (bytes < IMAGE_MD5_SIZE-10) {
+        fwrite(data, 1, bytes, fpout);
+    } else {
+        mutil_file_copy(fpout, fp);
     }
+    fclose(fpout);
+
+    return STATUS_OK;
+}
+
+NEOERR* mimg_zoomout(FILE *dst, FILE*src, int width, int height)
+{
+    MCS_NOT_NULLB(dst, src);
+
+    if (width <= 0 && height <= 0) return STATUS_OK;
+    
+    fseek(src, 0, SEEK_SET);
+    fseek(dst, 0, SEEK_SET);
+
+    gdImagePtr im = gdImageCreateFromJpeg(src);
+    int ow, oh;
+
+    if (!im) return nerr_raise(NERR_ASSERT, "load image failure");
+
+    ow = gdImageSX(im);
+    oh = gdImageSY(im);
+
+    if ((width > 0 && ow > width) ||
+        (height > 0 && oh > height)) {
+        if (width <= 0) width = (float)height / oh * ow;
+        if (height <= 0) height = (float)width / ow * oh;
+        
+        gdImagePtr dim = gdImageCreateTrueColor(width, height);
+        gdImageCopyResized(dim, im, 0, 0, 0, 0, width, height, ow, oh);
+        if (dim) gdImageJpeg(dim, dst, 100);
+        else return nerr_raise(NERR_ASSERT, "resize image error");
+    } else {
+        mutil_file_copy(dst, src);
+    }
+
+    return STATUS_OK;
+}
+
+NEOERR* mimg_accept_and_zoomout(CGI *cgi, char *imgroot, char result[LEN_MD5],
+                                int width, int height)
+{
+	NEOERR *err;
+
+    err = mimg_accept(cgi, imgroot, result);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+    FILE *fp = cgi_filehandle(cgi, NULL);
+    if (!fp) return nerr_raise(NERR_ASSERT, "unbelieveable, fp null");
+
+    FILE *fpout;
+    char tok[3] = {0}; strncpy(tok, result, 2);
+    err = mutil_file_openf(&fpout, "w+", "%s/%dx%d/%s/%s.jpg",
+                           imgroot, width, height, tok, result);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+    err = mimg_zoomout(fpout, fp, width, height);
+	if (err != STATUS_OK) return nerr_pass(err);
 
     fclose(fpout);
 
