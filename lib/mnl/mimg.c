@@ -138,9 +138,9 @@ NEOERR* mimg_zoomout(FILE *dst, FILE*src, int width, int height)
         gdImagePtr dim = gdImageCreateTrueColor(width, height);
         gdImageCopyResized(dim, im, 0, 0, 0, 0, width, height, ow, oh);
 #ifdef USE_FASTCGI
-        if (dim) gdImageJpeg(dim, dst->stdio_stream, 100);
+        if (dim) gdImageJpeg(dim, dst->stdio_stream, 70);
 #else
-        if (dim) gdImageJpeg(dim, dst, 100);
+        if (dim) gdImageJpeg(dim, dst, 70);
 #endif
         else return nerr_raise(NERR_ASSERT, "resize image error");
     } else {
