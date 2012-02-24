@@ -33,6 +33,7 @@
 #include "mcs.h"
 #include "mstr.h"
 #include "mutil.h"
+#include "mfile.h"
 #include "mimg.h"
 
 #endif    /* __MHEADS_H__ */
