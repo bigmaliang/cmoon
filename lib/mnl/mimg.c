@@ -1,5 +1,32 @@
 #include "mheads.h"
 
+static char *m_img_types[MIMG_TYPE_UNKNOWN+1] = {"jpeg", "png", "gif", "bmp", "unknown"};
+
+int mimg_type_str2int(char *type)
+{
+    if (!type) return MIMG_TYPE_UNKNOWN;
+    
+    if (!strcmp(type, "jpeg"))
+        return MIMG_TYPE_JPEG;
+
+    if (!strcmp(type, "png"))
+        return MIMG_TYPE_PNG;
+
+    if (!strcmp(type, "gif"))
+        return MIMG_TYPE_GIF;
+
+    if (!strcmp(type, "bmp"))
+        return MIMG_TYPE_BMP;
+
+    return MIMG_TYPE_UNKNOWN;
+}
+
+char* mimg_type_int2str(int type)
+{
+    if (type < 0 || type > MIMG_TYPE_UNKNOWN) return NULL;
+    return m_img_types[type];
+}
+
 NEOERR* mimg_create_from_string(char *s, char *path, double size, void **pic)
 {
     gdImagePtr im;
@@ -56,39 +83,29 @@ NEOERR* mimg_output(void *pic)
     return STATUS_OK;
 }
 
-NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5])
+NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5], int *ftype)
 {
-    NEOERR *err;
-    /*
-     * fastcgi redefined FILE*, but cgi_filehandle() don't know,
-     * so, cgi_filehandle() return's a standard FILE*
-     * adn fseek, fread... need FCGI_FILE* as parameter in fastcgi mode
-     * so, create a FCGI_FILE* from cgi_filehandle()'s FILE*.
-     * ****************************************************************
-     * you need to take care of every 3rd part library's file operation
-     * e.g. gdImageXxx()
-     *
-     * you don't need to take care of fopen(), fseek()... on stdio.h
-     * because of fcgi_stdio.h do it for you
-     * ****************************************************************
-     */
-#ifdef USE_FASTCGI
-    FILE *fp = malloc(sizeof(FILE)), *fpout;
-    if (fp) {
-        fp->stdio_stream = cgi_filehandle(cgi, NULL);
-        fp->fcgx_stream = NULL;
-    }
-#else
-    FILE *fp = cgi_filehandle(cgi, NULL), *fpout;
-#endif
     unsigned char data[IMAGE_MD5_SIZE];
     unsigned int bytes;
     char tok[3] = {0};
+    NEOERR *err;
+    FILE *fp, *fpout;
+    char *s;
 
-    MCS_NOT_NULLB(cgi->hdf, fp);
+    MCS_NOT_NULLC(cgi->hdf, imgroot, ftype);
+
+    /* TODO memory leak */
+    fp = mfile_get_safe_from_std(cgi_filehandle(cgi, NULL));
+    MCS_NOT_NULLA(fp);
+
+    s = mfile_get_type(cgi, fp);
+    if (!s || strncmp(s, "image/", 6)) {
+        return nerr_raise(NERR_ASSERT, "file %s not image type", s);
+    }
+    s = s + 6;
+    *ftype = mimg_type_str2int(s);
 
     memset(data, 0x0, sizeof(data));
-
     fseek(fp, 0, SEEK_SET);
     bytes = fread(data, 1, sizeof(data), fp);
 
@@ -96,36 +113,53 @@ NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5])
     mstr_md5_buf(data, bytes, result);
 
     strncpy(tok, result, 2);
-    err = mutil_file_openf(&fpout, "w+", "%s/%s/%s.jpg", imgroot, tok, result);
+    err = mfile_openf(&fpout, "w+", "%s/%s/%s.%s",
+                      imgroot, tok, result, mimg_type_int2str(*ftype));
     if (err != STATUS_OK) return nerr_pass(err);
 
     if (bytes < IMAGE_MD5_SIZE-10) {
         fwrite(data, 1, bytes, fpout);
     } else {
-        mutil_file_copy(fpout, fp);
+        mfile_copy(fpout, fp);
     }
     fclose(fpout);
 
     return STATUS_OK;
 }
 
-NEOERR* mimg_zoomout(FILE *dst, FILE*src, int width, int height)
+NEOERR* mimg_zoomout(int ftype, FILE *dst, FILE*src, int width, int height)
 {
     MCS_NOT_NULLB(dst, src);
 
+    int ow, oh;
+    gdImagePtr im;
+    FILE *gdin, *gdout;
+
     if (width <= 0 && height <= 0) return STATUS_OK;
-    
+
+    gdin = mfile_get_std_from_safe(src);
+    gdout = mfile_get_std_from_safe(dst);
+
     fseek(src, 0, SEEK_SET);
     fseek(dst, 0, SEEK_SET);
 
-#ifdef USE_FASTCGI
-    gdImagePtr im = gdImageCreateFromJpeg(src->stdio_stream);
-#else
-    gdImagePtr im = gdImageCreateFromJpeg(src);
-#endif
-    int ow, oh;
-
-    if (!im) return nerr_raise(NERR_ASSERT, "load image failure");
+    switch (ftype) {
+    case MIMG_TYPE_JPEG:
+        im = gdImageCreateFromJpeg(gdin);
+        break;
+    case MIMG_TYPE_PNG:
+        im = gdImageCreateFromPng(gdin);
+        break;
+    case MIMG_TYPE_GIF:
+        im = gdImageCreateFromGif(gdin);
+        break;
+    case MIMG_TYPE_BMP:
+        im = gdImageCreateFromWBMP(gdin);
+        break;
+    default:
+        return nerr_raise(NERR_ASSERT, "file type %d not support", ftype);
+    }
+    if (!im) return nerr_raise(NERR_ASSERT, "读取图片出错，文件格式错误？");
 
     ow = gdImageSX(im);
     oh = gdImageSY(im);
@@ -137,45 +171,53 @@ NEOERR* mimg_zoomout(FILE *dst, FILE*src, int width, int height)
         
         gdImagePtr dim = gdImageCreateTrueColor(width, height);
         gdImageCopyResized(dim, im, 0, 0, 0, 0, width, height, ow, oh);
-#ifdef USE_FASTCGI
-        if (dim) gdImageJpeg(dim, dst->stdio_stream, 70);
-#else
-        if (dim) gdImageJpeg(dim, dst, 70);
-#endif
-        else return nerr_raise(NERR_ASSERT, "resize image error");
+
+        if (dim) {
+            switch (ftype) {
+            case MIMG_TYPE_JPEG:
+                gdImageJpeg(dim, gdout, 70);
+                break;
+            case MIMG_TYPE_PNG:
+                gdImagePng(dim, gdout);
+                break;
+            case MIMG_TYPE_GIF:
+                gdImageGif(dim, gdout);
+                break;
+            case MIMG_TYPE_BMP:
+                gdImageWBMP(dim, 0, gdout);
+                break;
+            default:
+                return nerr_raise(NERR_ASSERT, "file type %d not suport", ftype);
+            }
+            
+        } else return nerr_raise(NERR_ASSERT, "resize image error");
     } else {
-        mutil_file_copy(dst, src);
+        mfile_copy(dst, src);
     }
 
     return STATUS_OK;
 }
 
 NEOERR* mimg_accept_and_zoomout(CGI *cgi, char *imgroot, char result[LEN_MD5],
-                                int width, int height)
+                                int *ftype, int width, int height)
 {
     NEOERR *err;
+    FILE *fp;
 
-    err = mimg_accept(cgi, imgroot, result);
+    err = mimg_accept(cgi, imgroot, result, ftype);
     if (err != STATUS_OK) return nerr_pass(err);
 
-#ifdef USE_FASTCGI
-    FILE *fp = malloc(sizeof(FILE));
-    if (fp) {
-        fp->stdio_stream = cgi_filehandle(cgi, NULL);
-        fp->fcgx_stream = NULL;
-    }
-#else
-    FILE *fp = cgi_filehandle(cgi, NULL);
-#endif
+    fp = mfile_get_safe_from_std(cgi_filehandle(cgi, NULL));
     if (!fp) return nerr_raise(NERR_ASSERT, "unbelieveable, fp null");
 
     FILE *fpout;
     char tok[3] = {0}; strncpy(tok, result, 2);
-    err = mutil_file_openf(&fpout, "w+", "%s/%dx%d/%s/%s.jpg",
-                           imgroot, width, height, tok, result);
+    err = mfile_openf(&fpout, "w+", "%s/%dx%d/%s/%s.%s",
+                      imgroot, width, height, tok, result,
+                      mimg_type_int2str(*ftype));
     if (err != STATUS_OK) return nerr_pass(err);
-
-    err = mimg_zoomout(fpout, fp, width, height);
+    
+    err = mimg_zoomout(*ftype, fpout, fp, width, height);
     if (err != STATUS_OK) return nerr_pass(err);
 
     fclose(fpout);
