@@ -17,10 +17,6 @@ bool    mutil_client_attack_cookie(HDF *hdf, char *action,
                                    uint64_t limit, time_t exp);
 void    mutil_makesure_coredump();
 
-NEOERR* mutil_makesure_dir(char *file);
-NEOERR* mutil_file_openf(FILE **fp, const char *mode, char *fname, ...);
-NEOERR* mutil_file_copy(FILE *dst, FILE *src);
-
 /*
  * res must be char xxx[LEN_TM]
  */
