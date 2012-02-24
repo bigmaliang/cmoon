@@ -54,7 +54,8 @@ __BEGIN_DECLS
 void mtc_init(const char *fn);
 void mtc_leave();
 bool mtc_msg(const char *func, const char *file, long line,
-             int level, const char *format, ...);
+             int level, const char *format, ...)
+             ATTRIBUTE_PRINTF(5, 6);
 
 __END_DECLS
 #endif    /* __MTRACE_H__ */

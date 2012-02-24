@@ -34,7 +34,7 @@ static memcached_st* mmc_create()
         port = hdf_get_int_value(node, "port", 0);
         rc = memcached_server_add(l_mc, ip, port);
         if (rc != MEMCACHED_SUCCESS) {
-            mtc_err("init %s:%s %s", ip, port, memcached_strerror(l_mc, rc));
+            mtc_err("init %s:%d %s", ip, port, memcached_strerror(l_mc, rc));
         }
         node = hdf_obj_next(node);
     }

@@ -97,6 +97,8 @@ NEOERR* mdb_finish(mdb_conn *conn);
  */
 NEOERR* mdb_exec(mdb_conn *conn, int *affectrow, const char* sql_fmt,
                  const char* fmt, ...);
+//                 ATTRIBUTE_PRINTF(3, 5);
+// attribute failure when fmt != NULL
 NEOERR* mdb_put(mdb_conn *conn, const char* fmt, ...);
 NEOERR* mdb_get(mdb_conn *conn, const char* fmt, ...);
 /* store data to res[], fmt must be '[sS]+' */
