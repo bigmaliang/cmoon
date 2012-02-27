@@ -29,7 +29,7 @@ NEOERR* mfile_copy(FILE *dst, FILE *src);
 FILE* mfile_get_safe_from_std(FILE *in);
 FILE* mfile_get_std_from_safe(FILE *in);
 
-char* mfile_get_type(CGI *cgi, FILE *fp);
+char* mfile_get_type(CGI *cgi, char *form_name);
 
 __END_DECLS
 #endif    /* __MFILE_H__ */

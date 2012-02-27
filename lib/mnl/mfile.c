@@ -13,7 +13,8 @@ NEOERR* mfile_makesure_dir(char *file)
         if (mkdir(tok, 0755) != 0 && errno != EEXIST) {
             return nerr_raise(NERR_IO, "mkdir %s failure %s", tok, strerror(errno));
         }
-        p = strchr(p+1, '/');
+        while (*p == '/') p++;
+        if(p) p = strchr(p, '/');
     }
     mtc_noise("directory %s ok", tok);
     return STATUS_OK;
@@ -90,8 +91,9 @@ FILE* mfile_get_std_from_safe(FILE *in)
 #endif
 }
 
-/* TODO complete file type */
-char* mfile_get_type(CGI *cgi, FILE *fp)
+/* TODO read file's type */
+char* mfile_get_type(CGI *cgi, char *form_name)
 {
-    return hdf_get_value(cgi->hdf, "HTTP.XFileType", NULL);
+    if (form_name) return hdf_get_valuef(cgi->hdf, PRE_QUERY".%s.Type", form_name);
+    else return hdf_get_value(cgi->hdf, "HTTP.XFileType", NULL);
 }

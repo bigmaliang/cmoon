@@ -23,6 +23,7 @@
 #include "mglobal.h"
 #include "mcfg.h"
 #include "md5.h"
+#include "mb64.h"
 #include "mmkd.h"
 #include "mtrace.h"
 #include "mmemc.h"

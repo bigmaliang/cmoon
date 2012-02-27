@@ -83,7 +83,8 @@ NEOERR* mimg_output(void *pic)
     return STATUS_OK;
 }
 
-NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5], int *ftype)
+NEOERR* mimg_accept(CGI *cgi, char *form_name, char *imgroot,
+                    char result[LEN_MD5], int *ftype)
 {
     unsigned char data[IMAGE_MD5_SIZE];
     unsigned int bytes;
@@ -95,10 +96,10 @@ NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5], int *ftype)
     MCS_NOT_NULLC(cgi->hdf, imgroot, ftype);
 
     /* TODO memory leak */
-    fp = mfile_get_safe_from_std(cgi_filehandle(cgi, NULL));
+    fp = mfile_get_safe_from_std(cgi_filehandle(cgi, form_name));
     MCS_NOT_NULLA(fp);
 
-    s = mfile_get_type(cgi, fp);
+    s = mfile_get_type(cgi, form_name);
     if (!s || strncmp(s, "image/", 6)) {
         return nerr_raise(NERR_ASSERT, "file %s not image type", s);
     }
@@ -117,10 +118,16 @@ NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5], int *ftype)
                       imgroot, tok, result, mimg_type_int2str(*ftype));
     if (err != STATUS_OK) return nerr_pass(err);
 
-    if (bytes < IMAGE_MD5_SIZE-10) {
-        fwrite(data, 1, bytes, fpout);
+    s = hdf_get_value(cgi->hdf, PRE_QUERY"._upfile_data_type", NULL);
+    if (s && !strcmp(s, "dataurl")) {
+        err = mb64_decode(fp, fpout);
+        if (err != STATUS_OK) return nerr_pass(err);
     } else {
-        mfile_copy(fpout, fp);
+        if (bytes < IMAGE_MD5_SIZE-10) {
+            fwrite(data, 1, bytes, fpout);
+        } else {
+            mfile_copy(fpout, fp);
+        }
     }
     fclose(fpout);
 
@@ -198,20 +205,23 @@ NEOERR* mimg_zoomout(int ftype, FILE *dst, FILE*src, int width, int height)
     return STATUS_OK;
 }
 
-NEOERR* mimg_accept_and_zoomout(CGI *cgi, char *imgroot, char result[LEN_MD5],
-                                int *ftype, int width, int height)
+NEOERR* mimg_accept_and_zoomout(CGI *cgi, char* form_name, char *imgroot,
+                                char result[LEN_MD5], int *ftype,
+                                int width, int height)
 {
     NEOERR *err;
-    FILE *fp;
+    FILE *fp, *fpout;
+    char tok[3] = {0};
 
-    err = mimg_accept(cgi, imgroot, result, ftype);
+    err = mimg_accept(cgi, form_name, imgroot, result, ftype);
     if (err != STATUS_OK) return nerr_pass(err);
 
-    fp = mfile_get_safe_from_std(cgi_filehandle(cgi, NULL));
-    if (!fp) return nerr_raise(NERR_ASSERT, "unbelieveable, fp null");
+    strncpy(tok, result, 2);
 
-    FILE *fpout;
-    char tok[3] = {0}; strncpy(tok, result, 2);
+    err = mfile_openf(&fp, "r", "%s/%s/%s.%s",
+                      imgroot, tok, result, mimg_type_int2str(*ftype));
+	if (err != STATUS_OK) return nerr_pass(err);
+
     err = mfile_openf(&fpout, "w+", "%s/%dx%d/%s/%s.%s",
                       imgroot, width, height, tok, result,
                       mimg_type_int2str(*ftype));

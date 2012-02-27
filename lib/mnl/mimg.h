@@ -17,9 +17,11 @@ int mimg_type_str2int(char *type);
 char* mimg_type_int2str(int type);
 
 NEOERR* mimg_create_from_string(char *s, char *path, double size, void **pic);
-NEOERR* mimg_accept(CGI *cgi, char *imgroot, char result[LEN_MD5], int *ftype);
+NEOERR* mimg_accept(CGI *cgi, char *form_name, char *imgroot,
+                    char result[LEN_MD5], int *ftype);
 NEOERR* mimg_zoomout(int ftype, FILE *dst, FILE*src, int width, int height);
-NEOERR* mimg_accept_and_zoomout(CGI *cgi, char *imgroot, char result[LEN_MD5],
+NEOERR* mimg_accept_and_zoomout(CGI *cgi, char *form_name, char *imgroot,
+                                char result[LEN_MD5],
                                 int *ftype, int width, int height);
 NEOERR* mimg_output(void *pic);
 
