@@ -68,7 +68,7 @@ FILE* mfile_get_safe_from_std(FILE *in)
     FILE *fp;
     
 #ifdef USE_FASTCGI
-    fp = malloc(sizeof(FILE)), *fpout;
+    fp = malloc(sizeof(FILE));
     if (fp) {
         fp->stdio_stream = in;
         fp->fcgx_stream = NULL;
