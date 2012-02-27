@@ -144,5 +144,9 @@ libsqlite3-dev
     _npg: page number (_nst will overwrite _npg)
     _npp: number perpage
     _type_xx: 请求中包含对象时，_type_xxx: 'object' 让 viki 将xxx当作对象解析
-    
 
+    ADD  /image/zero/img 上传图片
+    _upfile_data_type: 说明上传文件的数据类型
+        text    文本文件，对应js的 readAsText(file)
+        binstr  二进制流，对应js的 readAsBinaryString(file)
+        dataurl base64编码过的字符串，确保 url 传输安全，对应js的 readAsDataURL(file)
