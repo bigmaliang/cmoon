@@ -439,7 +439,7 @@ int mevent_trigger(mevent_t *evt, char *key,
     unsigned char *p;
     uint32_t rv = REP_OK;
     
-    if (!evt) return 0;
+    if (!evt) return REP_ERR;
 
     if (!key) key = evt->key;
     evt->cmd = cmd;
@@ -448,8 +448,8 @@ int mevent_trigger(mevent_t *evt, char *key,
 
     srv = select_srv(evt, key, strlen(key));
     if (!srv) {
-        evt->errcode = -1;
-        return -1;
+        evt->errcode = REP_ERR;
+        return REP_ERR;
     }
     
     if (g_reqid++ > 0x0FFFFFFC) {
@@ -480,8 +480,8 @@ int mevent_trigger(mevent_t *evt, char *key,
     
     t = srv_send(srv, evt->payload, evt->psize);
     if (t <= 0) {
-        evt->errcode = -2;
-        return -2;
+        evt->errcode = REP_ERR_SEND;
+        return REP_ERR_SEND;
     }
 
     hdf_destroy(&evt->hdfsnd);
@@ -492,6 +492,7 @@ int mevent_trigger(mevent_t *evt, char *key,
     if (flags & FLAGS_SYNC) {
         vsize = 0;
         rv = get_rep(srv, evt->rcvbuf, MAX_PACKET_LEN, &p, &vsize);
+        if (rv == -1) rv = REP_ERR;
         evt->errcode = rv;
 
         if (vsize > 8) {
