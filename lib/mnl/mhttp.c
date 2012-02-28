@@ -11,6 +11,21 @@ int http_req_method(CGI *cgi)
     return CGI_REQ_UNKNOWN;
 }
 
+NEOERR* mhttp_upload_parse_cb(CGI *cgi, char *method, char *ctype, void *rock)
+{
+    MCS_NOT_NULLC(cgi, method, ctype);
+    
+    if (!strcasecmp(method, "GET"))
+        return nerr_raise(CGIParseNotHandled, "%s not handled", method);
+    
+    int len = hdf_get_int_value(cgi->hdf, "CGI.ContentLength", 0);
+    
+    if (len <= 0 || len > *(int*)rock)
+        return nerr_raise(CGIUploadCancelled, "content length %d not support", len);
+    
+    return STATUS_OK;
+}
+
 /*
  * IE: make sure timezone & time set correct on web server
  */

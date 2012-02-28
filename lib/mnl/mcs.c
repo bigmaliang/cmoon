@@ -101,6 +101,23 @@ NEOERR* mcs_register_mkd_functions(CSPARSE *cs)
     return nerr_pass(cs_register_esc_strfunc(cs, "mkd.escape", mkd_esc_str));
 }
 
+NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock)
+{
+    NEOERR *err;
+    
+    err = cgi_register_parse_cb(cgi, "POST", "application/x-www-form-urlencoded",
+                                rock, mhttp_upload_parse_cb);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+    err = cgi_register_parse_cb(cgi, "POST", "multipart/form-data",
+                                rock, mhttp_upload_parse_cb);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+    err = cgi_register_parse_cb(cgi, "PUT", "*", rock, mhttp_upload_parse_cb);
+    return nerr_pass(err);
+}
+
+
 unsigned int mcs_get_uint_value(HDF *hdf, const char *name, unsigned int defval)
 {
     char *val, *n;

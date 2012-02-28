@@ -19,6 +19,8 @@ enum {
 
 int http_req_method(CGI *cgi);
 
+NEOERR* mhttp_upload_parse_cb(CGI *cgi, char *method, char *ctype, void *rock);
+
 /*
  * Cache-Control
  * IE: make sure timezone & time set correct on web server
