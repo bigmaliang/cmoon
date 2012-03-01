@@ -128,7 +128,7 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
  * 27      1    1991 34      1       76      C
  * 
  * mdb_set_rows(hdf, conn, "snum, course, score, level",
- *              "Output.students", "0;2:2,3,4,5,6;4:4,5,6")
+ *              "Output.students", "0;2:2-4,5,6;4:4,5,6")
  * ===>
  * 
  * students.35.snum = 35

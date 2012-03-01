@@ -258,7 +258,7 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
 
     int qrcnt = 1, i;
     char qrarray[QR_NUM_MAX][LEN_ST];
-    char *col[QR_NUM_MAX], fmt[LEN_ST], *ps;
+    char *col[QR_NUM_MAX], fmt[LEN_ST], *ps, *pe;
 	STRING hdfkey; string_init(&hdfkey);
     int keycol, slavekey[QR_NUM_MAX], slaveval[QR_NUM_MAX][QR_NUM_MAX], slavenum = 0;
     NEOERR *err;
@@ -274,6 +274,7 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
     if (keyspec && atoi(keyspec) < qrcnt) {
         /*
          * 0;2:2,3,4,5,6;4:4,5,6
+         * TODO space strim: 0; 2:2-6; 4: 4, 5,  6 
          */
         keycol = atoi(keyspec); /* 0 */
 
@@ -296,7 +297,7 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
              * 4:4,5,6
              */
             
-            int k, v, cnt;
+            int k, v, cnt, min, max;
             
             ITERATE_MLIST(list) {
                 k = -1; v = -1;
@@ -309,10 +310,25 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
                     slavekey[slavenum] = k;
 
                     /* 2,3,4,5,6 */
+                    /* OR 2-4,6 OR 2*/
                     cnt = 0;
                     while (*ps && cnt < QR_NUM_MAX-1) {
-                        slaveval[slavenum][cnt++] = atoi(ps);
-                        while (*ps && *ps++ != ',') {;}
+                        pe = ps;
+                        while (*pe && *pe != ',') {pe++;}
+
+                        if (pe > ps) {
+                            if (mstr_isdigitn(ps, pe-ps)) {
+                                slaveval[slavenum][cnt++] = atoi(ps);
+                            } else if (mstr_israngen(ps, pe-ps, &min, &max)){
+                                for (int x = min; x <= max; x++) {
+                                    if (cnt >= QR_NUM_MAX-2) break;
+                                    slaveval[slavenum][cnt++] = x;
+                                }
+                            }
+                        }
+
+                        while (*pe && *pe == ',') {pe++;};
+                        ps = pe;
                     }
 
                     while (cnt < QR_NUM_MAX) {slaveval[slavenum][cnt++] = -1;}
