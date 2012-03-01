@@ -13,6 +13,8 @@ void mstr_html_unescape(HDF *hdf, char *name);
 void mstr_md5_buf(unsigned char *in, size_t len, char out[LEN_MD5]);
 void mstr_md5_str(char *in, char out[LEN_MD5]);
 bool mstr_isdigit(char *s);
+bool mstr_isdigitn(char *buf, size_t len);
+bool mstr_israngen(char *buf, size_t len, int *left, int *right);
 
 /*
  * make sure buf big enough please
@@ -28,7 +30,7 @@ void mstr_repchr(char *s, char from, char to);
 /*
  * replace string with string
  * return an allocated string, remember to free it
- * mstr_str_repchr(s, "from1", "to1", "from2", "to2", ...)
+ * mstr_repstr(s, "from1", "to1", "from2", "to2", ...)
  * make sure offer suitable rep_count, or, random errors will occur.
  */
 char* mstr_repstr(int rep_count, char *s, ...);

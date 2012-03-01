@@ -74,8 +74,7 @@ void mstr_md5_str(char *in, char out[LEN_MD5])
 
 bool mstr_isdigit(char *s)
 {
-    if (s == NULL)
-        return false;
+    if (s == NULL) return false;
     
     char *p = s;
     while (*p != '\0') {
@@ -84,6 +83,45 @@ bool mstr_isdigit(char *s)
         p++;
     }
     return true;
+}
+
+bool mstr_isdigitn(char *buf, size_t len)
+{
+    if (buf == NULL || len <= 0) return false;
+
+    size_t cnt = 0;
+    while (cnt < len) {
+        if (!isdigit((int)*(buf+cnt)))
+            return false;
+        cnt++;
+    }
+    return true;
+}
+
+/* 2 -28 */
+bool mstr_israngen(char *buf, size_t len, int *left, int *right)
+{
+    if (buf == NULL || len <= 0) return false;
+
+    size_t cnt = 0;
+    int min = 0, max = 0;
+    
+    while (cnt < len) {
+        if (*(buf+cnt) == '-') {
+            if (cnt == 0 || cnt == len-1) return false;
+
+            min = atoi(buf);
+            max = atoi(buf+cnt+1);
+            if (min >= max) return false;
+            
+            if (left) *left = min;
+            if (right) *right = max;
+            return true;
+        }
+
+        cnt++;
+    }
+    return false;
 }
 
 void mstr_real_escape_string(char *to, char *from, size_t len)
