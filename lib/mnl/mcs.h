@@ -38,6 +38,13 @@ float mcs_get_float_value(HDF *hdf, const char *name, float defval);
 NEOERR* mcs_set_uint_value(HDF *hdf, const char *name, unsigned int value);
 NEOERR* mcs_set_float_value(HDF *hdf, const char *name, float value);
 
+HDF*    mcs_hdf_getf(HDF *node, char *fmt, ...)
+                     ATTRIBUTE_PRINTF(2, 3);
+NEOERR* mcs_hdf_copyf(HDF *dst, HDF *src, char *fmt, ...)
+                      ATTRIBUTE_PRINTF(3, 4);
+void    mcs_hdf_rep(HDF *data, char *name, HDF *dst);
+NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data);
+
 char* mcs_hdf_attr(HDF *hdf, char *name, char*key);
 char* mcs_obj_attr(HDF *hdf, char*key);
 

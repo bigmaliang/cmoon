@@ -162,6 +162,72 @@ NEOERR* mcs_set_float_value(HDF *hdf, const char *name, float value)
   return nerr_pass(hdf_set_value(hdf, name, buf));
 }
 
+HDF* mcs_hdf_getf(HDF *node, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return hdf_get_obj(node, key);
+}
+
+NEOERR* mcs_hdf_copyf(HDF *dst, HDF *src, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return nerr_pass(hdf_copy(dst, key, src));
+}
+
+void mcs_hdf_rep(HDF *data, char *name, HDF *dst)
+{
+    char myname[LEN_HDF_KEY], *srcstr, *repstr;
+    
+    if (!data || !dst) return;
+
+    HDF *hdf = hdf_obj_child(data);
+
+    while (hdf) {
+        if (hdf_obj_child(hdf)) {
+            if (name) snprintf(myname, sizeof(myname), "%s.%s",
+                               name, hdf_obj_name(hdf));
+            else strncpy(myname, hdf_obj_name(hdf), sizeof(myname));
+
+            return mcs_hdf_rep(data, myname, hdf);
+        }
+
+        srcstr = hdf_get_value(dst, name, NULL);
+        repstr = mstr_repstr(1, srcstr, hdf_obj_name(hdf), hdf_obj_value(hdf));
+
+        hdf_set_value(dst, name, repstr);
+
+        free(repstr);
+
+        hdf = hdf_obj_next(hdf);
+    }
+}
+
+NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data)
+{
+    NEOERR *err;
+    
+    MCS_NOT_NULLB(dst, src);
+
+    err = hdf_copy(dst, name, src);
+	if (err != STATUS_OK) return nerr_pass(err);
+
+    mcs_hdf_rep(data, NULL, dst);
+
+    return STATUS_OK;
+}
+
 char* mcs_hdf_attr(HDF *hdf, char *name, char*key)
 {
     if (hdf == NULL || name == NULL || key == NULL)
