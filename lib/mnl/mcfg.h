@@ -52,6 +52,7 @@ __BEGIN_DECLS
 #define PRE_INCLUDE     "Include"
 #define PRE_CONFIG      "Config"
 #define PRE_RESERVE     "Reserve"
+#define PRE_DATASET     "Dataset"
 #define PRE_ERRTRACE    PRE_OUTPUT".errtrace"
 #define PRE_ERRMSG      PRE_OUTPUT".errmsg"
 #define PRE_ERRCODE     PRE_OUTPUT".errcode"
