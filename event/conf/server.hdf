@@ -20,5 +20,10 @@ Mevent {
 Plugin {
     skeleton {
         dbsn = pgsql:dbname=lcs_msg host=localhost user=lcser password=loveu
+        InsertCol {
+            member {
+                midFromHdf [type=int, require=true] = midToDbCol
+            }
+        }
     }
 }
