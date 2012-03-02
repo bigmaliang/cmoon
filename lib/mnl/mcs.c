@@ -192,25 +192,25 @@ void mcs_hdf_rep(HDF *data, char *name, HDF *dst)
     
     if (!data || !dst) return;
 
-    HDF *hdf = hdf_obj_child(data);
+    HDF *child = hdf_obj_child(data);
 
-    while (hdf) {
-        if (hdf_obj_child(hdf)) {
+    while (child) {
+        if (hdf_obj_child(child)) {
             if (name) snprintf(myname, sizeof(myname), "%s.%s",
-                               name, hdf_obj_name(hdf));
-            else strncpy(myname, hdf_obj_name(hdf), sizeof(myname));
+                               name, hdf_obj_name(child));
+            else strncpy(myname, hdf_obj_name(child), sizeof(myname));
 
-            return mcs_hdf_rep(data, myname, hdf);
+            return mcs_hdf_rep(child, myname, dst);
         }
 
         srcstr = hdf_get_value(dst, name, NULL);
-        repstr = mstr_repstr(1, srcstr, hdf_obj_name(hdf), hdf_obj_value(hdf));
+        repstr = mstr_repstr(1, srcstr, hdf_obj_name(child), hdf_obj_value(child));
 
         hdf_set_value(dst, name, repstr);
 
         free(repstr);
 
-        hdf = hdf_obj_next(hdf);
+        child = hdf_obj_next(child);
     }
 }
 
