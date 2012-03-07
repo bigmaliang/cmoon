@@ -76,7 +76,7 @@ static NEOERR* mtpl_InConfigRend_parse_file(char *dir, char *name,
 
     snprintf(fname, sizeof(fname), "%s/%s", dir, name);
     err = hdf_read_file(node, fname);
-	if (err != STATUS_OK) return nerr_pass(err);
+    if (err != STATUS_OK) return nerr_pass(err);
 
     child = hdf_obj_child(node);
     while (child) {
@@ -181,22 +181,22 @@ NEOERR* mtpl_InConfigRend_init(char *dir, char *key, HASH **datah)
     }
 
     err = hdf_init(&value_node);
-	if (err != STATUS_OK) return nerr_pass(err);
+    if (err != STATUS_OK) return nerr_pass(err);
     err = hash_insertf(*datah, (void*)value_node, "icr_%s_value_node", key);
-	if (err != STATUS_OK) return nerr_pass(err);
+    if (err != STATUS_OK) return nerr_pass(err);
     
     err = hdf_init(&layout_node);
-	if (err != STATUS_OK) return nerr_pass(err);
+    if (err != STATUS_OK) return nerr_pass(err);
     err = hash_insertf(*datah, (void*)layout_node, "icr_%s_layout_node", key);
-	if (err != STATUS_OK) return nerr_pass(err);
+    if (err != STATUS_OK) return nerr_pass(err);
     
     err = hash_init(&layout_hash, hash_str_hash, hash_str_comp);
-	if (err != STATUS_OK) return nerr_pass(err);
+    if (err != STATUS_OK) return nerr_pass(err);
     err = hash_insertf(*datah, (void*)layout_hash, "icr_%s_layout_hash", key);
-	if (err != STATUS_OK) return nerr_pass(err);
+    if (err != STATUS_OK) return nerr_pass(err);
 
     err = mtpl_InConfigRend_parse_dir(dir, value_node, layout_node, layout_hash);
-	if (err != STATUS_OK) return nerr_pass(err);
+    if (err != STATUS_OK) return nerr_pass(err);
 
     return STATUS_OK;
 }
