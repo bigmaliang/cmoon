@@ -34,10 +34,10 @@ make
 make install
 
 cd /usr/local/src
-git clone git://github.com/deanproxy/eMail.git
-cd eMail; make_dist 1.0 main
-cd ~/; mv email-1.0.tar.gz /usr/local/src
-cd /usr/local/src; tar zxvf email-1.0.tar.gz; cd email-1.0
+git clone --recursive git@github.com:bigml/eMail.git
+#cd eMail; make_dist 1.0 main
+#cd ~/; mv email-1.0.tar.gz /usr/local/src
+#cd /usr/local/src; tar zxvf email-1.0.tar.gz; cd email-1.0
 ./configure && make && sudo make install
 cd /usr/local/etc/email;
 sudo cp email.conf liucs.conf
