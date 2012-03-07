@@ -1,5 +1,29 @@
 #include "mheads.h"
 
+void* hash_lookupf(HASH *table, char *fmt, ...)
+{
+    char key[LEN_HASH_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return hash_lookup(table, key);
+}
+
+NEOERR* hash_insertf(HASH *table, void *data, char *fmt, ...)
+{
+    char key[LEN_HASH_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return hash_insert(table, strdup(key), data);
+}
+
 NEOERR* mcs_outputcb(void *ctx, char *s)
 {
     printf ("%s", s);

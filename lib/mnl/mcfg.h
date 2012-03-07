@@ -32,6 +32,7 @@ __BEGIN_DECLS
 #define LEN_LINE    (1024*100)
 #define LEN_SQL     1024
 #define LEN_HDF_KEY 64
+#define LEN_HASH_KEY 128
 #define LEN_MMC_KEY  256                    /* memcached key length */
 #define LEN_NMDB_KEY 256
 #define LEN_NMDB_VAL (1024*64)
@@ -47,12 +48,16 @@ __BEGIN_DECLS
 #define PRE_CGI         "CGI"
 #define PRE_COOKIE      "Cookie"
 #define PRE_QUERY       "Query"
-#define PRE_LAYOUT      "Layout"
 #define PRE_OUTPUT      "Output"
-#define PRE_INCLUDE     "Include"
-#define PRE_CONFIG      "Config"
 #define PRE_RESERVE     "Reserve"
+
+#define PRE_LAYOUT      "Layout"
+#define PRE_INCLUDE     "Include"
 #define PRE_DATASET     "Dataset"
+#define PRE_VALUESET    "Valueset"
+#define PRE_VALUEREP    "ValueReplace"
+#define PRE_CONFIG      "Config"
+
 #define PRE_ERRTRACE    PRE_OUTPUT".errtrace"
 #define PRE_ERRMSG      PRE_OUTPUT".errmsg"
 #define PRE_ERRCODE     PRE_OUTPUT".errcode"

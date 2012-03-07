@@ -28,6 +28,7 @@
 #include "mcs.h"
 #include "mstr.h"
 #include "mutil.h"
+#include "mtemplate.h"
 #include "mfile.h"
 #include "mimg.h"
 

@@ -19,6 +19,10 @@ __BEGIN_DECLS
 #define MCS_NOT_NULLC(pa, pb, pc)                                       \
     if (!pa || !pb || !pc) return nerr_raise(NERR_ASSERT, "paramter null");
 
+void* hash_lookupf(HASH *table, char *fmt, ...)
+                   ATTRIBUTE_PRINTF(2, 3);
+NEOERR* hash_insertf(HASH *table, void *data, char *fmt, ...)
+                     ATTRIBUTE_PRINTF(3, 4);
 
 /*
  * because of libneo_cs doesn't have
