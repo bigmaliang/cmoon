@@ -4,7 +4,8 @@
 
 __BEGIN_DECLS
 
-extern HDF *g_cfg;
+extern HDF *g_cfg;              /* global config  */
+extern HASH *g_datah;           /* global data e.g. InConfigRend ... */
 
 __END_DECLS
 #endif    /* __MGLOBAL_H__ */
