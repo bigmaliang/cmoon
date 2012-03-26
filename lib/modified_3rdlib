@@ -1,59 +1,45 @@
-cs/cgi/cgi.c 643
-================
-    if (type && !strcmp(type, "application/x-www-form-urlencoded"))
+ClearSilver
+===========
 
+    util/neo_hdf.c
+    --------------
+    1623
+          while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
+    ===>      
+          while (*s && (isalnum(*s) || *s == '_' || *s == '.' || *(unsigned char*)s > 127)) s++;
+    让 hdf 的 key 支持中文（在 read_string 的时候）
+    
+    
+    util/neo_err.c
+    --------------
+    193
+    static char *_lookup_errname(NEOERR *err, char *buf, int buflen)
     ===>
-
-    if (type && !strncmp(type, "application/x-www-form-urlencoded", 33))
-
-    有些插件搞得 contentype 成了(可能是jquery.form.js搞的)
-626      pcb = cgi->parse_callbacks;
-(gdb) p type
-$1 = 0x962d978 "application/x-www-form-urlencoded; charset=UTF-8"
-(gdb) p method
-$2 = 0x962dbf0 "POST"    
-
-cs/utl/neo_str.c 234
-================
-    if (f != p)
-    {
-    再进行字符串入list
-    }
-因为以 分割符开头的源字符串进行切割时会把第一个item内容置为""
-
-去掉分隔符结尾的字符及字符串
-248  /* Handle remainder */
-+  if (sl == 1) {
-+      if (*f = *sep)
-+          return STATUS_OK;
-+  } else {
-+      if (!strcmp(f, sep))
-+          return STATUS_OK;
-+  }
-
-
-Clearsilver.h 26
-================
-#define hash_destroy ne_hash_destroy
-++#define hash_insert ne_hash_insert
-
-cs/utl/neo_hash.c
-================
-146
-    node = _hash_lookup_node(hash, key, NULL);
-===>
-    node = _hash_lookup_node(hash, *key, NULL);
-
-163
-add
-  if (node != 0)
-  {
-  }
-
-cs/utl/neo_hdf.c
-================
-1623
-      while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
-===>      
-      while (*s && (isalnum(*s) || *s == '_' || *s == '.' || *(unsigned char*)s > 127)) s++;
-让 hdf 的 key 支持中文（在 read_string 的时候）
+    char *_lookup_errname(NEOERR *err, char *buf, int buflen)
+    
+    util/neo_err.h
+    --------------
+    51
+      char desc[256];
+    ===>
+      char desc[1024];
+    
+    139
+    ++++
+    char *_lookup_errname(NEOERR *err, char *buf, int buflen);
+    
+    
+    cgi/cgi.c 794
+    -------------
+        if (type && !strcmp(type, "application/x-www-form-urlencoded"))
+    
+        ===>
+    
+        if (type && !strncmp(type, "application/x-www-form-urlencoded", 33))
+    
+        有些插件搞得 contentype 成了(可能是jquery.form.js搞的)
+    626      pcb = cgi->parse_callbacks;
+    (gdb) p type
+    $1 = 0x962d978 "application/x-www-form-urlencoded; charset=UTF-8"
+    (gdb) p method
+    $2 = 0x962dbf0 "POST"    

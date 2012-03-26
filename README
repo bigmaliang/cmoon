@@ -8,7 +8,7 @@ moon/
 |-- mtools      常用管理脚本
 |-- doc         文档目录(杂七杂八)
 |-- res         设计资源(杂七杂八)
-|-- lib         库文件目录
+|-- lib         内部公共库文件目录
 |
 |-- event       支持插件的高并发处理缓冲层后台, 详情请参考该目录文档和代码
 |-- deliver     web push 解决方案 (参考 deliver/README)
@@ -18,7 +18,7 @@ moon/
 |-- regae       应用初始框架(skeleton)
 |-- ksa         应用: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
 !-- pop         应用: www.bomdoo.com 播豆网
-|-- dada        应用: 相邀网
+|-- dida        应用: www.dididada.org
 |
 `-- memorypark  已作废应用(墓地)
     |-- funk    www.regae.com 送菜网(建设中。。。(暂作废))
@@ -27,56 +27,38 @@ moon/
 
 
 
-新建项目
-======
-I 在moon内部新建
--------------
-1, git clone voov 分支
-2, cp regae NEWPROJ
-3, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
-4, find -name '*voov*'; rename them
-5, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
-
-II 在moon外部引用
---------------
-1, git clone reage的 voov 分支
-2, same as up
-3, same as up
-4, same as up
-5, same as up
-6, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录
-7, cd NEWPROJ 修改一下文件和目录的连接路径，指向 moon 所在目录
-	./fly/js/pub
-	./fly/css/pub
-	./xport/daemon
-	./xport/plugin/mevent_plugin.h
-	./xport/plugin/mevent_skeleton.c
-	./xport/plugin/mevent_skeleton.h
-	./xport/test/stats.c
-	./xport/test/timer.h
-
-
-
 依赖
 ===
 
-整个程序依赖如下软件包，请自行安装(可参考 /mtools/prepare_lib.sh 脚本)：
+整个程序依赖如下软件包，请自行安装：
 
-开发库
------
-clearsilver-dev
-libfcgi-dev
-libjson0-dev
-libmemcached-dev
-libqdbm-dev (仅 cdata 依赖)
-libnmdb     (仅 cdata 依赖. Debian 没有此包, --- 仅需安装 nmdb/libnmdb
-             需要手动安装: http://blitiri.com.ar/p/nmdb/files/0.22/nmdb-0.22.tar.gz)
+系统安装
+------
+    Debian                                      RedHat
+    libpq-dev                                   postgresql84-devel.i386
+    libevent-dev                                libevent-devel.i386
+    libfcgi-dev                                 fcgi-devel.i386 (http://www.fastcgi.com/dist/fcgi.tar.gz)
+    libmemcached-dev                            libmemcached-devel.i386
+    libjson0-dev                                https://github.com/jehiah/json-c
 
-数据库(可选, Make.env 中可配置)
---------------------------
-libmysqlclient-dev
-libpq-dev
-libsqlite3-dev
+/usr/local/src/ 目录下手动安装
+---------------------------
+    clearsilver     http://clearsilver.googlecode.com/svn/trunk/ clearsilver (clearsilver代码需稍作修改，参考lib/modified_3rdlib)
+                    depend on streamhtmlparser http://streamhtmlparser.googlecode.com/svn/trunk/ streamhtmlparser
+                    ./autogen.sh --disable-wdb --disable-perl --disable-ruby --disable-java --disable-python && mkdir libs && make
+    eMail           git://github.com/bigml/eMail.git
+                    depend on dlib git://github.com/deanproxy/dlib.git
+    discount        git://github.com/Orc/discount.git
+
+js第三方库，自己在moon/lib/js/下checkout
+------------------------------------
+    jquerytools     git://github.com/jquerytools/jquerytools.git
+    flot            svn checkout http://flot.googlecode.com/svn/trunk/ flot
+    cycle           git://github.com/malsup/cycle.git
+    noty            git://github.com/needim/noty.git
+    markitup        git://github.com/bigml/1.x.git markitup
+    jqueryuploader  git://github.com/bigml/jqueryUploader.git
+
 
 依赖路径写在 Make.env 中, 如果装好上面软件后还出现编译错误, 请自行修改 Make.env 之 DEPEND LIBRARY 部分.
 
@@ -106,27 +88,39 @@ libsqlite3-dev
    (lightty enable fastcgi, disable cgi)
 
 5, login as moon:
-   cd /usr/local/ &&
-   git clone git://github.com/bigml/cmoon.git && mv cmoon moon &&
-   cd /usr/local/moon/lib/js/
-   && git clone git://github.com/jquerytools/jquerytools.git
-   && svn checkout http://flot.googlecode.com/svn/trunk/ flot
-   && git clone git://github.com/malsup/cycle.git
-   && git clone git@github.com:bigml/1.x.git markitup
-   && git clone git://github.com/needim/noty.git
-   && git clone git@github.com:bigml/jqueryUploader.git
+   git clone git://github.com/bigml/cmoon.git
+   根据“依赖”部分说明，准备开发环境。
    
-   git clone git://github.com/bigml/APE_JSF.git &&
-   git clone git://github.com/bigml/APE_Server.git
-   vim pop/fly/js/ape/Makefile change DIR_JSF
-   [vim pop/pub/lcfg.h PATH_SITE]
-
-6, modify moon/Make.env(no space left in config line)
-   cd lib ; make && cd event; make
+6, cd cmoon; make
 
 7, [/usr/local/bin/]memcached -d -m 16 -p 11211 -u nobody -l 127.0.0.1
 
 8, modify event/conf/server.hdf  pop/config.hdf APE_Server/bin/ape.conf loglevel from 7 to 3
+
+
+新建项目(应用)
+===========
+I 在moon内部新建
+-------------
+1, cp regae NEWPROJ
+2, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
+3, find -name '*voov*'; rename them
+4, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
+
+II 在moon外部引用
+--------------
+1, 拷贝 regae 目录至需要的 NEWPROJ
+2, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录
+3, cd NEWPROJ 修改以下文件和目录的连接路径，指向 moon 所在目录
+	./fly/js/pub
+	./fly/css/pub
+	./xport/daemon
+	./xport/plugin/mevent_plugin.h
+	./xport/plugin/mevent_skeleton.c
+	./xport/plugin/mevent_skeleton.h
+	./xport/test/stats.c
+	./xport/test/timer.h
+
 
 
 注:
