@@ -27,14 +27,24 @@ moon/
 
 
 
-依赖
-===
+开发环境
+======
 
-整个程序依赖如下软件包，请自行安装：
+[# useradd -d /opt -g code -N forge]
+# mkdir -p /var/log/moon/ && chmod 777 /var/log/moon/
+$ git clone git://github.com/bigml/cmoon.git
+
 
 系统安装
 ------
     Debian                                      RedHat
+    apt-get install locales
+    dpkg-reconfigure locales
+    git
+    git-core                                    git.i386
+    lighttpd
+    spawn-fcgi                                  spawn-fcgi.i386
+    postgresql                                  postgresql-server.i386
     libpq-dev                                   postgresql84-devel.i386
     libevent-dev                                libevent-devel.i386
     libfcgi-dev                                 fcgi-devel.i386 (http://www.fastcgi.com/dist/fcgi.tar.gz)
@@ -62,64 +72,32 @@ js第三方库，自己在moon/lib/js/下checkout
 
 依赖路径写在 Make.env 中, 如果装好上面软件后还出现编译错误, 请自行修改 Make.env 之 DEPEND LIBRARY 部分.
 
+能编译通过后，请参考应用 doc/system.txt 文档准备数据库和 web 服务器环境，便可以开始开发。
 
-
-运营安装
-======
-0, debian 5 32bit
-
-1, apt-get dist-upgrade
-   apt-get install locales, dpkg-reconfigure locales
-
-2, modify apt source
-   deb http://ftp.us.debian.org/debian squeeze main
-   deb http://security.debian.org/ squeeze/updates main
-   apt update
-
-3, adduser moon
-   chown moon:moon /usr/local/
-   mkdir -p /data/logs/ && chown moon:moon /data/logs/
-   mkdir -p /var/log/moon/ && chown moon:moon /var/log/moon/
-
-4, apt-get install git git-core lighttpd postgresql
-   install librarys need by moon according mtools/prepare_lib.sh
-   scp /usr/include/ClearSilver/ClearSilver.h  /usr/lib/libneo_utl.a
-   modify lighttpd and pg config according xxx/doc/system.txt
-   (lightty enable fastcgi, disable cgi)
-
-5, login as moon:
-   git clone git://github.com/bigml/cmoon.git
-   根据“依赖”部分说明，准备开发环境。
-   
-6, cd cmoon; make
-
-7, [/usr/local/bin/]memcached -d -m 16 -p 11211 -u nobody -l 127.0.0.1
-
-8, modify event/conf/server.hdf  pop/config.hdf APE_Server/bin/ape.conf loglevel from 7 to 3
 
 
 新建项目(应用)
 ===========
 I 在moon内部新建
 -------------
-1, cp regae NEWPROJ
-2, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
-3, find -name '*voov*'; rename them
-4, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
+    1, cp regae NEWPROJ
+    2, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
+    3, find -name '*voov*'; rename them
+    4, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
 
 II 在moon外部引用
 --------------
-1, 拷贝 regae 目录至需要的 NEWPROJ
-2, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录
-3, cd NEWPROJ 修改以下文件和目录的连接路径，指向 moon 所在目录
-	./fly/js/pub
-	./fly/css/pub
-	./xport/daemon
-	./xport/plugin/mevent_plugin.h
-	./xport/plugin/mevent_skeleton.c
-	./xport/plugin/mevent_skeleton.h
-	./xport/test/stats.c
-	./xport/test/timer.h
+    1, 拷贝 regae 目录至需要的 NEWPROJ
+    2, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录
+    3, cd NEWPROJ 修改以下文件和目录的连接路径，指向 moon 所在目录
+    	./fly/js/pub
+    	./fly/css/pub
+    	./xport/daemon
+    	./xport/plugin/mevent_plugin.h
+    	./xport/plugin/mevent_skeleton.c
+    	./xport/plugin/mevent_skeleton.h
+    	./xport/test/stats.c
+    	./xport/test/timer.h
 
 
 
