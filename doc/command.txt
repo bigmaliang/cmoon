@@ -33,7 +33,15 @@ TODAY=`date +%Y%m%d`
 
 
 创建密匙
+cd ~/.ssh
+mkdir key_backup
+cp id_rsa* key_backup
+rm id_rsa*
 ssh-keygen -t rsa -C "bigmaliang@gmail.com"
+
+测试当前用户在 github 上的登录名
+ssh -[v]T git@github.com
+
 
 
 scrot
