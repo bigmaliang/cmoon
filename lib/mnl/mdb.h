@@ -166,6 +166,7 @@ NEOERR* mdb_build_upcol(HDF *data, HDF *node, STRING *str);
  */
 NEOERR* mdb_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr);
 NEOERR* mdb_build_incol(HDF *data, HDF *node, STRING *str);
+NEOERR* mdb_build_mgcol(HDF *data, HDF *node, STRING *str);
 
 /*
  * set _ntt into hdf

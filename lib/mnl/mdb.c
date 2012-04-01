@@ -512,6 +512,24 @@ NEOERR* mdb_build_upcol(HDF *data, HDF *node, STRING *str)
                 string_appendf(str, " %s= path '%s' ", col, esc);
                 free(esc);
 
+            } else if (!strcmp(type, "bitop")) {
+                char *opkey;
+                int opval = 0;
+                opkey = mcs_obj_attr(node, "opkey");
+                opval = hdf_get_int_value(data, opkey, 0);
+                if (opkey) {
+                    if (opval == 1) {
+                        /* set bit */
+                        string_appendf(str, " %s=%s|%u ", col, col,
+                                       (unsigned int)atoi(val));
+                    } else {
+                        /* unset bit */
+                        string_appendf(str, " %s=%s&%u ", col, col,
+                                       (unsigned int)~atoi(val));
+                    }
+                } else {
+                    return nerr_raise(NERR_ASSERT, "%s don't have opkey", col);
+                }
             }
         } else if (require && !strcmp(require, "true")) {
             return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
@@ -658,6 +676,80 @@ NEOERR* mdb_build_incol(HDF *data, HDF *node, STRING *str)
     string_clear(&sa);
     string_clear(&sb);
     
+    return STATUS_OK;
+}
+
+NEOERR* mdb_build_mgcol(HDF *data, HDF *node, STRING *str)
+{
+    if (!data || !node || !str) return nerr_raise(NERR_ASSERT, "param err");
+    
+    char *name, *col, *val, *esc, *require, *clen, *type;
+
+    node = hdf_obj_child(node);
+    
+    while (node) {
+        name = hdf_obj_name(node);
+        col = hdf_obj_value(node);
+        val = hdf_get_value(data, name, NULL);
+        require = mcs_obj_attr(node, "require");
+        clen = mcs_obj_attr(node, "maxlen");
+        type = mcs_obj_attr(node, "type");
+
+        if (require && !strcmp(require, "true") && (!val || !*val)) {
+            return nerr_raise(NERR_ASSERT, "require %s %s", name, type);
+        }
+
+        if (!val || !*val) val = "";
+        esc = "";
+
+        if (str->len > 0) {
+            string_appendf(str, " , ");
+        }
+        if (type == NULL || !strcmp(type, "str")) {
+            mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+            if (clen)
+                string_appendf(str, " '%s'::varchar(%d) ",
+                               esc, atoi(clen));
+            else
+                string_appendf(str, " '%s' ", esc);
+            free(esc);
+
+        } else if (!strcmp(type, "int")) {
+            string_appendf(str, "%d", atoi(val));
+
+        } else if (!strcmp(type, "float")) {
+            string_appendf(str, "%f", atof(val));
+
+        } else if (!strcmp(type, "point")) {
+            if (!val || !*val) val = "(0,0)";
+            mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+            string_appendf(str, "point '%s' ", esc);
+            free(esc);
+
+        } else if (!strcmp(type, "box")) {
+            if (!val || !*val) val = "((0,0),(1,1))";
+            mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+            string_appendf(str, "box '%s' ", esc);
+            free(esc);
+
+        } else if (!strcmp(type, "path")) {
+            if (!val || !*val) val = "((0,0),(1,1))";
+            mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+            string_appendf(str, "path '%s' ", esc);
+            free(esc);
+        } else if (!strcmp(type, "time")) {
+            if (!val || !*val) val = "00:00:00";
+            mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+            string_appendf(str, "time '%s' ", esc);
+            free(esc);
+        }
+
+        node = hdf_obj_next(node);
+    }
+
+    if (str->len <= 0)
+        return nerr_raise(NERR_ASSERT, "str len 0");
+
     return STATUS_OK;
 }
 
