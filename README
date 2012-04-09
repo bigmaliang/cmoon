@@ -62,7 +62,7 @@ $ git clone git://github.com/bigml/cmoon.git
 
 js第三方库，自己在moon/lib/js/下checkout
 ------------------------------------
-    jquerytools     git://github.com/jquerytools/jquerytools.git
+    jquerytools     git://github.com/bigml/jquerytools.git
     flot            svn checkout http://flot.googlecode.com/svn/trunk/ flot
     cycle           git://github.com/malsup/cycle.git
     noty            git://github.com/needim/noty.git
