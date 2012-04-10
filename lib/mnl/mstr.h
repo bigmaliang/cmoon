@@ -8,6 +8,10 @@ __BEGIN_DECLS
 void mstr_rand_string(char *s, int max);
 void mstr_html_escape(HDF *hdf, char *name);
 void mstr_html_unescape(HDF *hdf, char *name);
+/*
+ * escape <script...>...</script> to &lt;script...>....&lt;/script&gt;
+ */
+void mstr_script_escape(HDF *node, char *name);
 
 /* out must be 33 length */
 void mstr_md5_buf(unsigned char *in, size_t len, char out[LEN_MD5]);

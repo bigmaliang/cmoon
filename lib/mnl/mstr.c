@@ -39,9 +39,30 @@ void mstr_html_unescape(HDF *node, char *name)
         s = hdf_get_value(node, name, NULL);
         if (s && *s) {
             os = mstr_repstr(3, s,
-                                  "&amp;", "&",
-                                  "&gt;", ">",
-                                  "&lt;", "<");
+                             "&amp;", "&",
+                             "&gt;", ">",
+                             "&lt;", "<");
+            if (os) {
+                hdf_set_value(node, name, os);
+                free(os);
+            }
+        }
+        
+        node = hdf_obj_next(node);
+    }
+}
+
+void mstr_script_escape(HDF *node, char *name)
+{
+    if (!node || !name) return;
+    char *s, *os;
+    
+    while (node) {
+        s = hdf_get_value(node, name, NULL);
+        if (s && *s) {
+            os = mstr_repstr(2, s,
+                             "<script", "&lt;script",
+                             "</script>", "&lt;/script&gt;");
             if (os) {
                 hdf_set_value(node, name, os);
                 free(os);

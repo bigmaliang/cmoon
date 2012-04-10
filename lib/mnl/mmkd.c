@@ -10,7 +10,7 @@ NEOERR* mkd_esc_str(const char *in, char **out)
     char *s = NULL;
     MMIOT *m = mkd_string((char*)in, strlen(in), 0);
     if (m) {
-        if (mkd_compile(m, MKD_NOHTML)) {
+        if (mkd_compile(m, 0)) {
             len = mkd_document(m, &s);
             if (s) {
                 *out = strndup(s, len);
