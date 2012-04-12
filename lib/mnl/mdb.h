@@ -4,6 +4,12 @@
 
 __BEGIN_DECLS
 
+enum {
+    MDB_FLAG_Z = 0,
+    MDB_FLAG_EMPTY_OK = (1 << 0),
+    MDB_FLAG_NO_ERR = (1 << 7)
+};
+
 typedef struct _mdb_conn mdb_conn;
 typedef struct _mdb_driver mdb_driver;
 
@@ -104,7 +110,7 @@ NEOERR* mdb_get(mdb_conn *conn, const char* fmt, ...);
 /* store data to res[], fmt must be '[sS]+' */
 NEOERR* mdb_geta(mdb_conn *conn, const char* fmt, char* res[]);
 /* note: avoid '%' in prefix, cols, dbcol[i]... please */
-NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
+NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix, int flags);
 /*
  * set db rows result into hdf
  * note: avoid '%' in prefix, cols, dbcol[i]... please
@@ -142,7 +148,7 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix);
  * 
  */
 NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
-                     char *prefix, char *keyspec);
+                     char *prefix, char *keyspec, int flags);
 int mdb_get_rows(mdb_conn *conn);
 int mdb_get_affect_rows(mdb_conn *conn);
 int mdb_get_last_id(mdb_conn *conn, const char* seq_name);

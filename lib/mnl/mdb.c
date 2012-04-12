@@ -181,7 +181,7 @@ NEOERR* mdb_geta(mdb_conn* conn, const char* fmt, char* res[])
     return nerr_pass(conn->driver->query_geta(conn, fmt, res));
 }
 
-NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
+NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix, int flags)
 {
     if (!conn || !hdf) return nerr_raise(NERR_ASSERT, "param error");
 
@@ -198,7 +198,11 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
     memset(fmt, 's', qrcnt);
 
     err = mdb_geta(conn, fmt, col);
-    if (err != STATUS_OK) return nerr_pass(err);
+    if (flags & MDB_FLAG_EMPTY_OK) nerr_handle(&err, NERR_NOT_FOUND);
+    if (err != STATUS_OK) {
+        if (flags & MDB_FLAG_NO_ERR) nerr_ignore(&err);
+        else return nerr_pass(err);
+    }
 
     for (i = 0; i < qrcnt; i++) {
         /* TODO cols NULL means what? see mdb_set_rows() */
@@ -252,7 +256,7 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix)
     } while (0)
 
 NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
-                     char *prefix, char *keyspec)
+                     char *prefix, char *keyspec, int flags)
 {
     if (!conn || !hdf) return nerr_raise(NERR_ASSERT, "param error");
 
@@ -366,8 +370,11 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
      * last row has fetched
      */
     nerr_handle(&err, NERR_OUTOFRANGE);
-    if (err != STATUS_OK) return nerr_pass(err);
-    //nerr_ignore(&err);
+    if (flags & MDB_FLAG_EMPTY_OK) nerr_handle(&err, NERR_NOT_FOUND);
+    if (err != STATUS_OK) {
+        if (flags & MDB_FLAG_NO_ERR) nerr_ignore(&err);
+        else return nerr_pass(err);
+    }
 
     return STATUS_OK;
 }
