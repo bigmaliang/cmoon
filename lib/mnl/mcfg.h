@@ -45,6 +45,7 @@ __BEGIN_DECLS
 #define ONE_WEEK    (7*60*60*24)
 #define ONE_MONTH   (30*60*60*24)
 
+#define PRE_HTTP        "HTTP"
 #define PRE_CGI         "CGI"
 #define PRE_COOKIE      "Cookie"
 #define PRE_QUERY       "Query"
