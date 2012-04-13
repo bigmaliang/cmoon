@@ -572,6 +572,10 @@ NEOERR* mdb_build_querycond(HDF *data, HDF *node, STRING *str, char *defstr)
                 mstr_real_escape_string_nalloc(&esc, val, strlen(val));
                 string_appendf(str, " %s '%s' ", col, esc);
                 free(esc);
+            } else if (!strcmp(type, "raw")) {
+                mstr_real_escape_string_nalloc(&esc, val, strlen(val));
+                string_appendf(str, " %s %s ", col, esc);
+                free(esc);
             } else if (!strcmp(type, "int")){
                 string_appendf(str, " %s %d ", col, atoi(val));
 
