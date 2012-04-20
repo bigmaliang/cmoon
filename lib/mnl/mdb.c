@@ -198,10 +198,12 @@ NEOERR* mdb_set_row(HDF *hdf, mdb_conn* conn, char *cols, char *prefix, int flag
     memset(fmt, 's', qrcnt);
 
     err = mdb_geta(conn, fmt, col);
-    if (flags & MDB_FLAG_EMPTY_OK) nerr_handle(&err, NERR_NOT_FOUND);
     if (err != STATUS_OK) {
-        if (flags & MDB_FLAG_NO_ERR) nerr_ignore(&err);
-        else return nerr_pass(err);
+        if ((flags & MDB_FLAG_EMPTY_OK && nerr_handle(&err, NERR_NOT_FOUND)) ||
+            (flags & MDB_FLAG_NO_ERR)) {
+            nerr_ignore(&err);
+            return STATUS_OK;
+        } else return nerr_pass(err);
     }
 
     for (i = 0; i < qrcnt; i++) {
@@ -370,10 +372,13 @@ NEOERR* mdb_set_rows(HDF *hdf, mdb_conn* conn, char *cols,
      * last row has fetched
      */
     nerr_handle(&err, NERR_OUTOFRANGE);
-    if (flags & MDB_FLAG_EMPTY_OK) nerr_handle(&err, NERR_NOT_FOUND);
+
     if (err != STATUS_OK) {
-        if (flags & MDB_FLAG_NO_ERR) nerr_ignore(&err);
-        else return nerr_pass(err);
+        if ((flags & MDB_FLAG_EMPTY_OK && nerr_handle(&err, NERR_NOT_FOUND)) ||
+            (flags & MDB_FLAG_NO_ERR)) {
+            nerr_ignore(&err);
+            return STATUS_OK;
+        } else return nerr_pass(err);
     }
 
     return STATUS_OK;
