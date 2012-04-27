@@ -51,6 +51,7 @@
 
 #define REQ_FETCH_PARAM_INT(hdf, key, ret)          \
     do {                                            \
+        ret = 0;                                    \
         if (hdf_get_value(hdf, key, NULL)) {        \
             ret = hdf_get_int_value(hdf, key, 0);   \
         }                                           \
@@ -58,6 +59,7 @@
 
 #define REQ_FETCH_PARAM_LONG(hdf, key, ret)                         \
     do {                                                            \
+        ret = 0;                                                    \
         if (hdf_get_value(hdf, key, NULL)) {                        \
             ret = strtoul(hdf_get_value(hdf, key, NULL), NULL, 10); \
         }                                                           \
@@ -65,10 +67,7 @@
 
 #define REQ_FETCH_PARAM_STR(hdf, key, ret)                  \
     do {                                                    \
-        if (hdf_get_value(hdf, key, NULL) &&                \
-            strcmp(hdf_get_value(hdf, key, NULL), "")) {    \
-            ret = hdf_get_value(hdf, key, NULL);            \
-        }                                                   \
+        ret = hdf_get_value(hdf, key, NULL);                \
     } while (0)
 
 #define REQ_FETCH_PARAM_OBJ(hdf, key, ret)      \
