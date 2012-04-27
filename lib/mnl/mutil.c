@@ -55,6 +55,30 @@ void mutil_makesure_coredump()
     setrlimit(RLIMIT_CORE, &rl);
 }
 
+int mutil_systemf(char *fmt, ...)
+{
+    char key[LEN_HASH_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return system(key);
+}
+
+int mutil_execvf(char *argv[], char *fmt, ...)
+{
+    char key[LEN_HASH_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return execv(key, argv);
+}
+
 bool mutil_getdatetime(char *res, int len, const char *fmt, time_t second)
 {
     memset(res, 0x0, len);

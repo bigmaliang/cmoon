@@ -11,11 +11,15 @@ __BEGIN_DECLS
             free(str);                          \
     } while (0)
 
-bool    mutil_client_attack(HDF *hdf, char *action, char *cname,
-                            uint64_t limit, time_t exp);
-bool    mutil_client_attack_cookie(HDF *hdf, char *action,
-                                   uint64_t limit, time_t exp);
-void    mutil_makesure_coredump();
+bool mutil_client_attack(HDF *hdf, char *action, char *cname,
+                         uint64_t limit, time_t exp);
+bool mutil_client_attack_cookie(HDF *hdf, char *action,
+                                uint64_t limit, time_t exp);
+void mutil_makesure_coredump();
+int  mutil_systemf(char *fmt, ...)
+                   ATTRIBUTE_PRINTF(1, 2);
+int mutil_execvf(char *argv[], char *fmt, ...)
+                 ATTRIBUTE_PRINTF(2, 3);
 
 /*
  * res must be char xxx[LEN_TM]
