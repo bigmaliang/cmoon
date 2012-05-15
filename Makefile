@@ -1,7 +1,7 @@
 BASEDIR = ./
 include $(BASEDIR)Make.env
 
-SUBDIR = lib event dida
+SUBDIR = lib event dida bull
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)

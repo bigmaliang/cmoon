@@ -16,6 +16,7 @@ moon/
 |-- grabber     获取邮件, msn, qq 好友方案
 |
 |-- regae       应用初始框架(skeleton)
+|-- bull        应用: www.hnycs.com
 |-- ksa         应用: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
 !-- pop         应用: www.bomdoo.com 播豆网
 |-- dida        应用: www.imdida.org 嘀嗒网
