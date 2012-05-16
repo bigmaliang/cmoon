@@ -116,7 +116,7 @@ II 在moon外部引用
     _nst: start number
     _npg: page number (_nst will overwrite _npg)
     _npp: number perpage
-    _type_object: 请求中包含对象时，该参数的值让 viki 将其当作对象解析，多个对象时逗号隔开
+    _type_object: 请求中包含对象/数组时，该参数的值让 viki 将其当作对象解析，多个对象时逗号隔开
 
 ADD /json/zero/image 上传图片
     _upfile_data_type: 说明上传文件的数据类型
