@@ -118,6 +118,8 @@ static NEOERR* mtpl_InConfigRend_parse_file(char *dir, char *name,
             JUMP_NOK(err, wnext);
             err = mcs_register_mkd_functions(cs);
             JUMP_NOK(err, wnext);
+            err = mcs_register_string_uslice(cs);
+            JUMP_NOK(err, wnext);
 
             err = cs_parse_file(cs, fname);
             JUMP_NOK(err, wnext);

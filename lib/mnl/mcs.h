@@ -35,6 +35,7 @@ NEOERR* mcs_str2file(STRING str, const char *file);
 
 NEOERR* mcs_register_bitop_functions(CSPARSE *cs);
 NEOERR* mcs_register_mkd_functions(CSPARSE *cs);
+NEOERR* mcs_register_string_uslice(CSPARSE *cs);
 NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock);
 
 unsigned int mcs_get_uint_value(HDF *hdf, const char *name, unsigned int defval);

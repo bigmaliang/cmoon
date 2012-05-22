@@ -263,6 +263,64 @@ char* mstr_strip (char *s, char n)
   return s;
 }
 
+size_t mstr_ulen(const char *s)
+{
+    size_t len = 0;
+
+    while (*s) {
+        u_char fbyte = s[0];
+		/* If greater than 0x7F (127) then it's not normal ASCII */
+        if (fbyte > 0x7F) {
+			/* It's a 2-byte sequence if it's between 0xC0(192) 
+			   and 0xDF(223),
+			   It's a 3-byte sequence if it's between 0xE0(224)
+			   and 0xEF(239) 
+			   It's a 4-byte sequence if it's between 0xF0(240)
+			   and 0xF4(244) */
+			if (fbyte >= 0xC0 && fbyte <= 0xDF) {
+				s += 2;
+			} else if (fbyte >= 0xE0 && fbyte <= 0xEF) {
+				s += 3;
+			} else if (fbyte >= 0xF0 && fbyte <= 0xF4) {
+				s += 4;
+			} else {
+				s += 1;
+			}
+        } else s += 1;
+
+        len++;
+    }
+
+    return len;
+}
+
+long int mstr_upos2len(const char *s, long int pos)
+{
+    long int len = 0, cnt = 0;
+    
+    while (*s && cnt < pos) {
+        u_char fbyte = s[0];
+        int step = 1;
+        
+        if (fbyte > 0x7F) {
+			if (fbyte >= 0xC0 && fbyte <= 0xDF) {
+                step = 2;
+			} else if (fbyte >= 0xE0 && fbyte <= 0xEF) {
+                step = 3;
+			} else if (fbyte >= 0xF0 && fbyte <= 0xF4) {
+                step = 4;
+			}
+        }
+
+        s += step;
+        len += step;
+
+        cnt++;
+    }
+
+    return len;
+}
+
 unsigned int hash_string(const char *str)
 {
         int hash = 5381; // DJB Hash

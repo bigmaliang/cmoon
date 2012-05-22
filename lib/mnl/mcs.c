@@ -106,6 +106,61 @@ static NEOERR* _builtin_bitop_xor(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
     return STATUS_OK;
 }
 
+static NEOERR * _builtin_string_uslice (CSPARSE *parse, CS_FUNCTION *csf, CSARG *args, CSARG *result)
+{
+  NEOERR *err;
+  char *s = NULL;
+  char *slice;
+  long int b = 0;
+  long int e = 0;
+  size_t len;
+
+  result->op_type = CS_TYPE_STRING;
+  result->s = "";
+
+  err = cs_arg_parse(parse, args, "sii", &s, &b, &e);
+  if (err) return nerr_pass(err);
+  /* If null, return empty string */
+  if (s == NULL) return STATUS_OK;
+  len = mstr_ulen(s);
+  if (b < 0 && e == 0) e = len;
+  if (b < 0) b += len;
+  if (b < 0) b = 0;
+  if (b > len) b = len;
+  if (e < 0) e += len;
+  if (e < 0) e = 0;
+  if (e > len) e = len;
+  /* Its the whole string */
+  if (b == 0 && e == len)
+  {
+    result->s = s;
+    result->alloc = 1;
+    return STATUS_OK;
+  }
+  if (e < b) b = e;
+  if (b == e)
+  {
+    /* If null, return empty string */
+    free(s);
+    return STATUS_OK;
+  }
+
+  b = mstr_upos2len(s, b);
+  e = mstr_upos2len(s, e);
+
+  slice = (char *) malloc (sizeof(char) * (e-b+1));
+  if (slice == NULL)
+    return nerr_raise(NERR_NOMEM, "Unable to allocate memory for string slice");
+  strncpy(slice, s + b, e-b);
+  free(s);
+  slice[e-b] = '\0';
+
+  result->s = slice;
+  result->alloc = 1;
+
+  return STATUS_OK;
+}
+
 NEOERR* mcs_register_bitop_functions(CSPARSE *cs)
 {
     NEOERR *err;
@@ -123,6 +178,11 @@ NEOERR* mcs_register_bitop_functions(CSPARSE *cs)
 NEOERR* mcs_register_mkd_functions(CSPARSE *cs)
 {
     return nerr_pass(cs_register_esc_strfunc(cs, "mkd.escape", mkd_esc_str));
+}
+
+NEOERR* mcs_register_string_uslice(CSPARSE *cs)
+{
+    return nerr_pass(cs_register_function(cs, "string.uslice", 3, _builtin_string_uslice));
 }
 
 NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock)
