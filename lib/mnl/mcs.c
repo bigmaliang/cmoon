@@ -109,16 +109,16 @@ static NEOERR* _builtin_bitop_xor(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
 static NEOERR * _builtin_string_uslice (CSPARSE *parse, CS_FUNCTION *csf, CSARG *args, CSARG *result)
 {
   NEOERR *err;
-  char *s = NULL;
+  char *s = NULL, *appends = NULL;
   char *slice;
   long int b = 0;
   long int e = 0;
-  size_t len;
+  size_t len, appendlen;
 
   result->op_type = CS_TYPE_STRING;
   result->s = "";
 
-  err = cs_arg_parse(parse, args, "sii", &s, &b, &e);
+  err = cs_arg_parse(parse, args, "siis", &s, &b, &e, &appends);
   if (err) return nerr_pass(err);
   /* If null, return empty string */
   if (s == NULL) return STATUS_OK;
@@ -145,15 +145,18 @@ static NEOERR * _builtin_string_uslice (CSPARSE *parse, CS_FUNCTION *csf, CSARG 
     return STATUS_OK;
   }
 
+  appendlen = (appends && e < len) ? strlen(appends) : 0;
+
   b = mstr_upos2len(s, b);
   e = mstr_upos2len(s, e);
 
-  slice = (char *) malloc (sizeof(char) * (e-b+1));
+  slice = (char *) malloc (sizeof(char) * (e-b+appendlen+1));
   if (slice == NULL)
     return nerr_raise(NERR_NOMEM, "Unable to allocate memory for string slice");
   strncpy(slice, s + b, e-b);
   free(s);
-  slice[e-b] = '\0';
+  if (appends) strncpy(slice+(e-b), appends, appendlen);
+  slice[e-b+appendlen] = '\0';
 
   result->s = slice;
   result->alloc = 1;
@@ -182,7 +185,7 @@ NEOERR* mcs_register_mkd_functions(CSPARSE *cs)
 
 NEOERR* mcs_register_string_uslice(CSPARSE *cs)
 {
-    return nerr_pass(cs_register_function(cs, "string.uslice", 3, _builtin_string_uslice));
+    return nerr_pass(cs_register_function(cs, "string.uslice", 4, _builtin_string_uslice));
 }
 
 NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock)
