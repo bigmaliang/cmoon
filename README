@@ -51,6 +51,8 @@ $ git clone git://github.com/bigml/cmoon.git
     libfcgi-dev                                 fcgi-devel.i386 (http://www.fastcgi.com/dist/fcgi.tar.gz)
     libmemcached-dev                            libmemcached-devel.i386
     libjson0-dev                                https://github.com/jehiah/json-c
+    pkg-config
+    libgd2-xpm-dev
 
 /usr/local/src/ 目录下手动安装
 ---------------------------
