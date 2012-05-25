@@ -106,6 +106,9 @@ static NEOERR* _builtin_bitop_xor(CSPARSE *parse, CS_FUNCTION *csf, CSARG *args,
     return STATUS_OK;
 }
 
+/*
+ * from csparse.c, most partly
+ */
 static NEOERR * _builtin_string_uslice (CSPARSE *parse, CS_FUNCTION *csf, CSARG *args, CSARG *result)
 {
   NEOERR *err;
