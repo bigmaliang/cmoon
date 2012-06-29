@@ -152,6 +152,12 @@ balsamiq mockups
     线条原型图， 设计之前
 
 
+GreenSock Animation Platform
+----------------------------
+    http://www.greensock.com/v12/
+    js 实现图片动画(flash 飞行效果)
+
+
 scrot
 -----
 抓屏软件
