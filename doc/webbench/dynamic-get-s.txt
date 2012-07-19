@@ -1,0 +1,89 @@
+php-fpm                   19066.339 resp / second    0.017191%
+viki unix domain socket   20281.45  resp / second    0.022023%
+#viki tcp (hasn't test yet)
+
+no application logic, just printf "xxxxx", adn exit;
+process:
+    php-fpm 170
+    viki    60
+
+
+***************
+****php-fpm****
+[root@bogon ~]# webbench -c 5000 -t 60 http://redis.tazai.com/new.php
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://redis.tazai.com/new.php
+5000 clients, running 60 sec.
+
+Speed=1151380 pages/min, 3357652 bytes/sec.
+Requests: 1151199 susceed, 181 failed.
+You have new mail in /var/spool/mail/root
+[root@bogon ~]# webbench -c 5000 -t 60 http://redis.tazai.com/new.php
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://redis.tazai.com/new.php
+5000 clients, running 60 sec.
+
+Speed=1144613 pages/min, 3337903 bytes/sec.
+Requests: 1144429 susceed, 184 failed.
+[root@bogon ~]# webbench -c 5000 -t 60 http://redis.tazai.com/new.php
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://redis.tazai.com/new.php
+5000 clients, running 60 sec.
+
+Speed=1135948 pages/min, 3312513 bytes/sec.
+Requests: 1135723 susceed, 225 failed.
+
+
+total 3431941
+total failed 590
+
+
+*************************************
+****viki(unix domain socket fcgi)****
+[root@bogon ~]# webbench -c 5000 -t 60 http://fcgi.tazai.com/json/zero
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://fcgi.tazai.com/json/zero
+5000 clients, running 60 sec.
+
+Speed=1239096 pages/min, 3303450 bytes/sec.
+Requests: 1238801 susceed, 295 failed.
+[root@bogon ~]# webbench -c 5000 -t 60 http://fcgi.tazai.com/json/zero
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://fcgi.tazai.com/json/zero
+5000 clients, running 60 sec.
+
+Speed=1197600 pages/min, 3192797 bytes/sec.
+Requests: 1197305 susceed, 295 failed.
+[root@bogon ~]# webbench -c 5000 -t 60 http://fcgi.tazai.com/json/zero
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://fcgi.tazai.com/json/zero
+5000 clients, running 60 sec.
+
+Speed=1213965 pages/min, 3236637 bytes/sec.
+Requests: 1213751 susceed, 214 failed.
+
+
+total 3650661
+total failed 804
+
+
+
+server info
+***********
+
+16G 内存， 16核 Intel(R) Xeon(R) 2.4G 12288 KB缓存 CPU
+Red Hat 4.1.2-51
+Linux bogon 2.6.39.2 #2 SMP Sat Oct 29 08:24:09 CST 2011 x86_64 x86_64 x86_64 GNU/Linux
+内核参数无修改
