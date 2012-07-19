@@ -1,0 +1,62 @@
+[root@bogon ~]# cat zeropush 
+{ "success": "1" }
+
+NEOERR* zeropush_data_get(CGI *cgi, HASH *dbh, HASH *evth, session_t *ses)
+{
+    mevent_t *evt = hash_lookup(evth, "skeleton");
+
+    MCS_NOT_NULLB(cgi->hdf, evt);
+
+    hdf_set_value(evt->hdfsnd, "browser", "mozilla");
+
+    MEVENT_TRIGGER(evt, NULL, 1001, FLAGS_NONE);
+
+    return STATUS_OK;
+}
+
+
+[root@bogon ~]# webbench -c 5000 -t 60 http://fcgi.tazai.com/json/zeropush
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://fcgi.tazai.com/json/zeropush
+5000 clients, running 60 sec.
+
+Speed=1037743 pages/min, 2974401 bytes/sec.
+Requests: 1037584 susceed, 159 failed.
+[root@bogon ~]# webbench -c 5000 -t 60 http://fcgi.tazai.com/json/zeropush
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://fcgi.tazai.com/json/zeropush
+5000 clients, running 60 sec.
+
+Speed=1040265 pages/min, 2981528 bytes/sec.
+Requests: 1040070 susceed, 195 failed.
+[root@bogon ~]# webbench -c 5000 -t 60 http://fcgi.tazai.com/json/zeropush
+Webbench - Simple Web Benchmark 1.5
+Copyright (c) Radim Kolar 1997-2004, GPL Open Source Software.
+
+Benchmarking: GET http://fcgi.tazai.com/json/zeropush
+5000 clients, running 60 sec.
+
+Speed=1047645 pages/min, 3002684 bytes/sec.
+Requests: 1047452 susceed, 193 failed.
+
+
+process:
+    viki    60
+
+
+
+result:
+Speed=1037743 pages/min, 2974401 bytes/sec.
+Requests: 1037584 susceed, 159 failed.
+
+Speed=1040265 pages/min, 2981528 bytes/sec.
+Requests: 1040070 susceed, 195 failed.
+
+Speed=1047645 pages/min, 3002684 bytes/sec.
+Requests: 1047452 susceed, 193 failed.
+
+
