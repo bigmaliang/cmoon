@@ -124,7 +124,7 @@ NEOERR* ediv_init_from_file(char **bm, char *path, int *wnum)
     FILE *fp;
     char line[MAX_PHRASE_S_LEN];
     int len;
-	NEOERR *err;
+    NEOERR *err;
     
     if (!bm || !path) return nerr_raise(NERR_ASSERT, "paramter null");
 

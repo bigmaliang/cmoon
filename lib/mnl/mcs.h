@@ -47,7 +47,33 @@ HDF*    mcs_hdf_getf(HDF *node, char *fmt, ...)
                      ATTRIBUTE_PRINTF(2, 3);
 NEOERR* mcs_hdf_copyf(HDF *dst, HDF *src, char *fmt, ...)
                       ATTRIBUTE_PRINTF(3, 4);
-void    mcs_hdf_rep(HDF *data, char *name, HDF *dst);
+/*
+ * in:
+ *
+ * data {
+ *    NeedReplaceA = foo
+ *    NeedReplaceB = bar
+ * }
+ * dst {
+ *    class = senior
+ *    comment {
+ *        nick = you have a NeedReplaceA comment
+ *    }
+ *    remark = when you are in NeedReplaceB...
+ * }
+ *
+ * out:
+ *
+ * dst {
+ *    class = senior
+ *    comment {
+ *        nick = you have a foo comment
+ *    }
+ *    remark = when you are in bar...
+ * }
+ */
+void    mcs_hdf_rep(HDF *data, HDF *dst);
+/* copy src hdf to dst.name hdf, and replace dst.name use data hdf */
 NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data);
 
 char* mcs_hdf_attr(HDF *hdf, char *name, char*key);
