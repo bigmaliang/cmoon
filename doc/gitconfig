@@ -9,3 +9,4 @@
     unstage = reset HEAD --
     last = log -1 HEAD
     logl = log --pretty=oneline
+    logf = log --pretty=format:'%h - %an, %ad : %s' --date=iso

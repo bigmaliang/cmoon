@@ -1,0 +1,158 @@
+A 配置文件
+	git config --system 	/etc/gitconfig
+	git config --global 	~/.gitconfig
+	git config 				xxx/.git/config
+    git config --list 可以查看目前的配置信息
+
+	参考 /home/bigml/.gitconfig, /home/bigml/.git-completion.bash
+	
+
+B 基本概念
+    git 使用 SHA-1 算法计算数据的校验和
+	git 在 git 目录（一般为.git） 目录下存放所有版本，所有提交的文件快照（无改动时存放快照指针）， 这样对于任意一次提交都可以快速取得工作快照
+    git 文件的三种状态： commited, modified, staged(对应.git/index文件)
+    git 的三个工作区域： working directory, staging area, git directory(respository)，一般 stagin area 也在 .git/目录下
+    git 对象的四种类型： blob(文件), tree(管理tree和blob), commit, tag。 git 中的每个对象都包含 类型、大小、内容 三个部分。
+
+    Revision（修订版本选择） 指明revision方法有：
+    	SHA
+        SHORT SHA
+        分支引用，一个分支最后一次提交的对象 git show voov 即查看 voov 分支的最后一次提交
+        祖先引用，普通引用后加上一个^，如 git diff voov^..voov，voov^^^ = voov~3 表示其第三级父提交
+        范围引用，被后者包含，但不被前者包含的提交。 git log master..voov 查看在 voov 中存在，但 master 中不存在的提交
+            git log refA..refB = git log ^refA refB = git log refB --not refA， 同时，多点选择 git log refA refB ^refC 也支持
+        三点引用，被两者其中一个包含，但又被另一个包含的提交。 git log master...voov 取两分支的差集
+
+    Refspec
+        Ref 是引用的简写，是SHA-1值的一些可读性更强的名字引用
+        Refspec 用户远端仓库的获取操作规范，其格式为 [+]<src>:<dst>，可选+告诉git不能快速演进的情况下，强制更新。
+    	origin/master = remotes/origin/master = refs/remotes/origin/master
+        
+        .git/config 中设置了各个remote的fetch方法（配置文件中可以指定多个Refspec）
+		[remote "origin"]
+			url = git@github.com:bigml/cmoon.git
+			fetch = +refs/heads/*:refs/remotes/origin/*
+        拉取remotes/下的所有分支，将'*'改为'master'可以设置只拉取master分支。
+        $git fetch origin master:refs/remotes/origin/mymaster 只做一次性拉取。
+		
+C 建立 git 项目
+    git init, git add, git commit
+    git clone ...
+    
+
+D DIY
+    gitk
+    git log OPTION dir,file,branch
+    
+	-p 按补丁格式显示每个更新之间的差异。
+	-3 只显示最近3次的提交。
+	--stat 显示每次更新的文件修改统计信息。
+	--shortstat 只显示 --stat 中最后的行数修改添加移除统计。
+	--name-only 仅在提交信息后显示已修改的文件清单。
+	--name-status 显示新增、修改、删除的文件清单。
+	--abbrev-commit 仅显示 SHA-1 的前几个字符，而非所有的 40 个字符。
+	--relative-date 使用较短的相对时间显示（比如，“2 weeks ago”）。
+	--graph 显示 ASCII 图形表示的分支合并历史。
+	--pretty 使用其他格式显示历史提交信息。可用的选项包括 oneline，short，full，fuller 和 format（后跟指定格式）。
+    --not 不包括dir,file,branch
+
+    --since=2.weeks
+    --until="2012-10-02" --before="2012-10-02" 某日期前的提交
+
+    git show 3727ae1d48de841b0ed99467c74172301b6a2c3c:pop/tpl/layout.html 查看文件的特定版本
+    git show 3727ae1d48de841b0ed99467c74172301b6a2c3c 查看这次提交, 约等价于 git log -p 3727ae1d48de841b0ed99467c74172301b6a2c3c
+
+    git tag 查看所有标签
+    git tag -a v1.2 -m "10st runable version" 9fceb02
+    git show v1.2 查看v1.2标签的详细信息
+    git push origin v1.2 分享标签, or, git push --tags 分享所有标签
+
+    git commit 之前用 git diff --check 检查空格
+    每次提交限定于完成一次逻辑功能或bug修复，并适当的分解为多次小更新。
+    提交说明一行以内(module - description)，空开一行后，再详细说明。
+
+    git stash 储藏当前工作目录变更
+    git stash list 列出所有储藏
+    git stash apply --index [stash@{2}] 应用储藏到当前分支（无clean要求），并且应用被staged的状态文件。
+    git stash branch testchanges 创建一个新的分支来应用储藏
+
+    git blame -L 11,21 Make.env 查看Make.env 11至21行的修改详细记录，可以方便查看某缺陷被引进的时间。
+    git blame -C 可以追溯文件重命名操作。
+
+
+E 协调
+    git branch 查看所有分支, remotename/branchname 表示远程分支
+    git branch -v --no-merge 查看所有还未合并到当前分支的分支及其最后一次 commit 信息
+    git push origin voov:qa/asownone 将本机的 voov branch 推到 origin remote 的 qa/asownone branch(fetch refspec 中可以使用refs/remotes/origin/qa/*分开获取)，
+        其他用户可以通过 git pull 来同步该分支，或者用git checkout --track origin/event_data来同步并切换到该分支，
+        或者 git checkout -b my_event_data origin/event_data 从 origin remote 上 获取 event_data branch。
+    git push [remotename] [localbranch]:[remotebranch]
+    git push origin :event_data， 删掉远程event_data branch
+
+    把一个分支整合到另一个分支的办法有两种：
+    git merge voov 将 voov 分支的改动单方合并到当前工作分支，该操作会在当前分支(HEAD)上产生一个新的提交，对voov分支没影响。
+    git rebase master 将HEAD分支上提交的改变在master分支上重做一次，该操作会在master分支上产生一个新的提交，对当前分支没影响，
+        回到master分支在执行一次快速合并git merge voov会达到前面命令相同的效果，但能产生一个更为简洁的提交历史（特别是非维护者，仅小修改时）。
+    注：把rebase当成一种在推送前清理提交历史的手段，永远不要rebase那些已经推送到公共仓库的更新(参考http://github.danmarner.com/section/ch3-6/)。
+    
+
+F 远程
+	$git remote -v 查看所有远程仓库(respository), 同时支持 git remote add name url, rm, rename...
+    $git remote show [remote-name] 查看某个远程仓库的分支等详细信息
+    $git log origin/master..HEAD 查看将把什么推送到远程。
+    $git fetch origin, git log origin/master^master, git merge origin/master = git pull 但前者能更方便的查看远程上最近的修改。
+    $git merge --no-commit --squash voov 将voov分支上所有的改动合并到当前分支，但不自动生成提交，这样，可以继续在当前分支工作，最后一起提交。
+    $git request-pull origin/master voov 输出voov分支从origin/master以来的修改，可以直接 email 给管理员维护。
+
+    分布式协作的三种方式：
+	    git diff ... -p > x.patch, git log -p ...
+	    git apply x.patch，同时可以用 git apply --check x.path 现检查补丁是否能顺利打上。
+	
+	    git format-patch -M origin/master
+	    git am xxx.patch
+	    该方式能将贡献者的提交信息，作者等一起应用到你的分支中。
+
+        git remote add xiangyuan git://github.com/xiangyuan/myproject.git
+        git fetch xiangyuan
+        git checkout -b featureA xiangyuan/featureAAAA
+
+
+G 服务器
+    $ git clone --bare my_project my_project.git 将现存仓库导出为新的纯仓库(不包含工作目录)供服务器端使用。
+    $ scp -r my_project.git user@gitserver:/opt/git
+    然后具有gitserver帐号的用户便可
+    client$ git clone user@gitserver:/opt/git/my_project.git
+    对/opt/git/my_project.git目录有写权限的用户自动具有推送权限，没有写权限的用户需要登录到服务器，然后
+    $ git init --bare --shared
+    通过以下方式，可以避免在服务器上adduser, 为每个用户建立一个帐号：
+    在服务器上建立一个 git 帐号， 让每个需要写权限的人发送一个 ssh 公钥到 git 帐号的 ~/.ssh/authorized_keys
+    （生成公钥请参考 command.txt 或 http://github.danmarner.com/section/ch4-3/），
+    访问主机的身份不会影响 commit 记录。
+    client$ git clone git@gitserver:/opt/git/project.git ssh 是分工开发的优选模式，一般配合http便可实现普通开源软件的开发和发布。 公司内部仅使用ssh方式足矣。
+    client$ git remote add origin git@gitserver:/opt/git/project.git
+    client$ git commit ...
+    client$ git push origin master
+    另外，服务器端将 /etc/passwd 文件的 git:x:1000:1000::/home/git:/bin/sh 改为 git:x:1000:1000::/home/git:/usr/bin/git-shell 可以将 git 用户的活动范围限制在仅与git相关（无bash登录权限）
+    
+    http 服务器以下配置：
+		$ cd /var/www/htdocs/
+		$ git clone --bare /path/to/git_project gitproject.git
+		$ cd gitproject.git
+		$ mv hooks/post-update.sample hooks/post-update
+		$ chmod a+x hooks/post-update
+
+
+H 底层
+    $echo "hey, man" > foo.txt
+    $git hash-object foo.txt -w
+    $git cat-fle -t 464ef86af80159493e03caec24a8c6eb6089e415
+    $git cat-file -p 464ef86af80159493e03caec24a8c6eb6089e415 > foo.txt
+
+    $echo "hey, see u again" > foo.txt
+    $git hash-object foo.txt -w
+    $git cat-file -p bce9628030639d772ead5175b5a695b25ca39fe3 > foo.txt
+
+    $git update-index --add --cacheinfo 100644 bce9628030639d772ead5175b5a695b25ca39fe3 foo.txt 将foo.txt加入到暂存区
+    $git write-tree
+    39658813b199973b695f849adb987cafa5d97167
+    $git cat-file -t 39658813b199973b695f849adb987cafa5d97167

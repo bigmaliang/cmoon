@@ -20,6 +20,9 @@ git push git@github.com:bigml/cmoon.git ml:master
 git pull --rebase
 在 pull(origin/master) 的基础上再做 commit.
 有时本地的 checkin 没有 push 到 origin/master,
+另，建议使用
+$git fetch origin
+$git merge origin/master
 
 
 
