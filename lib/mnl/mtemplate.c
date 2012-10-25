@@ -3,7 +3,11 @@
 static HDF *m_loadpath = NULL;
 static char *m_tplpath = NULL;
 
+#ifdef __MACH__
 static int mtpl_config(struct dirent *ent)
+#else
+static int mtpl_config(const struct dirent *ent)
+#endif
 {
     if (reg_search(".*.hdf", ent->d_name))
         return 1;
