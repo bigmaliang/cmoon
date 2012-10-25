@@ -12,8 +12,9 @@ NEOERR* mkd_esc_str(const char *in, char **out)
     if (m) {
         if (mkd_compile(m, 0)) {
             len = mkd_document(m, &s);
-            if (s) {
-                *out = strndup(s, len);
+            if (s && len > 0) {
+                *(s+len) = '\0';
+                *out = strdup(s);
             }
             mkd_cleanup(m);
         }

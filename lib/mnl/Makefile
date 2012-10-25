@@ -16,7 +16,6 @@ $(DEPEND): $(SOURCES)
 libmnl.a:$(OBJS) $(DEPEND)
 	@rm -rf $@
 	$(AR) rcs $@ $(OBJS)
-	$(AR) d $@ $(DROPOBJS)
 
 # make clean &&  make DYN=1 libmnl.so to make shared library
 libmnl.so:$(OBJS) $(DEPEND)

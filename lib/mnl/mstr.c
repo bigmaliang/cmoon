@@ -268,7 +268,7 @@ size_t mstr_ulen(const char *s)
     size_t len = 0;
 
     while (*s) {
-        u_char fbyte = s[0];
+        unsigned char fbyte = s[0];
         /* If greater than 0x7F (127) then it's not normal ASCII */
         if (fbyte > 0x7F) {
             /* It's a 2-byte sequence if it's between 0xC0(192) 
@@ -299,7 +299,7 @@ long int mstr_upos2len(const char *s, long int pos)
     long int len = 0, cnt = 0;
     
     while (*s && cnt < pos) {
-        u_char fbyte = s[0];
+        unsigned char fbyte = s[0];
         int step = 1;
         
         if (fbyte > 0x7F) {

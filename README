@@ -118,6 +118,7 @@ II 在moon外部引用
     3, cd NEWPROJ 修改以下文件和目录的连接路径，指向 moon 所在目录
         ./fly/js/pub
         ./fly/css/pub
+        ./fly/css/modules/noty -> lib/js/noty/css
         ./xport/daemon
         ./xport/plugin/mevent_plugin.h
         ./xport/plugin/mevent_skeleton.c

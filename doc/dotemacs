@@ -17,8 +17,37 @@
 (when window-system
   (mwheel-install)
   (set-selection-coding-system 'compound-text-with-extensions))
+(when (eq system-type 'darwin)
+      ;; default Latin font (e.g. Consolas)
+      (set-face-attribute
+        'default (selected-frame) :font
+        "-apple-Monaco-medium-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+
+      ;; default font size (point * 14)
+      ;;
+      ;; WARNING!  Depending on the default font,
+      ;; if the size is not supported very well, the frame will be clipped
+      ;; so that the beginning of the buffer may not be visible correctly. 
+      ;;(set-face-attribute 'default nil :height 165)
+      ;; use specific font for Korean charset.
+      ;; if you want to use different font size for specific charset,
+      ;; add :size POINT-SIZE in the font-spec.
+      ;;(set-fontset-font t 'hangul (font-spec :name "NanumGothicCoding"))
+      ;; you may want to add different for other charset in this way.
+      (autoload 'php-mode "php-mode" nil t)
+      (setq auto-mode-alist
+            (cons '("\\.php$" . php-mode)
+                  auto-mode-alist))
+      (global-set-key (kbd "M-SPC") 'set-mark-command)
+
+      ; change Command to Meta for mac keyboard
+      ;(setq mac-option-key-is-meta nil)
+      ;(setq mac-command-key-is-meta t)
+      (setq mac-command-modifier `meta)
+      ;(setq mac-option-modifier nil)
+)
+
 (create-fontset-from-fontset-spec "-xos4-*-medium-r-normal-*-16-*-*-*-*-*-fontset-bigml,\n  chinese-gb2312:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n mule-unicode-0100-24ff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n  mule-unicode-2500-33ff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n  mule-unicode-e000-ffff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*")
-(setq default-frame-alist '((font . "fontset-bigml")))
 (defface font-lock-function-call-face
   '((t (:foreground "SteelBlue1")))
   "Font Lock mode face used to highlight function calls."
@@ -30,11 +59,11 @@
 
 ;;;========== EXTEND ==========
 (setq load-path (append load-path '("~bigml/.site-lisp/emacs_lisp")))
+(setq exec-path (cons "/usr/local/bin" exec-path))
 (require 'c-comment-edit)
 (require 'backup-dir)
 (require 'color-theme)
 (require 'xcscope)
-(require 'scim-bridge-zh-si)
 (load-library "desktop-menu")
 (load-library "etach")                              ;use emacs RMAIL to deal with /var/mail/bigml 2006-09-22
 (load-library "smtpmail")                           ;use smtp mail instead of sendmail to outgoing mail 2006-09-24
@@ -94,7 +123,6 @@
 
 
 ;;;========== KEY BINDING ==========
-(global-set-key (quote [33554464]) (quote set-mark-command))
 (global-set-key [delete] 'delete-char)
 (global-set-key [kp-delete] 'delete-char)
 (global-set-key [f12] 'list-bookmarks)
@@ -162,6 +190,7 @@
 (diary)
 (setq bkup-backup-directory-info
       '(("/home/bigml/.*" "/home/bigml/.backups/" ok-create full-path prepend-name)
+        ("/Users/bigml/.*" "/Users/bigml/.backups" ok-create full-path prepend-name)
         ("/mnt/dev/.*" "/home/bigml/.backups" ok-create full-path prepend-name)
         ("/mnt/revive/.*" "/home/bigml/.backups" ok-create full-path prepend-name)))
 (custom-set-variables
@@ -195,7 +224,6 @@
              nil
          '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
 (add-hook 'diary-hook 'appt-make-list)
-(add-hook 'after-init-hook 'scim-mode-on)
 ;(add-hook 'gdb-mode-hook '(lambda ()
 ;                            (define-key c-mode-base-map [(f5)] 'gud-go)
 ;                            (define-key c-mode-base-map [(f7)] 'gud-next)
@@ -258,3 +286,10 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  )
+
+
+;;; Uncomment this on Linux distribution
+;(setq default-frame-alist '((font . "fontset-bigml")))
+;(require 'scim-bridge-zh-si)
+;(global-set-key (quote [33554464]) (quote set-mark-command))
+;(add-hook 'after-init-hook 'scim-mode-on)

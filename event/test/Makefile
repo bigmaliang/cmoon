@@ -2,7 +2,7 @@ BASEDIR = ../../
 include $(BASEDIR)Make.env
 
 INCS	= -I../daemon $(INC_MOON)
-LIBS	= -levent -lrt $(LIB_MOON)
+LIBS	= -levent $(LIB_MOON)
 
 SOURCES = $(wildcard *.c)
 BINARY = $(patsubst %.c, %, $(SOURCES))

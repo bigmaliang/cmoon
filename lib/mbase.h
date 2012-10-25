@@ -22,6 +22,13 @@
 #include <sys/shm.h>
 #include <sys/resource.h>
 
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#include <crt_externs.h>
+#define environ (*_NSGetEnviron())
+#endif
+
 /* Fix Up for systems that don't define these standard things */
 #ifndef __BEGIN_DECLS
 #ifdef __cplusplus

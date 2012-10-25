@@ -55,7 +55,7 @@ static void* mevent_start_base_entry(void *arg)
          * We sleep for 1 sec. There's no real need for it to be too
          * fast (it's only used so that stop detection doesn't take
          * long), but we don't want it to be too slow either. */
-        clock_gettime(CLOCK_REALTIME, &ts);
+        mutil_utc_time(&ts);
         ts.tv_sec += 1;
 
         rv = 0;

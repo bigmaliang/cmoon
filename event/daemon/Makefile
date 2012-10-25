@@ -18,7 +18,7 @@ CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 
 
 CFLAGS += $(INC_MOON)
-LIBS = -levent -lrt $(LIB_MOON)
+LIBS = -levent $(LIB_MOON)
 
 
 OBJS = mevent.o queue.o log.o net.o parse.o reply.o stats.o config.o common.o syscmd.o smsalarm.o

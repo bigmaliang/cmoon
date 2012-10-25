@@ -15,7 +15,6 @@ $(DEPEND): $(SOURCES)
 libeii.a:$(OBJS) $(DEPEND)
 	@rm -rf $@
 	$(AR) rcs $@ $(OBJS)
-	$(AR) d $@ $(DROPOBJS)
 
 # make clean &&  make DYN=1 libeii.so to make shared library
 libeii.so:$(OBJS) $(DEPEND)

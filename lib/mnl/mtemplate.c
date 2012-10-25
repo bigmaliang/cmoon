@@ -3,7 +3,7 @@
 static HDF *m_loadpath = NULL;
 static char *m_tplpath = NULL;
 
-static int mtpl_config(const struct dirent *ent)
+static int mtpl_config(struct dirent *ent)
 {
     if (reg_search(".*.hdf", ent->d_name))
         return 1;

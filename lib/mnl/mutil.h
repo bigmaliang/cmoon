@@ -30,6 +30,8 @@ bool mutil_getdatetime(char *res, int len, const char *fmt, time_t second);
  */
 bool mutil_getdatetime_gmt(char *res, int len, const char *fmt, time_t second);
 
+void mutil_utc_time(struct timespec *ts);
+
 int  mutil_compare_int(const void *a, const void *b);
 int  mutil_compare_inta(const void *a, const void *b);
 
