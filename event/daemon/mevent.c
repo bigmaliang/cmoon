@@ -11,6 +11,7 @@
 
 #include "net-const.h"
 #include "common.h"
+#include "mheads.h"
 
 /*
  * The hash function used is the "One at a time" function, which seems simple,
