@@ -114,8 +114,12 @@ I 在moon内部新建
 II 在moon外部引用
 --------------
     1, 拷贝 regae 目录至需要的 NEWPROJ
-    2, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录
-    3, cd NEWPROJ 修改以下文件和目录的连接路径，指向 moon 所在目录
+    2, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
+    3, find -name '*voov*'; rename them
+    4, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
+    
+    5, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录(绝对路径)
+    6, cd NEWPROJ 修改以下文件和目录的连接路径，指向 moon 所在目录
         ./fly/js/pub
         ./fly/css/pub
         ./fly/css/modules/noty -> lib/js/noty/css

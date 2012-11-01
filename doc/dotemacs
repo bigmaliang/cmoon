@@ -38,7 +38,7 @@
       (setq auto-mode-alist
             (cons '("\\.php$" . php-mode)
                   auto-mode-alist))
-      (global-set-key (kbd "M-SPC") 'set-mark-command)
+      (global-set-key (kbd "M-`") 'set-mark-command)
 
       ; change Command to Meta for mac keyboard
       ;(setq mac-option-key-is-meta nil)
@@ -198,7 +198,8 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(fill-column 86))
+ '(fill-column 86)
+ '(diff-switches "-u"))
 ;(setq erc-fill-prefix " ")
 ;(setq default-directory "/home/bigml/workspace/") ;history before 2005-12-6
 ;(setq next-line-add-newlines t)    ;inserts newline to avoid 'end of buffer' error
