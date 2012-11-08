@@ -4,7 +4,7 @@ include $(BASEDIR)Make.env
 DEPS	= $(INC_MOON)
 
 SOURCE1 = mcfg.c
-SOURCES = mcfg.c md5c.c mb64.c mmkd.c mtrace.c mmemc.c mjson.c mhttp.c mdb.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mcs.c mstr.c mutil.c mtemplate.c mfile.c mimg.c
+SOURCES = mcfg.c md5c.c mb64.c mmkd.c mtrace.c mmemc.c mjson.c mbson.c mhttp.c mdb.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mcs.c mstr.c mutil.c mtemplate.c mfile.c mimg.c
 OBJS	= $(patsubst %.c, %.o, $(SOURCES))
 DEPEND	= .depend
 

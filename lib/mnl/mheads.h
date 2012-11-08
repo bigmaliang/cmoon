@@ -12,6 +12,7 @@
 #include "fcgi_stdio.h"
 #endif
 #include "json.h"
+#include "mongo.h"
 
 #include "gd.h"
 #include "gdfontt.h"
@@ -35,6 +36,7 @@
 #include "mtrace.h"
 #include "mmemc.h"
 #include "mjson.h"
+#include "mbson.h"
 #include "mhttp.h"
 #include "mdb.h"
 

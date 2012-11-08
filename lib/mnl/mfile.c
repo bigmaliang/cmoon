@@ -10,8 +10,9 @@ NEOERR* mfile_makesure_dir(char *file)
     while (p != NULL) {
         memset(tok, 0x0, sizeof(tok));
         strncpy(tok, file, p-file+1);
-        if (mkdir(tok, 0755) != 0 && errno != EEXIST) {
-            return nerr_raise(NERR_IO, "mkdir %s failure %s", tok, strerror(errno));
+        if (mkdir(tok, 0755) != 0 && errno != EEXIST && errno != EISDIR) {
+            return nerr_raise(NERR_IO, "mkdir %s failure %d %s",
+                              tok, errno, strerror(errno));
         }
         while (*p == '/') p++;
         if(p) p = strchr(p, '/');

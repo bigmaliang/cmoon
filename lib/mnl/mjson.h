@@ -24,9 +24,13 @@ __BEGIN_DECLS
  * }
  * will output [ "fff", { "0": 301 }, "bar" ]
  */
-void mjson_output_hdf(HDF *hdf, time_t second);
-void mjson_execute_hdf(HDF *hdf, char *cb, time_t second);
+NEOERR* mjson_import_from_hdf(HDF *node, struct json_object **out);
 
+/*
+ * import wraper functions
+ */
+void mjson_output_hdf(HDF *node, time_t second);
+void mjson_execute_hdf(HDF *node, char *cb, time_t second);
 
 /*
  *  plan = {
@@ -38,7 +42,7 @@ void mjson_execute_hdf(HDF *hdf, char *cb, time_t second);
  *              ],
  *             "mum": ["foo", "bar"]
  *  }
- *
+ * ===>
  * plan.id = 4301
  * plan.name = foo
  * plan.dad.0.x = 1
@@ -47,8 +51,11 @@ void mjson_execute_hdf(HDF *hdf, char *cb, time_t second);
  * plan.dad.1.y = 2
  * plan.mun.0 = foo
  * plan.mun.1 = bar
+ *
+ * we set param o into node if o != NULL
+ * or, we'll compile node's value to a json object, and set it
  */
-void mjson_str2hdf(HDF *node, struct json_object *o);
+NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *o, bool drop);
 
 __END_DECLS
 #endif    /* __MJSON_H__ */
