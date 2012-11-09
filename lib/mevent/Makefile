@@ -4,6 +4,9 @@ include $(BASEDIR)Make.env
 # prefix for installing the binaries
 PREFIX=/usr/local
 
+UNAME := $(shell uname)
+CFLAGS += -fPIC -shared
+
 # Protocols to enable
 ENABLE_TIPC = 0
 ENABLE_TCP = 1
@@ -43,11 +46,14 @@ libmevent.pc: libmevent.skel.pc
 	@echo "$(CC) -o $@"
 	@$(CC) $(CFLAGS) -I /usr/local/include/ClearSilver -c $< -o $@
 
-libs: libmevent.a
+libs: libmevent.so
 
-# make clean &&  make DYN=1 libmevent.so to make shared library
 libmevent.so: mevent.h $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o libmevent.so
+ifeq ($(UNAME), Darwin)
+	$(CC) $(CFLAGS) -dynamiclib -undefined suppress -flat_namespace -o libmevent.so $(OBJS) $(LIB_STATIC)
+else
+	$(CC) $(CFLAGS) -o libmevent.so $(OBJS)
+endif
 
 libmevent.a: mevent.h $(OBJS)
 	$(AR) cr libmevent.a $(OBJS)
@@ -55,8 +61,8 @@ libmevent.a: mevent.h $(OBJS)
 
 install-lib: libs libmevent.pc
 	install -d $(PREFIX)/lib
-#	install -m 0755 libmevent.so $(PREFIX)/lib
-	install -m 0755 libmevent.a $(PREFIX)/lib
+	install -m 0644 libmevent.so $(PREFIX)/lib
+#	install -m 0755 libmevent.a $(PREFIX)/lib
 	install -d $(PREFIX)/include
 	install -m 0644 mevent.h $(PREFIX)/include
 	install -m 0644 net-const.h $(PREFIX)/include

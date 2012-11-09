@@ -26,6 +26,8 @@ unsigned int g_reqid = 0;
 static int load_config()
 {
     NEOERR *err;
+
+    if (loaded) return 1;
     
     if (g_cfg != NULL) {
         hdf_destroy(&g_cfg);

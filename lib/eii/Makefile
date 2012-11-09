@@ -3,11 +3,14 @@ include $(BASEDIR)Make.env
 
 DEPS	= $(INC_MOON)
 
+UNAME := $(shell uname)
+CFLAGS += -fPIC -shared
+
 SOURCES = ediv.c
 OBJS	= $(patsubst %.c, %.o, $(SOURCES))
 DEPEND	= .depend
 
-all: libeii.a
+all: libeii.so
 
 $(DEPEND): $(SOURCES)
 	@$(CC) $(CFLAGS) -MM $^ $(DEPS) > $@
@@ -16,9 +19,12 @@ libeii.a:$(OBJS) $(DEPEND)
 	@rm -rf $@
 	$(AR) rcs $@ $(OBJS)
 
-# make clean &&  make DYN=1 libeii.so to make shared library
 libeii.so:$(OBJS) $(DEPEND)
+ifeq ($(UNAME), Darwin)
+	@$(CC) $(CFLAGS) -dynamiclib -undefined suppress -flat_namespace -o $@ $(OBJS) $(LIB_STATIC)
+else
 	@$(CC) $(CFLAGS) -o $@ $(OBJS)
+endif
 
 include $(DEPEND)
 %.o:%.c
@@ -32,8 +38,14 @@ cflag:
 	@echo "=== "$(CFLAGS)
 	@echo "=== "$(DEPS)
 
+install:
+	install -m 0644 libeii.so /usr/local/lib
+
+uninstall:
+	rm -f /usr/local/lib/libeii.so
+
 clean:
-	@rm -f $(OBJS) *.a
+	rm -f $(OBJS) *.a *.so
 
 backup:
 	@$(MAKE) clean
