@@ -6,6 +6,9 @@
 #include "mevent.h"
 #include "timer.h"
 
+HDF *g_cfg = NULL;
+HASH *g_datah = NULL;
+
 int main(int argc, char *argv[])
 {
     unsigned long elapsed;

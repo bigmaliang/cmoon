@@ -10,9 +10,9 @@
 #include "ClearSilver.h"
 
 #define QUEUE_SIZE_INFO        100
-#define QUEUE_SIZE_WARNING    10000
-#define MAX_QUEUE_ENTRY        1048576
-//#define MAX_QUEUE_ENTRY    2097152
+#define QUEUE_SIZE_WARNING     1000000
+//#define MAX_QUEUE_ENTRY        1048576
+#define MAX_QUEUE_ENTRY        2097152
 
 struct queue {
     pthread_mutex_t lock;

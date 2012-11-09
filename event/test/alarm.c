@@ -5,6 +5,9 @@
 
 #include "mevent.h"
 
+HDF *g_cfg = NULL;
+HASH *g_datah = NULL;
+
 int main(int argc, char *argv[])
 {
     mevent_t *evt = mevent_init("unknown");
