@@ -13,6 +13,7 @@
 #include <inttypes.h>
 #include <stdint.h>             /* uint32_t... */
 #include <sys/types.h>
+#include <sys/time.h>           /* gettimeofday() */
 #include <dlfcn.h>                /* dlope()... */
 #include <dirent.h>                /* scandir()... */
 #include <iconv.h>
