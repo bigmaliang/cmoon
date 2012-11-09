@@ -181,8 +181,58 @@ char* mbson_string(bson *doc)
     return s;
 }
 
-NEOERR* mbson_import_from_hdf(HDF *node, bson **out)
+NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
 {
+    if (!node || !out) return nerr_raise(NERR_ASSERT, "paramter null");
+
+    char *key, *val;
+    CnodeType type;
+    bson *doc, *sub;
+
+    doc = bson_new();
+
+    node = hdf_obj_child(node);
+    while (node) {
+        key = hdf_obj_name(node);
+        val = hdf_obj_value(node);
+        type = mcs_get_int_attr(node, NULL, "type", CNODE_TYPE_STRING);
+            
+        if (hdf_obj_child(node) != NULL) {
+            mbson_import_from_hdf(node, &sub, true);
+            if (type == CNODE_TYPE_ARRAY)
+                bson_append_array(doc, key, sub);
+            else
+                bson_append_document(doc, key, sub);
+            bson_free(sub);
+        } else if (val) {
+            switch (type) {
+            case CNODE_TYPE_BOOL:
+                bson_append_boolean(doc, key, (bool)atoi(val));
+                break;
+            case CNODE_TYPE_INT:
+                bson_append_int32(doc, key, atoi(val));
+                break;
+            case CNODE_TYPE_FLOAT:
+                bson_append_double(doc, key, atof(val));
+                break;
+            case CNODE_TYPE_INT64:
+            case CNODE_TYPE_DATETIME:
+            case CNODE_TYPE_TIMESTAMP:
+                bson_append_int64(doc, key, mcs_get_int64_value(node, NULL, 0));
+                break;
+            default:
+                bson_append_string(doc, key, val, -1);
+                break;
+            }
+        }
+        
+        node = hdf_obj_next(node);
+    }
+
+    if (finish) bson_finish(doc);
+
+    *out = doc;
+    
     return STATUS_OK;
 }
 

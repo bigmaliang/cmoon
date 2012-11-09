@@ -208,7 +208,7 @@ NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock)
 }
 
 
-unsigned int mcs_get_uint_value(HDF *hdf, const char *name, unsigned int defval)
+unsigned int mcs_get_uint_value(HDF *hdf, char *name, unsigned int defval)
 {
     char *val, *n;
     unsigned int v;
@@ -222,7 +222,7 @@ unsigned int mcs_get_uint_value(HDF *hdf, const char *name, unsigned int defval)
     return defval;
 }
 
-float mcs_get_float_value(HDF *hdf, const char *name, float defval)
+float mcs_get_float_value(HDF *hdf, char *name, float defval)
 {
     char *val, *n;
     float v;
@@ -236,7 +236,21 @@ float mcs_get_float_value(HDF *hdf, const char *name, float defval)
     return defval;
 }
 
-NEOERR* mcs_set_uint_value(HDF *hdf, const char *name, unsigned int value)
+int64_t mcs_get_int64_value(HDF *hdf, char *name, int64_t defval)
+{
+    char *val, *n;
+    int64_t v;
+
+    val = hdf_get_value(hdf, name, NULL);
+    if (val) {
+        v = strtoll(val, &n, 10);
+        if (val == n) v = defval;
+        return v;
+    }
+    return defval;
+}
+
+NEOERR* mcs_set_uint_value(HDF *hdf, char *name, unsigned int value)
 {
   char buf[256];
 
@@ -244,12 +258,43 @@ NEOERR* mcs_set_uint_value(HDF *hdf, const char *name, unsigned int value)
   return nerr_pass(hdf_set_value(hdf, name, buf));
 }
 
-NEOERR* mcs_set_float_value(HDF *hdf, const char *name, float value)
+NEOERR* mcs_set_float_value(HDF *hdf, char *name, float value)
 {
   char buf[256];
 
   snprintf(buf, sizeof(buf), "%f", value);
   return nerr_pass(hdf_set_value(hdf, name, buf));
+}
+
+NEOERR* mcs_set_value_with_type(HDF *hdf, char *name, char *value,
+                                CnodeType type)
+{
+    NEOERR *err;
+
+    err = hdf_set_value(hdf, name, value);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    return nerr_pass(mcs_set_int_attr(hdf, name, "type", type));
+}
+
+NEOERR* mcs_set_int_value_with_type(HDF *hdf, char *name, int value, CnodeType type)
+{
+    NEOERR *err;
+    
+    err = hdf_set_int_value(hdf, name, value);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    return nerr_pass(mcs_set_int_attr(hdf, name, "type", type));
+}
+
+NEOERR* mcs_set_float_value_with_type(HDF *hdf, char *name, float value, CnodeType type)
+{
+    NEOERR *err;
+    
+    err = mcs_set_float_value(hdf, name, value);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    return nerr_pass(mcs_set_int_attr(hdf, name, "type", type));
 }
 
 HDF* mcs_hdf_getf(HDF *node, char *fmt, ...)
@@ -320,7 +365,7 @@ NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data)
 
 char* mcs_hdf_attr(HDF *hdf, char *name, char*key)
 {
-    if (hdf == NULL || name == NULL || key == NULL)
+    if (hdf == NULL || key == NULL)
         return NULL;
     
     HDF_ATTR *attr = hdf_get_attr(hdf, name);
@@ -345,6 +390,23 @@ char* mcs_obj_attr(HDF *hdf, char*key)
         attr = attr->next;
     }
     return NULL;
+}
+
+NEOERR* mcs_set_int_attr(HDF *hdf, char *name, char *key, int val)
+{
+    char tok[64] = {0};
+    
+    snprintf(tok, sizeof(tok), "%d", val);
+
+    return nerr_pass(hdf_set_attr(hdf, name, key, tok));
+}
+
+int mcs_get_int_attr(HDF *hdf, char *name, char *key, int defval)
+{
+    char *s = mcs_hdf_attr(hdf, name, key);
+
+    if (s) return atoi(s);
+    else return defval;
 }
 
 NEOERR* mcs_err_valid(NEOERR *err)

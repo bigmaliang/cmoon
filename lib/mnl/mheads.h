@@ -22,6 +22,7 @@
 #include "gdfontg.h"
 
 #include "mglobal.h"
+#include "mtimer.h"
 #include "mcfg.h"
 #include "md5.h"
 #include "mb64.h"

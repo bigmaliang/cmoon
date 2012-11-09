@@ -15,7 +15,7 @@ __BEGIN_DECLS
 
 #define TC_LEVELS   7
 
-#define TC_DEFAULT_LEVEL    3
+#define TC_DEFAULT_LEVEL    5
 #define TC_CFGSTR    "log_level"
 #define TC_MAX_SIZE  (10*1024*1024)
 #define TC_MAX_NUM   5
