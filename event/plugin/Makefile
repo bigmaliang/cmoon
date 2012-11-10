@@ -6,14 +6,6 @@ UNAME := $(shell uname)
 # prefix for installing the binaries
 PREFIX=/usr/local
 
-# -rdynamic instructs the linker to add all symbols,
-# not only used ones, to the dynamic symbol table.
-# e.g. nm mevent_skeleton.so | grep mjson output null
-# if [-rdynamic $(LIB_MOON)] don't supply
-# and this will occur error on dlysm if:
-# nm daemon/mevent | grep mjson output null
-# at the same time
-#CFLAGS += -shared -fPIC -rdynamic
 CFLAGS += -shared -fPIC
 
 CFLAGS += -I$(BASEDIR)event/daemon/ $(INC_MOON)

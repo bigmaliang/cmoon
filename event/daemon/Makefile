@@ -10,6 +10,11 @@ ENABLE_TCP = 1
 ENABLE_UDP = 1
 ENABLE_SCTP = 0
 
+# -rdynamic instructs the linker to add all symbols,
+# not only used ones, to the dynamic symbol table.
+# e.g. if without -rdynamic, ./mevent will output symbol lookup error on startup (linux)
+# because mevent_*.so used wlog(), reply_trigger()..., and mevent don't call them
+CFLAGS += -rdynamic
 CFLAGS += -DENABLE_TIPC=$(ENABLE_TIPC) \
 		-DENABLE_TCP=$(ENABLE_TCP) \
 		-DENABLE_UDP=$(ENABLE_UDP) \
