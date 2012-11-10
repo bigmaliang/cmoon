@@ -15,7 +15,7 @@ struct json_object* mbson_export_to_jsonobj(bson *doc, bool array);
 char* mbson_string(bson *doc);
 
 NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish);
-NEOERR* mbson_export_to_hdf(HDF *node, bson *doc);
+NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array);
 
 __END_DECLS
 #endif    /* __MBSON_H__ */

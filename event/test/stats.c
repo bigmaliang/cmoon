@@ -3,8 +3,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "mheads.h"
 #include "mevent.h"
-#include "timer.h"
 
 HDF *g_cfg = NULL;
 HASH *g_datah = NULL;
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    timer_start();
+    mtimer_start();
     
     for (int i = 0; i < 100000; i++) {
         ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_NONE);
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
             printf("process failure %d\n", ret);
     }
     
-    elapsed = timer_stop();
+    mtimer_stop(NULL);
 
     printf("Time elapsed: %lu usecs\n", elapsed);
     

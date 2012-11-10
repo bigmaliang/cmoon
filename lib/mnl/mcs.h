@@ -202,16 +202,24 @@ NEOERR* mcs_err_valid(NEOERR *err);
 #define MCS_SET_VALUE_WITH_TYPE(hdf, name, value, type) \
     do {                                                \
         char ztoka[64];                                 \
-        snprintf(ztoka, 64, "%d", type);                \
         hdf_set_value(hdf, name, value);                \
+        snprintf(ztoka, 64, "%d", type);                \
         hdf_set_attr(hdf, name, "type", ztoka);         \
     } while (0)
 #define MCS_SET_INT_VALUE_WITH_TYPE(hdf, name, value, type) \
     do {                                                    \
         char ztoka[64];                                     \
-        snprintf(ztoka, 64, "%d", type);                    \
         hdf_set_int_value(hdf, name, value);                \
+        snprintf(ztoka, 64, "%d", type);                    \
         hdf_set_attr(hdf, name, "type", ztoka);             \
+    } while (0)
+#define MCS_SET_INT64_VALUE_WITH_TYPE(hdf, name, value, type)   \
+    do {                                                        \
+        char ztoka[64];                                         \
+        snprintf(ztoka, 64, "%ld", value);                      \
+        hdf_set_value(hdf, name, ztoka);                        \
+        snprintf(ztoka, 64, "%d", type);                        \
+        hdf_set_attr(hdf, name, "type", ztoka);                 \
     } while (0)
 #define MCS_SET_FLOAT_VALUE_WITH_TYPE(hdf, name, value, type)   \
     do {                                                        \

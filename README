@@ -128,7 +128,6 @@ II 在moon外部引用
         ./xport/plugin/mevent_skeleton.c
         ./xport/plugin/mevent_skeleton.h
         ./xport/test/stats.c
-        ./xport/test/timer.h
 
 
 

@@ -63,7 +63,7 @@ D DIY
     git checkout 3727ae1d48de841b0ed99467c74172301b6a2c3c 将工作目录恢复到特定版本（请记下Previous HEAD position was ....，以便checkout回来）
     git reset --hard 3727ae1d48de841b0ed99467c74172301b6a2c3c 恢复到特定版本，之后的提交将被完全抛弃（慎用）
     git show 3727ae1d48de841b0ed99467c74172301b6a2c3c:pop/tpl/layout.html 查看文件的特定版本
-    git show 3727ae1d48de841b0ed99467c74172301b6a2c3c 查看这次提交, 约等价于 git log -p 3727ae1d48de841b0ed99467c74172301b6a2c3c
+    git show 3727ae1d48de841b0ed99467c74172301b6a2c3c 查看这次提交, 约等价于 git log -p 3727ae1d48de841b0ed99467c74172301b6a2c3c, 约等价于git diff 3723^..3727
 
     git tag 查看所有标签
     git tag -a v1.2 -m "10st runable version" 9fceb02
