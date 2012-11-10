@@ -38,7 +38,7 @@ static void json_append_to_bson(bson* b, char *key, struct json_object *val)
         bson_free(sub);
         break;
     case json_type_object:
-        sub = mbson_new_from_jsonobj(val, true);
+        sub = mbson_new_from_jsonobj(val, true, false);
         bson_append_document(b, key, sub);
         bson_free(sub);
         break;
@@ -49,7 +49,7 @@ static void json_append_to_bson(bson* b, char *key, struct json_object *val)
     
 }
 
-bson* mbson_new_from_jsonobj(struct json_object *obj, bool finish)
+bson* mbson_new_from_jsonobj(struct json_object *obj, bool finish, bool drop)
 {
     char *key; struct json_object *val; struct lh_entry *entry;
     bson *bson;
@@ -72,7 +72,7 @@ bson* mbson_new_from_jsonobj(struct json_object *obj, bool finish)
     
     if (finish) bson_finish(bson);
 
-    json_object_put(obj);
+    if (drop) json_object_put(obj);
 
     return bson;
 }
@@ -86,7 +86,7 @@ bson* mbson_new_from_string(const char *s, bool finish)
     obj = json_tokener_parse(s);
     if (!obj) return NULL;
 
-    return mbson_new_from_jsonobj(obj, finish);
+    return mbson_new_from_jsonobj(obj, finish, true);
 }
 
 struct json_object* mbson_export_to_jsonobj(bson *doc, bool array)
