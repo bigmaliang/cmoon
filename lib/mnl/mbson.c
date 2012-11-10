@@ -236,7 +236,7 @@ NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
     return STATUS_OK;
 }
 
-NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array)
+NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array, bool drop)
 {
     if (!node || !doc) return nerr_raise(NERR_ASSERT, "paramter null");
 
@@ -272,7 +272,7 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array)
             hdf_get_node(node, key, &cnode);
             hdf_set_value(cnode, NULL, "foo");
             MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_OBJECT);
-            err = mbson_export_to_hdf(cnode, vb, false);
+            err = mbson_export_to_hdf(cnode, vb, false, true);
             if (err != STATUS_OK) return nerr_pass(err);
             break;
         case BSON_TYPE_ARRAY:
@@ -280,7 +280,7 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array)
             hdf_get_node(node, key, &cnode);
             hdf_set_value(cnode, NULL, "foo");
             MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_ARRAY);
-            err = mbson_export_to_hdf(cnode, vb, true);
+            err = mbson_export_to_hdf(cnode, vb, true, true);
             if (err != STATUS_OK) return nerr_pass(err);
             break;
         case BSON_TYPE_BOOLEAN:
@@ -304,6 +304,8 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array)
     }
 
     bson_cursor_free(c);
+    
+    if (drop) bson_free(doc);
     
     return STATUS_OK;
 }

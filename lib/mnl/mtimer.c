@@ -29,7 +29,7 @@ unsigned long mtimer_stop(char *fmt, ...)
         vsnprintf(timer_msg, TIMER_MSG_LEN, fmt, ap);
         va_end(ap);
         
-        mtc_dbg("%s : %lu usecs", timer_msg, elapsed);
+        mtc_foo("%s : %lu usecs", timer_msg, elapsed);
     }
     
     return elapsed;

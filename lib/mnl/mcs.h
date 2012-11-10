@@ -196,6 +196,14 @@ NEOERR* mcs_err_valid(NEOERR *err);
         nerr_ignore(&err);                      \
     }
 
+#define TRACE_HDF(node)                         \
+    do {                                        \
+        char *zpa = NULL;                       \
+        hdf_write_string(node, &zpa);           \
+        mtc_foo("%s", zpa);                     \
+        free(zpa);                              \
+    } while (0)
+
 /*
  * a set of macros for performance purpose. see mjson_export_to_hdf()
  */
