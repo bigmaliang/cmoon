@@ -91,67 +91,72 @@ void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
     json_object_put(out);
 }
 
-NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, bool drop)
+static inline void json_append_to_hdf(HDF *node, char *key, struct json_object *obj)
 {
-    //if (!obj || (int)obj < 0) return nerr_raise(NERR_ASSERT, "json object null");;
-    if (!node || !obj) return nerr_raise(NERR_ASSERT, "paramter null");
-    
+    if (!node || !key || !obj) return;
+
     struct array_list *list;
     enum json_type type;
-    NEOERR *err;
-    HDF *cnode;
     char tok[64];
-    int i;
-    
-    char *key; struct json_object *val; struct lh_entry *entry;
+    HDF *cnode;
     
     type = json_object_get_type(obj);
 
     switch (type) {
     case json_type_boolean:
-        MCS_SET_INT_VALUE_WITH_TYPE(node, NULL, json_object_get_boolean(obj),
+        MCS_SET_INT_VALUE_WITH_TYPE(node, key, json_object_get_boolean(obj),
                                     CNODE_TYPE_BOOL);
         break;
     case json_type_int:
-        MCS_SET_INT_VALUE_WITH_TYPE(node, NULL, json_object_get_int(obj),
+        MCS_SET_INT_VALUE_WITH_TYPE(node, key, json_object_get_int(obj),
                                     CNODE_TYPE_INT);
         break;
     case json_type_double:
-        MCS_SET_FLOAT_VALUE_WITH_TYPE(node, NULL, json_object_get_double(obj),
+        MCS_SET_FLOAT_VALUE_WITH_TYPE(node, key, json_object_get_double(obj),
                                       CNODE_TYPE_FLOAT);
         break;
     case json_type_string:
-        hdf_set_value(node, NULL, json_object_get_string(obj));
+        hdf_set_value(node, key, json_object_get_string(obj));
         //err = mcs_set_int_attr(node, NULL, "type", CNODE_TYPE_STRING);
         //if (err != STATUS_OK) return nerr_pass(err);
         break;
     case json_type_array:
+        hdf_get_node(node, key, &cnode);
         list = json_object_get_array(obj);
-        for (i = 0; i < list->length; i++) {
+        for (int i = 0; i < list->length; i++) {
             sprintf(tok, "%d", i);
-            hdf_get_node(node, tok, &cnode);
-            err = mjson_export_to_hdf(cnode, (struct json_object*)list->array[i], false);
-            if (err != STATUS_OK) return nerr_pass(err);
+            json_append_to_hdf(cnode, tok, (struct json_object*)list->array[i]);
         }
-        hdf_set_value(node, NULL, "foo"); /* can't set node's attr if node have no value */
-        MCS_SET_INT_ATTR(node, NULL, "type", CNODE_TYPE_ARRAY);
+        hdf_set_value(cnode, NULL, "foo"); /* can't set node's attr if node have no value */
+        MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_ARRAY);
         break;
     case json_type_object:
-        for(entry = json_object_get_object(obj)->head;
-            (entry ? (key = (char*)entry->k,
-                      val = (struct json_object*)entry->v, entry) : 0);
-            entry = entry->next) {
-            hdf_get_node(node, key, &cnode);
-            err = mjson_export_to_hdf(cnode, val, false);
-            if (err != STATUS_OK) return nerr_pass(err);
+        hdf_get_node(node, key, &cnode);
+        json_object_object_foreach(obj, key, val) {
+            json_append_to_hdf(cnode, key, val);
         }
-        hdf_set_value(node, NULL, "foo");
-        MCS_SET_INT_ATTR(node, NULL, "type", CNODE_TYPE_OBJECT);
+        hdf_set_value(cnode, NULL, "foo");
+        MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_OBJECT);
         break;
     default:
         break;
     }
+}
 
+NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, bool drop)
+{
+    //if (!obj || (int)obj < 0) return nerr_raise(NERR_ASSERT, "json object null");;
+    if (!node || !obj) return nerr_raise(NERR_ASSERT, "paramter null");
+
+    if (json_object_get_type(obj) != json_type_object) {
+        if (drop) json_object_put(obj);
+        return nerr_raise(NERR_ASSERT, "not a json object");
+    }
+
+    json_object_object_foreach(obj, key, val) {
+        json_append_to_hdf(node, key, val);
+    }
+    
     if (drop) json_object_put(obj);
 
     return STATUS_OK;

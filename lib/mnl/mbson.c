@@ -51,7 +51,6 @@ static void json_append_to_bson(bson* b, char *key, struct json_object *val)
 
 bson* mbson_new_from_jsonobj(struct json_object *obj, bool finish, bool drop)
 {
-    char *key; struct json_object *val; struct lh_entry *entry;
     bson *bson;
     
     if (!obj) return NULL;
@@ -63,10 +62,7 @@ bson* mbson_new_from_jsonobj(struct json_object *obj, bool finish, bool drop)
     
     bson = bson_new();
 
-    for (entry = json_object_get_object(obj)->head;
-         (entry ? (key = (char*)entry->k,
-                   val = (struct json_object*)entry->v, entry) : 0);
-         entry = entry->next) {
+    json_object_object_foreach(obj, key, val) {
         json_append_to_bson(bson, key, val);
     }
     
