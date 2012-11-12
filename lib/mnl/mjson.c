@@ -91,13 +91,11 @@ void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
     json_object_put(out);
 }
 
-NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *o, bool drop)
+NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, bool drop)
 {
-    if (!node) return nerr_raise(NERR_ASSERT, "paramter null");
+    //if (!obj || (int)obj < 0) return nerr_raise(NERR_ASSERT, "json object null");;
+    if (!node || !obj) return nerr_raise(NERR_ASSERT, "paramter null");
     
-    char *s = hdf_obj_value(node);
-    
-    struct json_object *obj;
     struct array_list *list;
     enum json_type type;
     NEOERR *err;
@@ -107,14 +105,6 @@ NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *o, bool drop)
     
     char *key; struct json_object *val; struct lh_entry *entry;
     
-    obj = o;
-
-    if (!obj && s && *s) {
-        obj = json_tokener_parse(s);
-    }
-    //if (!obj || (int)obj < 0) return nerr_raise(NERR_ASSERT, "json object null");;
-    if (!obj) return nerr_raise(NERR_ASSERT, "json object null");
-
     type = json_object_get_type(obj);
 
     switch (type) {
@@ -162,8 +152,22 @@ NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *o, bool drop)
         break;
     }
 
-    if (!o) json_object_put(obj);
-    if (drop && o) json_object_put(o);
+    if (drop) json_object_put(obj);
 
     return STATUS_OK;
+}
+
+NEOERR* mjson_string_to_hdf(HDF *node, char *str)
+{
+    if (!node) return nerr_raise(NERR_ASSERT, "paramter null");
+
+    if (!str) str = hdf_obj_value(node);
+
+    struct json_object *obj;
+
+    obj = json_tokener_parse(str);
+
+    if (!obj) return nerr_raise(NERR_ASSERT, "json object null");
+
+    return mjson_export_to_hdf(node, obj, true);
 }

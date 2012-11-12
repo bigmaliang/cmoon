@@ -51,11 +51,13 @@ void mjson_execute_hdf(HDF *node, char *cb, time_t second);
  * plan.dad.1.y = 2
  * plan.mun.0 = foo
  * plan.mun.1 = bar
- *
- * we set param o into node if o != NULL
+ */
+NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, bool drop);
+/*
+ * we set param str into node if str != NULL
  * or, we'll compile node's value to a json object, and set it
  */
-NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *o, bool drop);
+NEOERR* mjson_string_to_hdf(HDF *node, char *str);
 
 __END_DECLS
 #endif    /* __MJSON_H__ */
