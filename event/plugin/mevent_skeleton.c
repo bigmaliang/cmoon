@@ -91,9 +91,9 @@ static EventEntry* skeleton_init_driver(void)
     e->base.stop_driver = skeleton_stop_driver;
     //mevent_add_timer(&e->base.timers, 60, true, hint_timer_up_term);
 
-    char *s = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
-    err = mdb_init(&e->db, s);
-    JUMP_NOK(err, error);
+    //char *s = hdf_get_value(g_cfg, CONFIG_PATH".dbsn", NULL);
+    //err = mdb_init(&e->db, s);
+    //JUMP_NOK(err, error);
     
     e->cd = cache_create(hdf_get_int_value(g_cfg, CONFIG_PATH".numobjs", 1024), 0);
     if (e->cd == NULL) {

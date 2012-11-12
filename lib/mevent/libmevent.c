@@ -286,13 +286,13 @@ mevent_t *mevent_init_plugin(char *ename)
         tv.tv_usec = hdf_get_int_value(node, "net_timeout_u", 0);
             
         if (!strcmp(type, "tcp")) {
-            mevent_add_tcp_server(evt, ip, port, nblock, &tv);
+            if (!mevent_add_tcp_server(evt, ip, port, nblock, &tv)) return NULL;
         } else if (!strcmp(type, "udp")) {
-            mevent_add_udp_server(evt, ip, port, nblock, &tv);
+            if (!mevent_add_udp_server(evt, ip, port, nblock, &tv)) return NULL;
         } else if (!strcmp(type, "tipc")) {
-            mevent_add_tipc_server(evt, port);
+            if (!mevent_add_tipc_server(evt, port)) return NULL;
         } else if (!strcmp(type, "sctp")) {
-            mevent_add_sctp_server(evt, ip, port);
+            if (!mevent_add_sctp_server(evt, ip, port)) return NULL;
         } else {
             continue;
         }
