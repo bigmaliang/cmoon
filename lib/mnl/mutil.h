@@ -7,8 +7,10 @@ __BEGIN_DECLS
 
 #define SAFE_FREE(str)                          \
     do {                                        \
-        if (str != NULL)                        \
+        if (str != NULL) {                      \
             free(str);                          \
+            str = NULL;                         \
+        }                                       \
     } while (0)
 
 bool mutil_client_attack(HDF *hdf, char *action, char *cname,
