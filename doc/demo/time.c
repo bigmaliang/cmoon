@@ -29,7 +29,7 @@ int main()
     }
     tm = timer_stop();
 
-    printf("use %u usec\n", tm);
+    printf("use %lu usec\n", tm);
     
     return 0;
 }

@@ -1,6 +1,4 @@
 #include "mheads.h"
-#include "lheads.h"
-#include "timer.h"
 
 HDF *g_cfg = NULL;
 
@@ -36,7 +34,7 @@ int main()
     hash_insert(etbl, "ape_ext_b", "ape_ext_b");
 
     unsigned long elapsed;
-    timer_start();
+    mtimer_start();
     for (int i = 0; i < 100000000; i++) {
 #if 0
         p = hash_lookup(etbl, "ape_ext_b");
@@ -56,8 +54,7 @@ int main()
             break;
         }
     }
-    elapsed = timer_stop();
-     printf("Time elapsed: %lu\n", elapsed);
+    mtimer_stop(NULL);
 
     return 0;
 }

@@ -1,6 +1,5 @@
 #include "mheads.h"
 #include "eheads.h"
-#include "lheads.h"
 
 HDF *g_cfg = NULL;
 
@@ -21,7 +20,7 @@ int main(int argc, char **argv, char **envp)
 
     char *s = argv[1];
     
-    mtc_init(TC_ROOT"div");
+    mtc_init("div");
 
     err = ediv_init_from_file(&bm, "/home/bigml/web/moon/eii/data/dict.txt", &cnt);
     DIE_NOK_MTL(err);

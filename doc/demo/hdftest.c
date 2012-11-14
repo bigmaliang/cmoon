@@ -1,10 +1,9 @@
 #include "mheads.h"
-#include "lheads.h"
 
 HDF *g_cfg = NULL;
 HASH *g_datah = NULL;
 
-#define NUM_TOTAL_TEST 100000
+#define NUM_TOTAL_TEST 50
 
 #define VERBERSE 0
 
@@ -18,7 +17,7 @@ int main(int argc, char **argv, char **envp)
     bson *doc;
     NEOERR *err;
     
-    mtc_init(TC_ROOT"hdftest");
+    mtc_init("hdftest");
 
     mtimer_start();
     for (int i = 0; i < NUM_TOTAL_TEST; i++) {
