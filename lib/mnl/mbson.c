@@ -232,13 +232,13 @@ NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
     return STATUS_OK;
 }
 
-NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array, bool drop)
+NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *setkey, bool array, bool drop)
 {
     if (!node || !doc) return nerr_raise(NERR_ASSERT, "paramter null");
 
     bson_cursor *c;
     bson_type type;
-    char *key;
+    char *bkey, key[LEN_HDF_KEY];
     HDF *cnode;
     double vd;
     bson *vb;
@@ -251,8 +251,11 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array, bool drop)
     c = bson_cursor_new(doc);
 
     while (bson_cursor_next(c)) {
-        key = (char*)bson_cursor_key(c);
+        bkey = (char*)bson_cursor_key(c);
         type = bson_cursor_type(c);
+
+        if (setkey) snprintf(key, LEN_HDF_KEY, "%s.%s", setkey, bkey);
+        else snprintf(key, LEN_HDF_KEY, "%s", bkey);
 
         switch (type) {
         case BSON_TYPE_DOUBLE:
@@ -268,7 +271,7 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array, bool drop)
             hdf_get_node(node, key, &cnode);
             hdf_set_value(cnode, NULL, "foo");
             MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_OBJECT);
-            err = mbson_export_to_hdf(cnode, vb, false, true);
+            err = mbson_export_to_hdf(cnode, vb, NULL, false, true);
             if (err != STATUS_OK) return nerr_pass(err);
             break;
         case BSON_TYPE_ARRAY:
@@ -276,7 +279,7 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array, bool drop)
             hdf_get_node(node, key, &cnode);
             hdf_set_value(cnode, NULL, "foo");
             MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_ARRAY);
-            err = mbson_export_to_hdf(cnode, vb, true, true);
+            err = mbson_export_to_hdf(cnode, vb, NULL, true, true);
             if (err != STATUS_OK) return nerr_pass(err);
             break;
         case BSON_TYPE_BOOLEAN:
@@ -304,4 +307,13 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, bool array, bool drop)
     if (drop) bson_free(doc);
     
     return STATUS_OK;
+}
+
+NEOERR* mbson_export_to_int_hdf(HDF *node, bson *doc, int setkey, bool array, bool drop)
+{
+    char tok[64];
+
+    snprintf(tok, 64, "%d", setkey);
+
+    return mbson_export_to_hdf(node, doc, tok, array, drop);
 }
