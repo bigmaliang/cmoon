@@ -100,6 +100,20 @@ bool mutil_getdatetime_gmt(char *res, int len, const char *fmt, time_t second)
     return true;
 }
 
+time_t mutil_get_abssec(char *fmt, char *time)
+{
+    char datetime[LEN_TM] = {0};
+    struct tm thatdaystm;
+    
+    if (!fmt || !time) return 0;
+
+    snprintf(datetime, LEN_TM, "%s", time);
+    //strptime(datetime, "%Y-%m-%d %H:%M:%S", &thatdaystm);
+    strptime(datetime, fmt, &thatdaystm);
+
+    return mktime(&thatdaystm);
+}
+
 void mutil_utc_time(struct timespec *ts)
 {
 #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time

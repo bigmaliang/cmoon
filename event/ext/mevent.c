@@ -369,7 +369,7 @@ PHP_FUNCTION(mevent_add_int)
 }
 /* }}} */
  
-/* {{{ proto int mevent_add_int(resource db, string key, int val)
+/* {{{ proto int mevent_add_bool(resource db, string key, int val)
  */
 PHP_FUNCTION(mevent_add_bool)
 {
@@ -403,7 +403,7 @@ PHP_FUNCTION(mevent_add_bool)
 }
 /* }}} */
  
-/* {{{ proto int mevent_add_int(resource db, string key, int val)
+/* {{{ proto int mevent_add_float(resource db, string key, double val)
  */
 PHP_FUNCTION(mevent_add_float)
 {
