@@ -30,6 +30,24 @@
 #include "ClearSilver.h"
  
 
+typedef enum {
+    CNODE_TYPE_STRING = 100,
+    CNODE_TYPE_BOOL,
+    CNODE_TYPE_INT,
+    CNODE_TYPE_INT64,
+    CNODE_TYPE_FLOAT,
+    CNODE_TYPE_DATETIME,
+    CNODE_TYPE_TIMESTAMP,
+    CNODE_TYPE_OBJECT,
+    CNODE_TYPE_ARRAY,
+    
+    CNODE_TYPE_POINT = 120,
+    CNODE_TYPE_BOX,
+    CNODE_TYPE_PATH,
+    CNODE_TYPE_TIME,
+    CNODE_TYPE_BITOP
+} CnodeType;
+
 /* If you declare any globals in php_mevent.h uncomment this:
    ZEND_DECLARE_MODULE_GLOBALS(mevent)
 */
@@ -46,7 +64,9 @@ zend_function_entry mevent_functions[] = {
     PHP_FE(mevent_init_plugin,    NULL)
     PHP_FE(mevent_free,    NULL)
     PHP_FE(mevent_add_str,    NULL)
-    PHP_FE(mevent_add_u32,    NULL)
+    PHP_FE(mevent_add_int,    NULL)
+    PHP_FE(mevent_add_bool,    NULL)
+    PHP_FE(mevent_add_float,    NULL)
     PHP_FE(mevent_trigger,    NULL)
     PHP_FE(mevent_result,    NULL)
     {NULL, NULL, NULL}    /* Must be the last line in mevent_functions[] */
@@ -105,29 +125,38 @@ static void mevent_fetch_array(HDF *node, zval **re)
 {
     if (node == NULL) return;
 
-    char *key, *type, *val;
+    char *key, *name, *type, *val, *n;
     zval *cre;
+    int ctype, namelen;
 
     node = hdf_obj_child(node);
 
     while (node) {
-        if ((val = hdf_obj_value(node)) != NULL) {
-            type = mutil_obj_attr(node, "type");
-            if (type && !strcmp(type, "int")) {
-                add_assoc_long(*re, hdf_obj_name(node), atoi(val));
-            } else {
-                add_assoc_string_ex(*re, hdf_obj_name(node),
-                                    (strlen(hdf_obj_name(node))+1),
-                                    val, 1);
-            }
-        }
-
         if (hdf_obj_child(node)) {
             key = hdf_obj_name(node) ? hdf_obj_name(node): "unkown";
             ALLOC_INIT_ZVAL(cre);
             array_init(cre);
             mevent_fetch_array(node, &cre);
             add_assoc_zval(*re, key, cre);
+        } else if ((val = hdf_obj_value(node)) != NULL) {
+            name = hdf_obj_name(node);
+
+            type = mutil_obj_attr(node, "type");
+            if (type) ctype = atoi(type);
+            else ctype = CNODE_TYPE_STRING;
+            
+            switch (ctype) {
+            case CNODE_TYPE_INT:
+            case CNODE_TYPE_BOOL:
+                add_assoc_long(*re, name, atoi(val));
+                break;
+            case CNODE_TYPE_FLOAT:
+                add_assoc_double(*re, name, strtod(val, &n));
+                break;
+            default:
+                namelen = strlen(name);
+                add_assoc_string_ex(*re, name, namelen+1, val, 1);
+            }
         }
 
         node = hdf_obj_next(node);
@@ -206,7 +235,7 @@ PHP_MINFO_FUNCTION(mevent)
 {
     php_info_print_table_start();
     php_info_print_table_header(2, "mevent support", "enabled");
-    php_info_print_table_row(2, "Version", "2.0");
+    php_info_print_table_row(2, "Version", "2.1");
     php_info_print_table_row(2, "Copyright", "Hunantv.com");
     php_info_print_table_row(2, "author", "neo & bigml");
     php_info_print_table_end();
@@ -233,7 +262,7 @@ PHP_FUNCTION(mevent_init_plugin)
     if (zend_parse_parameters(argc TSRMLS_CC, "s", &ename, &ename_len) == FAILURE) 
         return;
 
-    if (!strcmp(ename, ""))      ename       = "skeleton2";
+    if (!strcmp(ename, ""))      ename       = "skeleton";
 
     mevent_p = mevent_init_plugin(ename);
 
@@ -296,6 +325,9 @@ PHP_FUNCTION(mevent_add_str)
                             PHP_MEVENT_RES_NAME, le_mevent);
         if (mevent_p) {
             hdf_set_value(mevent_p->hdfsnd, key, val);
+            char ztoka[64];
+            snprintf(ztoka, 64, "%d", CNODE_TYPE_STRING);
+            hdf_set_attr(mevent_p->hdfsnd, key, "type", ztoka);
             RETURN_LONG(0);
         }
     }
@@ -303,9 +335,9 @@ PHP_FUNCTION(mevent_add_str)
 /* }}} */
  
 
-/* {{{ proto int mevent_add_u32(resource db, string key, int val)
+/* {{{ proto int mevent_add_int(resource db, string key, int val)
  */
-PHP_FUNCTION(mevent_add_u32)
+PHP_FUNCTION(mevent_add_int)
 {
     char *key = NULL;
      
@@ -328,6 +360,78 @@ PHP_FUNCTION(mevent_add_u32)
                             PHP_MEVENT_RES_NAME, le_mevent);
         if (mevent_p) {
             hdf_set_int_value(mevent_p->hdfsnd, key, val);
+            char ztoka[64];
+            snprintf(ztoka, 64, "%d", CNODE_TYPE_INT);
+            hdf_set_attr(mevent_p->hdfsnd, key, "type", ztoka);
+            RETURN_LONG(0);
+        }
+    }
+}
+/* }}} */
+ 
+/* {{{ proto int mevent_add_int(resource db, string key, int val)
+ */
+PHP_FUNCTION(mevent_add_bool)
+{
+    char *key = NULL;
+     
+    int argc = ZEND_NUM_ARGS();
+    int db_id = -1;
+    int key_len;
+    int parent_len;
+    long val;
+    int ret = 0;
+    zval *db = NULL;
+    mevent_t *mevent_p;
+   
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "rsl", &db, &key,
+                              &key_len, &val) == FAILURE)
+        return;
+    
+    if (db) {
+        ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
+                            PHP_MEVENT_RES_NAME, le_mevent);
+        if (mevent_p) {
+            hdf_set_int_value(mevent_p->hdfsnd, key, val);
+            char ztoka[64];
+            snprintf(ztoka, 64, "%d", CNODE_TYPE_BOOL);
+            hdf_set_attr(mevent_p->hdfsnd, key, "type", ztoka);
+            RETURN_LONG(0);
+        }
+    }
+}
+/* }}} */
+ 
+/* {{{ proto int mevent_add_int(resource db, string key, int val)
+ */
+PHP_FUNCTION(mevent_add_float)
+{
+    char *key = NULL;
+     
+    int argc = ZEND_NUM_ARGS();
+    int db_id = -1;
+    int key_len;
+    int parent_len;
+    double val;
+    int ret = 0;
+    zval *db = NULL;
+    mevent_t *mevent_p;
+   
+
+    if (zend_parse_parameters(argc TSRMLS_CC, "rsd", &db, &key,
+                              &key_len, &val) == FAILURE)
+        return;
+    
+    if (db) {
+        ZEND_FETCH_RESOURCE(mevent_p, mevent_t *, &db, db_id,
+                            PHP_MEVENT_RES_NAME, le_mevent);
+        if (mevent_p) {
+            char ztoka[64];
+            snprintf(ztoka, 64, "%f", val);
+            hdf_set_value(mevent_p->hdfsnd, key, ztoka);
+            snprintf(ztoka, 64, "%d", CNODE_TYPE_FLOAT);
+            hdf_set_attr(mevent_p->hdfsnd, key, "type", ztoka);
             RETURN_LONG(0);
         }
     }

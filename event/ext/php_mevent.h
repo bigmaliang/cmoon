@@ -44,7 +44,9 @@ PHP_MINFO_FUNCTION(mevent);
 PHP_FUNCTION(mevent_init_plugin);
 PHP_FUNCTION(mevent_free);
 PHP_FUNCTION(mevent_add_str);
-PHP_FUNCTION(mevent_add_u32);
+PHP_FUNCTION(mevent_add_int);
+PHP_FUNCTION(mevent_add_bool);
+PHP_FUNCTION(mevent_add_float);
 PHP_FUNCTION(mevent_trigger);
 PHP_FUNCTION(mevent_result);
 /* 
