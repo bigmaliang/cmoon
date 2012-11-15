@@ -450,7 +450,7 @@ exit:
 
         /* Build a new req just like when we first recv(). */
         init_req(tcpsock);
-        process_buf(tcpsock, buf, len);
+        process_buf(tcpsock, buf, tcpsock->len);
         return;
 
     }
