@@ -91,7 +91,7 @@ void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
     json_object_put(out);
 }
 
-static inline void json_append_to_hdf(HDF *node, char *key, struct json_object *obj)
+static inline void json_append_to_hdf(HDF *node, char *key, struct json_object *obj, int flag)
 {
     if (!node || !key || !obj) return;
 
@@ -104,46 +104,47 @@ static inline void json_append_to_hdf(HDF *node, char *key, struct json_object *
 
     switch (type) {
     case json_type_boolean:
-        MCS_SET_INT_VALUE_WITH_TYPE(node, key, json_object_get_boolean(obj),
-                                    CNODE_TYPE_BOOL);
+        hdf_set_int_value(node, key, json_object_get_boolean(obj));
+        if (flag & MJSON_EXPORT_TYPE) MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_BOOL);
         break;
     case json_type_int:
-        MCS_SET_INT_VALUE_WITH_TYPE(node, key, json_object_get_int(obj),
-                                    CNODE_TYPE_INT);
+        hdf_set_int_value(node, key, json_object_get_int(obj));
+        if (flag & MJSON_EXPORT_TYPE) MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_INT);
         break;
     case json_type_double:
-        MCS_SET_FLOAT_VALUE_WITH_TYPE(node, key, json_object_get_double(obj),
-                                      CNODE_TYPE_FLOAT);
+        mcs_set_float_value(node, key, json_object_get_double(obj));
+        if (flag & MJSON_EXPORT_TYPE)
+            MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_FLOAT);
         break;
     case json_type_string:
         hdf_set_value(node, key, json_object_get_string(obj));
-        //err = mcs_set_int_attr(node, NULL, "type", CNODE_TYPE_STRING);
-        //if (err != STATUS_OK) return nerr_pass(err);
+        if (flag & MJSON_EXPORT_TYPE)
+            MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_STRING);
         break;
     case json_type_array:
         hdf_get_node(node, key, &cnode);
         list = json_object_get_array(obj);
         for (int i = 0; i < list->length; i++) {
             sprintf(tok, "%d", i);
-            json_append_to_hdf(cnode, tok, (struct json_object*)list->array[i]);
+            json_append_to_hdf(cnode, tok, (struct json_object*)list->array[i], flag);
         }
-        hdf_set_value(cnode, NULL, "foo"); /* can't set node's attr if node have no value */
-        MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_ARRAY);
+        if (flag & MJSON_EXPORT_TYPE)
+            MCS_SET_INT_ATTRR(cnode, NULL, "type", CNODE_TYPE_ARRAY);
         break;
     case json_type_object:
         hdf_get_node(node, key, &cnode);
         json_object_object_foreach(obj, key, val) {
-            json_append_to_hdf(cnode, key, val);
+            json_append_to_hdf(cnode, key, val, flag);
         }
-        hdf_set_value(cnode, NULL, "foo");
-        MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_OBJECT);
+        if (flag & MJSON_EXPORT_TYPE)
+            MCS_SET_INT_ATTR(cnode, NULL, "type", CNODE_TYPE_OBJECT);
         break;
     default:
         break;
     }
 }
 
-NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, bool drop)
+NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, int flag, bool drop)
 {
     //if (!obj || (int)obj < 0) return nerr_raise(NERR_ASSERT, "json object null");;
     if (!node || !obj) return nerr_raise(NERR_ASSERT, "paramter null");
@@ -154,7 +155,7 @@ NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, bool drop)
     }
 
     json_object_object_foreach(obj, key, val) {
-        json_append_to_hdf(node, key, val);
+        json_append_to_hdf(node, key, val, flag);
     }
     
     if (drop) json_object_put(obj);
@@ -162,7 +163,7 @@ NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, bool drop)
     return STATUS_OK;
 }
 
-NEOERR* mjson_string_to_hdf(HDF *node, char *str)
+NEOERR* mjson_string_to_hdf(HDF *node, char *str, int flag)
 {
     if (!node) return nerr_raise(NERR_ASSERT, "paramter null");
 
@@ -174,5 +175,5 @@ NEOERR* mjson_string_to_hdf(HDF *node, char *str)
 
     if (!obj) return nerr_raise(NERR_ASSERT, "json object null");
 
-    return mjson_export_to_hdf(node, obj, true);
+    return mjson_export_to_hdf(node, obj, flag, true);
 }

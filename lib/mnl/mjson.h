@@ -52,12 +52,17 @@ void mjson_execute_hdf(HDF *node, char *cb, time_t second);
  * plan.mun.0 = foo
  * plan.mun.1 = bar
  */
-NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, bool drop);
+NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, int flag, bool drop);
 /*
  * we set param str into node if str != NULL
  * or, we'll compile node's value to a json object, and set it
  */
-NEOERR* mjson_string_to_hdf(HDF *node, char *str);
+enum {
+    MJSON_EXPORT_NONE = 0,
+    /* set node's [type='xxx'] information, for later convert useage */
+    MJSON_EXPORT_TYPE = 1 << 2
+};
+NEOERR* mjson_string_to_hdf(HDF *node, char *str, int flag);
 
 __END_DECLS
 #endif    /* __MJSON_H__ */

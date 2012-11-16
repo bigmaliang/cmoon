@@ -250,6 +250,14 @@ int64_t mcs_get_int64_value(HDF *hdf, char *name, int64_t defval)
     return defval;
 }
 
+NEOERR* mcs_set_int64_value(HDF *hdf, char *name, int64_t val)
+{
+  char buf[256];
+
+  snprintf(buf, sizeof(buf), "%ld", val);
+  return nerr_pass(hdf_set_value(hdf, name, buf));
+}
+
 NEOERR* mcs_set_uint_value(HDF *hdf, char *name, unsigned int value)
 {
   char buf[256];
@@ -397,6 +405,9 @@ NEOERR* mcs_set_int_attr(HDF *hdf, char *name, char *key, int val)
     char tok[64] = {0};
     
     snprintf(tok, sizeof(tok), "%d", val);
+
+    /* can't set node's attr if node have no value */
+    if (!hdf_get_value(hdf, name, NULL)) hdf_set_value(hdf, name, "foo");
 
     return nerr_pass(hdf_set_attr(hdf, name, key, tok));
 }

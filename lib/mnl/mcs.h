@@ -59,6 +59,7 @@ NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock);
 unsigned int mcs_get_uint_value(HDF *hdf, char *name, unsigned int defval);
 float mcs_get_float_value(HDF *hdf, char *name, float defval);
 int64_t mcs_get_int64_value(HDF *hdf, char *name, int64_t defval);
+NEOERR* mcs_set_int64_value(HDF *hdf, char *name, int64_t val);
 NEOERR* mcs_set_uint_value(HDF *hdf, char *name, unsigned int value);
 NEOERR* mcs_set_float_value(HDF *hdf, char *name, float value);
 
@@ -207,35 +208,13 @@ NEOERR* mcs_err_valid(NEOERR *err);
 /*
  * a set of macros for performance purpose. see mjson_export_to_hdf()
  */
-#define MCS_SET_VALUE_WITH_TYPE(hdf, name, value, type) \
-    do {                                                \
-        char ztoka[64];                                 \
-        hdf_set_value(hdf, name, value);                \
-        snprintf(ztoka, 64, "%d", type);                \
-        hdf_set_attr(hdf, name, "type", ztoka);         \
-    } while (0)
-#define MCS_SET_INT_VALUE_WITH_TYPE(hdf, name, value, type) \
-    do {                                                    \
-        char ztoka[64];                                     \
-        hdf_set_int_value(hdf, name, value);                \
-        snprintf(ztoka, 64, "%d", type);                    \
-        hdf_set_attr(hdf, name, "type", ztoka);             \
-    } while (0)
-#define MCS_SET_INT64_VALUE_WITH_TYPE(hdf, name, value, type)   \
-    do {                                                        \
-        char ztoka[64];                                         \
-        snprintf(ztoka, 64, "%ld", value);                      \
-        hdf_set_value(hdf, name, ztoka);                        \
-        snprintf(ztoka, 64, "%d", type);                        \
-        hdf_set_attr(hdf, name, "type", ztoka);                 \
-    } while (0)
-#define MCS_SET_FLOAT_VALUE_WITH_TYPE(hdf, name, value, type)   \
-    do {                                                        \
-        char ztoka[64];                                         \
-        snprintf(ztoka, 64, "%f", value);                       \
-        hdf_set_value(hdf, name, ztoka);                        \
-        snprintf(ztoka, 64, "%d", type);                        \
-        hdf_set_attr(hdf, name, "type", ztoka);                 \
+#define MCS_SET_INT_ATTRR(hdf, name, key, val)  \
+    do {                                        \
+        char ztoka[64];                         \
+        snprintf(ztoka, 64, "%d", val);         \
+        if (!hdf_get_value(hdf, name, NULL))    \
+            hdf_set_value(hdf, name, "foo");    \
+        hdf_set_attr(hdf, name, key, ztoka);    \
     } while (0)
 #define MCS_SET_INT_ATTR(hdf, name, key, val)   \
     do {                                        \

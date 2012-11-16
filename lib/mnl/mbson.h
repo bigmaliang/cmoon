@@ -15,8 +15,15 @@ struct json_object* mbson_export_to_jsonobj(bson *doc, bool array);
 char* mbson_string(bson *doc);
 
 NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish);
-NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *key, bool array, bool drop);
-NEOERR* mbson_export_to_int_hdf(HDF *node, bson *doc, int key, bool array, bool drop);
+enum {
+    MBSON_EXPORT_NONE = 0,
+    /* input bson doc isn't an object, an array */
+    MBSON_EXPORT_ARRAY = 1 << 1,
+    /* set node's [type='xxx'] information, for later convert useage */
+    MBSON_EXPORT_TYPE = 1 << 2
+};
+NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *key, int flag, bool drop);
+NEOERR* mbson_export_to_int_hdf(HDF *node, bson *doc, int key, int flag, bool drop);
 
 __END_DECLS
 #endif    /* __MBSON_H__ */
