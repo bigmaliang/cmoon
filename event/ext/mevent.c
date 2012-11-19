@@ -148,7 +148,8 @@ static void mevent_fetch_array(HDF *node, zval **re)
             switch (ctype) {
             case CNODE_TYPE_INT:
             case CNODE_TYPE_BOOL:
-                add_assoc_long(*re, name, atoi(val));
+            case CNODE_TYPE_INT64:
+                add_assoc_long(*re, name, atol(val));
                 break;
             case CNODE_TYPE_FLOAT:
                 add_assoc_double(*re, name, strtod(val, &n));
