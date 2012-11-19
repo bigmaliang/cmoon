@@ -40,5 +40,6 @@
 #include "mbson.h"
 #include "mhttp.h"
 #include "mdb.h"
+#include "mmg.h"
 
 #endif    /* __MHEADS_H__ */

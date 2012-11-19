@@ -7,7 +7,7 @@ UNAME := $(shell uname)
 CFLAGS += -fPIC -shared
 
 SOURCE1 = mcfg.c
-SOURCES = mcfg.c md5c.c mb64.c mmkd.c mtrace.c mmemc.c mjson.c mbson.c mhttp.c mdb.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mcs.c mstr.c mutil.c mtemplate.c mfile.c mimg.c mtimer.c
+SOURCES = mcfg.c md5c.c mb64.c mmkd.c mtrace.c mmemc.c mjson.c mbson.c mhttp.c mdb.c mdb-pgsql.c mdb-mysql.c mdb-sqlite.c mmg.c mcs.c mstr.c mutil.c mtemplate.c mfile.c mimg.c mtimer.c
 OBJS	= $(patsubst %.c, %.o, $(SOURCES))
 DEPEND	= .depend
 
