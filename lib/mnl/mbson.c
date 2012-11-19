@@ -261,7 +261,7 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *setkey, int flag, bool d
         bkey = (char*)bson_cursor_key(c);
         type = bson_cursor_type(c);
 
-        if (setkey) snprintf(key, LEN_HDF_KEY, "%s.%s", setkey, bkey);
+        if (setkey && setkey[0] != '\0') snprintf(key, LEN_HDF_KEY, "%s.%s", setkey, bkey);
         else snprintf(key, LEN_HDF_KEY, "%s", bkey);
 
         switch (type) {
