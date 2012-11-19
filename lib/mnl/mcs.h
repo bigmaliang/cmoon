@@ -65,6 +65,7 @@ NEOERR* mcs_set_float_value(HDF *hdf, char *name, float value);
 
 NEOERR* mcs_set_value_with_type(HDF *hdf, char *name, char *value, CnodeType type);
 NEOERR* mcs_set_int_value_with_type(HDF *hdf, char *name, int value, CnodeType type);
+NEOERR* mcs_set_int64_value_with_type(HDF *hdf, char *name, int64_t value, CnodeType type);
 NEOERR* mcs_set_float_value_with_type(HDF *hdf, char *name, float value, CnodeType type);
 
 HDF*    mcs_hdf_getf(HDF *node, char *fmt, ...)

@@ -124,7 +124,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *node)
             }
             
             doc = mongo_sync_cursor_get_data(db->c);
-            err = mbson_export_to_hdf(node, doc, key, MBSON_EXPORT_NONE, true);
+            err = mbson_export_to_hdf(node, doc, key, MBSON_EXPORT_TYPE, true);
             if (err != STATUS_OK) return nerr_pass(err);
 
             if (!cnode) cnode = hdf_get_obj(node, key);

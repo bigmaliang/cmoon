@@ -252,26 +252,26 @@ int64_t mcs_get_int64_value(HDF *hdf, char *name, int64_t defval)
 
 NEOERR* mcs_set_int64_value(HDF *hdf, char *name, int64_t val)
 {
-  char buf[256];
-
-  snprintf(buf, sizeof(buf), "%ld", val);
-  return nerr_pass(hdf_set_value(hdf, name, buf));
+    char buf[256];
+    
+    snprintf(buf, sizeof(buf), "%ld", val);
+    return nerr_pass(hdf_set_value(hdf, name, buf));
 }
 
 NEOERR* mcs_set_uint_value(HDF *hdf, char *name, unsigned int value)
 {
-  char buf[256];
+    char buf[256];
 
-  snprintf(buf, sizeof(buf), "%u", value);
-  return nerr_pass(hdf_set_value(hdf, name, buf));
+    snprintf(buf, sizeof(buf), "%u", value);
+    return nerr_pass(hdf_set_value(hdf, name, buf));
 }
 
 NEOERR* mcs_set_float_value(HDF *hdf, char *name, float value)
 {
-  char buf[256];
+    char buf[256];
 
-  snprintf(buf, sizeof(buf), "%f", value);
-  return nerr_pass(hdf_set_value(hdf, name, buf));
+    snprintf(buf, sizeof(buf), "%f", value);
+    return nerr_pass(hdf_set_value(hdf, name, buf));
 }
 
 NEOERR* mcs_set_value_with_type(HDF *hdf, char *name, char *value,
@@ -290,6 +290,16 @@ NEOERR* mcs_set_int_value_with_type(HDF *hdf, char *name, int value, CnodeType t
     NEOERR *err;
     
     err = hdf_set_int_value(hdf, name, value);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    return nerr_pass(mcs_set_int_attr(hdf, name, "type", type));
+}
+
+NEOERR* mcs_set_int64_value_with_type(HDF *hdf, char *name, int64_t value, CnodeType type)
+{
+    NEOERR *err;
+
+    err = mcs_set_int64_value(hdf, name, value);
     if (err != STATUS_OK) return nerr_pass(err);
 
     return nerr_pass(mcs_set_int_attr(hdf, name, "type", type));
