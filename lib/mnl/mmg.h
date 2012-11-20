@@ -16,6 +16,7 @@ typedef struct _mmg_conn {
     int skip;
     int limit;
     int flag;
+    bool incallback;
     int rescount;
 } mmg_conn;
 
@@ -28,6 +29,13 @@ enum {
 NEOERR* mmg_init(char *host, int port, mmg_conn **db);
 void mmg_destroy(mmg_conn *db);
 
+/*
+ * qcbk: the query callback on each result document.
+ * ATTENTION: we can query recursive, but the callback won't call recursive.
+ *            we just call the first NOTNULL qcbk
+ *            because following prepare overwrite the formal's callback will coredump
+ *            so, later prepare's callback won't be remember in db
+ */
 NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int start, int skip, int limit,
                     NEOERR* (*qcbk)(mmg_conn *db, HDF *node), int flag);
 

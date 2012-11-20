@@ -78,7 +78,10 @@ NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int start, int skip,
                                          strerror(errno));
     }
 
-    db->query_callback = qcbk;
+    /*
+     * later mmg_prepare won't overwrite formal's callback
+     */
+    if (!db->incallback) db->query_callback = qcbk;
     db->start = start;
     db->skip  = skip;
     db->limit = limit;
@@ -115,11 +118,13 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *node)
         cnode = NULL;
         count = 0;
         while (mongo_sync_cursor_next(db->c) && count < db->limit) {
+            memset(key, sizeof(key), 0x0);
+            
             if (prefix) {
                 if (db->limit > 1) snprintf(key, sizeof(key), "%s.%d", prefix, count);
                 else snprintf(key, sizeof(key), "%s", prefix);
             } else {
-                if (db->limit > 1) strncat(key, ".%d", count);
+                if (db->limit > 1) sprintf(key, "%d", count);
                 else key[0] = '\0';
             }
             
@@ -141,18 +146,24 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *node)
         /*
          * call callback at last. because we don't want declare more mmg_conn*
          * it's safe to do new query in callback on result stored (db->c freeed)
+         * we can call mmg_query() recursive, the callback won't.
          */
-        if (db->query_callback) {
+        if (db->query_callback && !db->incallback) {
+            db->incallback = true;
+            
             while (cnode) {
                 err = db->query_callback(db, cnode);
                 TRACE_NOK(err);
                 
                 cnode = hdf_obj_next(cnode);
             }
+            
+            db->incallback = false;
         }
     } else {
         /* don't need result */
         mongo_wire_packet_free(db->p);
+        db->c = NULL;
         db->p = NULL;
     }
 
