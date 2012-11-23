@@ -10,7 +10,7 @@ int main(int argc, char **argv, char **envp)
 
     hdf_init(&node);
 
-    mjson_string_to_hdf(hdf_get_obj(node, "s"), s);
+    //mjson_string_to_hdf(hdf_get_obj(node, "s"), s);
 
     hdf_write_file(node, "x.hdf");
     hdf_destroy(&node);

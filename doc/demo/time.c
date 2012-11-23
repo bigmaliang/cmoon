@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <sys/time.h>
 
+#include "mheads.h"
+
 static struct timeval tv_s, tv_e;
 
 static void timer_start(void) {
@@ -17,6 +19,8 @@ static unsigned long timer_stop(void) {
         + (tv_e.tv_usec - tv_s.tv_usec);
 }
 
+
+HDF *g_cfg = NULL;
 
 int main()
 {

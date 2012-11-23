@@ -5,9 +5,12 @@
 #include <stdbool.h>
 
 #include <event.h>
+#include "mevent.h"
 
 static struct event_base *me;
 static struct event e;
+
+HDF *g_cfg = NULL;
 
 void f(const int fd, const short which, void *arg)
 {

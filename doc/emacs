@@ -110,3 +110,15 @@ C-c s I            cscope-index-files
 C-c s L            cscope-create-list-of-files-to-index
 C-c s t            cscope-find-this-text-string
 C-c s c            cscope-find-functions-calling-this-function
+
+
+
+folder
+------
+M-x hs-minor-mode  进入hideshow mode
+C-c @ C-s   折叠当前代码
+C-c @ C-h   显示当前折叠
+C-c @ C-c   切换当前折叠
+
+C-c @ C-M-s 显示所有代码
+C-c @ C-M-h 折叠所有代码

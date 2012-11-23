@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <ClearSilver.h>
 
+HDF *g_cfg = NULL;
+
 int main()
 {
     HDF *hdf;

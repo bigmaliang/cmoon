@@ -22,7 +22,7 @@ int main(int argc, char **argv, char **envp)
     mtimer_start();
     for (int i = 0; i < NUM_TOTAL_TEST; i++) {
         hdf_init(&node);
-        err = mjson_string_to_hdf(node, bdatam);
+        //err = mjson_string_to_hdf(node, bdatam);
         OUTPUT_NOK(err);
         if (VERBERSE) hdf_dump(node, NULL);
         hdf_destroy(&node);
@@ -45,7 +45,7 @@ int main(int argc, char **argv, char **envp)
 
     hdf_init(&node);
     hdf_set_value(node, NULL, bdatam);
-    err = mjson_string_to_hdf(node, bdatam);
+    //err = mjson_string_to_hdf(node, bdatam);
     OUTPUT_NOK(err);
     
     mtimer_start();
@@ -88,13 +88,13 @@ int main(int argc, char **argv, char **envp)
     mtimer_start();
     for (int i = 0; i < NUM_TOTAL_TEST; i++) {
         hdf_init(&node);
-        err = mbson_export_to_hdf(node, doc, false, false);
+        //err = mbson_export_to_hdf(node, doc, false, false);
         OUTPUT_NOK(err);
         if (VERBERSE) hdf_dump(node, NULL);
         hdf_destroy(&node);
     }
     mtimer_stop("bson => hdf");
-    mtc_foo("%d per second", (int)(NUM_TOTAL_TEST/(elapsed/1000000.0f)));
+    //mtc_foo("%d per second", (int)(NUM_TOTAL_TEST/(elapsed/1000000.0f)));
     bson_free(doc);
 
     return 0;
