@@ -216,6 +216,12 @@ NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
             case CNODE_TYPE_TIMESTAMP:
                 bson_append_int64(doc, key, mcs_get_int64_value(node, NULL, 0));
                 break;
+            case CNODE_TYPE_JS:
+                bson_append_javascript(doc, key, val, -1);
+                break;
+            case CNODE_TYPE_SYMBOL:
+                bson_append_symbol(doc, key, val, -1);
+                break;
             default:
                 bson_append_string(doc, key, val, -1);
                 break;
@@ -305,6 +311,17 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *setkey, int flag, bool d
             if (flag & MBSON_EXPORT_TYPE)
                 MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_INT);
             break;
+        case BSON_TYPE_JS_CODE:
+            bson_cursor_get_javascript(c, (const gchar**)&vs);
+            hdf_set_value(node, key, vs);
+            if (flag & MBSON_EXPORT_TYPE)
+                MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_JS);
+            break;
+        case BSON_TYPE_SYMBOL:
+            bson_cursor_get_symbol(c, (const gchar**)&vs);
+            hdf_set_value(node, key, vs);
+            if (flag & MBSON_EXPORT_TYPE)
+                MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_SYMBOL);
         case BSON_TYPE_UTC_DATETIME:
         case BSON_TYPE_TIMESTAMP:
         case BSON_TYPE_INT64:

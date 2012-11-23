@@ -5,6 +5,8 @@ NEOERR* mmg_init(char *host, int port, mmg_conn **db)
     if (!host) return nerr_raise(NERR_ASSERT, "paramter null");
 
     mmg_conn *ldb;
+
+    mtc_dbg("connect to %s %d ...", host, port);
     
     *db = NULL;
     ldb = calloc(1, sizeof(mmg_conn));
@@ -40,8 +42,8 @@ void mmg_destroy(mmg_conn *db)
     mongo_sync_disconnect(db->con);
 }
 
-NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int start, int skip, int limit,
-                    NEOERR* (*qcbk)(mmg_conn *db, HDF *node), int flag)
+NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int flags, int skip, int limit,
+                    NEOERR* (*qcbk)(mmg_conn *db, HDF *node))
 {
     if (!db || !querys) return nerr_raise(NERR_ASSERT, "paramter null");
 
@@ -54,15 +56,9 @@ NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int start, int skip,
         bson_free(db->docq);
         db->docq = NULL;
     }
-
-    if (flag & MMG_PRE_WHERE) {
-        db->docq = bson_new();
-        bson_append_string(db->docq, "$where", querys, -1);
-        bson_finish(db->docq);
-    } else {
-        db->docq = mbson_new_from_string(querys, true);
-    }
-    if (!db->docq) return nerr_raise(NERR_ASSERT, "build query: %s", strerror(errno));
+    db->docq = mbson_new_from_string(querys, true);
+    if (!db->docq) return nerr_raise(NERR_ASSERT, "build query: %s: %s",
+                                     querys, strerror(errno));
 
 
     /*
@@ -74,44 +70,49 @@ NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int start, int skip,
     }
     if (sels) {
         db->docs = mbson_new_from_string(sels, true);
-        if (!db->docs) return nerr_raise(NERR_ASSERT, "build selector: %s",
-                                         strerror(errno));
+        if (!db->docs) return nerr_raise(NERR_ASSERT, "build selector: %s: %s",
+                                         sels, strerror(errno));
     }
 
     /*
      * later mmg_prepare won't overwrite formal's callback
      */
     if (!db->incallback) db->query_callback = qcbk;
-    db->start = start;
+    db->flags = flags;
     db->skip  = skip;
     db->limit = limit;
-    db->flag  = flag;
     db->rescount = 0;
     
     return STATUS_OK;
 }
 
-NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *node)
+NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
 {
     int count;
     char key[LEN_HDF_KEY];
-    HDF *cnode;
+    HDF *node, *cnode;
     bson *doc;
     NEOERR *err;
     
     MCS_NOT_NULLB(db, dsn);
 
-    db->p = mongo_sync_cmd_query(db->con, dsn, db->start, db->skip, db->limit,
+    db->p = mongo_sync_cmd_query(db->con, dsn, db->flags, db->skip, db->limit,
                                  db->docq, db->docs);
     if (!db->p) {
-        if (errno == ENOENT) return STATUS_OK;
+        if (errno == ENOENT) {
+            mtc_dbg("queried 0 result");
+            return STATUS_OK;
+        }
         return nerr_raise(NERR_DB, "query: %s %d", strerror(errno), errno);
     }
 
     /*
-     * need get result
+     * process result
      */
-    if (node) {
+    if (outnode || (db->query_callback && !db->incallback)) {
+        if (outnode) node = outnode; /* need store result */
+        else hdf_init(&node);
+
         db->c = mongo_sync_cursor_new(db->con, dsn, db->p);
         if (!db->c) return nerr_raise(NERR_DB, "cursor: %s", strerror(errno));
 
@@ -160,12 +161,98 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *node)
             
             db->incallback = false;
         }
+
+        if (!outnode) hdf_destroy(&node);
     } else {
         /* don't need result */
         mongo_wire_packet_free(db->p);
         db->c = NULL;
         db->p = NULL;
     }
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_string_insert(mmg_conn *db, char *dsn, char *str)
+{
+    bson *doc;
+    
+    MCS_NOT_NULLC(db, dsn, str);
+
+    doc = mbson_new_from_string(str, true);
+    if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
+                                str, strerror(errno));
+
+    if (!mongo_sync_cmd_insert(db->con, dsn, doc, NULL))
+        return nerr_raise(NERR_DB, "sync_cmd_insert: %s", strerror(errno));
+
+    bson_free(doc);
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
+{
+    bson *doc;
+    NEOERR *err;
+    
+    MCS_NOT_NULLC(db, dsn, node);
+
+    err = mbson_import_from_hdf(node, &doc, true);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    if (!mongo_sync_cmd_insert(db->con, dsn, doc, NULL))
+        return nerr_raise(NERR_DB, "sync_cmd_insert: %s", strerror(errno));
+
+    bson_free(doc);
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *sel, char *up)
+{
+    bson *doca, *docb;
+
+    MCS_NOT_NULLC(db, dsn, up);
+
+    if (sel) {
+        doca = mbson_new_from_string(sel, true);
+        if (!doca) return nerr_raise(NERR_ASSERT, "build doc sel: %s: %s",
+                                     sel, strerror(errno));
+    } else doca = NULL;
+    
+    docb = mbson_new_from_string(up, true);
+    if (!docb) return nerr_raise(NERR_ASSERT, "build doc up: %s: %s",
+                                 up, strerror(errno));
+
+/*
+    if (!mongo_sync_cmd_update(db->con, dsn, 0, doca, docb))
+*/
+    if (!mongo_sync_cmd_update(db->con, dsn,
+                               MONGO_WIRE_FLAG_UPDATE_UPSERT,
+                               doca, docb))
+        return nerr_raise(NERR_DB, "sync_cmd_update: %s", strerror(errno));
+    
+    bson_free(doca);
+    bson_free(docb);
+    
+    return STATUS_OK;
+}
+
+NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, char *querys, int *ret)
+{
+    bson *doc;
+
+    MCS_NOT_NULLC(db, dbname, collname);
+    MCS_NOT_NULLB(querys, ret);
+
+    mtc_dbg("prepare %s.%s %s", dbname, collname, querys);
+    
+    doc = mbson_new_from_string(querys, true);
+    if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
+                                querys, strerror(errno));
+
+    *ret = (int)mongo_sync_cmd_count(db->con, dbname, collname, doc);
 
     return STATUS_OK;
 }
