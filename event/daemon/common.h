@@ -8,6 +8,12 @@
 #include "queue.h"
 #include "meventd.h"
 
+#define REQ_MAKESURE_PARAM(hdf, key)                                \
+    do {                                                            \
+        if (!hdf_get_value(hdf, key, NULL))                         \
+            return nerr_raise(REP_ERR_BADPARAM, "need %s", key);    \
+    } while (0)
+
 #define REQ_GET_PARAM_INT(hdf, key, ret)                            \
     do {                                                            \
         if (!hdf_get_value(hdf, key, NULL)) {                       \
