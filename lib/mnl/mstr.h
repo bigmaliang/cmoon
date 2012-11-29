@@ -51,8 +51,21 @@ unsigned int hash_string_rev(const char *str);
 
 /*
  * make sure charout has inlen*2+1 len
+ * hexin: usually uint8_t*, the value is 0~15
+ * charout: '0123456789abcdef'
  */
 void mstr_hex2str(unsigned char *hexin, unsigned int inlen, unsigned char *charout);
+
+/*
+ * make sure charout has inlen/2 len
+ * charin: '0123456789abcdef'
+ * hexout: usually uint8_t*, the value is 0~15
+ */
+void mstr_str2hex(unsigned char *charin, unsigned int inlen, unsigned char *hexout);
+
+/*
+ * more wide rage bin converter
+ */
 void mstr_bin2char(unsigned char *in, unsigned int inlen, unsigned char *out);
 
 __END_DECLS

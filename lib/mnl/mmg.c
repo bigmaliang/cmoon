@@ -70,9 +70,11 @@ NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
         db->docs = NULL;
     }
     if (sels) {
-        db->docs = mbson_new_from_string(sels, true);
+        db->docs = mbson_new_from_string(sels, false);
         if (!db->docs) return nerr_raise(NERR_ASSERT, "build selector: %s: %s",
                                          sels, strerror(errno));
+        bson_append_int32(db->docs, "_id", 0);
+        bson_finish(db->docs);
     }
 
     /*

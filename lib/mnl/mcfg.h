@@ -36,6 +36,8 @@ __BEGIN_DECLS
 #define LEN_MMC_KEY  256                    /* memcached key length */
 #define LEN_NMDB_KEY 256
 #define LEN_NMDB_VAL (1024*64)
+#define BYTE_BSON_OID 12
+#define LEN_BSON_OID  25         /* 12*2+1 */
 
 #define ONE_MINUTE  60
 #define FIVE_MINUTE (5*60)

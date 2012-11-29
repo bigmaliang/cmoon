@@ -374,6 +374,27 @@ void mstr_hex2str(unsigned char *hexin, unsigned int inlen, unsigned char *charo
     charout[j+1] = '\0';
 }
 
+void mstr_str2hex(unsigned char *charin, unsigned int inlen, unsigned char *hexout)
+{
+#define STR2HEX(in1, in2, out)                          \
+    do {                                                \
+        if (in1 < ':')                                  \
+            (out) = ((in1 - 48) & 0xf) << 4;            \
+        else                                            \
+            (out) = ((in1 - 97 + 10) & 0xf) << 4;       \
+        if (in2 < ':')                                  \
+            (out) = (out) | ((in2 - 48) & 0xf);         \
+        else                                            \
+            (out) = (out) | ((in2 - 97 + 10) & 0xf);    \
+    } while (0)
+
+    unsigned int i, j;
+    
+    for (i = 0, j = 0; i < inlen; i += 2, j++) {
+        STR2HEX(charin[i], charin[i+1], hexout[j]);
+    }
+}
+
 void mstr_bin2char(unsigned char *in, unsigned int inlen, unsigned char *out)
 {
     /* 48 '0' */
