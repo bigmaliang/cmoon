@@ -42,8 +42,9 @@ void mmg_destroy(mmg_conn *db)
     mongo_sync_disconnect(db->con);
 }
 
-NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int flags, int skip, int limit,
-                    NEOERR* (*qcbk)(mmg_conn *db, HDF *node))
+NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
+                    NEOERR* (*qcbk)(mmg_conn *db, HDF *node),
+                    char *sels, char *querys)
 {
     if (!db || !querys) return nerr_raise(NERR_ASSERT, "paramter null");
 
@@ -77,6 +78,8 @@ NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int flags, int skip,
     /*
      * later mmg_prepare won't overwrite formal's callback
      */
+    if (db->incallback && qcbk != NULL)
+        return nerr_raise(NERR_ASSERT, "already in callback, can't set callback");
     if (!db->incallback) db->query_callback = qcbk;
     db->flags = flags;
     db->skip  = skip;
@@ -84,6 +87,32 @@ NEOERR* mmg_prepare(mmg_conn *db, char *querys, char *sels, int flags, int skip,
     db->rescount = 0;
     
     return STATUS_OK;
+}
+
+NEOERR* mmg_preparef(mmg_conn *db, int flags, int skip, int limit,
+                     NEOERR* (*qcbk)(mmg_conn *db, HDF *node), char *sels, char *qfmt, ...)
+{
+    char *querys;
+    va_list ap;
+    NEOERR *err;
+
+    va_start(ap, qfmt);
+    querys = vsprintf_alloc(qfmt, ap);
+    va_end(ap);
+    if (!querys) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for query string");
+
+    err = mmg_prepare(db, flags, skip, limit, qcbk, sels, querys);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    free(querys);
+    return STATUS_OK;
+}
+
+void mmg_set_callbackdata(mmg_conn *db, void *data)
+{
+    if (!db || !data) return;
+
+    db->callbackdata = data;
 }
 
 NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
@@ -96,12 +125,13 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
     
     MCS_NOT_NULLB(db, dsn);
 
-    db->p = mongo_sync_cmd_query(db->con, dsn, db->flags, db->skip, db->limit,
+    db->p = mongo_sync_cmd_query(db->con, dsn, db->flags & 0x3FF, db->skip, db->limit,
                                  db->docq, db->docs);
     if (!db->p) {
         if (errno == ENOENT) {
-            mtc_dbg("queried 0 result");
-            return STATUS_OK;
+            mtc_dbg("queried %s 0 result", dsn);
+            if (db->flags & MMG_FLAG_EMPTY) return STATUS_OK;
+            return nerr_raise(NERR_NOT_FOUND, "document not found");
         }
         return nerr_raise(NERR_DB, "query: %s %d", strerror(errno), errno);
     }
@@ -122,10 +152,12 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
             memset(key, sizeof(key), 0x0);
             
             if (prefix) {
-                if (db->limit > 1) snprintf(key, sizeof(key), "%s.%d", prefix, count);
+                if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
+                    snprintf(key, sizeof(key), "%s.%d", prefix, count);
                 else snprintf(key, sizeof(key), "%s", prefix);
             } else {
-                if (db->limit > 1) sprintf(key, "%d", count);
+                if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
+                    sprintf(key, "%d", count);
                 else key[0] = '\0';
             }
             
@@ -142,7 +174,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
         db->c = NULL;
         db->p = NULL;
         
-        mtc_dbg("queried %d result", count);
+        mtc_dbg("queried %s %d result", dsn, count);
 
         /*
          * call callback at last. because we don't want declare more mmg_conn*
@@ -160,6 +192,13 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
             }
             
             db->incallback = false;
+
+            /*
+             * query_callback can't be shared with multiply query
+             * later query must set them again even if TheSameOne
+             */
+            db->query_callback = NULL;
+            db->callbackdata = NULL;
         }
 
         if (!outnode) hdf_destroy(&node);
@@ -191,6 +230,25 @@ NEOERR* mmg_string_insert(mmg_conn *db, char *dsn, char *str)
     return STATUS_OK;
 }
 
+NEOERR* mmg_string_insertf(mmg_conn *db, char *dsn, char *fmt, ...)
+{
+    char *qa;
+    va_list ap;
+    NEOERR *err;
+    
+    va_start(ap, fmt);
+    qa = vsprintf_alloc(fmt, ap);
+    va_end(ap);
+    if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
+
+    err = mmg_string_insert(db, dsn, qa);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    free(qa);
+
+    return STATUS_OK;
+}
+
 NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
 {
     bson *doc;
@@ -209,7 +267,7 @@ NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
     return STATUS_OK;
 }
 
-NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *sel, char *up)
+NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *up, char *sel)
 {
     bson *doca, *docb;
 
@@ -239,7 +297,26 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *sel, char *up)
     return STATUS_OK;
 }
 
-NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, char *querys, int *ret)
+NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, char *up, char *selfmt, ...)
+{
+    char *qa;
+    va_list ap;
+    NEOERR *err;
+    
+    va_start(ap, selfmt);
+    qa = vsprintf_alloc(selfmt, ap);
+    va_end(ap);
+    if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
+
+    err = mmg_string_update(db, dsn, up, qa);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    free(qa);
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, int *ret, char *querys)
 {
     bson *doc;
 
@@ -253,6 +330,25 @@ NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, char *querys, int 
                                 querys, strerror(errno));
 
     *ret = (int)mongo_sync_cmd_count(db->con, dbname, collname, doc);
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_countf(mmg_conn *db, char *dbname, char *collname, int *ret, char *qfmt, ...)
+{
+    char *qa;
+    va_list ap;
+    NEOERR *err;
+    
+    va_start(ap, qfmt);
+    qa = vsprintf_alloc(qfmt, ap);
+    va_end(ap);
+    if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
+
+    err = mmg_count(db, dbname, collname, ret, qa);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    free(qa);
 
     return STATUS_OK;
 }
