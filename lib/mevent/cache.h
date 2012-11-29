@@ -62,6 +62,8 @@ int cache_getf(struct cache *cd, unsigned char **val, size_t *vsize,
 int cache_setf(struct cache *cd, const unsigned char *v, size_t vsize,
                int timeout, const char *keyfmt, ...);
 int cache_delf(struct cache *cd, const char *keyfmt, ...);
+int cache_incrf(struct cache *cd, int64_t increment, int64_t *newval,
+                const char *keyfmt, ...);
 
 #endif
 

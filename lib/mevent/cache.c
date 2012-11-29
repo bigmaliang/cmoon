@@ -462,3 +462,16 @@ int cache_delf(struct cache *cd, const char *keyfmt, ...)
     return cache_del(cd, (unsigned char*)key, (size_t)r);
 }
 
+int cache_incrf(struct cache *cd, int64_t increment, int64_t *newval,
+                const char *keyfmt, ...)
+{
+    char key[MAX_CACHEKEY_LEN];
+    va_list ap;
+    int r;
+
+    va_start(ap, keyfmt);
+    r = vsnprintf(key, MAX_CACHEKEY_LEN, keyfmt, ap);
+    va_end(ap);
+
+    return cache_incr(cd, (unsigned char*)key, (size_t)r, increment, newval);
+}
