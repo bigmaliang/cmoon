@@ -30,6 +30,10 @@ NEOERR* mjson_import_from_hdf(HDF *hdf, struct json_object **out)
             MCS_GET_INT_ATTR(hdf, NULL, "type", CNODE_TYPE_STRING, ctype);
             if (ctype == CNODE_TYPE_INT) {
                 jso = json_object_new_int(atoi(val));
+            } else if (ctype == CNODE_TYPE_DATETIME ||
+                       ctype == CNODE_TYPE_TIMESTAMP ||
+                       ctype == CNODE_TYPE_INT64) {
+                jso = json_object_new_int64(strtoll(val, NULL, 10));
             } else {
                 jso = json_object_new_string(val);
             }

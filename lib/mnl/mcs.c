@@ -434,6 +434,8 @@ NEOERR* mcs_err_valid(NEOERR *err)
 {
     NEOERR *r = err;
 
+    if (err == STATUS_OK) return STATUS_OK;
+
     while (r && r != INTERNAL_ERR) {
         if (r->error != NERR_PASS) break;
         r = r->next;

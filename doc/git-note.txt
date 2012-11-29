@@ -65,6 +65,10 @@ D DIY
     git show 3727ae1d48de841b0ed99467c74172301b6a2c3c:pop/tpl/layout.html 查看文件的特定版本
     git show 3727ae1d48de841b0ed99467c74172301b6a2c3c 查看这次提交, 约等价于 git log -p 3727ae1d48de841b0ed99467c74172301b6a2c3c, 约等价于git diff 3723^..3727
 
+    文件 merge 的时候有冲突，放弃本地修改
+    $ git reset foo/bar.txt
+    $ git checkout foo/bar.txt
+
     git tag 查看所有标签
     git tag -a v1.2 -m "10st runable version" 9fceb02
     git show v1.2 查看v1.2标签的详细信息

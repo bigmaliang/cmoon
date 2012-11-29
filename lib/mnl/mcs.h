@@ -11,12 +11,13 @@ typedef enum {
     CNODE_TYPE_INT,
     CNODE_TYPE_INT64,
     CNODE_TYPE_FLOAT,
-    CNODE_TYPE_DATETIME,
-    CNODE_TYPE_TIMESTAMP,
+    CNODE_TYPE_DATETIME, /**< 8byte timestamp; milliseconds since Unix epoch */
+    CNODE_TYPE_TIMESTAMP, /**< 4bytes increment + 4bytes timestamp */
     CNODE_TYPE_OBJECT,
     CNODE_TYPE_ARRAY,
     CNODE_TYPE_JS,
     CNODE_TYPE_SYMBOL,
+    CNODE_TYPE_OID, /**< 12byte ObjectID (uint) */
     
     CNODE_TYPE_POINT = 120,
     CNODE_TYPE_BOX,

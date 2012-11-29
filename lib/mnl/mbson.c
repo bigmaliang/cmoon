@@ -141,9 +141,12 @@ struct json_object* mbson_export_to_jsonobj(bson *doc, bool array)
         case BSON_TYPE_UTC_DATETIME:
         case BSON_TYPE_TIMESTAMP:
         case BSON_TYPE_INT64:
-            /* TODO UTC, TIME bug? */
             bson_cursor_get_int64(c, &vi6);
             jso = json_object_new_int64(vi6);
+            break;
+        case BSON_TYPE_OID:
+            bson_cursor_get_oid(c, (const guint8**)&vs);
+            jso = json_object_new_string(vs);
             break;
         default:
             break;
@@ -212,9 +215,13 @@ NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
                 bson_append_double(doc, key, atof(val));
                 break;
             case CNODE_TYPE_INT64:
-            case CNODE_TYPE_DATETIME:
-            case CNODE_TYPE_TIMESTAMP:
                 bson_append_int64(doc, key, mcs_get_int64_value(node, NULL, 0));
+                break;
+            case CNODE_TYPE_DATETIME:
+                bson_append_utc_datetime(doc, key, mcs_get_int64_value(node, NULL, 0));
+                break;
+            case CNODE_TYPE_TIMESTAMP:
+                bson_append_timestamp(doc, key, mcs_get_int64_value(node, NULL, 0));
                 break;
             case CNODE_TYPE_JS:
                 bson_append_javascript(doc, key, val, -1);
@@ -222,6 +229,8 @@ NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
             case CNODE_TYPE_SYMBOL:
                 bson_append_symbol(doc, key, val, -1);
                 break;
+            case CNODE_TYPE_OID:
+                bson_append_oid(doc, key, (const guint8*)val);
             default:
                 bson_append_string(doc, key, val, -1);
                 break;
@@ -323,13 +332,28 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *setkey, int flag, bool d
             if (flag & MBSON_EXPORT_TYPE)
                 MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_SYMBOL);
         case BSON_TYPE_UTC_DATETIME:
+            bson_cursor_get_int64(c, &vi6);
+            mcs_set_int64_value(node, key, vi6);
+            if (flag & MBSON_EXPORT_TYPE)
+                MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_DATETIME);
+            break;
         case BSON_TYPE_TIMESTAMP:
+            bson_cursor_get_int64(c, &vi6);
+            mcs_set_int64_value(node, key, vi6);
+            if (flag & MBSON_EXPORT_TYPE)
+                MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_TIMESTAMP);
+            break;
         case BSON_TYPE_INT64:
-            /* TODO UTC, TIME bug? */
             bson_cursor_get_int64(c, &vi6);
             mcs_set_int64_value(node, key, vi6);
             if (flag & MBSON_EXPORT_TYPE)
                 MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_INT64);
+            break;
+        case BSON_TYPE_OID:
+            bson_cursor_get_oid(c, (const guint8**)&vs);
+            hdf_set_value(node, key, vs);
+            if (flag & MBSON_EXPORT_TYPE)
+                MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_OID);
             break;
         default:
             break;
