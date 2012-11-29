@@ -40,6 +40,9 @@ typedef enum {
     CNODE_TYPE_TIMESTAMP,
     CNODE_TYPE_OBJECT,
     CNODE_TYPE_ARRAY,
+    CNODE_TYPE_JS,
+    CNODE_TYPE_SYMBOL,
+    CNODE_TYPE_OID, /**< 12byte ObjectID (uint) */
     
     CNODE_TYPE_POINT = 120,
     CNODE_TYPE_BOX,
@@ -149,6 +152,8 @@ static void mevent_fetch_array(HDF *node, zval **re)
             case CNODE_TYPE_INT:
             case CNODE_TYPE_BOOL:
             case CNODE_TYPE_INT64:
+            case CNODE_TYPE_DATETIME:
+            case CNODE_TYPE_TIMESTAMP:
                 add_assoc_long(*re, name, atol(val));
                 break;
             case CNODE_TYPE_FLOAT:
