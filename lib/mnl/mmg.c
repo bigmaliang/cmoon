@@ -6,7 +6,7 @@ NEOERR* mmg_init(char *host, int port, mmg_conn **db)
 
     mmg_conn *ldb;
 
-    mtc_dbg("connect to %s %d ...", host, port);
+    mtc_noise("connect to %s %d ...", host, port);
     
     *db = NULL;
     ldb = calloc(1, sizeof(mmg_conn));
@@ -48,7 +48,7 @@ NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
 {
     if (!db || !querys) return nerr_raise(NERR_ASSERT, "paramter null");
 
-    mtc_dbg("prepare %s %s", querys, sels);
+    mtc_noise("prepare %s %s", querys, sels);
     
     /*
      * doc query
@@ -131,7 +131,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                                  db->docq, db->docs);
     if (!db->p) {
         if (errno == ENOENT) {
-            mtc_dbg("queried %s 0 result", dsn);
+            mtc_noise("queried %s 0 result", dsn);
             if (db->flags & MMG_FLAG_EMPTY) return STATUS_OK;
             return nerr_raise(NERR_NOT_FOUND, "document not found");
         }
@@ -176,7 +176,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
         db->c = NULL;
         db->p = NULL;
         
-        mtc_dbg("queried %s %d result", dsn, count);
+        mtc_noise("queried %s %d result", dsn, count);
 
         /*
          * call callback at last. because we don't want declare more mmg_conn*
@@ -325,7 +325,7 @@ NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, int *ret, char *qu
     MCS_NOT_NULLC(db, dbname, collname);
     MCS_NOT_NULLB(querys, ret);
 
-    mtc_dbg("prepare %s.%s %s", dbname, collname, querys);
+    mtc_noise("prepare %s.%s %s", dbname, collname, querys);
     
     doc = mbson_new_from_string(querys, true);
     if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",

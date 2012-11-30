@@ -42,10 +42,19 @@ mevent 基于 nmdb(http://blitiri.com.ar/p/nmdb/) 的架构设计，其功能主
 
 
 
+daemon/mevent 安装
+------------------
+cd /usr/local/lib
 
-php 扩展安装
-----------
-tar zcvf libmevent.tar.gz /usr/local/include/mevent.h /usr/local/include/net-const.h /usr/local/lib/libmevent.a /usr/local/lib/libneo_utl.a /usr/local/include/ClearSilver/ /etc/mevent/ /usr/local/bin/mevent /usr/local/bin/hb /usr/local/lib/mevent_*.so /usr/local/lib/libstreamhtmlparser.*
+tar zcvf libdaemon.tar.gz libmnl.so libmevent.so libeii.so libstreamhtmlparser.so* libmemcached.so* libjson.so* libmongo-client.so* libjpeg.so* libfcgi.so* libglib-2.0.so* libiconv.so* libfreetype.so* libpng12.so*
+
+/usr/lib64/libgd.so*
+
+
+
+php 扩展安装                                                                                                                            
+---------- 
+tar zcvf libmevent.tar.gz /usr/local/include/mevent.h /usr/local/include/net-const.h /usr/local/lib/libmevent.so /usr/local/lib/libneo_utl.a /usr/local/include/ClearSilver/ /etc/mevent/ /usr/local/lib/libstreamhtmlparser.*
 
 /usr/local/src/php-5.xx/ext/ext_skel --extname=mevent
 cd mevent

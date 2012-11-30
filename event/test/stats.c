@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     mtimer_start();
     
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1; i++) {
         ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
         if (PROCESS_OK(ret))
             hdf_dump(evt->hdfrcv, NULL);

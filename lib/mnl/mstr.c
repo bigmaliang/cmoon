@@ -6,9 +6,18 @@ void mstr_rand_string(char *s, int max)
     int x = 0;
 
     size = neo_rand(max-1);
-    for (x = 0; x < size; x++)
-    {
+    for (x = 0; x < size; x++) {
         s[x] = (char)(65 + neo_rand(90-65));
+    }
+    s[x] = '\0';
+}
+
+void mstr_rand_digit_with_len(char *s, int len)
+{
+    int x;
+    
+    for (x = 0; x < len; x++) {
+        s[x] = (char)(48 + neo_rand(10));
     }
     s[x] = '\0';
 }
@@ -389,6 +398,18 @@ void mstr_str2hex(unsigned char *charin, unsigned int inlen, unsigned char *hexo
     } while (0)
 
     unsigned int i, j;
+    unsigned char *s;
+
+    /*
+     * tolower
+     */
+    s = charin;
+    i = 0;
+    while(*s != 0 && i < inlen) {
+        *s = tolower(*s);
+        s++;
+        i++;
+    }
     
     for (i = 0, j = 0; i < inlen; i += 2, j++) {
         STR2HEX(charin[i], charin[i+1], hexout[j]);

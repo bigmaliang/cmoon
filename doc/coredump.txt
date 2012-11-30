@@ -54,6 +54,9 @@ http://www.ibm.com/developerworks/cn/linux/l-cn-screen/
 #do some staff
 #C-a d
 
+#C-a ? 查看帮助
+#C-a [ 查看当前screen的历史输出
+
 #screen -r dbg
 #check some thing
 #C-d OR C-a d

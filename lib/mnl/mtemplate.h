@@ -15,7 +15,7 @@ NEOERR* mtpl_append_loadpath(char *dir);
 /*
  * in Config Rend
  * we need to build some complex data in hdf format(e.g. email data),
- * the finally data usually made by the following 3 parts:
+ * the finally data usually made up by the following 3 parts:
  *   In    : value from runtime variable. e.g. send to
  *   Config: value from config file. e.g. send option
  *   Rend  : value from template file. e.g. email content
