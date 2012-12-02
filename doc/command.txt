@@ -23,12 +23,20 @@ sed -i "s/oldstring/newstring/g" `grep oldstring -rl yourdir`
 ------
 输出当前秒数
 date +%s
+date +%s 和 time(NULL) 返回的数字一样，都是 seconds since 00:00:00 UTC
+故，无论在什么时区设置的机器上，其返回的数字都是一致的（不会因Timezone选择不同而不同）。
+所以，用其判断系统当前日期、时间，必须使用localtime()函数（如mutl_getdatetime()）。
+或者，在这个秒数的基础上手动加上时区秒数（在使用mevent的g_ctime时特别注意）。
+
 
 输出某特定时刻的秒数
 date -d "2011-11-15 00:00:00" +%s
 
 今天的日期
 TODAY=`date +%Y%m%d`
+
+将秒数转换成日期
+date -d "$((1354494968 - `date '+%s'` )) sec" +'%Y-%-m-%-d %H:%M:%S'
 
 
 

@@ -41,6 +41,10 @@ mevent 基于 nmdb(http://blitiri.com.ar/p/nmdb/) 的架构设计，其功能主
 1, 偷懒一把， 事件中心依赖 clearsilver (http://clearsilver.org/) 的 libneo_utl :)
 
 
+注意
+----
+使用 g_ctime 时请特别注意加上本机的时区设置，详情请参考 moon/doc/command.txt
+
 
 daemon/mevent 安装
 ------------------
