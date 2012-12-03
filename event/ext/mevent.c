@@ -135,19 +135,41 @@ static void mevent_fetch_array(HDF *node, zval **re)
     node = hdf_obj_child(node);
 
     while (node) {
+        type = mutil_obj_attr(node, "type");
+        if (type) ctype = atoi(type);
+        else ctype = CNODE_TYPE_STRING;
+        
         if (hdf_obj_child(node)) {
             key = hdf_obj_name(node) ? hdf_obj_name(node): "unkown";
+            
             ALLOC_INIT_ZVAL(cre);
             array_init(cre);
             mevent_fetch_array(node, &cre);
-            add_assoc_zval(*re, key, cre);
+
+            if (ctype == CNODE_TYPE_ARRAY) {
+                /* convert cre ===> array (copied from ext/standard/array.c) */
+                /* TODO memory leak? */
+                zval *array, **entry;
+                HashPosition pos;
+                ALLOC_INIT_ZVAL(array);
+                array_init_size(array, zend_hash_num_elements(Z_ARRVAL_P(cre)));
+
+                zend_hash_internal_pointer_reset_ex(Z_ARRVAL_P(cre), &pos);
+                while (zend_hash_get_current_data_ex(Z_ARRVAL_P(cre),
+                                                     (void **)&entry,
+                                                     &pos) == SUCCESS) {
+                    zval_add_ref(entry);
+                    zend_hash_next_index_insert(Z_ARRVAL_P(array), entry,
+                                                sizeof(zval *), NULL);
+                    zend_hash_move_forward_ex(Z_ARRVAL_P(cre), &pos);
+                }
+                add_assoc_zval(*re, key, array);
+            } else {
+                add_assoc_zval(*re, key, cre);
+            }
         } else if ((val = hdf_obj_value(node)) != NULL) {
             name = hdf_obj_name(node);
 
-            type = mutil_obj_attr(node, "type");
-            if (type) ctype = atoi(type);
-            else ctype = CNODE_TYPE_STRING;
-            
             switch (ctype) {
             case CNODE_TYPE_INT:
             case CNODE_TYPE_BOOL:
