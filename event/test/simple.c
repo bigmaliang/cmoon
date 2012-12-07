@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "mevent.h"
-#include "timer.h"
 
 HDF *g_cfg = NULL;
 HASH *g_datah = NULL;
@@ -45,7 +44,6 @@ int main(int argc, char *argv[])
     
     int i;
     suc = fai = busy = 0;
-    timer_start();
     for (i = 0; i < times; i++) {
         hdf_set_value(evt->hdfsnd, "sqls", sql);
         ret = mevent_trigger(evt, NULL, REQ_CMD_NONE, FLAGS_NONE);
@@ -58,8 +56,6 @@ int main(int argc, char *argv[])
         } else
             fai++;
     }
-    s_elapsed = timer_stop();
-    printf("%lu\n", s_elapsed);
     printf("suc %d fai %d busy %d\n", suc, fai, busy);
     
     mevent_free(evt);

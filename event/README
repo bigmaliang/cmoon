@@ -50,9 +50,7 @@ daemon/mevent 安装
 ------------------
 cd /usr/local/lib
 
-tar zcvf libdaemon.tar.gz libmnl.so libmevent.so libeii.so libstreamhtmlparser.so* libmemcached.so* libjson.so* libmongo-client.so* libjpeg.so* libfcgi.so* libglib-2.0.so* libiconv.so* libfreetype.so* libpng12.so*
-
-/usr/lib64/libgd.so*
+tar zcvf libdaemon.tar.gz libmnl.so libmevent.so libeii.so libstreamhtmlparser.so* libmemcached.so* libjson.so* libmongo-client.so* libjpeg.so* libfcgi.so* libglib-2.0.so* libiconv.so* libfreetype.so* libpng12.so* libgd.so* mevent_*.so
 
 
 

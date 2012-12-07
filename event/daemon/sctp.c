@@ -42,7 +42,7 @@ static void rep_send_error(const struct req_info *req, const unsigned int code)
     r = sendto(req->fd, minibuf, 3 * 4, 0, req->clisa, req->clilen);
 
     if (r < 0) {
-        errlog("rep_send_error() failed");
+        mtc_err("rep_send_error() failed");
     }
 }
 
@@ -77,8 +77,7 @@ static int rep_send(const struct req_info *req, const unsigned char *buf,
     
     rv = sendto(req->fd, buf, size, 0, req->clisa, req->clilen);
     if (rv < 0) {
-        //rep_send_error(req, ERR_SEND);
-        sctp_reply_mini(req, REP_ERR_SEND);
+        rep_send_error(req, REP_ERR_SEND);
         return 0;
     }
     return 1;
