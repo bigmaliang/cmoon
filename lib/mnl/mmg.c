@@ -21,6 +21,16 @@ NEOERR* mmg_init(char *host, int port, mmg_conn **db)
     return STATUS_OK;
 }
 
+NEOERR* mmg_seed_add(mmg_conn *db, char *host, int port)
+{
+    mtc_noise("add seed %s %d ...", host, port);
+
+    if (!mongo_sync_conn_seed_add(db->con, host, port))
+        return nerr_raise(NERR_DB, "add seed: %s", strerror(errno));
+    
+    return STATUS_OK;
+}
+
 void mmg_destroy(mmg_conn *db)
 {
     if (!db) return;

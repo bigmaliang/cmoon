@@ -12,7 +12,7 @@ __BEGIN_DECLS
 #define IMAGE_MD5_SIZE  (1024*1024)
 
 #define LEN_INT     16        // int max length
-#define LEN_LONG    20
+#define LEN_LONG    24
 #define LEN_DT      11        // date length 2008-01-01
 #define LEN_TM      25        // time 2008-01-01 12:12:43
 #define LEN_TM_GMT  32        /* Wdy, DD-Mon-YYYY HH:MM:SS GMT */

@@ -416,6 +416,15 @@ NEOERR* mcs_set_int_attr(HDF *hdf, char *name, char *key, int val)
     
     snprintf(tok, sizeof(tok), "%d", val);
 
+    return nerr_pass(hdf_set_attr(hdf, name, key, tok));
+}
+
+NEOERR* mcs_set_int_attrr(HDF *hdf, char *name, char *key, int val)
+{
+    char tok[64] = {0};
+    
+    snprintf(tok, sizeof(tok), "%d", val);
+
     /* can't set node's attr if node have no value */
     if (!hdf_get_value(hdf, name, NULL)) hdf_set_value(hdf, name, "foo");
 

@@ -21,6 +21,7 @@ typedef struct _mmg_conn {
 } mmg_conn;
 
 NEOERR* mmg_init(char *host, int port, mmg_conn **db);
+NEOERR* mmg_seed_add(mmg_conn *db, char *host, int port);
 void mmg_destroy(mmg_conn *db);
 
 enum {
