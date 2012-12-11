@@ -102,16 +102,15 @@ bool mutil_getdatetime_gmt(char *res, int len, const char *fmt, time_t second)
 
 time_t mutil_get_abssec(char *fmt, char *time)
 {
-    char datetime[LEN_TM] = {0};
-    struct tm thatdaystm;
+    struct tm stm;
     
     if (!fmt || !time) return 0;
 
-    snprintf(datetime, LEN_TM, "%s", time);
-    //strptime(datetime, "%Y-%m-%d %H:%M:%S", &thatdaystm);
-    strptime(datetime, fmt, &thatdaystm);
+    memset(&stm, 0x0, sizeof(struct tm));
+    strptime(time, fmt, &stm);
+    //strptime(datetime, "%Y-%m-%d %H:%M:%S", &stm);
 
-    return mktime(&thatdaystm);
+    return mktime(&stm);
 }
 
 void mutil_utc_time(struct timespec *ts)
