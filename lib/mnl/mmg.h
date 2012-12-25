@@ -28,7 +28,10 @@ enum {
     MMG_FLAG_Z = 0,
     /* allow entry result. don't return error if no result found */
     MMG_FLAG_EMPTY = 1 << 11,
-    MMG_FLAG_MIXROWS = 1 << 12
+    /* don't add number as key for each result row */
+    MMG_FLAG_MIXROWS = 1 << 12,
+    /* we need mongo's _id */
+    MMG_FLAG_GETOID = 1 << 13
 };
 /*
  * flags: reused flags with mongo_wire_cmd_query().
@@ -68,6 +71,10 @@ NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, char *up, char *selfmt, ...)
 NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, int *ret, char *querys);
 NEOERR* mmg_countf(mmg_conn *db, char *dbname, char *collname, int *ret, char *qfmt, ...)
                    ATTRIBUTE_PRINTF(5, 6);
+
+NEOERR* mmg_delete(mmg_conn *db, char *dsn, int flags, char *sel);
+NEOERR* mmg_deletef(mmg_conn *db, char *dsn, int flags, char *selfmt, ...)
+                   ATTRIBUTE_PRINTF(4, 5);
 
 __END_DECLS
 #endif    /* __MMG_H__ */

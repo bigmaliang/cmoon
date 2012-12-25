@@ -83,6 +83,7 @@ static EventEntry* skeleton_init_driver(void)
 {
     struct skeleton_entry *e = calloc(1, sizeof(struct skeleton_entry));
     if (e == NULL) return NULL;
+    NEOERR *err;
 
     e->base.name = (unsigned char*)strdup(PLUGIN_NAME);
     e->base.ksize = strlen(PLUGIN_NAME);

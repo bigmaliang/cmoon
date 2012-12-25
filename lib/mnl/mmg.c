@@ -83,7 +83,10 @@ NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
         db->docs = mbson_new_from_string(sels, false);
         if (!db->docs) return nerr_raise(NERR_ASSERT, "build selector: %s: %s",
                                          sels, strerror(errno));
-        bson_append_int32(db->docs, "_id", 0);
+        if (!(flags & MMG_FLAG_GETOID)) bson_append_int32(db->docs, "_id", 0);
+        bson_finish(db->docs);
+    } else if (!(flags & MMG_FLAG_GETOID)) {
+        db->docs = bson_build(BSON_TYPE_INT32, "_id", 0, BSON_TYPE_NONE);
         bson_finish(db->docs);
     }
 
@@ -335,13 +338,15 @@ NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, int *ret, char *qu
     MCS_NOT_NULLC(db, dbname, collname);
     MCS_NOT_NULLB(querys, ret);
 
-    mtc_noise("prepare %s.%s %s", dbname, collname, querys);
+    mtc_noise("count %s.%s %s", dbname, collname, querys);
     
     doc = mbson_new_from_string(querys, true);
     if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
                                 querys, strerror(errno));
 
     *ret = (int)mongo_sync_cmd_count(db->con, dbname, collname, doc);
+
+    bson_free(doc);
 
     return STATUS_OK;
 }
@@ -358,6 +363,45 @@ NEOERR* mmg_countf(mmg_conn *db, char *dbname, char *collname, int *ret, char *q
     if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
 
     err = mmg_count(db, dbname, collname, ret, qa);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    free(qa);
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_delete(mmg_conn *db, char *dsn, int flags, char *sel)
+{
+    bson *doc;
+
+    MCS_NOT_NULLC(db, dsn, sel);
+
+    mtc_noise("delete %s %s", dsn, sel);
+
+    doc = mbson_new_from_string(sel, true);
+    if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
+                                sel, strerror(errno));
+
+    if (!mongo_sync_cmd_delete(db->con, dsn, flags, doc))
+        return nerr_raise(NERR_DB, "sync_cmd_delete: %s", strerror(errno));;
+
+    bson_free(doc);
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_deletef(mmg_conn *db, char *dsn, int flags, char *selfmt, ...)
+{
+    char *qa;
+    va_list ap;
+    NEOERR *err;
+    
+    va_start(ap, selfmt);
+    qa = vsprintf_alloc(selfmt, ap);
+    va_end(ap);
+    if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
+
+    err = mmg_delete(db, dsn, flags, qa);
     if (err != STATUS_OK) return nerr_pass(err);
 
     free(qa);
