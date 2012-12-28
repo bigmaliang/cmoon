@@ -315,6 +315,44 @@ NEOERR* mcs_set_float_value_with_type(HDF *hdf, char *name, float value, CnodeTy
     return nerr_pass(mcs_set_int_attr(hdf, name, "type", type));
 }
 
+int mcs_add_int_value(HDF *node, char *key, int val)
+{
+    if (!node || !key) return 0;
+    
+    int ov = hdf_get_int_value(node, key, 0);
+    hdf_set_int_value(node, key, ov+val);
+
+    return ov+val;
+}
+
+char* mcs_append_string_value(HDF *node, char *key, char *str)
+{
+    if (!node || !key) return NULL;
+
+    char *ov = hdf_get_value(node, key, "");
+
+    hdf_set_valuef(node, "%s=%s%s", key, ov, str);
+
+    return hdf_get_value(node, key, NULL);
+}
+
+char* mcs_append_string_valuef(HDF *node, char *key, char *sfmt, ...)
+{
+    char *qa, *rs;
+    va_list ap;
+    
+    va_start(ap, sfmt);
+    qa = vsprintf_alloc(sfmt, ap);
+    va_end(ap);
+    if (!qa) return NULL;
+
+    rs = mcs_append_string_value(node, key, qa);
+    
+    free(qa);
+
+    return rs;
+}
+
 HDF* mcs_hdf_getf(HDF *node, char *fmt, ...)
 {
     char key[LEN_HDF_KEY];
