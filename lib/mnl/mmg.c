@@ -383,7 +383,7 @@ NEOERR* mmg_delete(mmg_conn *db, char *dsn, int flags, char *sel)
                                 sel, strerror(errno));
 
     if (!mongo_sync_cmd_delete(db->con, dsn, flags, doc))
-        return nerr_raise(NERR_DB, "sync_cmd_delete: %s", strerror(errno));;
+        return nerr_raise(NERR_DB, "sync_cmd_delete: %s", strerror(errno));
 
     bson_free(doc);
 
@@ -402,6 +402,67 @@ NEOERR* mmg_deletef(mmg_conn *db, char *dsn, int flags, char *selfmt, ...)
     if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
 
     err = mmg_delete(db, dsn, flags, qa);
+    if (err != STATUS_OK) return nerr_pass(err);
+
+    free(qa);
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_custom(mmg_conn *db, char *dbname,
+                   char *prefix, HDF *outnode, char *command)
+{
+    mongo_packet *p;
+    mongo_sync_cursor *c;
+    bson *doc;
+
+    NEOERR *err;
+    
+    MCS_NOT_NULLB(db, dbname);
+    MCS_NOT_NULLB(outnode, command);
+
+    mtc_noise("custom %s %s", dbname, command);
+
+    /*
+     * doc
+     */
+    doc = mbson_new_from_string(command, true);
+    if (!doc) return nerr_raise(NERR_ASSERT, "build doc custom %s", command);
+
+    p = mongo_sync_cmd_custom(db->con, dbname, doc);
+    bson_free(doc);
+    if (!p)
+        return nerr_raise(NERR_DB, "sync_cmd_custom: %s %s", command, strerror(errno));
+
+    c = mongo_sync_cursor_new(db->con, dbname, p);
+    if (!c) return nerr_raise(NERR_DB, "cursor: %s", strerror(errno));
+
+    if (mongo_sync_cursor_next(c)) {
+        doc = mongo_sync_cursor_get_data(c);
+        if (!doc) return nerr_raise(NERR_DB, "doc: %s", strerror(errno));
+        
+        err = mbson_export_to_hdf(outnode, doc, prefix, MBSON_EXPORT_TYPE, true);
+        if (err != STATUS_OK) return nerr_pass(err);
+    } else return nerr_raise(NERR_DB, "cursor next: %s", strerror(errno));
+    
+    mongo_sync_cursor_free(c);
+
+    return STATUS_OK;
+}
+
+NEOERR* mmg_customf(mmg_conn *db, char *dbname,
+                    char *prefix, HDF *outnode, char *cmdfmt, ...)
+{
+    char *qa;
+    va_list ap;
+    NEOERR *err;
+    
+    va_start(ap, cmdfmt);
+    qa = vsprintf_alloc(cmdfmt, ap);
+    va_end(ap);
+    if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
+
+    err = mmg_custom(db, dbname, prefix, outnode, qa);
     if (err != STATUS_OK) return nerr_pass(err);
 
     free(qa);

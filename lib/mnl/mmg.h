@@ -76,5 +76,11 @@ NEOERR* mmg_delete(mmg_conn *db, char *dsn, int flags, char *sel);
 NEOERR* mmg_deletef(mmg_conn *db, char *dsn, int flags, char *selfmt, ...)
                    ATTRIBUTE_PRINTF(4, 5);
 
+NEOERR* mmg_custom(mmg_conn *db, char *dbname,
+                   char *prefix, HDF *outnode, char *command);
+NEOERR* mmg_customf(mmg_conn *db, char *dbname,
+                    char *prefix, HDF *outnode, char *cmdfmt, ...)
+                    ATTRIBUTE_PRINTF(5, 6);
+
 __END_DECLS
 #endif    /* __MMG_H__ */
