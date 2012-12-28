@@ -24,7 +24,7 @@ struct skeleton_entry {
 static void skeleton_process_driver(EventEntry *entry, QueueEntry *q)
 {
     struct skeleton_entry *e = (struct skeleton_entry*)entry;
-    NEOERR *err;
+    NEOERR *err = NULL;
     int ret;
     
     struct skeleton_stats *st = &(e->st);

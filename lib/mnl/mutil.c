@@ -82,9 +82,12 @@ int mutil_execvf(char *argv[], char *fmt, ...)
 bool mutil_getdatetime(char *res, int len, const char *fmt, time_t second)
 {
     memset(res, 0x0, len);
-    time_t tm = time(NULL) + second;
-    /* TODO memory leak? */
-    struct tm *stm = localtime(&tm);
+    /*
+     * TODO memory leak?
+     * used static memory, no memory leak
+     * localtime_r() will
+     */
+    struct tm *stm = localtime(&second);
     if (strftime(res, len, fmt, stm) == 0)
         return false;
     return true;
@@ -93,8 +96,7 @@ bool mutil_getdatetime(char *res, int len, const char *fmt, time_t second)
 bool mutil_getdatetime_gmt(char *res, int len, const char *fmt, time_t second)
 {
     memset(res, 0x0, len);
-    time_t tm = time(NULL) + second;
-      struct tm *stm = gmtime(&tm);
+    struct tm *stm = gmtime(&second);
     if (strftime(res, len, fmt, stm) == 0)
         return false;
     return true;

@@ -53,6 +53,7 @@ __BEGIN_DECLS
 #define PRE_QUERY       "Query"
 #define PRE_OUTPUT      "Output"
 #define PRE_RESERVE     "Reserve"
+#define PRE_TEMP        "Temp"
 
 #define PRE_LAYOUT      "Layout"
 #define PRE_INCLUDE     "Include"
