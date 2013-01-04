@@ -64,8 +64,7 @@ bool mtc_msg(const char *func, const char *file, long line,
 
     va_list ap;
     char tm[LEN_TM];
-    if (!mutil_getdatetime(tm, sizeof(tm), "%F %T", 0))
-        return false;
+    mutil_getdatetime(tm, sizeof(tm), "%Y-%m-%d %H:%M:%S", time(NULL));
 
     fprintf(g_fp, "[%s]", tm);
     fprintf(g_fp, "[%s]", g_trace_level[level]);

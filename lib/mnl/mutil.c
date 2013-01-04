@@ -88,8 +88,8 @@ bool mutil_getdatetime(char *res, int len, const char *fmt, time_t second)
      * localtime_r() will
      */
     struct tm *stm = localtime(&second);
-    if (strftime(res, len, fmt, stm) == 0)
-        return false;
+    strftime(res, len, fmt, stm);
+    res[len-1] = '\0';
     return true;
 }
 
@@ -97,8 +97,8 @@ bool mutil_getdatetime_gmt(char *res, int len, const char *fmt, time_t second)
 {
     memset(res, 0x0, len);
     struct tm *stm = gmtime(&second);
-    if (strftime(res, len, fmt, stm) == 0)
-        return false;
+    strftime(res, len, fmt, stm);
+    res[len-1] = '\0';
     return true;
 }
 
