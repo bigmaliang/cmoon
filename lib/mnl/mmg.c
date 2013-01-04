@@ -1,12 +1,12 @@
 #include "mheads.h"
 
-NEOERR* mmg_init(char *host, int port, mmg_conn **db)
+NEOERR* mmg_init(char *host, int port, int ms, mmg_conn **db)
 {
     if (!host) return nerr_raise(NERR_ASSERT, "paramter null");
 
     mmg_conn *ldb;
 
-    mtc_noise("connect to %s %d ...", host, port);
+    mtc_noise("connect to %s %d %d ...", host, port, ms);
     
     *db = NULL;
     ldb = calloc(1, sizeof(mmg_conn));
@@ -15,6 +15,7 @@ NEOERR* mmg_init(char *host, int port, mmg_conn **db)
     ldb->con = mongo_sync_connect(host, port, true);
     if (!ldb->con) return nerr_raise(NERR_DB, "sync connect: %s", strerror(errno));
     mongo_sync_conn_set_auto_reconnect(ldb->con, true);
+    if (ms > 0) mongo_connection_set_timeout((mongo_connection*)ldb->con, ms);
 
     *db = ldb;
 
@@ -233,6 +234,8 @@ NEOERR* mmg_string_insert(mmg_conn *db, char *dsn, char *str)
     
     MCS_NOT_NULLC(db, dsn, str);
 
+    mtc_noise("insert string %s %s", dsn, str);
+    
     doc = mbson_new_from_string(str, true);
     if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
                                 str, strerror(errno));
@@ -271,6 +274,8 @@ NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
     
     MCS_NOT_NULLC(db, dsn, node);
 
+    mtc_noise("insert hdf %s", dsn);
+    
     err = mbson_import_from_hdf(node, &doc, true);
     if (err != STATUS_OK) return nerr_pass(err);
 
@@ -288,6 +293,8 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *up, char *sel)
 
     MCS_NOT_NULLC(db, dsn, up);
 
+    mtc_noise("update %s %s %s", dsn, up, sel);
+    
     if (sel) {
         doca = mbson_new_from_string(sel, true);
         if (!doca) return nerr_raise(NERR_ASSERT, "build doc sel: %s: %s",
