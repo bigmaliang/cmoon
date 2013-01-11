@@ -226,6 +226,17 @@
              nil
          '(("\\<\\(\\sw+\\) ?(" 1 font-lock-function-call-face)) t)))
 (add-hook 'diary-hook 'appt-make-list)
+
+(add-hook 'c-mode-hook   'hs-minor-mode)
+(add-hook 'c-mode-hook '(lambda ()
+                            (global-set-key [f5] 'hs-toggle-hiding)
+                            (global-set-key [f6] 'hs-hide-all)
+                            (global-set-key [C-f6] 'hs-show-all)))
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'java-mode-hook       'hs-minor-mode)
+(add-hook 'ess-mode-hook        'hs-minor-mode)
+(add-hook 'perl-mode-hook       'hs-minor-mode)
+(add-hook 'sh-mode-hook         'hs-minor-mode)
 ;(add-hook 'gdb-mode-hook '(lambda ()
 ;                            (define-key c-mode-base-map [(f5)] 'gud-go)
 ;                            (define-key c-mode-base-map [(f7)] 'gud-next)
