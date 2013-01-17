@@ -75,6 +75,9 @@ int mcs_add_int_value(HDF *node, char *key, int val);
 char* mcs_append_string_value(HDF *node, char *key, char *str);
 char* mcs_append_string_valuef(HDF *node, char *key, char *sfmt, ...)
                                ATTRIBUTE_PRINTF(3, 4);
+char* mcs_prepend_string_value(HDF *node, char *key, char *str);
+char* mcs_prepend_string_valuef(HDF *node, char *key, char *sfmt, ...)
+                                ATTRIBUTE_PRINTF(3, 4);
 
 HDF*    mcs_hdf_getf(HDF *node, char *fmt, ...)
                      ATTRIBUTE_PRINTF(2, 3);

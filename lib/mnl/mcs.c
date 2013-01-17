@@ -353,6 +353,34 @@ char* mcs_append_string_valuef(HDF *node, char *key, char *sfmt, ...)
     return rs;
 }
 
+char* mcs_prepend_string_value(HDF *node, char *key, char *str)
+{
+    if (!node || !key) return NULL;
+
+    char *ov = hdf_get_value(node, key, "");
+
+    hdf_set_valuef(node, "%s=%s%s", key, str, ov);
+
+    return hdf_get_value(node, key, NULL);
+}
+
+char* mcs_prepend_string_valuef(HDF *node, char *key, char *sfmt, ...)
+{
+    char *qa, *rs;
+    va_list ap;
+    
+    va_start(ap, sfmt);
+    qa = vsprintf_alloc(sfmt, ap);
+    va_end(ap);
+    if (!qa) return NULL;
+
+    rs = mcs_prepend_string_value(node, key, qa);
+    
+    free(qa);
+
+    return rs;
+}
+
 HDF* mcs_hdf_getf(HDF *node, char *fmt, ...)
 {
     char key[LEN_HDF_KEY];
