@@ -22,6 +22,16 @@ NEOERR* mmg_init(char *host, int port, int ms, mmg_conn **db)
     return STATUS_OK;
 }
 
+NEOERR* mmg_auth(mmg_conn *db, char *dsn, char *user, char *pass)
+{
+    mtc_noise("authorize to %s use %s %s", dsn, user, pass);
+    
+    if (!mongo_sync_cmd_authenticate(db->con, dsn, user, pass))
+        return nerr_raise(NERR_DB, "auth: %s", strerror(errno));
+
+    return STATUS_OK;
+}
+
 NEOERR* mmg_seed_add(mmg_conn *db, char *host, int port)
 {
     mtc_noise("add seed %s %d ...", host, port);

@@ -24,6 +24,7 @@ typedef struct _mmg_conn {
  * timeout in microsecond, 1000ms = 1s
  */
 NEOERR* mmg_init(char *host, int port, int timeout, mmg_conn **db);
+NEOERR* mmg_auth(mmg_conn *db, char *dsn, char *user, char *pass);
 NEOERR* mmg_seed_add(mmg_conn *db, char *host, int port);
 void mmg_destroy(mmg_conn *db);
 
