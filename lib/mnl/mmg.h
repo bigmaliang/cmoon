@@ -68,9 +68,9 @@ NEOERR* mmg_string_insertf(mmg_conn *db, char *dsn, char *fmt, ...)
                            ATTRIBUTE_PRINTF(3, 4);
 NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node);
 
-NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *up, char *sel);
-NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, char *up, char *selfmt, ...)
-                           ATTRIBUTE_PRINTF(4, 5);
+NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *sel);
+NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, int flags, char *up, char *selfmt, ...)
+                           ATTRIBUTE_PRINTF(5, 6);
 
 NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, int *ret, char *querys);
 NEOERR* mmg_countf(mmg_conn *db, char *dbname, char *collname, int *ret, char *qfmt, ...)

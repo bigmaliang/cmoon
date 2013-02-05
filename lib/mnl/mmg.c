@@ -297,7 +297,7 @@ NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
     return STATUS_OK;
 }
 
-NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *up, char *sel)
+NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *sel)
 {
     bson *doca, *docb;
 
@@ -315,12 +315,7 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *up, char *sel)
     if (!docb) return nerr_raise(NERR_ASSERT, "build doc up: %s: %s",
                                  up, strerror(errno));
 
-/*
-    if (!mongo_sync_cmd_update(db->con, dsn, 0, doca, docb))
-*/
-    if (!mongo_sync_cmd_update(db->con, dsn,
-                               MONGO_WIRE_FLAG_UPDATE_UPSERT,
-                               doca, docb))
+    if (!mongo_sync_cmd_update(db->con, dsn, flags, doca, docb))
         return nerr_raise(NERR_DB, "sync_cmd_update: %s", strerror(errno));
     
     bson_free(doca);
@@ -329,7 +324,7 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, char *up, char *sel)
     return STATUS_OK;
 }
 
-NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, char *up, char *selfmt, ...)
+NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, int flags, char *up, char *selfmt, ...)
 {
     char *qa;
     va_list ap;
@@ -340,7 +335,7 @@ NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, char *up, char *selfmt, ...)
     va_end(ap);
     if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
 
-    err = mmg_string_update(db, dsn, up, qa);
+    err = mmg_string_update(db, dsn, flags, up, qa);
     if (err != STATUS_OK) return nerr_pass(err);
 
     free(qa);
