@@ -1,11 +1,9 @@
 /*
- * 事件中心心跳检测报警程序, 需配合 crontab 定时拉起使用
- * PATH/hb 192.168.1.15 26000 uic ../daemon/mevent.hdf > /tmp/meventhb.log
- * 每次检查一个后端插件的工作情况
+ * 事件中心心跳检测重启程序, 需配合 crontab 定时拉起使用
+ * 程序本身得错误信息printf，后台的状态输出到日志文件
+ * PATH/hb uic 1001 /usr/local/moon/mevent.hdf > /tmp/meventhb.log
  *
- * 正常情况下 输出 后端插件的 stats 统计信息
- * 处理错误 0x800 时 短信上报
- * 网络,客户端错误时  短信上报 trigger return
+ * 正常情况下 输出 后端插件的返回信息
  */
 #include <stdio.h>        /* printf() */
 #include <unistd.h>        /* malloc(), fork() and getopt() */
@@ -22,60 +20,70 @@
 #include "log.h"
 #include "stats.h"
 #include "config.h"
-#include "smsalarm.h"
+
+#include "mheads.h"
+
+#include "ClearSilver.h"
 
 int main(int argc, char *argv[])
 {
+    STRING serror; string_init(&serror);
     int ret;
+    char *ename, *conf;
+    int cmd;
+    int trynum = 5;
 
-    if (argc != 5) {
-        printf("Usage: %s HOST PORT EVENT_NAME CONFIG_FILE\n", argv[0]);
+    if (argc != 4) {
+        printf("Usage: %s EVENT_NAME CMD CONFIG_FILE\n", argv[0]);
         return 1;
     }
+
+    ename = argv[1];
+    cmd = atoi(argv[2]);
+    conf = argv[3];
+
+    if (config_parse_file(conf, &g_cfg) != 1) {
+        printf("parse config file %s failure", conf);
+        return 1;
+    }
+    mtc_init(hdf_get_value(g_cfg, PRE_SERVER".logfile_hb", "/tmp/meventhb"));
+    nerr_init();
+    merr_init((MeventLog)mtc_msg);
 
     settings.smsalarm = 0;
-    //settings.logfname = "-";
-    log_init();
-    if (config_parse_file(argv[4], &g_cfg) != 1) {
-        printf("parse config file %s failure", argv[3]);
-            return 1;
-    }
-    
-    mevent_t *evt = mevent_init(argv[3]);
+
+    mevent_t *evt = mevent_init_plugin(ename);
     if (evt == NULL) {
         printf("init error\n");
-        SMS_ALARM("mevent_init error");
         return 1;
     }
 
-    struct timeval tv;
-    tv.tv_sec = 0;
-    tv.tv_usec = 800000;
-    
-    mevent_add_udp_server(evt, argv[1], atoi(argv[2]), NULL, &tv);
-    ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
+    ret = mevent_trigger(evt, NULL, cmd, FLAGS_SYNC);
     if (PROCESS_OK(ret)) {
+        mtc_foo("ok");
         hdf_dump(evt->hdfrcv, NULL);
     } else {
-        int try = 0;
+        int tried = 1;
         
     redo:
-        sleep(10);
-        ret = mevent_trigger(evt, NULL, REQ_CMD_STATS, FLAGS_SYNC);
-        if (PROCESS_NOK(ret) && try < 3) {
-            try++;
+        string_appendf(&serror, "%d => %d; ", tried, ret);
+        sleep(5);
+        ret = mevent_trigger(evt, NULL, cmd, FLAGS_SYNC);
+        if (PROCESS_NOK(ret) && tried < trynum) {
+            tried++;
             goto redo;
         }
 
-        if (PROCESS_NOK(ret) && try >= 3) {
-            printf("process failure %d\n", ret);
-            SMS_ALARM("process failure %d, restarted", ret);
-            system("killall -9 mevent; sleep 2; /usr/local/revive/xport/daemon/mevent -c /usr/local/revive/xport/conf/server.hdf");
+        if (PROCESS_NOK(ret) && tried >= trynum) {
+            mtc_foo("total  error: %s, restart", serror.buf);
+            system("killall -9 mevent; sleep 2; ulimit -S -c 9999999999 && /usr/local/moon/mevent -c /usr/local/moon/server.hdf");
         } else {
-            printf("process temproray error %d, %d", ret, try);
+            mtc_foo("partly error: %s", serror.buf);
+            hdf_dump(evt->hdfrcv, NULL);
         }
     }
 
+    string_clear(&serror);
     mevent_free(evt);
     return 0;
 }
