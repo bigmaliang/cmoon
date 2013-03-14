@@ -1,0 +1,999 @@
+[10:06] == #freakscorner.de 3 Willkommen zum offiziellen freakscorner.de | Bastelkeller IRC Chat. Hier findet ihr immer während eines Livestreams Kontakt zu uns. Besucht auch unsere Webseite unter http://freakscorner.de, unsere Facebook-Page unter http://facebook.com/Bastelkeller und unseren Youtube-Kanal unter http://youtube.com/tubenic86
+[10:06] == #megaly 6 ** MEGAN'S VERY QUIET, SERENE, TRANQUIL CHANNEL!!   Feel free to join  ##aspiefriends  OR ##AuTisTicS  **  >:\   **
+[10:06] == #hobo 3 Hobo - hobocentral.net - cookbook.hobocentral.net
+[10:06] == #ubuntu-co 21  Bienvenido al canal IRC de Ubuntu Colombia www.ubuntu-co.com - No olvidar respetar el CoC - http://www.ubuntu-ve.org/?q=codigodeconducta  - Preguntas y respuestas Ubuntu http://ubuntu.shapado.com/ - Felices Fiestas!
+[10:06] == #traq 4 Welcome to the official Traq channel | http://traq.io | Report bugs to http://bugs.traq.io/traq | Visit the forum at http://forum.traq.io | Latest version: 3.0.5
+[10:06] == #cqlug 9 Welcome to the home of Central Queensland Linux User Group | Meetings 2nd Wed & 4th Sat of Month | cqlug.linux.org.au
+[10:06] == #pathscale 30 EKOPath4 is now open source and the best benchmark is your own code! More sources coming soon - Main compiler at git clone git://github.com/path64/compiler.git # Test our debugger! - git clone git://github.com/path64/debugger.git # Mailing lists ->  http://lists.pathscale.com/mailman/listinfo # PSCNV docs -> http://wiki.github.com/pathscale/pscnv/
+[10:06] == #inovae 3
+[10:06] == #appjs 14
+[10:06] == #ubuntu-it 31 Canale italiano ufficiale di supporto per Ubuntu | Regolamento e info registrazione: http://wiki.ubuntu-it.org/GruppoIrc/LineeGuida  | Non incollare in canale, usare http://pastebin.ubuntu.com  | Log del canale: http://irclogs.ubuntu.com | Ubuntu 12.10 Quantal Quetzal: http://releases.ubuntu.com/quantal/
+[10:06] == #dejavu-dev 3
+[10:06] == #node 3
+[10:06] == #opensuse.hu 4 Üdvözlünk az opensuse.hu IRC-csatornáján! | Stabil kiadás: 12.2 - http://software.opensuse.org/122/hu
+[10:06] == ##luxrender 4 Welcome to the about luxrender channel | Please join #luxrender for the offical channel
+[10:06] == #pygraz 3 PyGRAZ: Python Usergroup Graz --- Nächstes Treffen findet am 5. März 2013 statt.
+[10:06] == #dragonjar.org 6 "Canal oficial de la comunidad DragonJAR.ORG - Pregunta y espera un poco"
+[10:06] == #bitcoin-gentoo 14 Gentoo Ebuilds for Bitcoin | https://gitorious.org/bitcoin/gentoo | layman -a bitcoin
+[10:06] == #Yandere 14 READ THE RULES: http://freenodeanime.wikia.com/wiki/Yandere_Rules
+[10:06] == #sourcemage-sorcery 7 Sorcery, the Source Mage package manager
+[10:06] == #mato 6 http://oona.redlynx.com/skaba | Games from the final available NOW: http://oona.redlynx.com/skaba/final
+[10:06] == #ubuntu-cl 7 Bienvenidos al canal oficial de Ubuntu Chile (ubuntu-cl) http://www.ubuntu-cl.org. Este canal NO brinda soporte, dudas bienvenidas en el foro: http://chile.ubuntuforums.org/
+[10:06] == #brainsilo 18 http://brainsilo.org - Portland's Own Hackerspace | You can call the space at (503) 764-4220 24/7 | Please see the mailing list! Weekly Meeting & Open House Thursdays at 7pm.
+[10:06] == #create 8 http://create.freedesktop.org : We make http://libregraphicsmeeting.org/2013 happen!
+[10:06] == ##c++-basic 122 We welcome C++ questions. No real C++ question is too stupid or too noobish. The only way to learn is to ask (just ask and stick around for someone to answer). | C questions: ##c or ##c-basic; other C++: ##c++-social, ##c++-general | Post your test case to http://ideone.com/ or http://codepad.org/ | See also http://www.parashift.com/c++-faq-lite/ http://jcatki.no-ip.org/fncpp/Resources
+[10:06] == #gskk 3 George School Computer Club Alumnus Exodus Emergency Channel | Greg Sowiak: Paragon of Efficiency and Minecraft Nostalgiarian | "As our appeal to the word 'unreasonable' suggests, we are about to cloak our ignorance in terminology." | "I logged onto an evil social network dedicated to profiting from the destruction of my privacy." | Valve: ACTIONS IN STEAM CHAT PLEASE
+[10:06] == #paldo 4 paldo 1.22 released! Check www.paldo.org for changes - http://www.paldo.org/wiki/FAQ
+[10:06] == #drupal-highavailability 4
+[10:06] == #osgrid 48 *** GRID IS ONLINE ***  - Stay up to date via [ http://twitter.com/osgrid | http://news.osgrid.org ]
+[10:06] == #gmusicbrowser 10 Welcome to the gmusicbrowser channel
+[10:06] == #digitac 4 Official IRC channel of Digitales Aachen (DIGITAC) e.V. - Visit us at http://digitac.cc/
+[10:06] == ##xymc 7
+[10:06] == #mucommander 3 mucommander 0.9.0 is out | Download at http://www.mucommander.com
+[10:06] == #chaplinjs 6 Chaplin.js
+[10:06] == #MNents 10 (7:17:35 PM) Monqu2: text on computers is rofl
+[10:06] == #haproxy 67 HAProxy - The Reliable, High Performance TCP/HTTP Load Balancer | http://haproxy.1wt.eu/ | JOIN and help grow our community! | Sit down and stay a while (> 30 minutes), it may take time for someone to respond.
+[10:06] == ##gwt 28 GWT [LATEST] has been released, go get it and update your projects! http://code.google.com/webtoolkit/download.html
+[10:06] == #xfer 4 Welcome to the xfer.in/androtransfer.com development channel!
+[10:06] == #magento-jobs 20 Welcome to #magento-jobs. This is NOT a support channel. If you need a coder please post a short job description with a link to a webpage with the detailed job description, explaining clearly what you require, how much you are willing to pay and please add the timeframe. . Do NOT PM unless you are asked to. Please leave your E-Mail when you ask for a quote!
+[10:06] == #ganeti-webmgr 21 Ganeti Web Manager: Django based web frontend for Ganeti - http://code.osuosl.org/projects/ganeti-webmgr
+[10:06] == #ppcoin 10 ppcoin digital currency | http://www.ppcoin.org/ | https://bitcointalk.org/index.php?topic=101820.0 | https://github.com/ppcoin/ppcoin
+[10:06] == #bundler 30 The topic for #bundler is: Docs! http://gembundler.com | Problems? http://bit.ly/bundler-issues | How to help: http://bit.ly/bundler/contribute | Why Bundler? http://bit.ly/bundler-rationale | Questions will be answered eventually, so hang out for a while
+[10:06] == #kubuntu-read-topic 4 Your router is buggy 1) Please follow these instructions: https://help.ubuntu.com/community/FixDCCExploit to FIX it (yes, it can be fixed) 2) after carrying out those instructions please type « test me » and wait few minutes | if this fails, type « /join #ubuntu-ops » and ask to be tested manually
+[10:06] == #fistule 11 prune: ou a tous les connard de francais qui viennent ici
+[10:06] == #zeromq 110 Welcome to #zeromq | Channel logs available at http://zero.mq/irc | Before asking for advice here, Please Read the FAQ - http://www.zeromq.org/area:faq - and the Guide - http://zero.mq/zg
+[10:06] == #weblion 5 Welcome to #weblion!  http://weblion.psu.edu/  Chat logs: http://bit.ly/chat-logs. To avoid being logged, start your message with [nolog].  Plone Symposium Midwest information: http://goo.gl/n7jH4
+[10:06] == #cisco 540 .:|:.:|:. Unofficial Cisco channel .:|:.:|:. |  Pastebin: http://inetpro.org/pastebin | Wiki: http://inetpro.org/wiki | +v to CCIEs! | Congrats on #38338, davidrothera! #Cisco's newest CCIE
+[10:06] == #ccc 106 is: Welcome to the unofficial CCC channel.
+[10:06] == #lantern 4
+[10:06] == #js-fr 9
+[10:06] == #dfhack 36 channel for dfhack and the tools using it - bay12 thread: http://tinyurl.com/dfhack-ng  github repo: http://github.com/peterix/dfhack Ping me (peterix) if you have any questions.
+[10:06] == #digitalpress 6 Welcome! Store hours 11-8 Mon-Thu 11-9 Fri-Sat 12-5 Sun Call us! (973) 772-1111
+[10:06] == #ffxi-chat 11 FFXI-Chat :: Motorcycles, Games, Technology and a touch of Tantalum
+[10:06] == #vnluser 12 Hội Luser Việt Nam - hết Tết, qua tháng ăn chơi - http://store.steampowered.com/sale/linux_release
+[10:06] == #againfaster-dev 3 'Cybernetics Department'
+[10:06] == #linux-hk 6 Hong Kong Linux User Group http://www.linux.org.hk | Hacking Thursday Feb/28 RSVP http://registrano.com/events/21d40b | Community Portal http://www.opensource.hk | 開源Wiki http://wiki.linux.org.hk
+[10:06] == #ls10 3
+[10:06] == #wikimedia-gs 21 Welcome to the Global Sysop's channel for Wikimedia foundation. You may seek help from a GS here. For urgent help, say !gs <request> . If you cannot find one here, try the #wikimedia-stewards channel for a Steward or find one in https://meta.wikimedia.org/wiki/Special:GlobalUsers?group=Global_sysops
+[10:06] == #AndEngine 6 Welcome to the http://www.andengine.org/ help channel. | Don't ask to ask, just ask. | Pasting? Use http://pastebin.com | cow is awesome, especially with lettuce, cheese, pickles, onions, on a sesame seed bun.
+[10:06] == #nolug 4 New Orleans Linux Dudes | nolug.org | we don't do windows | "There are 2 versions of Debian: Debian Really Old and Debian Broken" --- kniolet
+[10:06] == #lg4l 8 Welcome to #LG4L the Logitech G For Linux channel. Ask all questions relating to the kernel driver and frontend here. You can get the source for the modules at: https://github.com/ali1234/lg4l  Wiki at http://lg4l.wikia.com/
+[10:06] == #skydive 9
+[10:06] == #grapevine 5
+[10:06] == #DevSpace 3 The channel for DevSpace owners, users, admirers and lovers. | We've got an IRC bouncer, ask @jbpros if you're interested. | VDSL maintenance Feb 28, 7pm
+[10:06] == #akmc 4 Svetainė: http://www.akmc.lt | Forumas: http://www.akmc.lt/forumas | Paste: http://paste.akmc.lt
+[10:06] == #lesswrong-pro 6 Less Wrong+, where aspiring rationalists update their probability estimates on their professions |  no criticism without substitues allowed
+[10:06] == #electricguy 7 About electronics and circuit bending * Lab photo album http://electricguy.imgur.com * Stream list page http://www.chipguy.de * Music for a Vampire Available now! @  http://kathrynlj.bandcamp.com/ -Katzy
+[10:06] == #WorkingLibre 4 this sunday (Aug 19) I won't be around - have to work...<sigh>
+[10:06] == #linuxforum.hu 5 linuxforum.hu hivatalos csatorna | UTF 8 plz | Jul 19, 2008
+[10:06] == #cotonti 3 The place for Cotonti CMF/S development help/discussion/support - Please use our Pastebin, do not post code in chat. Now on Github! http://github.com/Cotonti
+[10:06] == #sheevaplug 8 Unoffical sheevaplug support/chat channel | Talk about the sheevaplug/guruplug here! | Paste larger than 3 lines: http://sheevaplug.pastebin.com/ | Need help with your plug? ask Tootoot222 (or anyone else if he's not here) |
+[10:06] == #breakingdad 4 Welcome to #breakingdad, official chat of /r/breakingdad | http://reddit.com/r/breakingdad | This is a place for dads to relax and swap stories/tips/drinking games | Stick around we might be slow to answer
+[10:06] == ##Writers 3 http://shakespeare.mit.edu/works.html | http://www.luminarium.org/renascence-editions/ren.htm | http://www.sacred-texts.com/index.htm | http://feeds.wnyc.org/radiolab | http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/xxx.mp3
+[10:06] == #affreux2600 3 pouaf
+[10:06] == #maposmatic 6 MapOSMatic -- http://www.maposmatic.org
+[10:06] == #django-pipeline 3
+[10:06] == #cstar 18 Welcome to c* |  Bi-Lingual (English, German) channel | Home of ccollect, cdist, cinit, ceof and a lot of fancy ideas
+[10:06] == #natog 14 NATOG - The North American Telephony Operators Group - NATOG on Zello - on-topic: discussions of telephony hardware, software, service, networks, operations and things which support them. Chatting is encouraged, but if you have a specific QUERY, don't ask to ask, just ask.
+[10:06] == #linux-wildo 3
+[10:06] == #sancalivre 3
+[10:06] == #facecats 16 Thanksgiving dinner is at applecherry's house this year
+[10:06] == #bufferbloat 40
+[10:06] == #edinhacklab 24 Edinburgh Hacklab - http://www.edinburghhacklab.com
+[10:06] == #ratholeradio 10 Rathole Radio (Like Crunchbang, but less Linux and more music) | Episode 96: http://ur1.ca/cri8n  | (ノಠ益ಠ)ノ彡 ¿¿¿ :ʍoɥs ǝʌıl ʇxǝN
+[10:06] == #KeepWriting 11 #KeepWriting: A place for word discussions about writing, word wars, general banter, and EXPLOSIONS! || Don't feed The_Cat. He's our dedicated greeter! - No he's not.
+[10:06] == #nihongo 47 Japanese language & culture chat in English/Japanese, language learners of all levels welcome | www.alc.co.jp is a great supplement to edict | Review is the key to learning. Do it with flashcards: http://ichi2.net/anki | Today's word is "苦労人 (くろうにん)". For explanations visit http://gqflp.free.fr/
+[10:06] == #nimda 5
+[10:06] == #herbstluftwm 43 herbstluftwm http://herbstluftwm.org | v0.5.1 released!
+[10:06] == #aviationwiki 3 Welcome to AviationWiki! | Status: Down | No public logging, please.
+[10:06] == #warsztat 10 http://warsztat.gd | SCV repo & wiki:https://github.com/Xion/seejoo Wesolych Swiat zyczy Warsztat!
+[10:06] == #actux 10 Salon de l'association Actux à Rennes - www.actux.eu.org
+[10:06] == ##folding 5
+[10:06] == #clovr 5
+[10:06] == #fb-portal 3 Aktuelle Version: 0.24 <> http://www.freebasic-portal.de/ <> 5 Jahre FreeBASIC-Portal! \o/ <> For english chat join #freebasic
+[10:06] == #ubuntu-cn 84 ubuntu 中文频道 || 提问的智慧 http://tinyurl.com/sq-zhs || 中文 Ubuntu 论坛 http://forum.ubuntu.org.cn || IRC 教程 http://wiki.ubuntu.org.cn/IRC || Log http://tinyurl.com/todaylogs || 分享代码 http://code.bulix.org || 分享图片 http://imagebin.org | ~hamo@canonical/hamo [Yang Bai]
+[10:06] == ##general-programming 7 Channel for General Programming discussion and help | All platforms/architectures/programming languages welcome | no flaming/trolling allowed | This channel is for programming, not ubuntu support | Don't ask to ask, just ask! | BE PATIENT!!! It may take a while before anyone answers. | use codepad.org for pasting | We won't do your homework for you
+[10:06] == ##PinkAmpersand 7 Now with scary extra buttons on Wikidata!!!! Thanks, everybody! <3 Run! Run! Before I block you all!
+[10:06] == #bpython 15 http://www.bpython-interpreter.org/ | hg clone https://bitbucket.org/bobf/bpython/ | Latest release: bpython 0.12 (party) | http://bpaste.net/ | amjith's bpython talk at PyCon 2012:http://www.youtube.com/watch?feature=player_detailpage&v=eLuscpu4xA0#t=601s | $0 if you implement readline key shortcuts (seriously)
+[10:06] == #jquery-mobile 3
+[10:06] == #wikimedia 104 Wikimedia https://www.wikimedia.org/ | No public logging | Software questions: #mediawiki | Technical help: #wikimedia-tech | IRC channel ops: #wikimedia-ops | Stewards: #wikimedia-stewards
+[10:06] == #fogimaging 12 IRC for the FOG computer cloning project | www.fogproject.org, Check the wiki, Use the forum if it's a long one. Please be polite.
+[10:06] == #openrce 20 Official channel of - www.openrce.org - Don't change the topic! ok...
+[10:06] == #lnxs 3
+[10:06] == ##ic_lambdas 3 we're back
+[10:06] == #phpcon 3 PHP Community Conference - Returning to Nashville, March 2013
+[10:06] == #mahara-dev 15 Mahara development discussion | Feel free to lurk, if you need support ask in #mahara | 1.6 is live! http://ur1.ca/al3q7
+[10:06] == #aerogear 26 AeroGear Project http://aerogear.org | Mailing List: http://bit.ly/O3Vbzc | Twitter: @AeroGears | Meeting: Mondays @ 10am EST | IRC logs: http://bit.ly/V551nI
+[10:06] == #limada-es 5 Kill dash nine to titiritero!! http://www.youtube.com/watch?v=hk9NxydtPOU
+[10:06] == #TEAEbook-dev 3
+[10:06] == #wikipedia-en-revdel 20 This channel is for posting sensitive diffs requiring revision deletion (not oversight; for edits that need oversight, please use [[Wikipedia:Requests for oversight]]). Only ops can see what you post, and only administrators are ops. Trouble posting? PM an op.|Please use !admin in your request to draw attention.|Please leave/part if you are not requesting revdel and you are not an admin.
+[10:06] == #brmbot 4 http://gallery.johny.sk/robotour2010 | wiki: http://brmlab.cz/project/brmbot_outdoor
+[10:06] == #anaconda 52 This is not the channel to discuss distribution customization.  It hasn't ever been.
+[10:06] == #hawkboard 7  Welcome to #hawkboard, a discussion channel devoted to the TI OMAP L138 Hawkboard - see www.hawkboard.org for more info - channel log at http://ibot.rikers.org/%23hawkboard
+[10:06] == #yapcasia-en 15 YAPC::Asia Tokyo 2012 Sep 27, 28, 29 | http://yapc.asia/2012 | guests: Larry Wall, Tim Bunce, Adam Kennedy, Mizzy
+[10:06] == ##typeracer 5 http://play.typeracer.com/ | Slow is smooth and smooth is fast.
+[10:06] == #olarila 13 Welcome to olarila.com chat. Download links: http://pastebin.com/gCi4gvq0
+[10:06] == #wz2100legacy 6 Welcome to the Warzone 2100 Legacy Project's IRC Channel! The current release is 1.0 Beta 1, for Windows, Linux, and Unix. Our site is: http://warzonelegacy.org/ | Please be very patient and remember to beep people's names to get their attention. Thank you.
+[10:06] == #webdevrefinery 7 http://cookiesandcups.com/
+[10:06] == #fusioninventory 35 FusionInventory documentation -- http://fusioninventory.org/
+[10:06] == #multirpg 30 Multinet IdleRPG | Register: /msg multirpg register <user> <password> <class> | Web: http://multirpg.net | Help and Chat: #multirpg-discuss
+[10:06] == #MKM 8 Kanał MKM-ów, MK i wszelkiej maści radiowców | http://tinyurl.com/IRCzasady | Staty: http://j.mp/zg19Vu | http://tirynatory.pl | Zbieramy na mandaty, mamy 668zł | Breaking news: Donald Tusk oświadczył, że w 3 lata zlikwiduje 1050 szkół z okazji zbliżającej się 1050 rocznicy chrztu Polski • And the Oscar goes to... Jail!
+[10:06] == ##socket.io 4 Socket.IO | Engine.IO
+[10:06] == #pvm 7
+[10:06] == #boinc-it 7 Canale Italiano Ufficiale di BOINC - http://it.wikipedia.org/wiki/Berkeley_Open_Infrastructure_for_Network_Computing
+[10:06] == #tournament 7 POPUP IN A FEW MINS, GL ALL
+[10:06] == #verse 7 New verse: http://verse.github.com | Verse and C#: http://code.google.com/p/versesharp/
+[10:06] == #hurfdurf 4 #pizzarrhea
+[10:06] == #pyfidelity 3 pyware is dead.  long live pyfidelity.
+[10:06] == #oss 12 Open Sound System (un)official support channel | Current stable: OSS v. 4.2 Build 2002 - Current testing: 4.2rc3 | Source? > http://tinyurl.com/oss-source | Mercurial? > http://opensound.hg.sf.net/hgweb/opensound/opensound (DEVELOPING ONLY) | (no)paste? > http://oss.pastebin.com | Ask your question and be PATIENT, please.
+[10:06] == #gentoo-zseries 3
+[10:06] == #ubuntu-fr-asso 10 Pour toute question concernant l'association Ubuntu-fr ou ses projets, vous êtes au bon endroit ;-) | Mêmes règles que #ubuntu-fr | #ubuntu-fr pour le support / #ubuntu-fr-offtopic pour les discussions diverses
+[10:06] == #pegasos.org 5 Pegasos.org - http://irc.pegasos.org/ | http://hackaton.se/wiki/index.php/Hack-A-Ton_2008
+[10:06] == #bitcoin-otc-foyer 71 Gateway channel for #bitcoin-otc. || Try ;;baa or ;;gpg for instructions on authentication and ;;guide for OTC user guide. || ;;voiceme to get voice on #bitcoin-otc once you are authenticated
+[10:06] == #vital-it 3 test
+[10:06] == ##weather-us-ma 3 NOAA Active Weather Alerts for the state of Massachusetts | Main discussion channel: ##weather
+[10:06] == #vaslibre 4 Valencia / Venezuela Software Libre | http://www.vaslibre.org.ve | ¡VaSLibre ahora en IPv6!
+[10:06] == #ec09 6 Cadê o topic?!
+[10:06] == #oq-people 4
+[10:06] == #centreon 34 Open Source Network, Systems and Application monitoring solution | documentation.centreon.com (help) | forum.centreon.com (problems) | blog.centreon.com (news) | www.centreon.com | forge.centeon.com (bugs) | community.centreon.com | translate.centreon.com (get translation) | wiki.centreon.com (obsolete)
+[10:06] == #shiftplan 4 "Attention attention, please move to #clockwork, the new channel with orange wallpaper.
+[10:06] == #memcached 70 Read: http://memcached.org/wiki | Ask Questions, use pastebin.com | Go find the latest stable: http://memcached.org
+[10:06] == #klumpfot 6 "Kidney 2000(TM) is in place"
+[10:06] == #muhcows 5 -!- CHANNEL STATS: http://tsundere.dk/jovo -!- http://fredslev.dk/forum (register with IRC nick please)
+[10:06] == #myserverproject 3 GNU MyServer project channel || Are you interested in agile development?  Take a look here: http://tinyurl.com/6z5z4r and join us, GNU MyServer needs you!
+[10:06] == #vaunt 4 The real chillout AND NAY HATE channel
+[10:06] == #coworkingmvd 8
+[10:06] == #jailbreak 6
+[10:06] == #octgn-dev 7
+[10:06] == #rsyslog 39 Rsyslog stable version 5.6.2 available: http://www.rsyslog.com/download/ -- Wiki page: http://wiki.rsyslog.com/ -- Using Forum: http://kb.monitorware.com/rsyslog-f40.html -- Mailing List: http://lists.adiscon.net/mailman/listinfo/rsyslog
+[10:06] == #togetheralone 87 Official channel for /r/togetheralone | First time here? Type .rules or visit http://rules.together-alone.org for info and rules | A more supportive setting: #ta-support | A little more relaxed: #ta-lounge | Lurker of the week: Dara! | Please read: http://xkcd.com/322 | http://pastebin.com/jdNBwDS0
+[10:06] == #SiT 4 Support Incident Tracker (GPL) :: http://sitracker.org/ :: v3.67 is current :: http://sitracker.org/wiki/Roadmap :: Don't flood, use a paste service: http://sit.kpaste.net/ || http://imgur.com :: Follow @sitracker on identi.ca/twitter
+[10:06] == #elinux 37 http://eLinux.org/ || Ask anything; it may take 24+ hours to get a response. Mailing lists -> http://elinux.org/ELinuxWiki:Mailing_List ; Logs available at ibot.rikers.org
+[10:06] == #pan 3 Pan 0.139 "Sexual Chocolate" is available now! (http://pan.rebelbase.com/download/releases/0.139/source/) || Get involved in Pan : Edit and  improve the wiki and give us your ideas : http://live.gnome.org/Pan || Precompiled versions for Ubuntu etc. @ PPA : https://launchpad.net/~klaus-vormweg/+archive/pan || Pan mailing lists: http://pan.rebelbase.com/mailing_lists/ ||
+[10:06] == #servhome 6 Servhome.org - Libertux.org -- Free Web Hosting - Hébergement Gratuit et Sans pub
+[10:06] == #hackerspace.tn 14 http://hackerspaces.tn HackerSpaceS Tunisia | Please, be patient If no one answer's you right away.  | Feel free to speak  عربي / français / english! & feel free to join us ... Welcome!
+[10:06] == #slashdot-jp 38 UTF8: アレゲな人達によるアレゲな人達のためのアレゲな技術チャンネル。参照してね→ http://bit.ly/3bZVxp
+[10:06] == #kaohsiung 5 kaohsiung
+[10:06] == ##japanese 146 UTF-8 encoding | http://www.guidetojapanese.org/ | FAQ: http://editthis.info/japanese/
+[10:06] == #kde-devel-it 11 Sviluppatori italiani e italofoni di KDE :: KDE SC 4.9 :: Pastebin: http://paste.kde.org :: http://www.kde.it
+[10:06] == ##wicket 38 Download 1.4.22, 1.5.10 and 6.6.0 at http://wicket.apache.org | Refcard: http://dzone.it/yml | PasteBin: ~pastebin | Logs: ~logs
+[10:06] == #pyugat 9 Python User Group Austria - http://pyug.at/
+[10:06] == #djangocong 34 Posez vos questions Django sur #django-fr | et n'oubliez pas d'annoncer ici aussi les repas django !!
+[10:06] == #clementine 68 Clementine 1.1.1 released | http://code.google.com/p/clementine-player/downloads/list
+[10:06] == #uncov 6 <kfx> Poutine On The Ritz
+[10:06] == #2dforts 4 2Dforts! version 17 is LIVE!! http://www.2dforts.com Server Thread: http://bit.ly/LRxy97 Server Map: http://bit.ly/UOgnju
+[10:06] == #sketchdaily 12 <Dodongo> brb, someone is grabbing my stuff under my computer
+[10:06] == #codeclubhq 5 The official IRC channel for Code Club. http://codeclub.org.uk. Co-founder Linda can usually be found here nick lindas
+[10:06] == #opensuse-chat 40 openSUSE chat, the openSUSE off-topic channel, where Geeko spends most of his time watching from his tree. - Have a lot of fun! Technical support is in #suse - Please, ask your questions there. Have a Geeko-green day!
+[10:06] == #xendocs 14 Today is Xen Documentation Day! http://wiki.xen.org/wiki/Xen_Document_Days & http://wiki.xen.org/wiki/Xen_Document_Days/TODO ... Wiki help at  http://wiki.xen.org/wiki/Help:Contents
+[10:06] == #raleigh.rb 5 Raleigh Ruby Brigade | www.raleighrb.com
+[10:06] == #nltk 14 www.nltk.org
+[10:06] == #cerebrum 3 Welcome to #cerebrum. Cerebrum is an IRC experiment in concentrating intelligent conversation on Freenode. Here is how it works: If you are invited you will be voiced. If you are voiced you may invite. Do not invite anyone less intelligent than you are.
+[10:06] == #apa2011 4 Welcome to the channel for the 2011 course in Automated Program Analysis at Utrecht University | http://www.cs.uu.nl/wiki/Apa/WebHome
+[10:06] == #lbua 9 Canal oficial de La Batman United Association AKA LBUA
+[10:06] == #dspace 10 Welcome to the DSpace IRC channel. Please use the https://lists.sourceforge.net/lists/listinfo/dspace-tech listserv if you would like to have questions answered when IRC users are inactive here.
+[10:06] == ##pxe 9 PXE HOWTO at: http://pxe.dev.aboveaverageurl.com/index.php/PXE_Index | Also see http://en.wikipedia.org/wiki/Preboot_Execution_Environment (also at de.wiki) | Need help? Stick around (for about 8 hours, we're probably sleeping or at school)! | Want logs? http://tinyurl.com/2ja6hn | No, you cannot PXE boot an ISO.
+[10:06] == #wowwiki 3 Welcome to #wowwiki
+[10:06] == #AOKP-support 28 Welcome to Team Kangs support channel!  this channel is for support only
+[10:06] == #albasani 4 www.albasani.net
+[10:06] == #Citrix 83 Welcome! Ask your question - be sure to include product name. If  no one replies right away stick around as were not always watching the screen.  Checkout our website for the latest channel news http://citrixirc.com.  Follow our twitterer. Channel is being logged - http://echelog.com/?citrix Channel stats at http://stats.citrixirc.com
+[10:06] == ##rc.rit.edu 7
+[10:06] == ##1812 3
+[10:06] == #freeems-ot 25 All hail hentaixp for fixing his ADSL connection. Long live the pillow-hugging king!
+[10:06] == #teacup 3 a channel for makers of visual novels
+[10:06] == #fri 4 FRI, kanal študentov fakultete za računalništvo in informatiko
+[10:06] == #raspberrypi-internals 33 The internal workings of the Raspberry Pi - documentation: https://github.com/hermanhermitage/videocoreiv/wiki/VideoCore-IV-Programmers-Manual - mailing list: http://www.freelists.org/list/raspi-internals
+[10:06] == #wikimedia-labs-nagios 7 This is a channel where nagios feed goes to | #wikimedia-labs | want to change topic? need a cloak and /cs voice to do that
+[10:06] == #philosophy-grad 5
+[10:06] == #fedora-unity 13 Fedora Unity Project - http://fedoraunity.org/ | End-Users: #fedora | Re-Spins: http://spins.fedoraunity.org/ | Bug Reports: http://bugs.fedoraunity.org/ | Solved: http://fedorasolved.org/ | FORGET THE Lists once existed: http://lists.fedoraunity.org/ | Blogs: http://blogs.fedoraunity.org/
+[10:06] == #gentoo-netmon 4 Home of Gentoo Network Monitoring Tools | assistance with bugs welcome http://tinyurl.com/ykzzhu
+[10:06] == #francogrid-aide 3 Canal reliant le chat des simulateurs qui sont prédestinées à aider les nouveaux sur Francogrid. Pour visiter la grille, -loginuri http://grid.francogrid.org:8002/
+[10:06] == #VoyagerOS 4
+[10:06] == #doomsday 12 The Doomsday Engine | = | 1.9.7 (stable) released | = | Mutiplayer now works | = | Homepage http://www.dengine.net/ | = | Pastebin http://pastebin.ca/ | = | Wiki http://dengine.net/dew/ | = | NO WAREZ | = | Do not use newdoom for any support requests
+[10:06] == #tdriver 3 Testability Driver - The best test automation tool for Qt
+[10:06] == #sporewiki 10 SporeWiki! http://spore.wikia.com || Wikia: #wikia - www.wikia.com || top editors: http://tinyurl.com/dbv7z2 || statistics: http://tinyurl.com/dghjgy || Remember to register your username on IRC: type "~register" for more info || Logs: http://ibot.rikers.org/%23sporewiki/ || Collaborative Fiction Universe: http://tinyurl.com/3ddvp7q || Use http://pastie.org for pastes spanning many lines
+[10:06] == #incarnadine 7 firefly and pyro's house | #incarnadine rocking the casbah since 2010 | meow | incarnadine engine is being rewritten in C - loading, please wait | look at this sometime pyro http://www.xiph.org/video/vid2.shtml
+[10:06] == ##weather-us-vt 3 NOAA Active Weather Alerts for the state of Vermont | Main discussion channel: ##weather
+[10:06] == ##bcit 5 BCIT | forums: http://datacomm.me/ | BCIT is pretty OK. | <onpageone> is this BCIT the big tech school in British Columbia?
+[10:06] == #wikipedia-cs 13 Stav: OK - http://status.wikimedia.org/ | VisualEditor jako moznost na en.wp. Globalni nasazeni 7. 2013 |  Wikidata nasazena na čtyřech Wikipediích, nás to čeká 6. března | Nové tlačítko do editačního okna? http://bit.ly/11Dbdoj
+[10:06] == #slackpkg 6 slackpkg 2.81 is the latest stable version. You can get it in http://www.slackpkg.org/stable/. Look ChangeLog to see the changes and new features.
+[10:06] == #wordpress-unregistered 6 Welcome to #wordpress-unregistered.  If you are here you either have an issue with your internet connection and continually join/part or #wordpress is limited to registered and identified users.  Please contact an OP for further assistance.
+[10:06] == #awssum 3 AwsSum v0.12.0 (latest) | https://awssum.io/ | Please use https://gist.github.com/ to paste
+[10:06] == #report_goatse_spam_chat 3 If you don't want to report, simply use /mode yournick +R to block spam from unidentified users. | Scripts to block and report the spam can be found at http://www.whiterabbit.org/goatse/ | If you don't see your client, feel free to review the other scripts and make more! | Report with "/msg #report_goatse_spam ### GOATSE MSG --> nick!user@host"
+[10:06] == #mediainsights 3 Welcome to Media Insights
+[10:06] == ##freebsd-br 30 FUG-BR: www.fug.com.br | Lista: tinyurl.com/6cvrf | Handbook: freebsd.org/handbook | Forum: http://forum.fug.com.br | NAO ANUNCIE AWAY http://sackheads.org/~bnaylor/spew/away_msgs.html | escreva em pt_BR, nao pt_MSN (aka miguixês)!
+[10:06] == ##dd-wrt 48 Welcome to the ##dd-wrt channel; if you receive help please think about staying around and returning a little help to someone else
+[10:06] == #tizen-ja 3 Tizen 日本語チャンネルです。文字コードは UTF-8 でお願いします。
+[10:06] == #ethosce 10 Welcome to #ethosce | This is the official channel for http://ethosce.com | Propose features, report bugs or help other users with their support requests here: http://community.ethosce.com
+[10:06] == #Sensation-Devs 11 Sensation-Devs - Bricked ICS ~ Sense: v1.4 - AOSP: v1.31 | CM9.x or CM10: http://get.cm/?device=pyramid |
+[10:06] == #ipv6-ru 17 http://version6.ru/ || http://www.secondinternet.org/ || http://sedictor.ru/11/01/14/1294957779.png || UTF-8 here!!!
+[10:06] == #ps3dev 17 h4x0r=bad | No talk about official/NDA Sony tools or unauthorized code running on GameOS | MARS: ftp://ftp.infradead.org/pub/Sony-PS3/mars/
+[10:06] == #colloquy 44 Colloquy 2.4.1 is out! http://colloquy.info/downloads/colloquy-2.4.1.zip | Bugs or feature requests: http://colloquy.info/?bug | Colloquy for iPhone, iPod touch & iPad: #colloquy-mobile | To hide parts and joins: http://bit.ly/ndAay
+[10:06] == #cbstream 13 bidirectional perlmonks.org chatterbox bridge | FAQ: http://russell2.math.bme.hu/~ambrus/sc/cbstream/
+[10:06] == #chiliwurm 3
+[10:06] == #lunarnumbat 3 Welcome to #lunarnumbat - http://www.lunarnumbat.org/ - Follow us on twitter: http://twitter.com/lunarnumbat - Regulars please register with nickserv - /msg nickserv register
+[10:06] == #reddit-android 23 Welcome to #reddit-android! official channel of r/android! | No warez, torrents, illegal stuff, etc. | If no one's around, feel free to higlight an op or a voiced person! | If you're an idler who'd like voice, PM Berzerker (be sure to register your nick first!)
+[10:06] == #panicroom 9 |▒▒►Welcome to PanicRoom◄▒▒| Contact C0deMaver1ck to become a Co-Founder! ☺
+[10:06] == #openssh 104 http://openssh.org/ | http://lackof.org/taggart/hacking/ssh/ | http://mywiki.wooledge.org/SshKeys | http://mywiki.wooledge.org/SshTunnel
+[10:06] == ##JOPGC 3 Jesse's Own Personal Game Channel | New game, I'm not the GM this time thank god.
+[10:06] == #magnets 4 Magnetic Sculpture and Photography  Neodymium Magnet Sphere Commons: http://www.flickr.com/groups/magnetspheres/  Zen Magnets Gallery: http://www.flickr.com/groups/zengallery/  Dotpedia: http://www.dotpedia.com
+[10:06] == #linux-sv 7 Canal de la Asociacion de Usuarios GNU/Linux de El Salvador || http://linux.org.sv || No pida permiso para preguntar, formule su pregunta de la forma más clara posible || OffTopic en el canal #linux.org.sv
+[10:06] == #iriscouch 12 For support, see http://getsatisfaction.com/iriscouch. For Jason's (and dad's) fish, see http://bit.ly/nncWGG
+[10:06] == #pcmk 3
+[10:06] == #linuxcult 4
+[10:06] == #hackmiami 7 In search of life, liberty, and the pursuit of root.
+[10:06] == #shell-fm 4 Shell.FM (Radio Player) Channel - NO SHELL ACCOUNTS | If you don't get an answer within seconds, stick around for a few hours - I'm probably asleep because I'm on the other side of the earth!
+[10:06] == #laravel 207 Official Laravel IRC || Current Versions: Laravel 3.2.13, Laravel 4 Beta 3 || Laravel 4 Beta docs http://four.laravel.com || Need help? Please use http://paste.laravel.com to show your code, errors, and work || http://laravel.com/docs || http://forums.laravel.io || Laracon Talk Videos will be publicly available once editing has taken place. || HAPPY BABY MACHUGA DAY
+[10:06] == #shorewall 36 Shoreline Firewall (Shorewall) | Stable 4.5.13 | Development 4.5.14 Beta 3 | Please ask your question -- it may be a while before we answer
+[10:06] == ##unravel 16 Welcome to Unraveled World!|We are a community aimed at exploring the dynamics of social interactions between neurologically diverse groups.| http://unravel.co.cc |Unraveled World welcomes all topics; just remember topics are subject to everyone's opinion and sometimes they may not agree with you. :)|Love keeps us kind. <3 .  http://www.live365.com/index.live#stations/scottfhn?play=2
+[10:06] == #jbpm 18 Welcome to the jBPM project, http://www.jboss.org/jbpm/
+[10:06] == #ubuntu-hams 24 Welcome! For membership information see http://wiki.ubuntu.com/UbuntuHams  --  Feel free to announce yourself:  Name, Callsign, QTH, etc.  --  Note that this channel is sometimes rather quiet, and the 'regulars' are scattered over many timezones  --  If you ask a question and no-one responds right away, you might try calling on someone by name, or just stick around!
+[10:06] == #trotw 11 http://gifsforum.com/images/gif/other/grand/1890b751a5b91c167141bb0272224da6.gif
+[10:06] == #slic3r 93 0.9.8 - STL-to-GCODE translator for RepRap 3D printers | http://slic3r.org/ | https://github.com/alexrj/Slic3r/wiki/Documentation (help us writing some documentation) | There's no place like G28.
+[10:06] == #tetalab 20 magnet:?xt=urn:btih:38dad8e4d2967b523ac083d2638c4496c7fd26eb&dn=IMG%5F0700.MOV
+[10:06] == #math 3 Please join ##math
+[10:06] == #nvidia 71 UNOFFICIAL NVIDIA Linux/FreeBSD/Solaris Graphics Driver Support | Releases: official: 313.18, legacy: 304.64, 173.14.36, 96.43.23, 71.86.15 | ftp://download.nvidia.com | DO NOT FLOOD! (use http://pastebin.com) | try to use your distribution's driver packages | Have you tried nvidia-settings?
+[10:06] == #squirrelmail 10 http://www.squirrelmail.org  Webmail for Nuts! || Got a question? Just ask it right away. If someone knows the answer they will respond, but please be patient.
+[10:06] == #nwrug 23 Matz <3 rub and so we <3 rub | Be polite, keep it clean | Fork and add to rugbot: https://github.com/caius/Rugbot | Click links from petercooper, they're worth it
+[10:06] == #leeds2600 6 Leeds2600 Next Meet Friday 7th January 7pm @ The Brewery Tap Leeds - http://leeds2600.org.uk/
+[10:06] == #tdtrs 30 Welcome to The Dick Turpin Road Show #tdtrs http://www.tdtrs.co.uk/ :: Latest episode EP46 "LO300."
+[10:06] == #edev 63 Discussion of embedded systems (Hardware/Software/Linux/Commercial Device Repurposing) : Busybox and Buildroot : http://www.elinux.org : Logs available at ibot.rikers.org
+[10:06] == #grifon 7 GRIFON - Groupe Rennais pour un Internet Fourni de manière Ouverte et Neutre - http://grifon.fr
+[10:06] == #mpd 105 Music Player Daemon | Latest 0.17.3 | git: http://git.musicpd.org | wiki: mpd.wikia.com | pastebin: mpd.pastebin.ca | Problems? Just ask away, and please provide the info as explained on: http://mpd.wikia.com/wiki/IRC
+[10:06] == ##erryfanclub 3 Fan club of the freenode staffbot
+[10:06] == #basekamp 8 Welcome to #basekamp | This is the main channel for http://basekamp.com | yes, filthy jokes *are* allowed | consider saying hi to botkamp... you'll be happy you did
+[10:06] == #norhack 3 norhack.org || die if int(rand(2)); || Firefox 3.6.2 er ute... www.firefox.no
+[10:06] == #gentoo-vim 6 Gentoo packages app-editors/[g]vim[-core] and app-vim/* (Try #vim for basic vim questions)
+[10:06] == #synapse-ctf 3 http://synapse-labs.com/cscamp/Writeups | Finals are over . first rank was FancyUnicorn*Crew
+[10:06] == #slackermedia 8 Slackermedia Chat and Support
+[10:06] == #gumstix 12 http://www.gumstix.com/ | Gumstix 'support' page http://docwiki.gumstix.org/Main_Page | mail list archive http://sourceforge.net/mailarchive/forum.php?forum_id=38940  high latency channel, ask your question and stay put, someone might answer eventualy
+[10:06] == #droidtastic 4 Welcome! feel free to FUCK OFF!
+[10:06] == #knoxlug 3 Knoxville Linux Users Groups http://knoxlug.org
+[10:06] == #eucalyptus-qa 10 Eucalyptus Quality Assurance | Ask in #eucalyptus or #eucalyptus-devel if no one is around | Bugs: https://eucalyptus.atlassian.net/ | Eutester: https://github.com/eucalyptus/eutester | This channel is often logged | Please do not feed the bots
+[10:06] == #fabhack 5 http://fabhack.com | http://www.foodhackers.org/
+[10:06] == #nemerle 3 Welcome to #nemerle. http://nemerle.org. Nemerle is a high-level statically-typed programming language for the .NET platform. It offers functional, object-oriented and imperative features. It has a simple C#-like syntax and a powerful meta-programming system.
+[10:06] == #shellium-ru 3 Русская поддержка по Шеллиуму || Russian SHellium support || UTF only || Не умеете настроить UTF-8, идите нахуй/читать wiki || Wiki: http://wiki.shellium.org/w/Main_Page/ru || Очередное время года! || Wiki: http://ru.wikipedia.org/wiki/Времена_года
+[10:06] == #garoa 23 Garoa Hacker Clube - Rua Vitorino Carmilo 459, São Paulo, Brasil - http://garoa.net.br - fone +55 11 3662-0571 ☂ Nossos eventos são gratuitos: http://garoa.net.br/wiki/Eventos ☂ Venha fazer seu projeto aqui: http://garoa.net.br/wiki/Projetos ☂ Tem alguém no garoa agora? http://status.garoa.net.br/view
+[10:06] == #jboss 54 www.jboss.org - Latest AS is 7.1.1.Final - JBoss AS help forum @ http://is.gd/ccXD - FAQ @ http://is.gd/ccYg - Wiki @ http://is.gd/hxem - Don't ask to ask, just ask and be patient - Please use a pastebin for ALL multi-line pastes - see ~pastebin for options
+[10:06] == #digitalsalon 3 Next Meeting Feb 26, 7pm @ B**2 | http://digitalsalon.github.com/ | http://bscientific.org/digitalsalon/irc/archive/
+[10:06] == #bikechatforums 4 <=- http://www.bikechatforums.com -=> :: There is no bike chat in bike chat! ::
+[10:06] == #freenet 65 freenetproject.org | People asking for help to upload or download illegal files will be banned from this channel | Channel is logged on Freenet | 1434 latest, 1433 mandatory | https://wiki.freenetproject.org/FAQ | #freenet-de #freenet-fr etc | #freenet-chat for politics, weather etc
+[10:06] == #gentoo 1039 Gentoo Linux Support | udev-197 upgrade: http://bit.ly/14ZV93u | Can't speak? /j #gentoo-ops | long pastes: dpaste.org | masked by license? http://xrl.us/bhunqc | perl-cleaner python-updater = good | nvidia-drivers + kernel 3.{7,8}: http://bit.ly/138qsdO
+[10:06] == #xfred 3 http://agrajag.chx-labs.org/photos/album-1/list
+[10:06] == #w0pr 4  <abeaumont> pero ya está disponible la vulnimage?<topolb> cifrada, relaja pezones #thewayw0prstartsaday | https://www.rootedcon.es/index.php/fechas-para-la-apertura-del-registro-y-compra-de-entradas/ || Fechas oficiales de la #EE21: 25, 26 27 y 28 de julio
+[10:06] == #hathyllan 14 that's a penis
+[10:06] == #synfig 13 [[[[[[[http://synfig.org/wiki/FAQ | 0.63.05 Released!! http://synfig.org/cms/en/news/releases/synfig-studio-0-63-05/ | News: http://synfig.org/cms/en/news/ | Ask your question and wait - we will answer eventually... | IRC LOGS: http://dooglus.rincevent.net/synfig/logs/2013/?C=M;O=D ]]]]]]]
+[10:06] == #MPC 4 Welcome to #mpc. The official Musepack channel is #MPC on irc.musepack.net. This is not #mpd. We also don't have any affiliation with the Media Player Classic project. What the heck are MPC samplers?
+[10:06] == ##hamradio 231 Welcome to ##hamradio, LETS HAM IT UP !!! || Do you want a Q&A with a well known Ham Radio icon? Lets discuss it, and we will make up a poll and decide on the majority! || Please register your nickname to speak. Thanks!
+[10:06] == #drupal-rage 4 RAGE  |  AAAARGH! WHY WON'T YOU WORK!!!?!  |  NO DISCUSSION  |  http://frogse.cx/  |  NO SUPPORT
+[10:06] == #compsoc-man 8 "<Shadlington> Annnnnnnnnnd I've got my answer elsewhere. But thanks anyway :)" - CompSoc, get your answers elsewhere.
+[10:06] == #vamdc 3
+[10:06] == #archlinux-pacman 26 Welcome to #archlinux-pacman. This is the development channel; for general support please use #archlinux. Please report any bugs to the ML or Flyspray, where they will be seen. The forums and this channel are NOT acceptable. Thanks!
+[10:06] == #insanes 5 Advanced technical discussions for SNES emulator development
+[10:06] == #packstack-dev 4 See http://wiki.openstack.org/Packstack for some packstack project information
+[10:06] == #wikipedia-en-roads 17 Public logging not allowed; see [[WP:HWY/IRC]] for details | ACR: I-96, MSTHS, CA 67, PA Tpke, and WA 104 need reviews; KTA needs collaboration | RC feed of projectspace: #wikipedia-en-roads-rc | Wikidata phase 1 live on enwp; shields, maps, and hierarchy on Wikidata https://www.wikidata.org/wiki/Wikidata:Property_proposal#Roads_.2F_Stra.C3.9Fen_.2F_routes
+[10:06] == #mate 63 MATE Desktop Environment™ - A GNOME2 fork - http://wiki.mate-desktop.org/
+[10:06] == #knuxchannel 12 Welcome to the official Knuckles96 chat! |  http://knuckles96.prophpbb.com/ | official 7/24 Minecraft Server: 134.255.236.64:25561  ] <- You may want to make sure clouds are off | Got the AOK 1-100 pack? Upload "65 - Dancing Ace" to Imgur. | Michelfp, The Movie: http://www.youtube.com/watch?v=dxlpIxGSU2k
+[10:06] == #codeigniter 125 CodeIgniter PHP Framework - Current stable version 2.1.3 | http://www.codeigniter.com | http://codeigniter.com/user_guide/ | https://github.com/EllisLab/CodeIgniter | Pastebin: http://pastebin.com | http://workaround.org/getting-help-on-irc
+[10:06] == #2cpu 23 [17:12:49] <champs> skullone: wings? | [17:24:09] <skullone> i dunno
+[10:06] == #orbitmedia-devs 3
+[10:06] == #horde-dev 3
+[10:06] == ##baconcoders 3
+[10:06] == #Moosader 24 | Welcome to the Moosader game development community! Moosader.com | Treat others with respect! | January's Hangout moved to February | Competition X: JRPG Style Games - Jan 25 to Feb 25      http://bit.ly/Uc0lxt |
+[10:06] == #nnmon 4 RespectMyNet main channel for devs, feedback here : https://nnmon.quadpad.lqdn.fr/feedback
+[10:06] == #zigfrak 4 Welcome to #zigfrak, feel free to lurk. Homepage: http://zigfrak.com/
+[10:06] == #d 107 The D Programming Language http://dlang.org - DMD 1.076 / 2.062 | http://gdcproject.org - GDC | http://wiki.dlang.org/LDC - LDC 0.10.0 | http://dsource.org/projects/tango - Tango 0.99.9 | Paste >4 lines: !paste | #d IRC Guidelines: http://j.mp/kYnMRm | NG feed: #d.feed
+[10:06] == #eaton 16 GOOD MORNING. http://www.theittybittykittycommittee.com/
+[10:06] == #sequanux 17 Logiciels Libres en Franche-Comté (\_o< ~ *coin* !) | < e1000> apres je ne suis pas hostille a du latex, au contraire
+[10:06] == #fairchild 6 PVD DVD
+[10:06] == #24hoursupport 7 Welcome to the Live Support Chat. Feel free to ask for help. You are no longer on Reddit. If no one is available please create a post at http://24hoursupport.reddit.com and we will respond as quickly as possible. If you allow someone to connect to your computer to fix an issue, monitor their actions and disconnect if they attempt anything malicious or infringing on your privacy.
+[10:06] == #musescore 15 MuseScore - http://musescore.org - Free music notation Software
+[10:06] == #wrangplonet 3
+[10:06] == #eff 8
+[10:06] == #brightcove 3
+[10:06] == #frogandowl 3 Welcome to Frog & Owl, a one-stop-shop for open education resources (both software and content). | We are OS, distro, and WM - neutral. | If the minute hand is in the same place when you leave as when you joined, we haven't had time to notice you. Flybys stink, stay awhile.
+[10:06] == #D7 3 Zipsu will be streaming most of his nolife gaming sessions now @ http://d7.mine.bz/live/ ! Also check out D7 new browser game X-Life @ http://www.d7-x.com/game/
+[10:06] == #drupal-views 42 Views and Panels development and API implementation discussions; this is not a support channel. Please see #drupal-support for support.  Views documentation: http://views-help.doc.logrus.com Views API documentation: http://views.doc.logrus.com | If you send people here for support questions and I find out about it, I will ban you. | Views Bug Squad handbook: http://drupal.org/node/945414
+[10:06] == #lifemusicwiki 3 Welcome to the official IRC channel of LifeMusic Wiki! God bless you! | http://heavenmusic.wikia.com | Please follow all the rules at http://heavenmusic.wikia.com/wiki/LifeMusic_Wiki:IRC | Psalm 150: this is LMW's mission. | Jesus in other languages: Jésus-Christ (French), 耶穌 (Trad. Chinese), 耶稣 (Simp. Chinese), יֵשׁוּוּעַ (Hebrew)
+[10:06] == #bitcoinconsultancy 21 !! SYSTEM UPGRADE IMMINENT !! unSYSTEM conference: http://www.unsystem.net/ !! SYSTEM UPGRADE IMMINENT !!
+[10:06] == ##mrspaceman 3 Cognitive Dissonance is not allowed.  Try #buddhism@EFnet
+[10:06] == #clocktech 3 clockalypse - read all about it!
+[10:06] == #alterniaradio 3
+[10:06] == #reddit-gamingpc 53 Post here for your "Irc Regular" flair   http://goo.gl/OmNuc | http://www.jscho.net/gamingpc/  | gapobot lets you irc though reddit gamingpc's steam group chat | RIP in peace zxrax,  his computer didn't turn on
+[10:06] == #pads 5 Bitte alle mit mir nach ##terraform wechseln. Dieser Channel hat keinen Bezug mehr zu mir :-(
+[10:06] == #pantheon 26 Pantheon developer channel | http://helpdesk.getpantheon.com | http://status.getpantheon.com/ | Ping us if you need assistance or have questions for support, engineering, operations, or sales. We are standing by!
+[10:06] == #fedora 431 Fedora 18 has been released. Torrents are open http://torrent.fedoraproject.org (remember to seed).| Fedora 17 and 18 end-user support.| Please READ: http://tinyurl.com/chanfaq | Common bugs: http://tinyurl.com/f17bugs | IRC Feedback: http://tinyurl.com/fedoraircsig | Howtos: http://fedorasolved.org | Updated LiveCDs: http://tinyurl.com/live-respins | Default to OPEN
+[10:06] == #elm 16 Welcome to #Elm! Ask questions, discuss, and learn
+[10:06] == #itp 3
+[10:06] == #nopants 3
+[10:06] == ##mikjaer 3
+[10:06] == #wikiHow 21 Welcome to #wikiHow | http://www.wikihow.com | Channel index: http://is.gd/GrFb5g | Channel stats: http://is.gd/8hLs38
+[10:06] == #gentoo-groupcontacts 23 For group contact needs, please see rane, Calchan, Betelgeuse, or jmbsvicetto.
+[10:06] == #misec 57 Next #misec meet-up is Thursday, March 14th, at 7PM || 4815 Delemere Avenue, Royal Oak || Web http://michsec.org || LinkedIn http://linkd.in/pYs2xk || YouTube http://www.youtube.com/user/misecgroup
+[10:06] == #otitech 5 "Welcome to OTI's tech group channel; channel rules available as .m4 macros."
+[10:06] == #meego-fr 7 MeeGo French User Group - meego-fr.org - Derniers compte rendus : http://irclogs.meego.com/meetbot/meego-meeting/2011/meego-meeting.2011-10-04-19.07.html | http://irclogs.meego.com/meetbot/meego-meeting/2011/meego-meeting.2011-09-06-19.16.html |=> Next event: IRC meeting mardi 1novembre a 21h sur #meego-meeting <=|
+[10:06] == #maraschino 17 Maraschino: https://github.com/mrkipling/maraschino || Installation Guide: http://www.maraschinoproject.com/installation | Bug Tracker and feature requests: https://maraschino.lighthouseapp.com/ || Please wait a bit if no one responds immediately.
+[10:06] == #eliteteam 3 Welcome to #EliteTeam the GN2 Fan Club! Yay Triangle away
+[10:06] == #the_moon 12 *TheRainbowDawn hugs [Your name] :D || Welcome to #the_moon || Free to do as you please, Links at your own risk, would be considered (very) nice if you could tag them... || #the_moon is now on Canternet!
+[10:06] == ##fedora 13 Support for ATI-AMD/Nvidia drivers and Atrpms repo on Fedora 17+. Legacy ATI on F17, See: http://tinyurl.com/9hp4f52 . OSSv4 sound drivers recommended/supported (Opensound.com). || See our official ##fedora performance kernel at http://tinyurl.com/ckm8ygk || Opinions expressed here do not represent views of Red Hat.
+[10:06] == #kde-brasil 25 KDE Brasil - br.kde.org - lista https://mail.kde.org/mailman/listinfo/kde-br | Aqui se discute KDE, não DISTROS...
+[10:06] == #rivierhack 9 Rivier'hack : hackerspace en Cote d'Azur | http://www.rivierhack.org/ | Liste : https://lists.ndn.cx/cgi-bin/mailman/listinfo/lab
+[10:06] == #hackteam 3 HackTeam
+[10:06] == #mageia-fi 3 http://www.mageia.org/ | http://www.mageia-fi.org/ | Mageia 1 julkaistu
+[10:06] == #fzu 9 Jakykoliv diskovy prostor, ktery dostaneme k dispozici, bude behem par dnu zaplnen daty ze sracek v urychlovaci LHC a soubory, ktere vzniknou jejich zpracovanim.
+[10:06] == #kde-mac 7 http://community.kde.org/Mac | Latest KDE in Macports: 4.6.4 | Latest KDE in Fink: 4.4.1 | No one around to answer? Try the forums: http://forum.kde.org/mac-f-60.html
+[10:06] == #guacamole-dev 6
+[10:06] == #lacantine 3 laCantine -- http://lacantine.org/
+[10:06] == #contao.de 16 Contao Formerly Known As TYPOlight || Contao Wiki http://de.contaowiki.org
+[10:06] == #mforum-pl 6 "meegoforum.pl team channel, http://tinyurl.com/6h9prrz | Sources: http://tinyurl.com/9swe4lp | Latest version: 0.1.1 @ 26.01.2013 | Channel logs: http://tinyurl.com/8j2d2yx"
+[10:06] == #servercrate 4
+[10:06] == #openpilot-dev 9 Welcome to OpenPilot's Dev chan. This is for dev chatter only - all off topic kindly use #openpilot. To request voice - please PM an op either here or on the Forum |  This chan will soon be +R so please all register your Nick and identify with nickserv
+[10:06] == ##nottor 21 This channel doesn't exist. The #tor channel is at irc.oftc.net.
+[10:06] == #netz39 18 http://www.netz39.de/ | Folge dem Nerdstern!
+[10:06] == #css.de 7 Der Channel fuer Webdesigner, Webmaster und Offtopic('er) | www.css4you.de | http://de.selfhtml.org/css | NOPASTE&Display -> http://webdevout.net/test/ | Stats -> http://tinyurl.com/2jnm2g | Validiere deine Seite! -> http://www.validome.org | http://jigsaw.w3.org/css-validator | Partner-Channel: ##php-de + #mysql.de | pls install firebug
+[10:06] == #ringojs 8 RingoJS | http://ringojs.org | Logs: http://ringojs.org/bot/ | Server-side JavaScript since ... way back! | Just ask your question, we read the logs.
+[10:06] == #lugatgt 14 Linux Users Group @ Georgia Tech - http://lugatgt.org
+[10:06] == #hipponet 5 [17:54:52] supergustaf mate have you done some changes on the appserver? A: You are running the request with no docids as argument, i don't think that is meant to be possible...
+[10:06] == ##synthedit 3 Welcome to the Synthedit Gathering Chatroom! | SynthEdit 1.2 V 1.207 available
+[10:06] == #drupalchix 10 This is a safe place for all Women in Drupal to talk to each other.  Invited male allies accompanied by a member are welcome to be here temporarily, but kindly asked not to remain in the channel permanently. Everyone is welcome to join http://groups.drupal.org/women-drupal.
+[10:06] == #trilug-mtb 3 next ride?
+[10:06] == #archreactor 8 http://archreactor.org :: Please visit our Disccussion Group also
+[10:06] == ##history 7 Welcome to The History Channel. Please take a seat and join the discussion! -- If you have a question, then *JUST ASK* and stick around (small channel, so fewer people, thus less attention).
+[10:06] == #ilrt 5
+[10:06] == #kde-ruby 4
+[10:06] == #clubpenguinfanon 6 Club Penguin Fanon Wiki help and discussion channel. | http://fanon.clubpenguinwiki.info/ | No swearing or obscene talk (This applies to EVERYONE - No Exceptions!!)
+[10:06] == #logstash 302 logstash 1.1.9 released!  docs: http://logstash.net/docs/latest - http://logstashbook.com/ - changelog: https://github.com/logstash/logstash/blob/master/CHANGELOG - grok debugger: http://grokdebug.herokuapp.com/ - channel irc logs: http://irclog.gr/#browse/irc.freenode.net/logstash
+[10:06] == #html 171 HyperText Markup Language | www.w3.org/MarkUp/#html4 | #css for styling | No WYSIWYGs please | Tables aren't for layout: http://xrl.us/kd35 , http://goo.gl/8yFKr | Separate Content and Presentation: http://xrl.us/be84ry | Validate first: http://validator.w3.org/ | W3C ref: say e.g. `html div | Just ask | Paste links, not code: http://webdevout.net/test | HTML5 authored by #whatwg
+[10:06] == #adhearsion 14 Adhearsion - open source voice application framework  |  http://adhearsion.com/ | Latest stable version: 2.2.1
+[10:06] == #canberra2013-core 4 http://i.imgur.com/Di6W6Va.jpg
+[10:06] == #gitorious 40 http://gitorious.org | http://status.gitorious.org/ | Gitorious.org support: support@gitorious.org
+[10:06] == #Magrathea 5
+[10:06] == #earthserver 3
+[10:06] == #ubuntu-ruhr 4 Ubuntuuser ausm Pott treffen sich hier und im RealenLeben: http://forum.ubuntuusers.de/topic/anwendertreffen-raum-essen/
+[10:06] == #bitcoin-anarchy 4 http://agoristradio.com/?p=443 "What is money?" - Bastiat
+[10:06] == #msst 3
+[10:06] == #spray 8 Welcome to the Spray (http://spray.io/) IRC channel. Spray provides high-performance HTTP via Akka Actors. More help is available on the mailing list: http://bit.ly/Sp8AYC. Note that the Spray contributors are not generally in this channel.
+[10:06] == ##vortic 6 Vortic - C'est l'histoire de deux prostituées qui se disputent
+[10:06] == ##computerscience 18 Welcome to ##ComputerScience, the channel where you can discuss semantics, type systems, parallelism, complexity theory, quantum computing, cryptography, data structures, algorithmics, logic, AI, machine learning, operations research, data compression and even hardware design. | Ask your questions clearly, please. | Math questions?  Try #math | Linux question?  Try ##linux
+[10:06] == #buildout 18 Welcome to #buildout: a place for discussion of Buildout development and use · http://buildout.org
+[10:06] == #mfazns 10 asian girls with white boyfriends
+[10:06] == #kayac 7 21:17 <@katsuya> ふんふんふんふんふふふふふふん 22:30 <@katsuya> うひゃひゃひゃｈｙ
+[10:06] == #kde-windows 38 Please be patient if nobody answers right away (ask on kde-windows@kde.org) | Release 4.8.0 has arrived - please report all problems | for longer pastes: http://paste.kde.org/~windows/ | Please help and fill this wiki page with common build errors: http://techbase.kde.org/Getting_Started/Build/Windows/Common_problems
+[10:06] == #ergodis 3
+[10:06] == ##wikipedia-geeks 4 Welcome to ##wikipedia-geeks. We're an unofficial (i.e., not related to Wikipedia or Wikimedia officially) channel composed of geeks that are also Wikipedia editors (and a few just readers too).
+[10:06] == #Tru64 6 wanted: 5.1B-6 patch kit
+[10:06] == #hum-team 4
+[10:06] == #fights 3
+[10:06] == #legacy 8 Welcome to the official DooM Legacy IRC channel || DO YOU IMAGINE JESUS PLAYING DOOM???!?!?!!??!1! || But I gone away !!! I'm free !! ... And you ?
+[10:06] == #h0zer 11 <bordicon> I wanna dress like a panda <bordicon> we should show this to serena now
+[10:06] == #openoffice.org-de 4 OOo 3.3.0 ist released | DEV300_m96 (für 3.4) zum Testen verfügbar | OTE 1.3 verfügbar | OTE-Dev: http://wiki.services.openoffice.org/wiki/DE/OTE abgeändert
+[10:06] == #budgetvm 10 oh Hai
+[10:06] == #telefoninux 3 il canale irc di www.telefoninux.org
+[10:06] == #0x10c-dev 89 LOGGED | NO DRAMA (ping dylukes for immediate drama/SirCmpwn resolution if online) | Regulars are voiced | Read the rules: http://goo.gl/8EGYA | Welcome to #0x10c-dev, the development channel for 0x10c and the DCPU16 | Spec: ?spec | Off Topic: #0x10c-blah | Project List: ?projects | SPED-3 holographic display: ?sped-3 | Floppy drive ?m35fd
+[10:06] == #jclouds 31
+[10:06] == #mercenariesguild-dev 4 We've upped our standards, now up yours! || MGDev: mercenariesguild.net Edev: edev.mercenariesguild.net|| stats: http://www.tremulous.net/balance/mgdev/
+[10:06] == #dtdm 5 Welcome to DTDM IRC channel| The WebServer is disabled | Where or where did Odin go | SourceMage Official Mirror: http://download.sourcemage.dtdm.net/
+[10:06] == #functionaljava 10 Functional Java http://functionaljava.org/ | API Specification http://tinyurl.com/lwcd2v | Examples http://functionaljava.org/examples | Paste http://paste.pocoo.org/+java | Functional Java 3.0 released | let unicode = flip showHex [] . ord
+[10:06] == #hardware-monitor 6 Open Hardware Monitor Support Channel | http://openhardwaremonitor.org/
+[10:06] == #rootz 33 The official freenode channel of http://RootzWiki.com || Register at http://kan.gd/1clb || You can also find us at irc.andirc.net #rootz || Twitter: @RootzWiki & Google+: http://goo.gl/bGbXbi || Why yes there is a wiki, and you can help: http://kan.gd/1ew3
+[10:06] == #trolling 4
+[10:06] == #beanpc 8 BeanPC channel | Your World First! | Not active just now, coming again one day soon!
+[10:06] == #monome 15 http://monome.org | our crazy-ass asses is playas, wassup. | we're idle, hang out | <hurfadurf> i wrote your drivers, shut up
+[10:06] == #ubuntu-mythtv 40 Mythbuntu 12.04 Released :: Please visit www.mythbuntu.org/12.04/release for more information :: Paste logs @ http://mythbuntu.pastebin.com ** Please stick around for people to answer your question
+[10:06] == #Cognition 16 Take it and report back to channel your result type and percentages. http://www.humanmetrics.com/cgi-win/jtypes2.asp
+[10:06] == #DeadJournal 3  deadjournal.com - where the dark sardonic under-appreciated make fun of everyone else.
+[10:06] == #5by5craft 3 Tumblr: http://5by5craft.com [] Twitter: http://twitter.com/5by5craft [] Reddit: http://reddit.com/r/5by5craft [] Report Bugs: http://github.com/5by5craft/BulkBag/issues
+[10:06] == #fluxbuntu 6 Fluxbuntu: Leap into the Wind :: Fluxbuntu 9.10 Karmic Koala Roadmap -> http://wiki.fluxbuntu.org/index.php?title=KarmicReleaseSchedule | FreeBSD 8.2!!! go get it! | Debian 6.0!!! OMG!
+[10:06] == ##Holidayclub 3 Happy Present's Day!!
+[10:06] == #Maelstrom 6 "Fiction suffers from the restriction that you must be able to suspend disbelief, which means on some level it must be believable. History is under no such restrictions."
+[10:06] == #archos 21 Channel about Archos devices running linux (and some windows - but don't expect help for those)
+[10:06] == #pgpool 3 pgPool-II 2.2 is out!  pgpoolAdmin 2.2 is out -- http://pgfoundry.org/projects/pgpool/
+[10:06] == #blu 4
+[10:06] == #newjersey 33 The Official New Jersey IRC Channel | Rules: http://pastebin.com/AgRarwqu  | If you can't handle the heat in #newjersey then you must be really, really heat-sensitive. This is the north!
+[10:06] == #eclipse-soc 4
+[10:06] == #tinyap 3 http://bl0b.github.com/tinyap/ http://www.github.com/bl0b/tinyap/ This is not yet another parser... generator ! Check it out ! Clone it ! Fork it ! it's good with a spoon, too.
+[10:06] == #twisted 218 http://twistedmatrix.com/ || Current Version: Twisted 12.3.0 || #twisted.web for  web-related topics || NO LOL
+[10:06] == #opensuse-nordic 4 Velkommen til #opensuse-nordic - openSUSE- og SLE-kanal på svenska, dansk og norsk
+[10:06] == #dd-wrt 120 Official DD-WRT Channel || Unofficial support @ ##dd-wrt || Please reset your router to defaults after upgrade. Info on how to do so is in the Wiki. | Latest news & downloads at http://www.dd-wrt.com/ | How to flash DD-WRT on a Fonera: http://www.dd-wrt.com/wiki/index.php/La_Fonera_Flashing | To flash a r2 that will not revert, view - http://stefans.datenbruch.de/lafonera/ | The generic
+[10:06] == #santoku 4 santoku-linux.com
+[10:06] == #mageia-uk 4 Mageia UK || http://mageia.org || http://identi.ca/group/mageia http://identi.ca/tag/mageia || Please chat in #mageia-social as well or instead!
+[10:06] == #wwu-restek 17 ResTek || It don't mean a thing if it ain't got that swing
+[10:06] == #fayntic 5 ~ Fayntic Services ~ http://www.fayntic.com/ ~
+[10:06] == #mikrokopter 31 Der genehmigungsfreie Modellsport! - Bitte zuerst lesen: http://mikrokopter.de/ucwiki/MikroKopterEinstieg - Zaungäste unerwünscht, nehmt euch einen Stuhl und setzt euch zu uns!
+[10:06] == #badwater 3 Republic of BadWater Games - Freenode Channel - Discussion of BadWater's FOSS game project and potential distribution of hosted games. http://badwatergames.com - http://irc.badwatergames.com
+[10:06] == #wookieepedia-WP:TCW 5 WP:TCW - The Filoni Fanclub | Heroes of WP:TCW http://tinyurl.com/7qpqmrs | Vital intelligence: Jabba can be found in Jabba's Palace on Tatooine | <delta> Ahsoka quickly got over anakin when she had a PM convo with someone
+[10:06] == #gti5500 5 Official Madteam IRC || http://WadUthink.com
+[10:06] == #icfp-contest 5
+[10:06] == #gtkforphp 3 GTK+ for PHP: Out with the old, in with the new.
+[10:06] == #ffii 4
+[10:06] == #TheWorld 3 Unofficial chat channel for [TheWorld]. Feel free to talk with all your friends!
+[10:06] == #canaima-social 15 Canal de socialización de canaima, para hablar de lo que quieran pero manteniendo el respeto
+[10:06] == #biopunk 7 Darwinism, futurism and biohacking | http://biopunk.org
+[10:06] == #ppsspp 3 www.ppsspp.org | The real channel is (still) #ppsspp on EFnet, but Freenode is better, feel free to hang in there if you want :)
+[10:06] == #librecad 19 LibreCAD, the Qt4 fork of Qcad Free Community edition. http://librecad.org/ | http://wiki.librecad.org | http://blog.librecad.org | channel log : http://goo.gl/NwGrX
+[10:06] == #lfs-de 3
+[10:06] == #groupies 22 Nous sommes spécialistes de l'Internet :: Notre poste dans les entreprises "Internet Engineer".
+[10:06] == #brotoss 6 DUPTIS http://www.youtube.com/watch?v=4u8FqrVK_rI
+[10:06] == #nemein 5
+[10:06] == #umn-acm 6 Robot Odyssey Lives - http://www.droidquest.com/
+[10:06] == #phpugl 3  PHPUGL IRC Channel | phpugl.de| Wir treffen uns jeden letzten Donnerstag im Monat 20:30 Uhr | Trollstufe: grün
+[10:06] == #beetstra-spam-bot-channel 5
+[10:06] == #romkitchen-beta 3
+[10:06] == #ubuntu-mythtv-dev 14 Mythbuntu development channel.  Please see #mythbuntu for support and other non development related things.  To get involved stay in here and talk to someone (probably tgm4883)
+[10:06] == #bzr 88 Bazaar version control <http://bazaar.canonical.com> | try https://answers.launchpad.net/bzr for more help | http://irclogs.ubuntu.com/
+[10:06] == ##tdct-flood 4 :ta mere suce des bites en enfer !
+[10:06] == #maya 7 [Alias Maya] Quiet channel - wait a while and we'll help
+[10:06] == #openwips 3
+[10:06] == #sesame 4
+[10:06] == #ex_bow 13 God said "I need someone who will come into work at 10:30, surf the internet until lunch, and then complain about having to work late." So God made a programmer.
+[10:06] == #exherbo-haskell 4
+[10:06] == #space 113 Next Scheduled Launches: SpaceX CRS 2 via Falcon 9 from SLC-40, Cape Canaveral AFS, Florida on March 1 at 1510 GMT; Chinasat 11 via Long March 3B from Xichang, China in March | Recent Launches: SARAL atop a PSLV, LDCM atop an Atlas 5, Progress 50P atop a Soyuz | Universe continues its campaign to destroy Russia | Rec'd Doc.: http://youtu.be/TdasRx4lc_A
+[10:06] == ##otterhats 6 https://gs1.wac.edgecastcdn.net/8019B6/data.tumblr.com/8dbc8c3d1a0426000d6e55b7695d285f/tumblr_misgppMvhe1qeukgeo1_1280.jpg
+[10:06] == #linguistics 80 WOTD: topic (n.) 1630s, "argument suitable for debate," singular form of "Topics" (1560s), the name of a work by Aristotle on logical and rhetorical generalities, from Latin Topica, from Greek Ta Topika, literally "matters concerning topoi," from topoi "commonplaces," neuter plural of topikos "commonplace, of a place," from topos "place"
+[10:06] == #tvsl 3
+[10:06] == #hackers 3 Happy new years every one. happy hacking in 2013 :) . congratulations on surviving the mayan apocalypse :P |join #newyears| Learn linux http://bit.ly/aw7WYu | Learn C http://bit.ly/12uXGST | Hacking ,security and anything related. off topic is allowed so long as you are being polite to others..|US-CERT vulnerability summary week 12/10/2012 http://www.us-cert.gov/cas/bulletins/SB12
+[10:06] == #androidforums 12 The official chat channel of  Android Forums!! :) www.androidforums.com (If you have a problem, try to stay longer than 1-3 minutes. We're not always watching this channel, so it might take time for someone to see your question)
+[10:06] == #luns 6 LUNS Ltd | http://www.luns.net.uk | Welcome to our community support channel!
+[10:06] == #sixhop 3
+[10:06] == #ubuntu-fi-en 11 Welcome to #ubuntu-fi-en the english language loco channel for Finland. Please remember to obey the CoC. Watch out for Tm_T - he is crusty and ancient. :)
+[10:06] == #magfest 33 #magfest New Magfest show: Game Over Baltimore, March 16th $10  http://www.facebook.com/events/156216744535054/?fref=ts
+[10:06] == #fsbot 3 POKE 23609, 25 / 💾 / We have moved from CVS to Git. And there was much rejoicing. / fsbot is connected via a redirect through my DSL line to get around some [hopefully] temporary freenode user capping limits - link may be flaky
+[10:06] == ##5709 8 This channel has moved to irc.AlphaChat.net #Lobby
+[10:06] == ##cohort-hookupgraph 5
+[10:06] == #dynvpn 4 www.dynvpn.com - http://twitter.com/dynvpn - https://github.com/nicboul/DNDS/blob/master/ROADMAP - https://aur.archlinux.org/packages/dnds-git/
+[10:06] == ##asrh 3 "Who's gonna break it to Clint Eastwood that the chair won?"
+[10:06] == #langrich-dev 7
+[10:06] == #mootooled 5 we haz no domains ;<
+[10:06] == #kde-tutorials 5 KDE tutorials!
+[10:06] == #SickleTeam 4
+[10:06] == #bad_taste 3
+[10:06] == #Brimstone 6 #Brimstone -- Where kids can talk about cherry vanilla ice cream
+[10:06] == #frikipedia 18 FRIKIPEDIA : Lugar de reunión de psicópatas, degenerados, y ops medio borrachos.. || Ofertas 2x1 en baneos y 70% de descuento en zapatillas para hombre. || Normas: http://bit.ly/duXiMj - Stats: http://bit.ly/RQXgmq || http://i.imgur.com/PCYn0.png | [19:25:50]<Lemax> ISANTA	WE NEED YOU
+[10:06] == #mandriva-es 3 quizas hay mas mundo en #linux-es
+[10:06] == #timesys-alumni 4 TimeSys Auld Lang Syne
+[10:06] == #suricata 31 Open Information Security Foundation (OISF) | Suricata 1.4 | http://suricata-ids.org | http://www.openinfosecfoundation.org/
+[10:06] == #keigo 15 為せば成る為さねば成らぬ何事も成らぬは人の為さぬなりけり
+[10:06] == #freebus 4 OPEN BUS SYSTEM http://www.freebus.org  Tipp #1 Projektverwaltung: http://project.freebus.org Tipp #2 Namensvervollständigung mit Tabulator-Taste
+[10:06] == #aMPed 6 aMPed 3.4 - paMPered for widescreen! (1280x720) - released!
+[10:06] == #modsecurity 15 ModSecurity || http://www.modsecurity.org || stable: 2.5.12 || oldstable: 2.1.7
+[10:06] == #linuxcaffe 9 Defacto standard linuxcaffe IRC channel :: http://linuxcaffe.ca - Happy holidays & the world did not end !
+[10:06] == #quakeforge 5 The main channel is still on OFTC #QuakeForge
+[10:06] == #yabause 18 Yabause, A Beautiful And Under-rated Saturn Emulator | 0.9.12 has been released!
+[10:06] == #puppet-dev 86 Contributions welcome! http://docs.puppetlabs.com/guides/development_lifecycle.html
+[10:06] == #gamebase_RD 3
+[10:06] == #apache-modules 5
+[10:06] == #hackerrank 476 Weekly challenge for dynamic programming is up (https://www.hackerrank.com/weekly/problems)
+[10:06] == #truecrypt 25 TrueCrypt v7.1a (07-Feb-2012) @ http://truecrypt.org/ - Old Versions @ http://cyberside.dontexist.org/truecrypt/ - Please ask your question and stay a while (don't leave us)! :)
+[10:06] == #fgtc 4 Questions? Visit our website: http://freegeektwincities.org
+[10:06] == #6sync 21 6sync.com - community support channel - IPv6 reverse DNS added! - http://status.6sync.com -  Merry Christmas and a happy New Year!
+[10:06] == #open2x 6 Wiz/Caanoo support TBA | New devs welcome - Contact DJWillis or Orkie
+[10:06] == #ens0 7 http://youtu.be/nWU0bfo-bSY
+[10:06] == #nixos 76 http://nixos.org/ || Latest Nix release: http://hydra.nixos.org/release/nix/nix-1.5 || Logs: http://nixos.org/irc/logs/ || http://www.cafepress.co.uk/NixOS
+[10:06] == #flatassembler 3
+[10:06] == #openbsd 326 Channel FAQ: http://t.boetes.org | LATEST PATCH: 5.2#1 Nov 29, 5.1#1 Apr 23 | Can't speak? /msg nickserv register
+[10:06] == #wowpedia 28 Welcome to #wowpedia, please read http://wowpedia.org/WP:IRC | Tech support: #wowtech | UI&Macros: #wowuidev
+[10:06] == #ubuntu-news 22 Next Meeting: TBD Agenda: https://wiki.ubuntu.com/UbuntuWeeklyNewsletter/Meetings | The Ubuntu News Channel - You report it, we publish it!  Serving the Fridge, Ubuntu Weekly News, and other fine publications. | https://wiki.ubuntu.com/NewsTeam | Current UWN Prep: http://bit.ly/vDkJyf
+[10:06] == #htc-holiday 10 Welcome to the official HTC Holiday device IRC channel! | CWM Recovery: http://goo.gl/Tob3U | Partition Map: http://goo.gl/vBISS | Rule: Be kind... Rewind :) | DO NOT USE XDA FOR PRIVACY CONCERNS | We do not suggest you use WCX recovery | Bricked? Try this: http://goo.gl/ysaJy |
+[10:06] == #hnhlive 9 H&H Chat - Open 24/7 for your chatting pleasure -250 The Humans are Dead
+[10:06] == #py2exe 5 py2exe is a Python Distutils extension which converts Python scripts into executable Windows programs, able to run without requiring a Python installation. More at http://www.py2exe.org
+[10:06] == #shmoolabs 17 IT'S OVER
+[10:06] == #opensuse-buildservice 89 Please add an openSUSE 12.2 repository to your project. 12.2 is out! |http://bit.ly/obs_portal | http://bit.ly/obs_tips_tricks | http://bit.ly/obs_appliance | paste to http://pastie.org/ | Channel requires you to be registered with nickserv. "/msg nickserv help register" | SNAFU
+[10:06] == #satchmo 12 Welcome to the official channel for Satchmo, the Django-based shop solution! | http://satchmoproject.com | Use the dev version: http://bitbucket.org/chris1610/satchmo/wiki/ (Requires Django 1.4) | If no one's talking, ask your question and stay in the channel! | Django questions: #django | Python questions: ##python-friendly | For general chat talk here or #codez
+[10:06] == #phpgroups 6 PHP Groups user group network - http://phpgroups.org - Join our mailing list: ug-admins-subscribe@lists.php.net
+[10:06] == #free-class 28 Welcome to Coursera & edX channel, see also #Udacity | List of IRC channels for online courses: http://bit.ly/onlinedu | List of courses: http://www.class-central.com | Follow @ClassCentral for news | Channels logs for this & several MOOC channels: http://goo.gl/NBDG8 | Reddit: /r/OnlineEducation
+[10:06] == #jbosnu 25 .i ca'e mu'igi lo nu tavla fo lo nadu be lo lojbo cu zekri gi lo jbocei cu makfa catra le'o lo tavla be fo lo drata | .i ca'e zo sofybakni latna lo ka valsi kei lo ka bebna kei lo lojbo lijda
+[10:06] == #hackmeeting 9 Hackmeeting 2013 posiblemente en el CSOA La Madreña: http://lamadrena.blogspot.com/
+[10:06] == #cyber-nux 20 Bienvenue sur #cyber-nux | le chan de http://www.cyber-nux.fr | http://www.coyotus.com | http://www.hackersrepublic.org | \_o< ici on écrit en UTF8 |
+[10:06] == #webplatform 101 conversation about webplatform.org  faq: http://docs.webplatform.org/wiki/WPD:FAQ  logs: http://talk.webplatform.org/chatlogs  bugs: http://goo.gl/bTTpT   recent activity: http://goo.gl/oqZu4
+[10:06] == #penguins-de 13 Tritt ein, setz dich, nimm dir nen Keks und entspann dich bei einem gemütlichen Plausch mit den anwesenden Personen | Titten | MacGyver | Linux
+[10:06] == #chameleonos 21 ChameleonOS release due first quarter!
+[10:06] == ##thefarm 4 Har du inte fråga mossan | Django 1.5 ute!
+[10:06] == #TildeGroupOurs 3
+[10:06] == #droidsec 36 Android security conversations! - Roots: http://goo.gl/mVR57
+[10:06] == #usgexpats 7
+[10:06] == #hasjs 3
+[10:06] == #ros 3 There are no robots here but there is ReactOS! (http://reactos.org/) | THERE ARE NO ROBOTS! We like to think of them as Reactions. | The GhostlyDeath Method is where you bang the computer until it resets or turns off. | Remember 9/11!|  http://www.mangler.org/  connect to xei.org.ua  port 3784  ]
+[10:06] == #wikisource-cs 6 Napiste @spravci [text] potrebujete-li akutne nejakeho || # stran: 18658 (17581) [17615] | poradi: 16/64 & 175/853
+[10:06] == #ubuntu-tv-fr 4 This is a temporary Channel that here for Ubuntu France LOCO AND Ubuntu-TV folks, to communicate the setup of Ubuntu TV at there release party. || Links: http://loco.ubuntu.com/events/ubuntu-fr/2065/detail/ || This channel is publicly logged at irclogs.ubuntu.com. Use of this channel implies acceptance of the terms at https://wiki.ubuntu.com/IRC/TermsOfService
+[10:06] == #laquadrature 161 La Quadrature du Net | support: https://support.laquadrature.net | Canal de travail: #lqdn-travail | Participez aux campagnes de La Quadrature sur discussion@laquadrature.net | Vous voulez aider ? Pingez Bram pour du code et meli_melo (ou axx_) pour le reste.
+[10:06] == #ncmist 8 'Welcome to Isakigakure's IRC! Disclaimer: By entering this channel, you are free to act yourself, just not like an asshat or troll | http://i.imgur.com/6CbgL2W.jpg  Isaki has found his soulmate.  God-Emporer Isaki Hoshikata, Mizukage!  Remember to pray to Isaki before bed.  I love Isaki.
+[10:06] == #oi-dev 44 OpenIndiana developers discussion | Mailing list: http://openindiana.org/mailman/listinfo/oi-dev | PASTIE OR GTFO | Log: http://echelog.com/?oi-dev | Mind the bobcats
+[10:06] == #DatChan 3 Dat Chan.  Where gentlemen are gentlemen.  And laser shooting robots chase them.
+[10:06] == #udi 3 List: http://lists.e43.eu/listinfo/udi - Wiki: http://udi.io/wiki/Main_Page - More Wiki (trac): http://udi.rootdirectory.de
+[10:06] == #marijuana 8 Lets get high! -|- http://postimage.org/image/oefqtwclx/
+[10:06] == #taggle 9 Taggle - [17:36] "<Malaiac_> bah faut plonger dans la merde pour choper les roses, c clair"  - French Search Engine Experts || HQ : http://forum.taggle.org || Noarchive
+[10:06] == #jackalope 8
+[10:06] == #farsetlabs 26 Belfast Hackerspace - http://farsetlabs.org.uk | Global Game Jam 2013 Jan 25th-27th http://unit1.farsetlabs.org.uk/wiki/index.php/GGJ13
+[10:06] == #kubuntu-bugs 7
+[10:06] == #lazok_toilet 3
+[10:06] == #reddit-uk 6 Reddit UK | Channel is moving to irc.snoonet.com #uk - message the +v and +o people for help switching | webchat http://mibbit.com/?server=irc.snoonet.com&nick=nickname%3F%3F%3F&channel=%23uk
+[10:06] == #iterm2 17 iTerm2 project | Official Homepage: http://sites.google.com/site/iterm2home/ | Code etc.: http://iterm2.googlecode.com/
+[10:06] == #backspace 31 welcome to backspace e.V. - Hackerspace Bamberg - http://www.hackerspace-bamberg.de - Space: closed
+[10:06] == #gentoo-vdr 21 Discussion about the Gentoo VDR Project | Homepage: http://www.gentoo.org/proj/en/desktop/video/vdr/ | Guide: http://www.gentoo.org/doc/en/vdr-guide.xml | Wiki: http://www.vdr-wiki.de/wiki/index.php/Gentoo | Our Bugs: http://tinyurl.com/7mq89j7 | (wget)Paste: http://dpaste.com/ | Charset: UTF-8 | Channel languages: English,German
+[10:06] == #exult 18 Exult: http://exult.sourceforge.net/ - The open source engine for Ultima 7
+[10:06] == #firegento 4
+[10:06] == #retroshare 9
+[10:06] == #otp22 6 This is Off Topic Place #OTP22.  Fun news of the day: chronomex cracked the 3233 code! Read up at: http://bit.ly/QS1itE.  To discuss OTP22 The Arctic Adventure, please go to ----> #ARG. <----
+[10:06] == #zftalk-ja 10 elf2000: Oh珍
+[10:06] == #guard 10
+[10:06] == #drupalcampmtl 3
+[10:06] == #check_mk 22 Check_MK addon for Nagios & General Chat - http://mathias-kettner.de/check_mk.html
+[10:06] == #NCTU-NSL 8 NCTU-NSL | 新年快樂開學摟 | Weekly Meeting Time: Mon. 18:30 | 心靈時間：半小時 | 下周心靈：宏瑋 | 下週報告：博班dudou+韻立
+[10:06] == ##uiuc-cs498 6 ndb > db
+[10:06] == #LBSA 8 Welcome to LBSA Plaza - Enjoy your stay! (grid status: online) running  0.7.5
+[10:06] == #atx2600 12 Next Meeting: This Friday!
+[10:06] == #traps 4
+[10:06] == #uitinf 4 This is a clean and tidy chat for computer science students @ University of Tromso.
+[10:06] == #shackspace 61 Am Pranger: das Wochenende, weil es sich Zeit lässt  | My little Lasagne, Phenylbutazon is magic.
+[10:06] == ##HNC 8
+[10:06] == #nuklearia 7 Ausstiegskritische Nuklearia - http://nuklearia.de/
+[10:06] == #archlinux-newbie 8 Welcome to the Arch community. This is a space to learn and try new things, without fear of ridicule. | Rules are forthcoming. | No slurs or oppressive language, please.
+[10:06] == #opensuse-tw 5 歡迎加入 #opensuse-tw 頻道 | openSUSE 12.2 has been released on Sep. 5th 2012 | openSUSE Facebook 正體中文社團 歡迎您的加入 http://goo.gl/9mkBC
+[10:06] == #smarty 18 current version 3.1.10
+[10:06] == #cryptosphere 4 Cryptosphere: openly-federated encrypted cloud storage vaporware | https://github.com/tarcieri/cryptosphere
+[10:06] == #androidaalto 4 Android Aalto community official chat
+[10:06] == #failo 4 https://github.com/hinrik/failo | http://twitter.com/failofailo | http://identi.ca/failo | Join #hailo for less bot spam
+[10:06] == #mageia-br 3 Mageia 2 Lançada! | Mageia - a magia continua! | Home - http://mageia.org/ | Blog - http://blog.mageia.org/pt/ | Comunidade BR - http://mageiabr.org/
+[10:06] == ##asp.net 90 [##ASP.NET] Read Guidelines @ http://aspdotnet.supertechhelp.com - Entity Framework: #entityframework  Winforms: ##vb.net or ##csharp - WPF/Silverlight/Metro: ##xaml - WCF: ##WCF
+[10:06] == #grass 10 GRASS GIS - http://grass.osgeo.org - Logs at http://logs.qgis.org/grass - Paste code at http://osgeo.pastebin.com/ - Please test http://wingrass.fsv.cvut.cz/grass64/
+[10:06] == #tickit 5 https://github.com/ingydotnet/tickit-info#readme
+[10:06] == #informatik.lmu 29 http://die-informatiker.net | Glühkabel statt HDMI-Wein | Stammtisch http://bit.ly/U1TaJy
+[10:06] == #lecamping 3
+[10:06] == #ics_lente 10 Welcome to Nikez Development channel. Currently supported devices: HTC Desire, HTC Sensation and Nexus 4. If you want a testbuild you have to be active in IRC and you have to report back ASAP.
+[10:06] == #jasig-ssp 4
+[10:06] == #xorg 119 Read http://wiki.x.org/wiki/XorgIRC | xorg.conf is not used for input devices by default, see http://xrl.us/xinput & http://tinyurl.com/xinput | xserver 1.13 released | Open driver questions see also #intel-gfx, #radeon, #nouveau | Closed driver questions -> #ati, #nvidia, #poulsbo | Really. Even if those channels seem dead. Not here.
+[10:06] == #nginx-master 7 Welcome to the home of the Nginx Masters | http://wiki.nginx.org/IRC | This channel is for operator/abuse questions only. Please exit the channel once your issue is dealt with. | We reserve the right to remove idlers | Channel is logged at ngxbot.lustfield.net
+[10:06] == #box2d 11
+[10:06] == #macintosh 7 Welcome to #macintosh | Just wait few minutes (or hours *g*) if no one answers | If we can't help you here, join #macdev (if the question is development-related), #openmac, #macosx, ##mac
+[10:06] == ##kitten 3
+[10:06] == ##fdt 7 Settimo: non rubare per fermare il declino
+[10:06] == ##cups 28 Unofficial Support for CUPS - The Common UNIX® Printing System - http://www.cups.org/ | See also http://www.openprinting.org/ | Ask your question and be patient | Enable Debug Logging | Read /var/log/cups/error_log
+[10:06] == #openshift-dev-node 13 Welcome! Discussions about http://openshift.redhat.com : cartridges and platform code
+[10:06] == #linux-ha 104 Latest: Pacemaker 1.1.8 & 1.0.12 (http://www.clusterlabs.org/), Heartbeat 3.0.6  (http://www.linux-ha.org/wiki/Heartbeat)
+[10:06] == #introverts 14 Welcome to the introverts channel! || www.reddit.com/r/introvert || CAM CHAT: http://www.icanhazchat.com/introverted || http://www.icanhazchat.com/nerdcraft
+[10:06] == #minetest-dev 22 == FEATURE FREEZE FOR 0.4.5 IN EFFECT == Minetest core development and maintenance. Chit-chat goes to #minetest. Consider this instead of /msg celeron55. http://irc.minetest.ru/minetest-dev/ http://dev.minetest.net/
+[10:06] == #miranda-de 6 Willkommen im deutschen Miranda IM Channel: http://miranda-im.de | Für Smalltalk bitte #miranda-de-smalltalk joinen. | Jabber MUC: miranda-de@conference.jabber.ccc.de | Regeln für diesen Channel: 1.) Im Forum nachsehen, 2.) Im Wiki suchen, 3.) Erst danach eine Frage stellen.
+[10:06] == #wikinews-feeds 5 http://www.wikinews.org || Feeds: Toronto Star, Xinhua, Times of India, Fox News, MSNBC, Mail & Guardian, The Guardian, The Daily Telegraph, etc... || Updates under a minute after source has released the information
+[10:06] == ##marxism-dnd 6 Dungeons, Dragons and Revolution ! || See also #d&d and #d&d-inn
+[10:06] == #concrete5 31 [concrete5 CMS] [Current Stable: 5.6.1] http://concrete5.org | Use http://pastie.org for code. | Don't ask to ask, just ask. | #concrete5-social for off-topic | #concrete5-announce for latest forum posts.
+[10:06] == #TheWalkingDead 3 *** tonights the night!! Brother vs. Brother. "Suicide King" - does that mean Merle sacrifices himself? *** NO LURKERS HERE PLEASE!
+[10:06] == #ubertweak 4
+[10:06] == #cyanogenmod-msm7x27 3 WinSuk take a look at http://forum.xda-developers.com/showthread.php?t=1960117
+[10:06] == #rnsynergy 7 #rnsynergy
+[10:06] == #skysql 5 The first choice in affordable MySQL® database solutions for the enterprise and cloud - http://www.skysql.com/
+[10:06] == #overline 7 Have you thanked R. Kelly for Ignition (Remix) yet? http://bit.ly/VPBbIu | BEST NEW WEBSITE: http://okcebooks.tumblr.com/ | Listen to lapilofu's show again! The URLs are still in the topic from last week! | EAGLE MANIACS | Listen to lapilofu's radio show online: http://makesomethingeveryday.com/secondpage/ | Listen to lapilofu's radio show at 11AM EST on wobc.org! | Happy Birthday, melin
+[10:06] == #openlmi 5 https://fedorahosted.org/openlmi/wiki/faq
+[10:06] == #ClubPenguinWiki 14 Welcome to the Club Penguin Wiki's IRC Channel! | http://clubpenguinwiki.info/ | Recent Changes: http://bit.ly/N4GE92 | CPWRC Commands: http://bit.ly/cpwrcbot (All voiced users can use commands)
+[10:06] == #linuxteam-el 7 LinuxTeam ΤΕΙ Λάρισας - http://linuxteam.teilar.gr/ - http://cronos.teilar.gr Νέα έκδοση 0.3! http://cronos.teilar.gr/posts/3669 - http://diogenis.teilar.gr - Διαβάστε τα νέα μας στο http://linuxteam.teilar.gr/node/220
+[10:06] == #kolab 50 Latest stable: 3.0 | http://www.kolab.org
+[10:06] == ##onuchat 3
+[10:06] == #openicc 9 OpenIcc list http://lists.freedesktop.org/mailman/listinfo/openicc Wiki:http://www.freedesktop.org/wiki/OpenIcc
+[10:06] == ##tty 4 Terminal emulator and application development | ECMA-{6,35,48} http://tinyurl.com/xtermseq http://tinyurl.com/termkeys | Unicode 6 🍻
+[10:06] == #tungsten 7 All about Tungsten Replicator http://tungsten-replicator.org/ | Troubleshooting:  http://bit.ly/tr20_tshoot | Tungsten 2.0.4 released http://bit.ly/tr20_relnotes | CookBook: http://bit.ly/tr20_recipes
+[10:06] == #osd 8 FOSDEM 2013: c'e' la devroom sulla virtualizzazione
+[10:06] == #qt-components 40 Desktop: http://codereview.qt-project.org/#admin,project,playground/qtdesktopcomponents,info | MeeGo & Symbian: http://gitorious.org/qt-components | Bugs: http://bugreports.qt-project.org/browse/QTCOMPONENTS | Mailing list: http://lists.qt-project.org/mailman/listinfo/qt-components
+[10:06] == ##stagecraft 6 Ever wonder what a Par Can is? | Talk about stage knowledge, Live Sound, Lighting, and anything else that comes our way | http://www.positive-feedback.com/Issue52/aes.htm
+[10:06] == #krita 37 painting for digital artists | http://krita.org | Current stable release: 2.6 | Forums: http://forum.kde.org/krita  | krita source repo  http://projects.kde.org/calligra  | Almost everyone sleeps  during  CET night!
+[10:06] == #wgt634u 5 Hacking the Netgear WGT634U (EOL) wireless router.
+[10:06] == #bluez 52 BlueZ Development. Go to #bluez-users for non-development topics.
+[10:06] == #moebius 3 Pratitator | Möbius | Moebius | http://mathb.in/ | http://www.youtube.com/watch?v=EPs4RAWlXoU
+[10:06] == #gift 5 It's old, broken and the stats lie to your face. || Trouble Connecting? Run http://gift.cvs.sourceforge.net/*checkout*/gift/giFT/gift-update-nodes || visit #gift-fasttrack for FastTrack and Ares plugins
+[10:06] == #unixag 20 Fr H-HM
+[10:06] == #vocapost 3
+[10:06] == #linuxworks 19 Linux User Group Berlin Friedrichshain/Kreuzberg - Meetings every thursday | http://friedrichshain.homelinux.org/
+[10:06] == #rubberec2 7 rubber: deploy ruby/rails on ec2 - https://github.com/rubber/rubber/wiki; If no one's around, check out the google group: https://groups.google.com/forum/?fromgroups#!forum/rubber-ec2
+[10:06] == ##ithkuil 4 Website: http://www.ithkuil.net | Mailing List: https://groups.google.com/forum/?fromgroups=#!forum/ithkuil | Facebook Group: http://www.facebook.com/groups/298793876903856/ | Ükhu attál. — I bid you greetings. | Ki attáwîl. — Greetings to you. | Attál. / Attàwîl. — Hello!/Greetings!/Salutations!
+[10:06] == #robotframework 6 Robot Framework Q&A :: http://robotframework.org :: Channel is logged: http://koti.kapsi.fi/~peke/irclogs/robotframework :: NOTE! Time zones - Core team is in Finland
+[10:06] == #not-tbo 3
+[10:06] == #linux-raid 31 IRC extension of the linux-raid mailing list | If you're looking for help, hang around for a little bit and see if someone answers
+[10:06] == #opencsw 40 Solaris packages | http://youtu.be/JWKCbPJSaxw | pkgadd -d http://get.opencsw.org/now
+[10:06] == #rivendell-fr 3
+[10:06] == #postgresql-br 7 Versões recentes: 9.2.3, 9.1.8, 9.0.12, 8.4.16, 8.3.23. Atualize sua versão. Lembre-se: 8.3.23 é a última da série 8.3 || Bot: ??palavra || Não pergunte se pode perguntar, apenas pergunte! || http://www.postgresql.org.br/ || http://planeta.postgresql.org.br/
+[10:06] == ##neuroscience 43 Web: neurosci.wikidot.com | All aspects of neuroscience | No medical advice | Slow Motion: ask question, then wait | LaTeX pastebin: mathbin.net | New users please register at neurosci.wikidot.com/interest
+[10:06] == #mmojozilla 4 "Games. Video Games." | Since GW2 has slain the levels/shards/factions demons, what now? Play it.
+[10:06] == ##yashira.org 9 Canal Oficial del WarGame Yashira -> http://www.yashira.org | ¡9 Años Procrastinando Online!
+[10:06] == #oqlt 6 oqlt e.V. :: http://oqlt.de/ :: Treffen jeden Dienstag :: Die naechsten Termine: http://oqlt.de/oqlt-ascii.txt
+[10:06] == #scheming 5 someday we will all be here at the same time. also use screen or a bouncer.
+[10:06] == #communi 9 Communi 1.2.2 - IRC framework || Home: http://communi.github.com || Docs: http://communi.github.com/doc || MeeGo: http://store.ovi.com/content/219150
+[10:06] == #openvpn-as 20 1.8.4 released! http://bit.ly/qdKlar |Welcome to the OpenVPN Access Server User Community Chat! | To find out who our company staff is type !staff | To find out staff hours type !hours | If you can't get an answer to your question here please submit a ticket: http://openvpn.net/index.php/support-center.html | When you join here, ask your question and have patience, or submit a ticket.
+[10:06] == #unimelb-drupal 4
+[10:06] == #mediawiki-parsoid 19 Round-tripping parser and runtime for MediaWiki | gwicke, subbu, marktraceur, and awight are the team | https://www.mediawiki.org/wiki/Parsoid | always fresh round-trip testing results at http://parsoid.wmflabs.org:8001/
+[10:06] == #mangaazul 3 Manga azul é uma rara fruta encontrada nas matas nativas de Calanga localizadas nas ilhas virgens de Xilunga
+[10:06] == #gentoo.pl-core 12 <@ftpd> Koleżanka ma mnie molestować regularnie.
+[10:06] == ##sl4 3
+[10:06] == #omf 12 http://omf.justinoakley.com | https://github.com/omf2097 | exclamation: basically i want to ask if it uses sdl and if it will be a portable code -> huntercool: the answer is yes to both questions
+[10:06] == #t-bones 4
+[10:06] == #gnome-japanese 4
+[10:06] == #compilers 24 The art of writing and optimizing compilers (for parsers, see ##parsers) | Since there aren't many of us, we're not always active; stick around for a while. | Paste to <http://paste.lisp.org/new/compilers> .
+[10:06] == #easygate-dev 4 e9 forever :)
+[10:06] == #ubuntu-translators 13 Welcome to the Ubuntu Translators channel! | List of Ubuntu Translation teams:  https://translations.launchpad.net/+groups/ubuntu-translators | We use Launchpad Translations https://translations.launchpad.net |  Howtos, FAQ and Contact info: https://wiki.ubuntu.com/Translations | Logs: http://logs.ubuntu-eu.org/free/
+[10:06] == #openshift 129 Welcome! Go ahead and ask a question wait a while for a response since we may be busy. -- go to github.com/openshift to get started super fast and the forums as well - https://openshift.redhat.com/community/forums/openshift!
+[10:06] == #mekensleep 4 tighty whities for dummies
+[10:06] == #af83-capgemini 3 https://trello.com/board/capgemini-adeo/50e57d2565b7f05841009e6e
+[10:06] == #openwolf 4 Welcome to the official OpenWolf project channel, official OpenWolf ModDB page - www.moddb.com/games/openwolf
+[10:06] == #ac100-fr 4
+[10:06] == #ronin 11 Ronin | http://ronin-ruby.github.com/ | git: http://github.com/ronin-ruby/ | issues: http://bit.ly/v5EMnH | list: http://bit.ly/vWFPDD | twitter: http://bit.ly/yMTsdE | reddit: http://bit.ly/Aj8evM | ronin-support 0.5.0, ronin 1.5.0, ronin-gen 1.2.0, ronin-sql 1.0.0 released! Now we focus on releasing ronin-exploits / ronin-scanners
+[10:06] == #pirata.cat 5 ☠ Pirates de Catalunya ☠ http://pirata.cat ☠ http://twitter.com/partit_pirata ☠ http://www.facebook.com/pirata.cat ☠
+[10:06] == ##ios 18 Jailbroken Apple devices here! JB all devices except iPad2G http://bit.ly/lRYjE9 use pwnagetool for ATV2G | Always save SHSH! | Devs welcome! :D | get greenpois0n http://is.gd/fYibh | iPad2 jailbreak
+[10:06] == #glastopf 13 https://public.honeynet.org/mailman/listinfo/glastopf | GlastopfNG: http://honeynet.org/node/580
+[10:06] == #fedora-fudcon 26 FUDCon Lawrence is over! go home ya butt
+[10:06] == #teiiddesigner 5
+[10:06] == #chucklefish 4
+[10:06] == #freepbx 117 Current: 2.10 | Dev: #freepbx-dev | Distro: http://goo.gl/qe8aI | Paid Support: http://bit.ly/1B1TEN | Rules & Guidelines: http://bit.ly/UQGpls | Twitter: http://bit.ly/YoNBSc | Just ask and then wait patiently, even if it looks quiet
+[10:06] == #firmata 4 https://github.com/jgautier/firmata | https://github.com/rwldrn/johnny-five | <+rwaldron> hardware is basically the world's greatest synchronous race condition
+[10:06] == ##4eCO 18 No more crunch.  4e is solved?  | 130128 - new playtest document, now with barbarians
+[10:06] == #freebsd-romania 3 "Bine ai venit pe canalul dedicat FreeBSD - Romania http://freebsd.org/handbook . http://www.freebsd-romania.tk"
+[10:06] == ##trp 5 RIP ##trp
+[10:06] == #libreswan 4
+[10:06] == #runny-dev 5 Welcome to Runnymede development irc channel! | If you have questons, ask them, yeah, NOW! - http://logcat.scheffsblend.com/ | JB kernels here - http://tinyurl.com/cpnbrru
+[10:06] == #jython 30 Try Jython 2.7b1 at http://tinyurl.com/d4s8qvd | This channel is logged: http://jython.extreme.st/irclogs/ | Please update the wiki: http://wiki.python.org/jython | Jython Book: http://jythonbook.com | Podcast: http://jython.org/jythonpodcast/
+[10:06] == #gtkpod 14 Latest releases: gtkpod-2.1.3, libgpod-0.8.2, website and wiki at http://www.gtkpod.org, displaying information concerning support for older products, including the classic, nano, iphone and shuffles.
+[10:06] == #coreaudio 7 CoreAudio resources at http://www.iphonedevfaq.com/index.php?title=Core_Audio
+[10:06] == #trifunc 3
+[10:06] == #wikimedia-be 6 Welkom op de chat van Wikimedia België | Bienvenue sur le chat de Wikimédia Belgique | Wilkommen im Chat von Wikimedia Belgien | Welcome on the chat of Wikimedia Belgium || plans: http://etherpad.wikimedia.org/WikimediaBelgium || site: http://be.wikimedia.org
+[10:06] == #projectvov 3
+[10:06] == ##osx-server 83 OSX Server - Free and Friendly support for OSX Server/DeployStudio/InstaDMG/Munki - "Enterprise at your own risk" - Latest version 10.6.8 v1.1 / 10.7.5 / 10.8.2 - Wiki @ http://afp548.com/mediawiki/ - Latest Releases: Munki Stable 0.8.3.1679, DeployStudio 1.5.17. Chat Logs: http://tinyurl.com/osx-server-logs
+[10:06] == #ccl 32  Clozure Common Lisp  -- http://ccl.clozure.com/
+[10:06] == #reddit-subredditdrama 3 For /r/subredditdrama! | lols | penises | lulzcakes has been banned | geology not banned | http://1upfordac.com/ | Try our new snoonet chan! #subredditdrama on irc.snoonet.com
+[10:06] == #tuxshells 27  Welcome to TuxShells! -  Accepting users on a case by case basis. Please message TuxShells or send an email to admin@tuxshells.com to inquire about an account.  Please english only in the main channel and be courteous to others!
+[10:06] == #balanced 41 balancedpayments.com/community | nobody around? ask your question on stackoverflow.com/questions/tagged/balanced-payments or  email support@balancedpayments.com | github.com/balanced/balanced-api | logs @ https://botbot.me/freenode/balanced/
+[10:06] == #unknown 11
+[10:06] == #palib 7 PALib: for grown turkey http://palibusers.tumblr.com
+[10:06] == #udacitygpu 11 Friendly and helpful discussion for Udacity cs344: Intro to Parallel Programming. Channel policy includes: Be friendly and helpful!  No bots.   No logging please.
+[10:06] == #enthouse-ingame 11 Welcome to Enthouse in-game chat!
+[10:06] == #tvdaemon 5 TVDaemon -  The dev. hangout - we serve....
+[10:06] == #blinkenshell 5 Blinkenshell - Free UNIX shell service! | http://blinkenshell.org/ | Official IRC channel: #blinkenshell @ irc.blinkenshell.org 6697 SSL
+[10:06] == #massageprive 3 MassagePrivé.com Private chan
+[10:06] == #esoteric-en 3 <dho> Martinussen: what 3com card do you have  <Martinussen> It is orange
+[10:06] == #analtux 4 Analtux Control Channel
+[10:06] == #slab 5 "ending a sentence with a preposition is something up with which we will not put!"
+[10:06] == #cocoa-se 10 iPhone OS 3.1.2 is out!
+[10:06] == #tetaneutral.net 65 http://tetaneutral.net, network, net neutrality, open internet, ISP, broadband, fiber, wifi, not for profit, Toulouse area
+[10:06] == #udbug 5 type '~udbug help' for help or '~udbug topic' for the topic
+[10:06] == #kegbot 13 http://kegbot.org/
+[10:06] == #openstack-quantum 14
+[10:06] == #mplayer2-dev 21 mplayer2 development channel
+[10:06] == ##pfsense 310 pfSense 2.0.2 RELEASE is here! http://blog.pfsense.org/?p=676 || pfSense book now available! http://blog.pfsense.org/?p=509  || Need commercial support? https://portal.pfsense.org
+[10:06] == #wikia-warriorcats-fanfiction 7 Welcome to the Warriors Fanfiction Wiki channel! | Rules: http://warriorsfanfic.wikia.com/wiki/Warriors_Fanfiction:IRC#Rules | Ops: Artimas Hunter, Birchy, Forestpaw13 | Voices: Wiki Officials and Active Users | Staff: Artimas Hunter, Birchy, Wetstream, Forestpaw13, RedPandaPotter | Articles: 4,500+ | Registered Users: 4,000,000+ | This channel is for WFW editors and former editors.
+[10:06] == #piraten-rechnen 8 Klarmachen zum Rechnen ---- Willkommen an Bord! Während andere noch Pi raten, rechnen wir schon.
+[10:06] == #ooc-lang 22 Welcome to the official ooc programming language channel || Discussing the future of rock's build mechanism: https://github.com/nddrylliog/rock/issues/377 || Channel logs: http://tinyurl.com/ooc-lang || Stable: 0.9.5 || Get rock: `cd && curl -L da.gd/rock | bash` || Interpreter: http://da.gd/oocrb || Primitive symbol implementation: https://gist.github.com/3039317 2501
+[10:06] == #openattic 4 www.open-attic.org -- Please highlight Svedrin or capri so we will notice. :)
+[10:06] == ##ubuntu-lyon 13 Salon des ubunteros lyonnais | www.ubuntu-lyon.org | Tapez !help pour obtenir de l'aide !
+[10:06] == #fasterthanlight 9 Unofficial IRC channel for Faster Than Light, a roguelike IN SPACE! | ftlgame.com | reddit.com/r/ftlgame | ftlwiki.com | ftl.wikia.com | Feel free to use and improve the learndb! (??learndb for help)
+[10:06] == #teambuild 28 General development help | No question is stupid, just ask | Google is your friend, please at least Google once before asking your stupid question | Please do not paste raw code/output into the channel, instead use http://pastebin.com | For logcats, please use http://logcat.scheffsblend.com | NO Ubuntu Touch help
+[10:06] == ##weather-us-me 3 NOAA Active Weather Alerts for the state of Maine | Main discussion channel: ##weather
+[10:06] == #koha-news 3
+[10:06] == #interhack 18 Programmatic NetHack | doytaeb (Val Dwa Fem Law), 417613 points, killed by a jabberwock | rawrbot (saiph) (Val Hum Fem Law), 274323 points, killed by a death ray (after killing Medusa) | TAEB523 (Val Dwa Fem Law), 137086 points, killed by an invisible titan
+[10:06] == #txlf 13  Texas Linux Fest 2013: http://texaslinuxfest.org/ for more information.
+[10:06] == ##udacity-cs101 8 Udacity CS101 http://goo.gl/L7WNt | Channel logs: http://goo.gl/drNsf  http://goo.gl/za9sT | see #udacity #free-class | UdacityMirror (download videos with a few clicks): http://goo.gl/crO8f
+[10:06] == #nanode 20 http://wiki.hackspace.org.uk/wiki/Project:Nanode | http://nanode.eu/ | @Nanode_1 | Channel may be publicly logged
+[10:06] == #ubuntu-at 6 Bitte einfach direkt das Problem beschreiben - und Geduld haben :) || Ubuntu Austria LoCo || Bitte keine ungefragten querys. || Bitte keine random highlites ||
+[10:06] == #foss.aegean.gr 4 Κοινότητα ΕΛ/ΛΑΚ Πανεπιστημίου Αιγαίου http://foss.aegean.gr/ - εγγραφείτε στην Mailing  List μας: http://foss.aegean.gr/mailinglist -- στείλτε μας στη διεύθυνση fossaegean{at}lists.hellug.gr ή foss{at}aegean.gr
+[10:06] == #devious 89 Join us across the Internet! http://devio.us/communities | Wolfman is online. | Please don't waste your time e-mailing if it's down; we won't receive your email until it's back up. | Signups are on-hold while we are setting up and migrating to the new cluster | Interesting fact: To date, 10,862 shell applications have been rejecte
+[10:06] == #sequel-dev 3 Sequel Development Discussion - http://dev.gene-rally.com - ALL CHAT IS LOGGED BY SequelBot FOR REFERENCE
+[10:06] == #eole 14 projet Ensemble Ouvert Libre et Evolutif (EOLE), http://eole.orion.education.fr \n MERCI de mettre votre NOM REEL dans vos paramètres
+[10:06] == #voxel.js 44 voxel.js - follow @voxeljs for news - channel logs: https://www.dropbox.com/s/17ty7yr5sydas4u/%23voxel.js.log
+[10:06] == #stap-dev 4 A channel for the development of Stack Processing (STAP). Cool features include Metastacks and Metaoperators.
+[10:06] == #wolfplex 27 [Grip] Service unavailable. Expected resume partial (= you can access get a backup fo your data account) avaibility: today 11:00 UTC. Expected normal (= network/applications/services ok) availability: we're devising some solutions. (Happy New Year 2013)
+[10:06] == #ubuntu-ch 7 Ubuntu Switzerland, http://www.ubuntu-ch.org | Channel language: English, please! | For Ubuntu help in Chinese 您可以访问中文频道： #ubuntu-cn 或者 #ubuntu-tw  或者 #ubuntu-hk | Ubuntu 10.10 Maverick Meercat released! Partytime :) | 10.04 LTS CDs still available for Ubuntu, Kubuntu and Ubuntu server | Swiss Remix CD available from dstoni, Kubuntu CDs from Mamarok.
+[10:06] == #picolisp 12 Picolisp latest found at http://www.software-lab.de/down.html  | check also http://www.picolisp.com (new site) for more information
+[10:06] == #forge 15 Forge 1.2.1.Final is out ! Get the latest Forge release/documentation at http://forge.jboss.org - Chat transcripts: http://bit.ly/forge-transcripts - Meeting transcripts: http://bit.ly/forge-meetings - Follow us on twitter: http://twitter.com/JBossForge - Want to help us ? Fix any issue in http://bit.ly/forge-issues-all
+[10:06] == #seclab-ingesup-paris 3
+[10:06] == #fusiondirectory 25 Welcome to FusionDirectory, Your infrastructure manager | http://www.fusiondirectory.org | Latest Version 1.0.4
+[10:06] == #NukingsMiningCo 3 http://ltc.nushor.net | For Current Pool Stats Type !Stats, !U for user hash rates
+[10:06] == #ralnabe 6 次回、「Oobleck Night with Pizza!」ご期待ください。
+[10:06] == #ubuntu-iso 3
+[10:06] == #ubuntu-women-project 25 This Channel is LOGGED | http://ubuntu-women.org | support (mostly) at #ubuntu | channel guidelines: http://wiki.ubuntu-women.org/IrcGuidelines | Next Meeting: Tuesday March 12th at 18:00 UTC
+[10:06] == #residualvm 24 ResidualVM 0.1.1 | http://residualvm.org | Forum: http://forums.residualvm.org | Logs: http://logs.residualvm.org | Git: http://github.com/residualvm | old logs: http://logs.scummvm.org/residual
+[10:06] == #rhodecode 28 Site http://rhodecode.org | Sources https://secure.rhodecode.org | Demo http://demo.rhodecode.org| Tracker https://bitbucket.org/marcinkuzminski/rhodecode/issues?status=new&status=open | Discussion Group http://groups.google.com/group/rhodecode/
+[10:06] == #Mathetes 16 Welcome.  Don't ask to ask; just ask.  Use !memo to send a message to someone who is absent.  Diakonos 0.9.0: http://diakonos.pist0s.ca/download/  Diakonos mailing list: Just send directly to diakonos@librelist.com  |  Mathetes is no longer online.
+[10:06] == ##freebsd-pl 30 FreeBSD 8.3-RELEASE, 7.4-RELEASE, 9.1-RELEASE; PC-BSD 9.1 | EN: FreeBSD-SA-13:02.libc, FreeBSD-SA-13:01.bind | http://freebsd.org/handbook | Pomogliśmy 25 osobom! | http://kwiat.panic.pl/irc/%23%23freebsd-pl.html
+[10:06] == #nekokak 10
+[10:06] == #wikipedia-kl 4 Wikipediap chat kanaalia kalaallisut • Allannguutit kingulliit: irc://irc.wikimedia.org/kl.wikipedia • Aamma takuuk #wikimedia-danmark
+[10:06] == #dgplug 6 Welcome to Linux User's Group of Durgapur | Mailing list at  http://lists.dgplug.org/listinfo.cgi/users-dgplug.org | Old classes http://www.dgplug.org/irclogs/ | nick registering http://freenode.net/faq.shtml#registering | New to programming -- http://www.ccs.neu.edu/home/matthias/HtDP2e/ | 8 years completed, thank you everyone | Fedora 18 Released http://fedoraproject.org/get-fedora |
+[10:06] == #drupal-media 32 Drupal Media | http://drupal.org/project/media | http://groups.drupal.org/media | @drupalmedia | Latest releases are 7.x-1.2 and 7.x-2.0-unstable7 | Next IRC meeting is TBD
+[10:06] == ##philosophy-ops 3
+[10:06] == #spackeria 20 Wiki: http://bit.ly/hzVWOq | Chat-Log: http://bit.ly/g8Cy5h | Twitter: http://twitter.com/spackeria | http://blog.spackeria.org/about/
+[10:06] == #ubuntu-au 19 Australian Ubuntu LoCo Team channel! - guidelines @ https://wiki.ubuntu.com/AustralianTeam/IRC | Off-topic chat in #ubuntu-au-chat | Next Team Meeting: Sun 10/03/2013 @ 2000 AEST (GMT+10) - http://is.gd/nextmtg | Web: http://ubuntu.org.au | Mailing List: http://is.gd/SNIoYJ | Forum: http://au.ubuntuforums.org
+[10:06] == #sourcemage 32 Stable Sorcery: 1.15.2 | Latest Stable Grimoire: 0.61-19 (stable-rc: 0.62, test: 0.63) | Latest stable ISO: 0.10.0 | SMGL IRC stats: http://ircstats.sourcemage.org/ | Non-English: #sourcemage{es,de,fr,ja,ru,zh,si} | Paste in #sourcemage-dump | http://wiki.sourcemage.org/FAQ/Gentoo/Philosophical
+[10:06] == ##vhdl 39 Welcome to ##vhdl! Ask and lurk, answers may take time | Be polite and precise! | Use http://codeupload.com http://paste.org www.pastey.net (don't paste too many lines in the channel!!) | Free book: http://tinyurl.com/VHDL-Cookbook-pdf | References: http://www.ics.uci.edu/~jmoorkan/vhdlref | Related chans: ##verilog ##fpga
+[10:06] == #cvn-wp-ru 3
+[10:06] == #openpnp 4
+[10:06] == ##foulab 40 Foulab: Proje(c)t Hackerspace Montreal // Lab status: closed // !sign <message> to ping inside the lab
+[10:06] == #AdaCommons 3 AdaCommons contributors discussion -- http://adacommons.com/ -- a new home for Lady Ada
+[10:06] == #eproj 12
+[10:06] == #chato2k12 3 Channel de discussion pour les prépas qui seront à Chatô en 2012-2013 (ou pas) | http://cdn.memegenerator.net/instances/1000x/23515085.jpg | http://work.hydraze.org/1349905452285.jpg
+[10:06] == #rekonq 28 rekonq web browser developers channel | released 2.2! | rekonq website: http://rekonq.kde.org | Code: https://projects.kde.org/rekonq |  mailing list: rekonq@kde.org. Enjoy rekonq :)
+[10:06] == #geodjango 24 GeoDjango | http://geodjango.org/ | http://www.youtube.com/watch?v=zOaimbSe6n8 | New to geodjango? Done with the GeoDjango tutorial? Have a look at olwidget to learn more essential basics...
+[10:06] == #angrybytes 4
+[10:06] == #grizzly 3 Grizzly - https://grizzly.dev.java.net/  - Java NIO communication library - Latest 1.9.18-e
+[10:06] == #szluug 12 Szczecin Linux/Unix Users Group :: http://szluug.org | http://osconf.pl | Piwo w piątek 22.02: https://www.facebook.com/events/513602658691548/
+[10:06] == #idiocrates 4 Le coup d'état de Gaki le propulse à la tête du ministère des garderies
+[10:06] == #python-cs 15 Vitejte v mistnosti o programovacim jazyce Python | http://python.cz | Logy: http://irc.python.cz  | Vice nez 5 radku textu vkladejte napr. pres http://dpaste.com/
+[10:06] == #sdsug 3
+[10:06] == #plone-docs 7 /join #plone-tuneup on Friday! | http://bit.ly/plonedd | Report any problem with documentation at https://dev.plone.org/plone/newticket?component=Documentation
+[10:06] == #GeekStreams 50 GeekStreams was created for the open sharing of ideas. Stream a hack! *  Watch http://GeekStreams.com * How it works http://rod.gs/l9n * Katzy's new album available!! http://kathrynlj.bandcamp.com/ * Test gartenzwerg's game http://www.frank-buss.de/TilingGame/index.html * Try this http://obsproject.com/
+[10:06] == #wikiAct 3 Welcome to ##wikiAct! | http://www.editthis.info/wikiact/Main_Page | Please be polite to other users :)
+[10:06] == #warpzone 28 www.warpzone.ms | Nächstes Hack&Breakfast: 09.02.2013 - 10.02.2013 in der Warpzone
+[10:06] == #puma 10
+[10:06] == #kuechenradio 11 kuechenradio.org | KR243 Kein Gast / Viererrunde
+[10:06] == #pensacola_linux 6 Pensacola Linux and *Vim* User Group - Type .help to interact
+[10:06] == #chupei.pm 6 竹北 Perl 推廣組 | http://chupei.pm.org
+[10:06] == #edubuntu 29 Edubuntu 12.10 is out! - http://www.edubuntu.org | When asking questions, hang around for a bit, we're not always at our computers :) | Try WebLive! http://edubuntu.org/weblive | Help out with bugs: http://tinyurl.com/EduBugs | LTSP questions? also try #ltsp | Welcome to the playground, have lots of fun and behave yourself!
+[10:06] == #gluxon 4 Welcome to the official #gluxon chat room! Please keep it PG! Act your age, not your shoe size (unless you are dwack). An updated set of rules can be found at http://gluxon.com/chat/rules Thank you for chatting with us! :D
+[10:06] == ##cbb 5 No heteronormatives allowed!
+[10:06] == #teamsbrissenmod 7 lol https://twitter.com/#!/CodenameAndroid/status/194632868356558848
+[10:06] == #eurix 4 Linux Users Group de l'Eure (27) - http://www.eurix.org/ - Toujours pas en UTF - AG le 26/01/2013
+[10:06] == #hobbiton 4 have you signed alltrials.net? || We are easily confused, please remember that when you enter here.
+[10:06] == ##coders 5 General programming help - Any language - RTFM is a 4 letter word - Need it written? Freelancers welcome!
+[10:06] == #orgthingy 4 Das Ist SPAAARTAAAA || Shahrius™ is the channel mascot || orange juice tastes good
+[10:06] == #fatlab 31 0-day TPB AFK CAM by @arambartholl: http://fffff.at/tpb-afk-illegal-cam-bootleg-at-world-premiere/ | FAT GOLD hoodies/shirts: http://fatgold.spreadshirt.com
+[10:06] == #anime-es 5 .:: Bienvenidos a irc://irc.freenode.net/#anime-es, el lugar indicado para conversar de anime, manga, jpop, jrock y tus idols favoritas :: Anime en vivo: http://animecalendar.net/ (via KeyHoleTV: http://is.gd/frlKz y la hora en Tokio: http://is.gd/frlP1 ) :: Tiempos de crisis. Adopta un torrent, no permitas que nuestra pasión desaparezca. P2P forever!!! ::.
+[10:06] == #speakup 8 Welcome to the speakup screen review channel. http://www.linux-speakup.org
+[10:06] == #interchange 15 Interchange - The e-commerce platform || http://www.icdevgroup.org/
+[10:06] == #AwesomeRetro 5 ===---http://www.awesomeretro.com---=== ###Retrogaming for everyone!###
+[10:06] == ##broomstick 4 Nous parlons français/We speak English/Wir sprechen Deutsch/Me puhumme Suomea/日本語が出来ます/Hablamos  castillano/Vorbim românește/Мы говорим по-русски/Mówimy po polsku/<add more here>
+[10:06] == #qmosa 3 Bungholio> i dont have sticks and balls and even if i did i wouldnt know how to swing them
+[10:06] == #daedalus 4 Play: byond://ss13.nss-icarus.net:13013 | Source and bug tracker: http://daedalus.nss-icarus.net | Site: http://www.nss-icarus.net | Fora: http://forum.nss-icarus.net | Now with SQLite! | Server updated: 0035 12 Jun 12 MST
+[10:06] == #ubuntu-discuss 33 Welcome to #ubuntu-discuss. This is a channel for high quality on-topic non-support discussions about Ubuntu | Non Ubuntu stuff to #ubuntu-offtopic or the relevant other channel | We follow the CoC at all times here | No ranting here please | Ubuntu for Phones discussion has moved to #ubuntu-phone
+[10:06] == #lemmings 10 Lemmings: Happy New Year! :) :) 0:) :) :) :) Our Logs: http://gentoogeek.org/stats/lemmings.html
+[10:06] == #canaima-desarrolladores 3
+[10:06] == ##LLchat 4
+[10:06] == ##mac-social 4 ##mac-social - where the topic is off-topic. We don't bite!
+[10:06] == #cubox 56
+[10:06] == #Wikia-Metroid 8 Welcome to the IRC channel for the Modern Ænglo-Saxon Wikitroid: http://metroid.wikia.com | Recent Changes Feed: #wikitroid (Up) - NOW REPORTS RC for metroidfanon and metroid.answers | Rules: http://tinyurl.com/2wouup | This is the channel's topic, obviously | Wikitroid mailing list info: http://bit.ly/PlDYAp | Wikitroid Steam group: http://bit.ly/OE02rt
+[10:06] == #maemo-hostmode-discussion 5 h-e-n DEVELOPERS chan. NO SUPPORT! http://h-e-n.garage.maemo.org | Status quo: http://talk.maemo.org/showthread.php?p=869527#post869527 http://talk.maemo.org/showthread.php?p=921203#post921203 | ToDo: jrbme w/ vboost & hostmode switching; GUI V2 | fundamentals: http://talk.maemo.org/showthread.php?p=685367#post685367 and http://talk.maemo.org/showthread.php?p=685914#post685914
+[10:06] == #glorioustrainwrecks 17 "Imagine a game that only uses the Share button" | gTrWx
+[10:06] == #enna 4 "More informations about the project here : https://github.com/enna-project"
+[10:06] == #volatility 36 Volatile Memory Analysis
+[10:06] == #cadoth 24 cadoth server's IRC channel | http://cadoth.net | Users/bots with an account are voiced. | Rebooted at Feb 7, 14:20:42 CET (UTC+1). | If you need to use private directories in your userdirs, use .htaccess with Options -Indexes (it has been added for users that were already using private/ and noindex/).
+[10:06] == #reddit-cyberpunk 26 ◊ [CYBERPUИK] -> http://www.reddit.com/r/cyberpunk -> set your cyberphaser to maximum haximum
+[10:06] == #VaasaHacklab 8 Vaasa Hacklab http://goo.gl/X0X2L http://www.freelists.org/list/vaasahack
+[10:06] == #centos-br 8
+[10:06] == #code-hell 4 Welcome to #code-hell. Today's theme is "process docs" | http://www.cprover.org/ | WOTD: Assertion | Why Python: http://www.lesher.ws/choose_python.pdf | http://archive.adaic.com/docs/reports/lawlis/content.htm | Echidna's arf, of you... | David Parnas goes to Ireland...  http://www.sqrl.ul.ie/
+[10:06] == #ntcm7 3 Tweaked build back in the workings.  Anybody with knowledge of modifying source code contact Celtic on celticwebsolutions@gmail.com if you'd like to be involved. BEAKING NEWS: CELTIC STILL CAN'T TYPE!
+[10:06] == #perl-cats 21 PERLCATS.COM -> twitter://@perlcats :: http://f00li5h.pin21.com :: www.catonmat.net :: http://substack.net :: podcats.in :: symkat.com :: blog.fox.geek.nz :: simcop2387.info :: www.shlomifish.org :: www.dhoss.net :: Feline Facilities #stackvm #catonmat :: average_drifer prefers something more lightweight than Windows Notepad. Like Eclipse.
+[10:06] == #ubuntu-youth 20 Welcome to Ubuntu Youth! || Here, you can talk about Ubuntu, a distro that is becoming increasingly more awesome... || LP team: http://pad.lv/~ubuntu-youth
+[10:06] == #devaamo-meeting 5 Devaamo meeting channel
+[10:06] == #oggcastplanet 68 Oggcast Planet http://oggcastplanet.org | General Freenode policies strictly enforced! | Live Stream: n/a | Unix Porn is back http://unixporn.com
+[10:06] == ##mikeslab 5 C:\LIFE\SLEEP.EXE | Check out ##mikeslab-eBay so you dont miss out on classic comp ebay auctions!
+[10:06] == #kindledev 8 Kindle development and hacking talk. No end user support. No talk about any other device.
+[10:06] == #nctucsie 6
+[10:06] == #gentoo-mips 34 Gentoo/MIPS: http://mips.gentoo.org | General MIPS/Linux questions: #mipslinux | If you want to help revive Linux on SGI Octane and know how to work in the Linux Kernel, talk with `Kumba | We do not help with homework of any kind.
+[10:06] == #ElectronTubeStore 3 ElectronTubeStore.com Support Channel
+[10:06] == #getdeb 8 Archive and sites are up, package updates are still being worked - Software you want - www.GetDeb.net | Games you want - www.PlayDeb.net | Want to request a package? Go to https://launchpad.net/getdeb.net/+filebug
+[10:06] == ##anarchism 9 http://freenode-anarchism.github.com/ | Rule 0: don't be a dick | r/anarchism coup HQ - use privatepaste.com for all nefarious plots plz | boring things: pretty much everything i guess
+[10:06] == #robotics 73 Mechanical Electrical Programming and Psychology | http://tom-itx.dyndns.org:81/~webpage/ | STAY AROUND TO GET AN ANSWER! TIMEZONES YA KNOW!
+[10:06] == #gradle 14 http://www.gradle.org/
+[10:06] == #wikiquote-cs 5 Napiste @spravci [text] potrebujete-li akutne nejakeho || # clanku: 4748 (4449) [4628] | poradi: 10/88 & 301/853
+[10:06] == #notfuckheads 3 Paste your passwords here!
+[10:06] == #Zachoz 3
+[10:06] == #dulwich 9 http://samba.org/~jelmer/dulwich | 0.8.7 is unleashed onto the world
+[10:06] == #nexus10 11 Nexus 10 - The 10" Google Tablet.  All are welcome.  http://goo.gl/pKz6E
+[10:06] == #applescript 3
+[10:06] == #postmark 4 Postmarky Mark!!! ~~~ https://botbot.me/private/s81c2WYUSs/
+[10:06] == #msm8960-dev 9 ICS/JB development for msm8960. Use https://github.com/xkonni/scripts/blob/master/stikked to paste logcats/stuff.
+[10:06] == #ckefgisc 3 #ckefgisc
+[10:06] == #scrumbleship 5 Hi! We're moving to #ScrumbleShip on irc.scrumbleship.com . Please move with us!
+[10:06] == #ipfire 18 IPFire - Support in english and german! Ask your question and stay tuned, or visit our forum. http://forum.ipfire.org  !!! DO NOT ASK TO ASK !!!
+[10:06] == #amavis 14 http://www.ijs.si/software/amavisd/ - Version 2.6.4 released 2009-06-25
+[10:06] == #cegui 18 Usage help for Crazy Eddie's GUI System | Latest: 0.7.9 | #cegui-devel for development chat | http://donate.cegui.org.uk | follow us: @ceguilib | If we forgot to troll you, it does not mean we like you!
+[10:06] == #polevo 6 134314 <@siano> 500 GB to za duzo juz teraz kopia tego serwera robi sie 7 h, mniejszy dysk naklania do pozadku
+[10:06] == #tech45 5 Tech45 #143 is er weer op 5 maart om 21:30.
+[10:06] == #openmoko-devel 3
+[10:06] == #linaro-android 68 Linaro Android 13.02 released: http://bit.ly/YJKQOX
+[10:06] == #blamesamsung 10  We have a gitweb! http://review.bbqdroid.org/gitweb/
+[10:06] == ##Pomegranate 12 [Welcome to ##Pomegranate (Pomeg for you Pokenerds) A chat channel. (Cinnamon <3) | Sister kingdom: ##moon-eyes | XANA ATTACK | POMEG'S ARMY IS BETTER THAN MOONEYES' | I tired.
+[10:06] == #Kendo 3 #Kendo | HARDCORE | Have Heart | ... to look up to me is to look down on everything | http://www.youtube.com/watch?v=zj_1X0tQBNo |
+[10:06] == #libreoffice-ja 4 LibreOffice日本語コミュニティ用のチャンネル。日本語OKです。文字コードはUTF-8でお願いします。
+[10:06] == #rmccue 4
+[10:06] == #reddit-hockey 24 Welcome to /r/Hockey IRC!
+[10:06] == #qt-v4vm 4
+[10:06] == #winswitch 14 please file bugs! (we can't fix things we don't know about)
+[10:06] == #linuxparty.dk 3 Linuxparty er på ferie på ubestemt tid
+[10:06] == #GamerChat 6 Welcome to #GamerChat! It's the Breaking Bad of video game webchat channels. The place for gamers to talk about video games, music, etc.  What we're playing - Gotham City Impostors  PS3 ss14hero's quote of the undisclosed amount of time : "Check and mate, buddy!" Spikan's game of the moment : DmC: Devil May Cry.
+[10:06] == #yapb 3
+[10:06] == #hsvguns 8 Huntsville area firearms enthusiasts.
+[10:06] == #aspietalk 62 Welcome to AspieTalk!! An Asperger's/Autism channel. | Read the channel rules at: http://pastebin.com/raw.php?i=Wy0vWq2K | Autistic gamer's forum: https://www.evolvehq.com/recruit/group?token=player:CjAo1F6W38jJ2h-G,group:ezNt2gfj8wgUoW02
+[10:06] == #Gnomoria 21 Gnomoria Chat! | Current Version: 0.8.26.0 (20130122) @ http://gnomoria.com | Wiki @ http://www.gnomoriawiki.com | Forums @ http://forums.gnomoria.com | Bugzilla @ http://bugzilla.gnomoria.com | Stats @ http://stats.planetgnomoria.com/irc/
+[10:06] == #heavyops 5 Torix RS/portal maint Sat Feb16 6p-12a, 1 RS down/time max.
+[10:06] == ##xen-br 13 Canal #xen-br :::: Lista: http://groups-beta.google.com/group/xen-br :::: Site: http://wiki.xen-br.org ::::  | Mais que 5 linhas? Use o Pastebin http://paste.xen-br.org | Portal: www2.xen-br.org
+[10:06] == #libtechwomen 6 Join the Google Group http://bit.ly/UFkZ6v
+[10:06] == ##vi 9 All "vi" variants except Vim; see #vim for that | Be precise, detailed, but to the point! (we are harsh)
+[10:06] == #droolsdev 17 Alpha7 released (master builds fine locally --- assuming Hudson emails are a patch of choppy water) --- porcelli starts to relax http://i49.tinypic.com/2h6dkao.jpg
+[10:06] == #clojureql 4 ClojureQL 1.0.3 now on Clojars!
+[10:06] == #efreilinux 8 ÉFREI-LINUX — http://linux.efrei.fr ~ Solutions Linux 2013 ! ~ On veut une bouuuuuuuuuufz
+[10:06] == #drupal-nc 13 Drupal North Carolina | http://groups.drupal.org/north-carolina
+[10:06] == #supercollider 11 SuperCollider Support Channel | SC Home: http://supercollider.sf.net | Paste stuff here http://pastie.org/
+[10:06] == #yichi 6 UTF-8 | 2012 年春酒圓滿成功 | 不過有人沒來 XD
+[10:06] == #izzysoft 4 Discussion of ext3undel, imdbphp, phpVideoPro, phpDiveLog, pkgmake, relman, dbahelper, HyperSQL, OraRep... http://www.izzysoft.de/?topic=software
+[10:06] == #maemo-ssu 48 Maemo Community Seamless Software Update "CSSU" channel,  http://wiki.maemo.org/Community_SSU | Known bugs: http://j.mp/communityssu-bugs | Channel logs: http://mg.pov.lt/maemo-ssu-irclog/ | Sources: http://gitorious.org/community-ssu/ | Latest version: Testing(2013-01-07): 21.2011.38-1Tmaemo7.2; Stable(2013-01-10): 21.2011.38-1Smaemo6 | Next meeting 27.02 20:30 CET
+[10:06] == #pyrasite 3 http://pyrasite.com
+[10:06] == #sunlightlabs 9 http://sunlightlabs.com || UNLEASH THE KRAKEN !!! http://www.nhc.noaa.gov/refresh/graphics_at3+shtml/150352.shtml?5-daynl
+[10:06] == #xml 47 XML - Extensible Markup Language - and related, XSLT, XSLFO, XLink, XQuery,Xpath, XSD/Schema,...| use http://pastie.org for pastes over 3 lines | Useful links: http://xml.farsquare.com/ | Don't ask to ask: ask, and then wait | http://www.catb.org/~esr/faqs/smart-questions.html | Use XSLT 2.0 if you can! | Goodbye, Aaron :-(
+[10:06] == #seam-dev 13 Development discussions for Seam (seamframework.org). Join #seam for user discussions.  See http://seamframework.org/Seam3/Chat for logs and more info.  TeamSpeak 3 server is available for Seam devs at 216.6.228.98:10024, password: seam-dev
+[10:06] == #mcwarsadmin 4
+[10:06] == #deveth 3 ~ Wenn Einstein sagt Zeit ist Relativ, dann wusste er nicht was ein nichtdurchschlafendes Kind bedeutet ~
+[10:06] == ##RileyBot 12 en, es, fr wikivoyage, wikisource, enwiki and simplewiki https://en.wikiquote.org/wiki/Wikiquote:Bots#RileyBot https://jira.toolserver.org/browse/ACCAPP-613
+[10:06] == #jbosstools-qa 3
+[10:06] == ##Computers 4 Welcome to Freenode's ##Computers .:. Assistance with Computers software/hardware (Including trojans/viruses). State your question(s) & wait patiently .:. Attempting to rebuild; under new mgt .:. Looking for active, helpful & knowledable staff as well, please memo/message [Keith] .:. Email: Admin@IRCnewbies.com .:.
+[10:06] == #wikimedia-actualidad 5
+[10:06] == ##desertdwell 4
+[10:06] == #exaile 16 Exaile 3.3.1 released! | Don't ask if you can ask, just ask! | File bugs and feature requests at https://bugs.launchpad.net/exaile
+[10:06] == #ubuntu-us-co 11 Colorado Ubuntu Linux Team:  http://coloco.ubuntu-rocks.org/ ||  Logs: http://irclogs.ubuntu.com/ ||  Pastebin: http://irclogs.ubuntu.com/
+[10:06] == ##vaping 3 Welcome to ##vaping. || Discussion about electronic cigarettes (ecigs) and social chatter. || Happy Vaping!
+[10:06] == #witchlinux 9 ⌨ weight of a duck, BURN 'EM! | http://tinyurl.com/witchlinux | welcome. if ur here, ur a witch developer now. "release any witch you like" | history/forum: http://tinyurl.com/c7wo7q9 | http://identi.ca/witch | chat priority: witch, any 'nix, anything. | TOPIC:  we're writing an install/remaster script: http://github.com/Digit/witch/
+[10:06] == #unichannel 4
+[10:06] == #uwadv 3
+[10:06] == #unicode 9 UNICODE users channel | Use utf-8 encoding for your native language characters | http://www.unicode.org
+[10:06] == #seaphor 3
+[10:06] == #d3.js 47 d3.js http://mbostock.github.com/d3 ][ use gist.github.com + bl.ocks.org to share code samples ][ take part in the active mailing list: http://groups.google.com/group/d3-js
+[10:06] == #ptt 5 PTT，台灣宅男宅女最大社群。the channel UTF-8 encoding only |
+[10:06] == #subler 8 Subler 0.19 | http://code.google.com/p/subler/ | FAQ: http://code.google.com/p/subler/wiki/FAQ
+[10:06] == #pdxhackathon 10 Hackathons are Thursdays at the Lucky Lab on SE Hawthorne.
+[10:06] == #clientme 6
+[10:06] == #cvn-wikia-es 6 Canal de Countervandalism de la Central Hispana | Ayuda o información en #countervandalism
+[10:06] == #csg 3
+[10:06] == #tribler 3
+[10:06] == #saffire 13 Welcome to #saffire. Programming the web since 2014! Check the site at http://www.saffire-lang.org. For more info, check out the source at http://github.com/saffire/saffire
+[10:06] == #linux.no 41 http://www.linoquot.es |  GMKN http://i.imgur.com/CThgf.gif | pandamandag: http://io9.com/5943896/drop-everything--a-baby-panda-was-just-born-at-the-national-zoo-and-theres-a-baby-panda-cam | http://stemtorkil.no
+[10:06] == #rcos 11 Welcome to RCOS (Rensselaer Center for Open Source Software) Spring 2013 RCOS URP proposal details may be found in this link https://docs.google.com/document/d/1OSIXGpfvU2XIDZlYTA5nA9cYbegV7zKUuMu9qLRFgDc/edit Please follow the guidelines. If you have any questions please contact moorthy@cs.rpi.edu  or goldschmidt@gmail.com
+[10:06] == ##java-ideia 12
+[10:06] == #binpress 3
+[10:06] == #n7 4 militons pour le retour de BeloteAdmin !
+[10:06] == #openhack 4
+[10:06] == #uofw 3 The official uOFW channel | Project page: http://uofw.psnpt.com | Repository: https://github.com/uofw/uofw | Installer: https://github.com/uofw/uofwinst | Need help with reverse engineering? Don't hesitate to ask us!
+[10:06] == #vle 4 vle 1.0.3 released
+[10:06] == #pld-git 5 pld git discussion -- http://www.pld-linux.org/dokuwiki/pld-git
+[10:06] == #pfsense-br 3 Bem-vindo ao canal da Comunidade pfSense Brasil - www.pfsense-br.org
+[10:06] == #boxee 17 Boxee Box Developer Channel  -  Please don't announce you have a question, just ask and please be patient  -  Message To Developers http://bit.ly/V9c10y  -  For Boxee TV support http://support.boxee.tv  -  Boxee TV Available Now! http://b0x.ee/VFVmlO
+[10:06] == #SysCP 4 SysCP rocks :: Please show respect and use english only! :: Current Stable Version: 1.4.2 :: Website https://www.syscp.org :: Forum https://forum.syscp.org :: Don't ask to ask :: Ask in complete sentences and think about what you want to ask, before asking ::
+[10:06] == #AfterStep 8 Resubscribe to the as-users list: http://bit.ly/O7A23X | http://wiki.afterstep.org | AfterStep 2.2.11 is current | aterm deprecated: use urxvt (rxvt-unicode)
+[10:06] == #repcore 6
+[10:06] == #tindie 23 Tindie.com - HANGOUT THIS SATURDAY 3pm PST/ 6pm EST/ 11PM GMT https://plus.google.com/events/cpd0r279h3db1d1qhptc2ejqeu8
+[10:06] == #freifunkfranken 5
+[10:06] == #movabletype 4
+[10:06] == #haiku-fr 4 Haiku, l'OS des poètes | Tous à BeGeistert ! http://begeistert.org/
+[10:06] == #asustab 4 Team Eos Transformer Nightlies (tf101) - http://forum.xda-developers.com/showthread.php?t=1520764    Roachy finally has icys :p Vanna, Roach finally has his "O" face on! -- OOOOhhhh Yeah! Chiki Chika! - http://kan.gd/1hgt
+[10:06] == #openbsc 20 Osmocom OpenBSC project | http://openbsc.osmocom.org/
+[10:06] == #wikipedia-en-help 83 Welcome to the English Wikipedia help channel! | Nobody around to assist? Type !helper followed by your question, and wait for volunteers (who have a + next to their name) to respond (please wait longer than 1 or 2 minutes, we're not that fast!) | We can only answer questions concerning editing the English Wikipedia; for other questions, try http://enwp.org/WP:RD | No public logging
+[10:06] == #lubuntu-es 4 Canal oficial de soporte Lubuntu en español | Si no hay nadie para ayudar pregunta en #ubuntu-es | Pegar texto: http://paste.ubuntu.com | Lubuntu 12.10 https://help.ubuntu.com/community/Lubuntu/GetLubuntu
+[10:06] == #cult 3
+[10:06] == ##vocaloid 6 General vocaloid discussion channel | Rules: https://gist.github.com/cca69a146e310a8d08b0 | Reddit: http://www.reddit.com/r/vocaloid | Wiki: http://vocaloid.wikia.com/wiki/Vocaloid_Wiki (see #wikia-vocaloids)
+[10:06] == #ilovehugs 12 zip`ap`tail: the Aztec god of consecutive numbers
+[10:06] == ##Christianrocker90 3 CR90's Social Channel | Please keep swearing to a minimum :) | Channel rules: http://tinyurl.com/CR90RulesCentral | CR90 is now CRRaysHead90 | "These people have an idea that if there's color, it's not professional and not becoming of an encyclopedia" - CR90 | Be sure to check out BRaysball Talk: http://www.braysballtalk.com
+[10:06] == #rockbox-community 53 Most ironic nick ever | no, not evilnick | he's retired
+[10:06] == #mobile-webdev 6 Welcome to #mobile-webdev! Here we discuss mobile web development and everything that includes. Building websites for smartphones, mobile jquery, mobile video, etc | 10 Mobile Frameworks: http://bit.ly/fvQY1a | jQuery Mobile: Alpha 4.1 (maintenance rls) is out!! http://ow.ly/1c5sw4 , beta by the SF jQuery conference
+[10:06] == #kiwi-ltsp 3
+[10:06] == ##wikicafe 6 ¡Bienvenidos! · Ayuda #wikimedia-ayuda · Peticiones a los bibliotecarios: #wikipedia-es-biblios · Café de Wikipedia en español: http://es.wikipedia.org/wiki/Wikipedia:Café_(todos) · Canal de Wikipedia en español: #wikipedia-es · Otros canales: ##wikijuegos - ##wikitrivial - #wikivoyage-es · Puedes hablar de lo que quieras, pero no molestes a los usuarios
+[10:06] == #foxtrotGPS 5 FoxtrotGPS <http://www.foxtrotgps.org/>: moving-map GPS display software for Linux laptops/handhelds/phones etc. Discussions via e-mail, see <http://wiki.osgeo.org/wiki/FOSS-GPS>. This is IRC: Don't Ask To Ask, Just Ask. Paste snippets to http://foxtrotgps.pastebin.com, not the channel.
+[10:06] == #rebol 3
+[10:06] == #scoutwiki 6 ScoutWiki Network – Scouting wikis in 15 languages. | All support issues to <support@scoutwiki.org>, NOT FACEBOOK!
+[10:06] == #hive 24
+[10:06] == #meego-fi 10
+[10:06] == #niteoweb 8 https://twitter.com/MacYET/status/306873713087885313
+[10:06] == #yast 17 YaST development channel (/join #suse for support) | http://en.opensuse.org/openSUSE:YaST_development | http://tinyurl.com/moving-yast-svn2git | Best time to reach YaST developers here: 08:00 - 18:00 CEST
+[10:06] == #logicabyss 12 Work Harder!!!!
+[10:06] == #lsdevlinux 10 Linguistics Software Development for Linux http://linux.lsdev.sil.org/
+[10:06] == ##distros 10 Discussion of how distributions can work better together | http://lists.freedesktop.org/mailman/listinfo/distributions
+[10:06] == #ftctalk 3
+[10:06] == #archlinux-bugs 32 Nex Bug Day: Saturday 17th November. The bugtracker is at http://bugs.archlinux.org. TODO: http://wiki.archlinux.org/index.php/Bug_Day/2012
+[10:06] == #about:radio 4 Samstag: #25 - about:(u)efi - 16oo-18oo
+[10:06] == #pcc 6 The Portable C Compiler | http://pcc.ludd.ltu.se/ | mailing list archives: http://marc.info/?l=pcc-list (devel) and http://marc.info/?l=pcc-commit-list (cvs) || [23:16:26] <abraxxl> dileks: op-ti-mize [verb (trans.)]* ...  (gcc) to modify executable code so that it fails more quickly.
+[10:06] == #iphonelinux 31 Project status: http://0xdeadfa11.net/blog/2012/07/11/the-idroid-project-where-it-presently-stands/
+[10:06] == #masteri2l 7 Bienvenue sur le canal du Master Ingénierie du Logiciel Libre. Pour plus d'info : http://dpt-info.univ-littoral.fr/wiki/I2L:Accueil
+[10:06] == #cvn-sw-spam 11 SWMT's spam monitoring channel | 722 wikis watched by the linkwatchers: http://enwp.org/m:SWMT/IRC#The_LinkWatchers | COIBots watching the linkwatchers and big wikis, see [[m:Small_Wiki_Monitoring_Team/IRC#COIBots]] | Please help whitelisting good users on the Linkwatchers: e.g. "EnLinkWatcher2 user add <username>" | The SWMT is now part of the shiny [[m:CVN]]
+[10:06] == #cerberus-dev 3 Cerberus Development Channel | http://cerberusweb.com/ | #cerberus for Support | Chat logs at http://is.gd/cerb_irc_bot | Use Pastebin for more than a few lines of code http://cerberus.pastebin.com/  | Bug Reports at http://is.gd/cerb_jira
+[10:06] == #quilmeslug 9 QuilmesLUG [Grupo de usuarios de Software Libre de Quilmes y cercanías] | (S|G)?LUG | http://(www|galeria|wiki|listas|foro).quilmeslug.org - 16 FEB proxima Reunion QuilmesLug
+[10:06] == #mana-lpc 3 THE CHANNEL MOVED! See #sourceoftales for new Channel!
+[10:06] == #bonfire-project 5 Testbeds for Internet of Services experimentations - http://www.bonfire-project.eu
+[10:06] == #clubcanaima 4 https://www.facebook.com/jlcl020
+[10:06] == #clanam 6 http://www.360voice.com/join/V32S73I5 ... oh... and my ass
+[10:06] == ##addshore 13 NO PUBLIC LOGGING | type !help for help | https://toolserver.org/~legoktm/cgi-bin/wikidata/checker.py?id=Q8454 | https://toolserver.org/~legoktm/enwiki_removals.txt
+[10:06] == #winehackers 73 winehq.org programming - Users go to #winehq - Wine 1.5.24 released - Patch Status: http://source.winehq.org/patches/
+[10:06] == #boxgrinder 14 BoxGrinder Build 0.10.4 released! (F18 bugfixes) | Bugs and Feature Requests: https://issues.jboss.org/browse/BGBUILD | http://boxgrinder.org/
+[10:06] == #expressionengine 10 ExpressionEngine Web Publishing System :: http://expressionengine.com :: http://ellislab.com
+[10:06] == #freelan 6 Official IRC channel for freelan (http://www.freelan.org). If you require help and nobody can help here, try the mailing-lists (http://www.freelan.org/page/contact). Preferred language here is english, but french is fine too.
+[10:06] == #symfony-cmf 26 http://blog.liip.ch/archive/2013/01/09/symfony-cmf-what-is-left-todo.html || https://github.com/symfony-cmf/symfony-cmf-standard || making it easier for developers to add CMS functionality to applications built with the Symfony2 PHP framework || http://cmf.symfony.com
+[10:06] == #linaro-ti 7 *** Public Channel ***
+[10:06] == #ModernCalcs 3 TI Nspire Linux Coming Soon! Modern calcs are back-lit with color screens, non-proprietary USB backup! Self-help group to share tips/tricks for scientific/graphing calculators. You can learn about your calculator and make friends here. Your participation is what makes this happen. Questions to RadSurfer@yahoo.com
+[10:06] == #asterisknow 4 AsteriskNOW 2.0.2 has been released (2012-04-25).
+[10:06] == #spirit 3
+[10:06] == #ckule 60 Main Site: http://lojban.org/ | Lojban Only Channel: #jbosnu | Classes for beginners: #ckule | Word Lookup: http://vlasisku.lojban.org/ | Parse Checker: http://lojban.org/jboski
+[10:06] == #anpe 23 (en parlant de FT) " ya un stade où tu peux pas enlever le cancer sans tuer le patient"
+[10:06] == #dsf 9 Todays theme: change your nick to your porn name: http://existenz.se/out.php?id=74912
+[10:06] == #freeBNC 4 If you need a free bnc account, msg bncGiver
+[10:06] == #wiktionary-pl 3 http://pl.wiktionary.org/ | status: up | UTF-8 | Przekroczyliśmy liczbę 300 tys. haseł
+[10:06] == #freevo 9 Latest Version 1.9.2b2 - for support, please ask on the freevo-users mailing list or check doc.freevo.org, we are working on 2.0.
+[10:06] == #tvrrug 11 Thames Valley RepRap User Group | Web: http://tvrrug.org.uk | This channel is logged at http://logs.tvrrug.org.uk | Next build group meeting: TBA
+[10:06] == #flashtux 3 Free projects for free OS: http://www.flashtux.org/
+[10:06] == #colobok 4 http://knowyourmeme.com/i/000/053/502/original/1276053296058.jpg
+[10:06] == ##guns 50  http://gunfacts.info/ | Its Joffe! http://imgur.com/gallery/AVbKq | FUCK YOU ALL PLUTO IS A GDDAMN PLANET! http://imgur.com/gallery/cvpbtT0
+[10:06] == #wikipedia-bn 3 Welcome to the IRC channel of Bengali Wikipedia. Feel free to ask for help or any questions. If you don't find anyone here please go to http://bit.ly/bnwikihelp, and ask your questions there; someone will help you soon. Join #cvn-bn-scan to patrol recent changes of all Bengali Wikimedia projects. Enjoy your stay!
+[10:06] == #openxcom 15 OpenXcom | http://openxcom.ninex.info
+[10:06] == #gentoo-by 5 Belorussian (Belarus) Gentoo channel. Please speak English; Belorussian or Russian in UTF-8 | http://devmanual.gentoo.org | Принимаются идеи и предложения о проведении летнего Gentoo Summer Camp в Беларуси
+[10:06] == ###ofono-branch-martin-seo 4
+[10:06] == #oldx86hardware 4
+[10:06] == #magnolia 3
+[10:06] == #xreal.de 4
+[10:06] == #ITArea 3 CAPSLOCK IS AUTOPILOT FOR COOL
+[10:06] == #batman 19 BATMAN - get it, mesh it, love it! | http://www.open-mesh.org | batman-adv 2013.0.0 released !!
+[10:06] == #ichthux 4 Ichthux - Linux for Christians | http://www.ichthux.com for info, download, forums
+[10:06] == #tiddlywiki 6 http://www.tiddlywiki.com | http://www.tiddlywiki.org | this channel is being logged by IRSeek (http://www.irseek.com)
+[10:06] == #airbuccaneers 12 http://store.steampowered.com/app/223630 / Join Official AirBuccaneers Group on Steam
+[10:06] == #foraker 5 RESIDENT OF THE UNITED STATES OF LOVE
+[10:06] == #r42 11 Vote! https://trello.com/board/hangouts/507eb3e9a34a41160d1546d3
+[10:06] == #freewrt 7 FreeWRT Appliance Development Kit & Embedded GNU/Linux Distribution - https://www.freewrt.org/ || Web Image Builder - http://wib.freewrt.org/ - is down. | stable version: FreeWRT 1.0-stable (post-1.0.3 which doesn’t compile on newer GNU/Linux) || Use http://nopaste.snit.ch/ when pasting multiple lines. | We’re not dead or sleeping, just a little understaffed.
+[10:06] == #sugar-meeting 23 The meeting channel for the Sugar learning platform | Meeting logs at http://meeting.sugarlabs.org/sugar-meeting/meetings | See also #sugar | THIS CHANNEL IS ALWAYS LOGGED
+[10:06] == #icsnotechat 11 Welcome, stay a bit longer then 5 minutes for replies, sometimes it takes a bit for someone to reply! enjoy your stay:: PARANOID I717 NEWEST RELEASE: DEC19 PA_VERSION: 2.56 ANDROID: 4.1.2
+[10:06] == #happydesigner 28 4/25 http://registrano.com/events/hdm7
+[10:06] == #elastix-es 3 Bienvenid@s al canal de habla hispana oficial de ELASTIX, plantea tus preguntas e intentaremos ayudarte, Ya esta disponible Elastix a ritmo de merengue, para descargarlo visita www.elastix.org
+[10:06] == #irchacks 8 Accompanying channel for the book "IRC Hacks" by  Paul Mutton. People may be in different time zones to you, so don't always expect immediate answers.
+[10:06] == #ekoparty 3 In XOR we trust
+[10:06] == #amarok.de 17 Amarok 2.7 "A Minor Tune" veröffentlicht: http://amarok.kde.org/en/releases/2.7 :: Roktober - Spende ans Amarok Projekt: http://amarok.kde.org/en/roktober/2012
+[10:06] == #urbanculture 8 http://urbanculture.in/ || Culture that bitch || 2013!
+[10:06] == ##asm 187 Assembly programming channel, all architectures welcome. Don't ask to ask! Use a pastebin if appropriate! Check your manuals! Further info: http://pastehtml.com/view/ctoxhv74u.html
+[10:06] == #elfdev 13 The ERESI project .:::. http://www.eresi-project.org || Latest -dev : 0.81a8 (Mar 23 2008)  || TRAC/SVN/ML powered : see website for more info
+[10:06] == #phpmentoring 54 PHP Mentoring [ http://phpmentoring.org ] - Building strong developers - Add yourself to the list, it's not an obligation, it's just an indication :) [ http://bit.ly/LT7LgZ ] turtles man, turtles
+[10:06] == #mer-meeting 33 Mer meeting room
+[10:06] == #holopod 4 Holopod, also known as Volksempfänger | http://volksempfaenger.0x4a42.net/
+[10:06] == #dkf 8 created 20120807 when noc unplugged the wrong firewall at the colo
+[10:06] == ##mercenaries 4 marauder job celebration dinner: TBA
+[10:06] == ##appdotnet 4 App.net support -- or try us on HipChat: http://www.hipchat.com/garqCaGOZ
+[10:06] == #dos 4 Disk Operating System! Help Channel
+[10:06] == #pyconza 5 PyCon South Africa | http://za.pycon.org/ | PyConZA 2013 on 3 & 4 October in Cape Town
+[10:06] == #sealevel 4 Welcome to #sealevel - for stuff that floats on and under the sea
+[10:06] == #frapi 6 Welcome to the friends of Frapi channel | http://getfrapi.com | Be nice now.
+[10:06] == #MechanicAdvice 9 Shield Thy Stench Knifely
+[10:06] == ##moderation 4
+[10:06] == #mc_sakura_dev 3
+[10:06] == #0linux 7 0linux, système Linux francophone en développement - http://0.tuxfamily.org
+[10:06] == #milspeclinux 4 Welcome to MilSpecLinux! Background: http://www.milspeclinux.com/?cat=3 Reject socialism by running what you want to run instead of what they approve of you running.
+[10:06] == ##bmstu 4 Неделя №10
+[10:06] == #tikvzw 4 Tik vzw | http://www.tik.be/
+[10:06] == #symfony-de 16 Deutscher Symfony Support - http://www.symfony.com
+[10:06] == #quasselstrippen 3 Wichtiges und Unwichtiges! Jeden Samstag um 11 Uhr!
+[10:06] == #sftclan 4
+[10:06] == #squirrelfish 12 Squirrelfish!
+[10:06] == ##sanctuary 5 Welcome to *Sanctuary* - Life is harsh, so we try not to be. ^^ | This channel is LGBT and fur friendly; Play nice, or you get the boot to the head. | Assume all links are NSFW by default! | The cats attack each other, then blissfully sleep together.
+[10:06] == #wikiversity-zh 3 中文維基學院 http://beta.wikiversity.org/wiki/Wikiversity:%E9%A6%96%E9%A0%81 | 自由的研習社群 | 目前主要討論中文維基學院在beta的籌建工作和獨立計劃 | 目前議題：是否重新對中文Wikiversity之譯名重新投票 http://bit.ly/Psd3Un | 公共日誌 http://is.gd/FsGY5V
+[10:06] == #lacie 8 Corporate LaCie channel
+[10:06] == #megaglest 9 [ MegaGlest ··· http://megaglest.org ] · Hosted games: http://play.mg · FAQ: http://faq.megaglest.org · Forums: http://forums.megaglest.org · In-game chat: #megaglest-lobby · Deutsch: #megaglest-de ··· Check also http://annexconquer.com
+[10:06] == #narfen 5 Go hang a salami, I'm a lasagna hog | http://piratepad.nl/narfen-pad | http://musicbrainz.org/release/8cb8d138-afa4-4ec3-92c3-4620b3d3179d
+[10:06] == #freedreno 25 open source graphics drivers snapdragon/adreno - http://freedreno.github.com
+[10:06] == #sii-media 3 Synthetic Intellect Institute - Public Relations / News Room :: IRC channels (http://thesii.org/wiki/Community/IRC) :: Meetings (http://thesii.org/wiki/Meetings) :: "Artificial Intelligence for All"
+[10:06] == #rhs48 5
+[10:06] == #reddit-twoxchromosomes 36 Welcome to #reddit-twoxchromosomes | Channel Guidelines: http://pastebin.com/066VGWfn
+[10:06] == #parthenon_sales 3
+[10:06] == #lug-saar.de 8 Offizieller IRC-Channel der LUG-Saar. Homepage: http://lug-saar.de
+[10:06] == #osm-hr 5 http://wiki.openstreetmap.org/wiki/Croatia | arhiva kanala: http://data.osm-hr.org/irclogs/
+[10:06] == #genesilico-dev 4 Wino, kobiety i bioinformatyka
+[10:06] == #forkcms 11 Subfolder = http://forum.fork-cms.com/discussions/3xx/191-installing-forkcms-in-subfolders#comment_13133394
+[10:06] == #lowendmac 6 Welcome to Low End Mac. I'm not sure why we're here. But we are. Some things never die. Oh, and if you want to talk... it's better to stick around for more than one minute and parting again.
+[10:06] == #tuebingen 11 Heppi Birthday jsux und dito richi
+[10:06] == #devnull_nethack 10 /dev/null/nethack tournament discussion | http://nethack.devnull.net | http://twitter.com/devnull_nethack | post &help for Oracle commands
+[10:06] == #openstack-meeting 169 OpenStack meetings || Development in #openstack-dev || Help in #openstack
+[10:06] == #01 5 #01 | OSC ZERONE http://www.osczerone.kz | Откладываем покупку VPS | <alexzulu> как обычно http://kvirc.info | jillsmitt - аспирант по 05.13.06 | Serbian people here too: http://nemysis.anapnea.net
+[10:06] == #legmbhkeg 3 Willkommen im LEG-Chat ++ Passend zu unserem Forum http://legmbhkeg.de.vu/forum
+[10:06] == #crossfire 18 Topic for irc://irc.freenode.net/#crossfire is: Crossfire RPG http://crossfire.real-time.com/ | Messageboard: http://forum.metalforge.net/  | Please jot your name down on http://wiki.metalforge.net/doku.php/people | Install help for Windows: http://wiki.metalforge.net/doku.php/windows | Web  based JX Client http://invidious.meflin.net/crossfire/jxclient.jnlp | Common courtesy expected on
+[10:06] == #django-seattle 8 "Give me your tired, your poor, Your huddled masses yearning to breathe free [of the old channel]"
+[10:06] == #vgr 6 If you ended here, you are either a stalker, someone who tried my nick as a channel name, someone who saw the channel mentioned or had to join for a reason. Anyway, welcome. R2D2Warrior is the master. ChauffeR is awesome. neersighted is derp. benhunter09 is strange. lolcat is a lolcat.
+[10:06] == #gambas-es-org 3 Bienvenido a la Comunidad Gambas en español
+[10:06] == ##weather-us-pa 3 NOAA Active Weather Alerts for the state of Pennsylvannia | Main discussion channel: ##weather
+[10:06] == #wikipedia-fr-accueil 11 Bienvenue sur le canal d’aide aux contributeurs de Wikipédia francophone. Vous avez besoin d'un renseignement sur le fonctionnement de Wikipédia ou sur la manière de modifier l’encyclopédie ? N'hésitez pas ! | Les + sont les wikipédiens prêts à aider.
+[10:06] == #castor-cvs 3 Topic zastêpczy obowi±zuje nadal...
+[10:06] == #international_pizza 5 happy bday libero!
+[10:06] == ##imap 7 http://www.imapwiki.org/
+[10:06] == #linuxac 4 مجتمع لينيكس العربي http://www.linuxac.org سلّم ,اسأل مباشرة, انتظر الرد, كُن صبورا. العربية اللغة الرسمية .دعم دبيان بالعربي #debian-arabic . استعمل لقباً مميزا. اكتب لقب احدهم لكي يرن عنده.
+[10:06] == ##dns-p2p 4 The quest to make a fully decentralized DNS system :: wiki - http://dnsp2p.gp5st.com/
+[10:06] == #drupal-china 4 Drupal官方聊天室 中国频道Drupal official irc, channel China欢迎使用中文
+[10:06] == #uno 3
+[10:06] == ##proggit-civ 3 civ this weekend? anyone?
+[10:06] == #otrs 35 #otrs A discussion channel for users and developers of OTRS http://www.otrs.org/ . Download the newest version of OTRS and OTRS ITSM http://otrs.org/download and please give us your feedback.
+[10:06] == #libcouchbase 23 libcouchbase 2.0.3. Couchbase Server 2.0 GA! http://www.couchbase.com/download | General discussion of client library development including Ruby, node.js, Perl, PHP, Java and .NET. http://couchbase.com/develop
+[10:06] == #bluebream 4 Website: http://bluebream.zope.org | Wiki: http://wiki.zope.org/bluebream
+[10:06] == #tinkerforge 7 Tinkerforge.com - Online now!
+[10:06] == End of /LIST
+[10:11] == #fedora-cn #fedora-zh Forwarding to another channel
+[10:11] == #fedora-zh http://fedoraproject.org/wiki/zh
+[10:12] == #debian http://www.debian.org

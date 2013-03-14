@@ -1,3 +1,20 @@
+libmongo-client report error on mdev:
+
+checking for strerror... yes
+./configure: line 11948: syntax error near unexpected token `GLIB,'
+./configure: line 11948: `PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_MIN_VERSION,,)'
+
+用以下方法解决：
+
+The PKG_CHECK_MODULES macro doesn't seem to be expanded properly. When you installed pkg-config, did it install pkg.m4 (in somewhere like /usr/share/aclocal)? If so, try running aclocal again (maybe with -I m4, if you've got custom m4 code in the m4 subdirectory) and then run autoconf.
+
+If that doesn't work and pkg.m4 was installed, try running autoreconf -f (and maybe autoreconf -i -f).
+
+If that doesn't work, you'll need to copy pkg.m4 to a directory for your package. Usually this is the m4 subdirectory. Set ACLOCAL_AMFLAGS = -I m4 (or ACLOCAL_AMFLAGS = -I m4 --install) in Makefile.am (if you're using automake), and AC_CONFIG_MACRO_DIR([m4]) in configure.ac. Then run aclocal -I m4 and autoconf and ./configure
+
+
+
+
 　　1. autoscan
 　　autoscan是 用来扫描源代码目录生成configure.scan文件的 .autoscan
 可以用目录名做为参数,但如果你不使用参数的 话,那么autoscan将认为使用的是当前目录.
