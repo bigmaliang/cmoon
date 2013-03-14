@@ -61,6 +61,8 @@ NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock);
 
 unsigned int mcs_get_uint_value(HDF *hdf, char *name, unsigned int defval);
 float mcs_get_float_value(HDF *hdf, char *name, float defval);
+int mcs_get_int_valuef(HDF *hdf, int defval, char *fmt, ...)
+                       ATTRIBUTE_PRINTF(3, 4);
 int64_t mcs_get_int64_value(HDF *hdf, char *name, int64_t defval);
 NEOERR* mcs_set_int64_value(HDF *hdf, char *name, int64_t val);
 NEOERR* mcs_set_uint_value(HDF *hdf, char *name, unsigned int value);
@@ -72,6 +74,8 @@ NEOERR* mcs_set_int64_value_with_type(HDF *hdf, char *name, int64_t value, Cnode
 NEOERR* mcs_set_float_value_with_type(HDF *hdf, char *name, float value, CnodeType type);
 
 int mcs_add_int_value(HDF *node, char *key, int val);
+int mcs_add_int_valuef(HDF *node, int val, char *fmt, ...)
+                       ATTRIBUTE_PRINTF(3, 4);
 char* mcs_append_string_value(HDF *node, char *key, char *str);
 char* mcs_append_string_valuef(HDF *node, char *key, char *sfmt, ...)
                                ATTRIBUTE_PRINTF(3, 4);
@@ -212,10 +216,10 @@ NEOERR* mcs_err_valid(NEOERR *err);
 
 #define TRACE_HDF(node)                         \
     do {                                        \
-        char *zpa = NULL;                       \
-        hdf_write_string(node, &zpa);           \
-        mtc_foo("%s", zpa);                     \
-        free(zpa);                              \
+        STRING zstra;    string_init(&zstra);   \
+        hdf_dump_str(node, NULL, 2, &zstra);    \
+        mtc_foo("%s", zstra.buf);               \
+        string_clear(&zstra);                   \
     } while (0)
 
 /*

@@ -236,6 +236,18 @@ float mcs_get_float_value(HDF *hdf, char *name, float defval)
     return defval;
 }
 
+int mcs_get_int_valuef(HDF *hdf, int defval, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return hdf_get_int_value(hdf, key, defval);
+}
+
 int64_t mcs_get_int64_value(HDF *hdf, char *name, int64_t defval)
 {
     char *val, *n;
@@ -323,6 +335,18 @@ int mcs_add_int_value(HDF *node, char *key, int val)
     hdf_set_int_value(node, key, ov+val);
 
     return ov+val;
+}
+
+int mcs_add_int_valuef(HDF *node, int val, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return mcs_add_int_value(node, key, val);
 }
 
 char* mcs_append_string_value(HDF *node, char *key, char *str)
