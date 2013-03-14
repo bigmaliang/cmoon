@@ -12,6 +12,16 @@ void mstr_rand_string(char *s, int max)
     s[x] = '\0';
 }
 
+void mstr_rand_string_with_len(char *s, int len)
+{
+    int x = 0;
+
+    for (x = 0; x < len; x++) {
+        s[x] = (char)(65 + neo_rand(90-65));
+    }
+    s[x] = '\0';
+}
+
 void mstr_rand_digit_with_len(char *s, int len)
 {
     int x;

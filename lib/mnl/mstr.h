@@ -6,6 +6,7 @@
 __BEGIN_DECLS
 
 void mstr_rand_string(char *s, int max);
+void mstr_rand_string_with_len(char *s, int len);
 void mstr_rand_digit_with_len(char *s, int len);
 void mstr_html_escape(HDF *hdf, char *name);
 void mstr_html_unescape(HDF *hdf, char *name);
