@@ -11,7 +11,7 @@ typedef struct _mmg_conn {
     bson *docs;
     mongo_packet *p;
     mongo_sync_cursor *c;
-    NEOERR* (*query_callback)(struct _mmg_conn *db, HDF *node);
+    NEOERR* (*query_callback)(struct _mmg_conn *db, HDF *node, bool lastone);
     int flags;
     int skip;
     int limit;
@@ -35,7 +35,7 @@ enum {
     /* don't add number as key for each result row */
     MMG_FLAG_MIXROWS = 1 << 12,
     /* we need mongo's _id */
-    MMG_FLAG_GETOID = 1 << 13
+    MMG_FLAG_GETOID = 1 << 13,
 };
 /*
  * flags: reused flags with mongo_wire_cmd_query().
@@ -53,10 +53,10 @@ enum {
  *            so, later prepare's callback won't be remember in db
  */
 NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
-                    NEOERR* (*qcbk)(mmg_conn *db, HDF *node),
+                    NEOERR* (*qcbk)(mmg_conn *db, HDF *node, bool lastone),
                     char *sels, char *querys);
 NEOERR* mmg_preparef(mmg_conn *db, int flags, int skip, int limit,
-                     NEOERR* (*qcbk)(mmg_conn *db, HDF *node),
+                     NEOERR* (*qcbk)(mmg_conn *db, HDF *node, bool lastone),
                      char *sels, char *qfmt, ...)
                      ATTRIBUTE_PRINTF(7, 8);
 void mmg_set_callbackdata(mmg_conn *db, void *data);

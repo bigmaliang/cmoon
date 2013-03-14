@@ -64,7 +64,7 @@ void mmg_destroy(mmg_conn *db)
 }
 
 NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
-                    NEOERR* (*qcbk)(mmg_conn *db, HDF *node),
+                    NEOERR* (*qcbk)(mmg_conn *db, HDF *node, bool lastone),
                     char *sels, char *querys)
 {
     if (!db || !querys) return nerr_raise(NERR_ASSERT, "paramter null");
@@ -116,7 +116,8 @@ NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
 }
 
 NEOERR* mmg_preparef(mmg_conn *db, int flags, int skip, int limit,
-                     NEOERR* (*qcbk)(mmg_conn *db, HDF *node), char *sels, char *qfmt, ...)
+                     NEOERR* (*qcbk)(mmg_conn *db, HDF *node, bool lastone),
+                     char *sels, char *qfmt, ...)
 {
     char *querys;
     va_list ap;
@@ -156,7 +157,23 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
     if (!db->p) {
         if (errno == ENOENT) {
             mtc_noise("queried %s 0 result", dsn);
-            if (db->flags & MMG_FLAG_EMPTY) return STATUS_OK;
+            if (db->flags & MMG_FLAG_EMPTY) {
+                if (db->query_callback && !db->incallback) {
+                    /*
+                     * empty result, call callback
+                     */
+                    db->incallback = true;
+
+                    err = db->query_callback(db, NULL, true);
+                    TRACE_NOK(err);
+
+                    db->incallback = false;
+
+                    db->query_callback = NULL;
+                    db->callbackdata = NULL;
+                }
+                return STATUS_OK;
+            }
             return nerr_raise(NERR_NOT_FOUND, "document not found");
         }
         return nerr_raise(NERR_DB, "query: %s %d", strerror(errno), errno);
@@ -209,9 +226,12 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
          */
         if (db->query_callback && !db->incallback) {
             db->incallback = true;
-            
+
+            count = 0;
             while (cnode) {
-                err = db->query_callback(db, cnode);
+                count++;
+                if (db->rescount == count) err = db->query_callback(db, cnode, true);
+                else err = db->query_callback(db, cnode, false);
                 TRACE_NOK(err);
                 
                 cnode = hdf_obj_next(cnode);
@@ -430,8 +450,7 @@ NEOERR* mmg_custom(mmg_conn *db, char *dbname,
 
     NEOERR *err;
     
-    MCS_NOT_NULLB(db, dbname);
-    MCS_NOT_NULLB(outnode, command);
+    MCS_NOT_NULLC(db, dbname, command);
 
     mtc_noise("custom %s %s", dbname, command);
 
@@ -449,13 +468,15 @@ NEOERR* mmg_custom(mmg_conn *db, char *dbname,
     c = mongo_sync_cursor_new(db->con, dbname, p);
     if (!c) return nerr_raise(NERR_DB, "cursor: %s", strerror(errno));
 
-    if (mongo_sync_cursor_next(c)) {
-        doc = mongo_sync_cursor_get_data(c);
-        if (!doc) return nerr_raise(NERR_DB, "doc: %s", strerror(errno));
-        
-        err = mbson_export_to_hdf(outnode, doc, prefix, MBSON_EXPORT_TYPE, true);
-        if (err != STATUS_OK) return nerr_pass(err);
-    } else return nerr_raise(NERR_DB, "cursor next: %s", strerror(errno));
+    if (outnode) {
+        if (mongo_sync_cursor_next(c)) {
+            doc = mongo_sync_cursor_get_data(c);
+            if (!doc) return nerr_raise(NERR_DB, "doc: %s", strerror(errno));
+            
+            err = mbson_export_to_hdf(outnode, doc, prefix, MBSON_EXPORT_TYPE, true);
+            if (err != STATUS_OK) return nerr_pass(err);
+        } else return nerr_raise(NERR_DB, "cursor next: %s", strerror(errno));
+    }
     
     mongo_sync_cursor_free(c);
 
