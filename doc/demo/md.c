@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 
     mstr_md5_str(buf, out);
 
-    printf("%s\n", out);
+    printf("%s %d\n", out, 22 % atoi(argv[1]));
     
     return 0;
 }

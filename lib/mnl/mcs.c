@@ -208,6 +208,100 @@ NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock)
 }
 
 
+int  mcs_get_child_num(HDF *hdf, char *name)
+{
+    HDF *node;
+    
+    if (!hdf) return 0;
+
+    int count = 0;
+
+    node = hdf_get_child(hdf, name);
+    while (node) {
+        count++;
+        node = hdf_obj_next(node);
+    }
+
+    return count;
+}
+
+HDF* mcs_get_nth_child(HDF *hdf, char *name, int n)
+{
+    HDF *node;
+    
+    if (!hdf || n < 0) return NULL;
+
+    node = hdf_get_child(hdf, name);
+    while (node && --n > 0) {
+        node = hdf_obj_next(node);
+    }
+
+    return node;
+}
+
+HDF* mcs_obj_nth_child(HDF *hdf, int n)
+{
+    HDF *node;
+
+    if (!hdf || n < 0) return NULL;
+
+    node = hdf_obj_child(hdf);
+    while (node && --n > 0) {
+        node = hdf_obj_next(node);
+    }
+
+    return node;
+}
+
+HDF* mcs_get_objf(HDF *hdf, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return hdf_get_obj(hdf, key);
+}
+
+NEOERR* mcs_get_nodef(HDF *hdf, HDF **rnode, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return hdf_get_node(hdf, key, rnode);
+}
+
+NEOERR* mcs_copyf(HDF *dst, HDF *src, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return nerr_pass(hdf_copy(dst, key, src));
+}
+
+NEOERR* mcs_remove_treef(HDF *hdf, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return nerr_pass(hdf_remove_tree(hdf, key));
+}
+
+
 unsigned int mcs_get_uint_value(HDF *hdf, char *name, unsigned int defval)
 {
     char *val, *n;
@@ -403,30 +497,6 @@ char* mcs_prepend_string_valuef(HDF *node, char *key, char *sfmt, ...)
     free(qa);
 
     return rs;
-}
-
-HDF* mcs_hdf_getf(HDF *node, char *fmt, ...)
-{
-    char key[LEN_HDF_KEY];
-    va_list ap;
-
-    va_start(ap, fmt);
-    vsnprintf(key, sizeof(key), fmt, ap);
-    va_end(ap);
-
-    return hdf_get_obj(node, key);
-}
-
-NEOERR* mcs_hdf_copyf(HDF *dst, HDF *src, char *fmt, ...)
-{
-    char key[LEN_HDF_KEY];
-    va_list ap;
-
-    va_start(ap, fmt);
-    vsnprintf(key, sizeof(key), fmt, ap);
-    va_end(ap);
-
-    return nerr_pass(hdf_copy(dst, key, src));
 }
 
 void mcs_hdf_rep(HDF *data, HDF *dst)

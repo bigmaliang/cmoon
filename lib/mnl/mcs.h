@@ -59,6 +59,18 @@ NEOERR* mcs_register_mkd_functions(CSPARSE *cs);
 NEOERR* mcs_register_string_uslice(CSPARSE *cs);
 NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock);
 
+int  mcs_get_child_num(HDF *hdf, char *name);
+HDF* mcs_get_nth_child(HDF *hdf, char *name, int n);
+HDF* mcs_obj_nth_child(HDF *hdf, int n);
+HDF* mcs_get_objf(HDF *hdf, char *fmt, ...)
+                  ATTRIBUTE_PRINTF(2, 3);
+NEOERR* mcs_get_nodef(HDF *hdf, HDF **rnode, char *fmt, ...)
+                      ATTRIBUTE_PRINTF(3, 4);
+NEOERR* mcs_copyf(HDF *dst, HDF *src, char *fmt, ...)
+                      ATTRIBUTE_PRINTF(3, 4);
+NEOERR* mcs_remove_treef(HDF *hdf, char *fmt, ...)
+                         ATTRIBUTE_PRINTF(2, 3);
+
 unsigned int mcs_get_uint_value(HDF *hdf, char *name, unsigned int defval);
 float mcs_get_float_value(HDF *hdf, char *name, float defval);
 int mcs_get_int_valuef(HDF *hdf, int defval, char *fmt, ...)
@@ -82,11 +94,6 @@ char* mcs_append_string_valuef(HDF *node, char *key, char *sfmt, ...)
 char* mcs_prepend_string_value(HDF *node, char *key, char *str);
 char* mcs_prepend_string_valuef(HDF *node, char *key, char *sfmt, ...)
                                 ATTRIBUTE_PRINTF(3, 4);
-
-HDF*    mcs_hdf_getf(HDF *node, char *fmt, ...)
-                     ATTRIBUTE_PRINTF(2, 3);
-NEOERR* mcs_hdf_copyf(HDF *dst, HDF *src, char *fmt, ...)
-                      ATTRIBUTE_PRINTF(3, 4);
 /*
  * in:
  *

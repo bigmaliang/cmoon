@@ -33,7 +33,7 @@ int main()
     }
     tm = timer_stop();
 
-    printf("use %lu usec\n", tm);
+    printf("use %lu usec %d\n", tm, ((38000 + 37999) / 38000) % 229);
     
     return 0;
 }
