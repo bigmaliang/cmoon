@@ -86,5 +86,18 @@ NEOERR* mmg_customf(mmg_conn *db, char *dbname,
                     char *prefix, HDF *outnode, char *cmdfmt, ...)
                     ATTRIBUTE_PRINTF(5, 6);
 
+/*
+ * get one row's string value
+ */
+char* mmg_get_valuef(mmg_conn *db, char *dsn, char *key, int skip, char *qfmt, ...)
+                     ATTRIBUTE_PRINTF(5, 6);
+
+/*
+ * get servral row's int value, and add them
+ */
+int mmg_get_int_valuef(mmg_conn *db, char *dsn, char *key, int skip, int limit,
+                       char *qfmt, ...)
+                       ATTRIBUTE_PRINTF(6, 7);
+
 __END_DECLS
 #endif    /* __MMG_H__ */

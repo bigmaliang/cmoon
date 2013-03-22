@@ -174,7 +174,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                 }
                 return STATUS_OK;
             }
-            return nerr_raise(NERR_NOT_FOUND, "document not found");
+            return nerr_raise(NERR_NOT_FOUND, "无此记录");
         }
         return nerr_raise(NERR_DB, "query: %s %d", strerror(errno), errno);
     }
@@ -501,4 +501,81 @@ NEOERR* mmg_customf(mmg_conn *db, char *dbname,
     free(qa);
 
     return STATUS_OK;
+}
+
+
+
+char* mmg_get_valuef(mmg_conn *db, char *dsn, char *key, int skip, char *qfmt, ...)
+{
+    HDF *tmpnode; hdf_init(&tmpnode);
+    char *val, *querys, sels[256];
+    va_list ap;
+    NEOERR *err;
+
+    va_start(ap, qfmt);
+    querys = vsprintf_alloc(qfmt, ap);
+    va_end(ap);
+    if (!querys) {
+        mtc_err("Unable to allocate mem for query string");
+        return NULL;
+    }
+
+    snprintf(sels, sizeof(sels), "{'%s': 1}", key);
+    err = mmg_prepare(db, MMG_FLAG_EMPTY, skip, 1, NULL, sels, querys);
+    RETURN_V_NOK(err, NULL);
+
+    err = mmg_query(db, dsn, NULL, tmpnode);
+    RETURN_V_NOK(err, NULL);
+
+    err = hdf_get_copy(tmpnode, key, &val, NULL);
+    RETURN_V_NOK(err, NULL);
+
+    hdf_destroy(&tmpnode);
+    SAFE_FREE(querys);
+
+    return val;
+}
+
+int mmg_get_int_valuef(mmg_conn *db, char *dsn, char *key, int skip, int limit,
+                       char *qfmt, ...)
+{
+    HDF *tmpnode; hdf_init(&tmpnode);
+    char *querys, sels[256];
+    int val;
+    va_list ap;
+    HDF *node;
+    NEOERR *err;
+
+    va_start(ap, qfmt);
+    querys = vsprintf_alloc(qfmt, ap);
+    va_end(ap);
+    if (!querys) {
+        mtc_err("Unable to allocate mem for query string");
+        return 0;
+    }
+
+    snprintf(sels, sizeof(sels), "{'%s': 1}", key);
+    err = mmg_prepare(db, MMG_FLAG_EMPTY, skip, limit, NULL, sels, querys);
+    RETURN_V_NOK(err, 0);
+
+    err = mmg_query(db, dsn, NULL, tmpnode);
+    RETURN_V_NOK(err, 0);
+
+    val = 0;
+    
+    if(hdf_get_valuef(tmpnode, "0.%s", key)) {
+        node = hdf_obj_child(tmpnode);
+        while (node) {
+            val += hdf_get_int_value(node, key, 0);
+            
+            node = hdf_obj_next(node);
+        }
+    } else {
+        val = hdf_get_int_value(tmpnode, key, 0);
+    }
+
+    hdf_destroy(&tmpnode);
+    SAFE_FREE(querys);
+
+    return val;
 }
