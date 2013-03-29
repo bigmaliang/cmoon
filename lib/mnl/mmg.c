@@ -1,5 +1,13 @@
 #include "mheads.h"
 
+#define GET_LAST_ERROR(con, dbname)                                 \
+    do {                                                            \
+        SAFE_FREE(m_errmsg);                                        \
+        mongo_sync_cmd_get_last_error(con, dbname, &m_errmsg);      \
+    } while (0)
+
+static char *m_errmsg = NULL;
+
 NEOERR* mmg_init(char *host, int port, int ms, mmg_conn **db)
 {
     if (!host) return nerr_raise(NERR_ASSERT, "paramter null");
@@ -13,7 +21,10 @@ NEOERR* mmg_init(char *host, int port, int ms, mmg_conn **db)
     if (!ldb) return nerr_raise(NERR_NOMEM, "calloc for connection");
 
     ldb->con = mongo_sync_connect(host, port, true);
-    if (!ldb->con) return nerr_raise(NERR_DB, "sync connect: %s", strerror(errno));
+    if (!ldb->con) {
+        GET_LAST_ERROR(ldb->con, NULL);
+        return nerr_raise(NERR_DB, "sync connect: %s", m_errmsg);
+    }
     mongo_sync_conn_set_auto_reconnect(ldb->con, true);
     if (ms > 0) mongo_connection_set_timeout((mongo_connection*)ldb->con, ms);
 
@@ -26,8 +37,10 @@ NEOERR* mmg_auth(mmg_conn *db, char *dsn, char *user, char *pass)
 {
     mtc_noise("authorize to %s use %s %s", dsn, user, pass);
     
-    if (!mongo_sync_cmd_authenticate(db->con, dsn, user, pass))
-        return nerr_raise(NERR_DB, "auth: %s", strerror(errno));
+    if (!mongo_sync_cmd_authenticate(db->con, dsn, user, pass)) {
+        GET_LAST_ERROR(db->con, dsn);
+        return nerr_raise(NERR_DB, "auth: %s", m_errmsg);
+    }
 
     return STATUS_OK;
 }
@@ -36,8 +49,10 @@ NEOERR* mmg_seed_add(mmg_conn *db, char *host, int port)
 {
     mtc_noise("add seed %s %d ...", host, port);
 
-    if (!mongo_sync_conn_seed_add(db->con, host, port))
-        return nerr_raise(NERR_DB, "add seed: %s", strerror(errno));
+    if (!mongo_sync_conn_seed_add(db->con, host, port)) {
+        GET_LAST_ERROR(db->con, NULL);
+        return nerr_raise(NERR_DB, "add seed: %s", m_errmsg);
+    }
     
     return STATUS_OK;
 }
@@ -176,7 +191,8 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
             }
             return nerr_raise(NERR_NOT_FOUND, "无此记录");
         }
-        return nerr_raise(NERR_DB, "query: %s %d", strerror(errno), errno);
+        GET_LAST_ERROR(db->con, dsn);
+        return nerr_raise(NERR_DB, "query: %s", m_errmsg);
     }
 
     /*
@@ -270,8 +286,10 @@ NEOERR* mmg_string_insert(mmg_conn *db, char *dsn, char *str)
     if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
                                 str, strerror(errno));
 
-    if (!mongo_sync_cmd_insert(db->con, dsn, doc, NULL))
-        return nerr_raise(NERR_DB, "sync_cmd_insert: %s", strerror(errno));
+    if (!mongo_sync_cmd_insert(db->con, dsn, doc, NULL)) {
+        GET_LAST_ERROR(db->con, dsn);
+        return nerr_raise(NERR_DB, "sync_cmd_insert: %s", m_errmsg);
+    }
 
     bson_free(doc);
 
@@ -309,8 +327,10 @@ NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
     err = mbson_import_from_hdf(node, &doc, true);
     if (err != STATUS_OK) return nerr_pass(err);
 
-    if (!mongo_sync_cmd_insert(db->con, dsn, doc, NULL))
-        return nerr_raise(NERR_DB, "sync_cmd_insert: %s", strerror(errno));
+    if (!mongo_sync_cmd_insert(db->con, dsn, doc, NULL)) {
+        GET_LAST_ERROR(db->con, dsn);
+        return nerr_raise(NERR_DB, "sync_cmd_insert: %s", m_errmsg);
+    }
 
     bson_free(doc);
 
@@ -335,8 +355,10 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *se
     if (!docb) return nerr_raise(NERR_ASSERT, "build doc up: %s: %s",
                                  up, strerror(errno));
 
-    if (!mongo_sync_cmd_update(db->con, dsn, flags, doca, docb))
-        return nerr_raise(NERR_DB, "sync_cmd_update: %s", strerror(errno));
+    if (!mongo_sync_cmd_update(db->con, dsn, flags, doca, docb)) {
+        GET_LAST_ERROR(db->con, dsn);
+        return nerr_raise(NERR_DB, "sync_cmd_update: %s", m_errmsg);
+    }
     
     bson_free(doca);
     bson_free(docb);
@@ -414,8 +436,10 @@ NEOERR* mmg_delete(mmg_conn *db, char *dsn, int flags, char *sel)
     if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
                                 sel, strerror(errno));
 
-    if (!mongo_sync_cmd_delete(db->con, dsn, flags, doc))
-        return nerr_raise(NERR_DB, "sync_cmd_delete: %s", strerror(errno));
+    if (!mongo_sync_cmd_delete(db->con, dsn, flags, doc)) {
+        GET_LAST_ERROR(db->con, dsn);
+        return nerr_raise(NERR_DB, "sync_cmd_delete: %s", m_errmsg);
+    }
 
     bson_free(doc);
 
@@ -462,8 +486,10 @@ NEOERR* mmg_custom(mmg_conn *db, char *dbname,
 
     p = mongo_sync_cmd_custom(db->con, dbname, doc);
     bson_free(doc);
-    if (!p)
-        return nerr_raise(NERR_DB, "sync_cmd_custom: %s %s", command, strerror(errno));
+    if (!p) {
+        GET_LAST_ERROR(db->con, dbname);
+        return nerr_raise(NERR_DB, "sync_cmd_custom: %s %s", command, m_errmsg);
+    }
 
     c = mongo_sync_cursor_new(db->con, dbname, p);
     if (!c) return nerr_raise(NERR_DB, "cursor: %s", strerror(errno));
