@@ -3,6 +3,10 @@ ClearSilver
 
     util/neo_hdf.c
     --------------
+    132
+    +++if (myhdf->top && myhdf->top->last_hp == myhdf) myhdf->top->last_hp = NULL;
+    +++if (myhdf->top && myhdf->top->last_hs == myhdf) myhdf->top->last_hs = NULL;
+    
     1623
           while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
     ===>      
