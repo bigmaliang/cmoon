@@ -124,14 +124,13 @@ int mevent_trigger(mevent_t *evt, char *key,
                    unsigned short cmd, unsigned short flags);
 
 
-/* TODO hdf_write_string lead mem_leak */
 #define MEVENT_TRIGGER(evt, key, cmd, flags)                            \
     do {                                                                \
         if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
-            char *zpa = NULL;                                           \
-            hdf_write_string(evt->hdfrcv, &zpa);                        \
-            return nerr_raise(evt->errcode, "pro %s %d failure %d %s",  \
-                              evt->ename, cmd, evt->errcode, zpa);      \
+            char *msg = hdf_get_value(evt->hdfrcv, PRE_ERRMSG, NULL);   \
+            char *trace = hdf_get_value(evt->hdfrcv, PRE_ERRTRACE, NULL); \
+            NEOERR *e = nerr_raise(evt->errcode, msg);                  \
+            return nerr_pass_ctx(e, trace);                             \
         }                                                               \
     } while(0)
 #define MEVENT_TRIGGER_VOID(evt, key, cmd, flags)                       \
