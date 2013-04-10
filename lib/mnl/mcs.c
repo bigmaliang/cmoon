@@ -609,6 +609,8 @@ NEOERR* mcs_err_valid(NEOERR *err)
         if (r->error != NERR_PASS) break;
         r = r->next;
     }
+
+    if (!r) r = err;
     
     return r;
 }
