@@ -58,6 +58,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    hdf_set_value(evt->hdfsnd, "user_id", "747");
+
     ret = mevent_trigger(evt, NULL, cmd, FLAGS_SYNC);
     if (PROCESS_OK(ret)) {
         mtc_foo("ok");
