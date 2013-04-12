@@ -141,9 +141,15 @@ struct json_object* mbson_export_to_jsonobj(bson *doc, bool array)
             jso = json_object_new_int(vi);
             break;
         case BSON_TYPE_UTC_DATETIME:
+            bson_cursor_get_utc_datetime(c, (gint64*)&vi64);
+            jso = json_object_new_int64(vi64);
+            break;
         case BSON_TYPE_TIMESTAMP:
+            bson_cursor_get_timestamp(c, (gint64*)&vi64);
+            jso = json_object_new_int64(vi64);
+            break;
         case BSON_TYPE_INT64:
-            bson_cursor_get_int64(c, &vi64);
+            bson_cursor_get_int64(c, (gint64*)&vi64);
             jso = json_object_new_int64(vi64);
             break;
         case BSON_TYPE_OID:
@@ -339,19 +345,19 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *setkey, int flag, bool d
             if (flag & MBSON_EXPORT_TYPE)
                 MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_SYMBOL);
         case BSON_TYPE_UTC_DATETIME:
-            bson_cursor_get_int64(c, &vi64);
+            bson_cursor_get_utc_datetime(c, (gint64*)&vi64);
             mcs_set_int64_value(node, key, vi64);
             if (flag & MBSON_EXPORT_TYPE)
                 MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_DATETIME);
             break;
         case BSON_TYPE_TIMESTAMP:
-            bson_cursor_get_int64(c, &vi64);
+            bson_cursor_get_timestamp(c, (gint64*)&vi64);
             mcs_set_int64_value(node, key, vi64);
             if (flag & MBSON_EXPORT_TYPE)
                 MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_TIMESTAMP);
             break;
         case BSON_TYPE_INT64:
-            bson_cursor_get_int64(c, &vi64);
+            bson_cursor_get_int64(c, (gint64*)&vi64);
             mcs_set_int64_value(node, key, vi64);
             if (flag & MBSON_EXPORT_TYPE)
                 MCS_SET_INT_ATTR(node, key, "type", CNODE_TYPE_INT64);
