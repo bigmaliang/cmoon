@@ -4,6 +4,8 @@ HDF *g_cfg = NULL;
 
 int main(int argc, char **argv, char **envp)
 {
+#if 0
+
     NEOERR *err;
     mmg_conn *db;
 
@@ -19,5 +21,7 @@ int main(int argc, char **argv, char **envp)
 
     mmg_destroy(db);
 
+
+#endif
     return 0;
 }
