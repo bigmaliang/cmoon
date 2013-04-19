@@ -139,7 +139,9 @@ static void mevent_fetch_array(HDF *node, zval **re)
         if (type) ctype = atoi(type);
         else ctype = CNODE_TYPE_STRING;
         
-        if (hdf_obj_child(node)) {
+        if (hdf_obj_child(node) ||
+            ctype == CNODE_TYPE_ARRAY ||
+            ctype == CNODE_TYPE_OBJECT) {
             key = hdf_obj_name(node) ? hdf_obj_name(node): "unkown";
             
             ALLOC_INIT_ZVAL(cre);
