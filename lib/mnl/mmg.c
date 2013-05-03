@@ -127,7 +127,8 @@ NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
     db->flags = flags;
     db->skip  = skip;
     db->limit = limit;
-    db->rescount = 0;
+    /* callback won't overwrite caller's rescount */
+    if (!db->incallback) db->rescount = 0;
     
     return STATUS_OK;
 }
@@ -161,7 +162,7 @@ void mmg_set_callbackdata(mmg_conn *db, void *data)
 
 NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
 {
-    int count;
+    int count, thiscount;
     char key[LEN_HDF_KEY];
     HDF *node, *cnode;
     bson *doc;
@@ -208,8 +209,9 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
         if (!db->c) return nerr_raise(NERR_DB, "cursor: %s", strerror(errno));
 
         cnode = NULL;
-        count = 0;
-        while (mongo_sync_cursor_next(db->c) && count < db->limit) {
+        count = mcs_get_child_num(node, prefix);
+        thiscount = 0;
+        while (mongo_sync_cursor_next(db->c) && thiscount < db->limit) {
             memset(key, sizeof(key), 0x0);
             
             if (prefix) {
@@ -228,8 +230,10 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
 
             if (!cnode) cnode = hdf_get_obj(node, key);
             count++;
+            thiscount++;
+            /* callback won't overwrite caller's rescount */
+            if (!db->incallback) db->rescount++;
         }
-        db->rescount = count;
 
         mongo_sync_cursor_free(db->c);
         db->c = NULL;
