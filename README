@@ -30,6 +30,7 @@ moon/
 |-- event       支持插件的高并发处理缓冲层后台, 详情请参考该目录文档和代码
 |-- deliver     web push 解决方案 (参考 deliver/README)
 |-- eii         中文分词工具(暂无内容)
+|-- minioc      在线互动系统(mini but extensiable online communication system)
 |-- grabber     获取邮件, msn, qq 好友方案
 |
 |-- regae       应用初始框架(skeleton)

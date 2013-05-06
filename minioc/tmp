@@ -1,0 +1,12 @@
+
+#if 0
+void net_get_s()
+{
+    base = event_init();
+    event_dispatch();
+
+
+    evtimer_set(&ev_clock, clock_handler, &);
+    evtimer_add(&ev_clock, &t);
+}
+#endif
