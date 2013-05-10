@@ -192,6 +192,14 @@ void udp_recv(int fd, short event, void *arg)
 
     rv = recvfrom(fd, static_buf, SBSIZE, 0, (struct sockaddr *) &clisa,
             &clilen);
+#if 0
+    char s[INET6_ADDRSTRLEN];
+    mtc_foo("recvfrom %s %d %d bytes",
+            inet_ntop(clisa.sin_family, &(clisa.sin_addr), s, sizeof s),
+            ntohs(clisa.sin_port),
+            rv);
+#endif
+
     if (rv < 0) {
         goto exit;
     }

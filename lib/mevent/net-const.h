@@ -33,7 +33,7 @@
 #define CONFIG_FILENAME "./mevent.hdf"
 
 #define PRE_PLUGIN    "Plugin"
-#define PRE_SERVER    "Mevent"
+#define PRE_MEVENT    "Mevent"
 //#define PLUGIN_PATH    "/usr/local/findjb/idc/event/plugin/"
 #define PLUGIN_PATH    "/usr/local/lib/"
 

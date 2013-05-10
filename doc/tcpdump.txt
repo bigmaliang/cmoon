@@ -48,7 +48,7 @@ C 获取主机210.27.48.1除了和主机210.27.48.2之外所有主机通信的ip
 #tcpdump ip host 210.27.48.1 and ! 210.27.48.2
 
 D 获取主机210.27.48.1接收或发出的telnet包，使用如下命令：
-#tcpdump tcp port 23 host 210.27.48.1
+#tcpdump tcp port 23 and host 210.27.48.1
 
 E 对本机的udp 123 端口进行监视 123 为ntp的服务端口
 # tcpdump udp port 123 

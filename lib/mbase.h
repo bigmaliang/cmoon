@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <sys/time.h>           /* gettimeofday() */
 #include <dlfcn.h>                /* dlope()... */
+#include <fcntl.h>                /* fcntl() */
 #include <dirent.h>                /* scandir()... */
 #include <iconv.h>
 

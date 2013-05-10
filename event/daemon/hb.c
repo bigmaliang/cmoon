@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
         printf("parse config file %s failure", conf);
         return 1;
     }
-    mtc_init(hdf_get_value(g_cfg, PRE_SERVER".logfile_hb", "/tmp/meventhb"));
+    mtc_init(hdf_get_value(g_cfg, PRE_MEVENT".logfile_hb", "/tmp/meventhb"));
     nerr_init();
     merr_init((MeventLog)mtc_msg);
 
@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
     }
 
     hdf_set_value(evt->hdfsnd, "user_id", "747");
+    hdf_set_value(evt->hdfsnd, "is_recommend", "1");
 
     ret = mevent_trigger(evt, NULL, cmd, FLAGS_SYNC);
     if (PROCESS_OK(ret)) {

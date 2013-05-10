@@ -4,6 +4,6 @@
 
 #include <stdint.h>        /* for uint32_t */
 
-struct data_cell* reply_trigger(struct queue_entry *q, uint32_t reply);
+int reply_trigger(struct queue_entry *q, uint32_t reply);
 
 #endif    /* __MREPLY_H__ */

@@ -61,6 +61,7 @@ __BEGIN_DECLS
 #define PRE_VALUESET    "Valueset"
 #define PRE_VALUEREP    "ValueReplace"
 #define PRE_CONFIG      "Config"
+#define PRE_SERVER      "Server"
 
 #define PRE_ERRTRACE    PRE_OUTPUT".errtrace"
 #define PRE_ERRMSG      PRE_OUTPUT".errmsg"

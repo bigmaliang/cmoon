@@ -5,12 +5,17 @@
 
 #include "ClearSilver.h"
 #include "libmemcached/memcached.h"
+
+#ifdef USE_MEVENT
 #include "mevent.h"
 #include "cache.h"
-#include "mkdio.h"
+#endif
+
 #ifdef USE_FASTCGI
 #include "fcgi_stdio.h"
 #endif
+
+#include "mkdio.h"
 #include "json.h"
 #include "mongo.h"
 
