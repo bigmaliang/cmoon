@@ -38,7 +38,7 @@ db.system.js.save({
         
         col.renameCollection('baker_tmp');
         db.baker_tmp.find().forEach(function(x) {
-            db.getCollection(collname+'_archive').save(x);
+            db.getCollection('archive_'+collname).save(x);
         });
         db.baker_tmp.drop();
         //if (collname == 'aoicropperday') {

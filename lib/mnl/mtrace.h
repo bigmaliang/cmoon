@@ -1,7 +1,15 @@
+/*
+ * trace module may be used by others, keep it clean
+ */
 #ifndef __MTRACE_H__
 #define __MTRACE_H__
 
-#include "mheads.h"
+#include <stdlib.h>        /* malloc() */
+#include <unistd.h>        /* close() */
+#include <string.h>
+#include <stdbool.h>
+
+#include "ClearSilver.h"
 
 __BEGIN_DECLS
 
@@ -47,11 +55,7 @@ __BEGIN_DECLS
 #define mtc_noise(f,a...) mtc_msg(__PRETTY_FUNCTION__,__FILE__,__LINE__,TC_NOISE,f,##a)
 #endif
 
-/*
- * mtc_init should be called after mconfig_parse_file()
- * read mconfig.h for more info
- */
-void mtc_init(const char *fn);
+void mtc_init(const char *fn, int level);
 void mtc_leave();
 bool mtc_msg(const char *func, const char *file, long line,
              int level, const char *format, ...)

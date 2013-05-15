@@ -1,8 +1,9 @@
-#include "mheads.h"
+#include "mtrace.h"
 
 /* global file name for trace info write to */
-static char g_fn[LEN_FN] = "";
+static char g_fn[_POSIX_PATH_MAX] = "";
 static FILE *g_fp = NULL;
+static int m_dftlv = TC_DEFAULT_LEVEL;
 static char linebuf[2096];
 static char *g_trace_level[TC_LEVELS] = {"DIE", "MESSAGE", "ERROR", "WARNING", "INFO", "DEBUG", "NOISE"};
 
@@ -15,7 +16,7 @@ static void trace_shift_file()
         return;
 
     int i;
-    char ofn[LEN_FN], nfn[LEN_FN];
+    char ofn[_POSIX_PATH_MAX], nfn[_POSIX_PATH_MAX];
 
     if (g_fp != NULL)
         fclose(g_fp);
@@ -34,8 +35,10 @@ static void trace_shift_file()
     g_fp = fopen(g_fn, "a+");
 }
 
-void mtc_init(const char *fn)
+void mtc_init(const char *fn, int level)
 {
+    if (level > 0 && level < TC_LEVELS) m_dftlv = level;
+    
     strncpy(g_fn, fn, sizeof(g_fn)-4);
     strcat(g_fn, ".log");
     if (g_fp != NULL)
@@ -55,16 +58,18 @@ void mtc_leave()
 bool mtc_msg(const char *func, const char *file, long line,
              int level, const char *format, ...)
 {
-    int dftlv = hdf_get_int_value(g_cfg, PRE_CONFIG".trace_level", TC_DEFAULT_LEVEL);
-    if (level > dftlv)
-        return true;
+    //int dftlv = hdf_get_int_value(g_cfg, PRE_CONFIG".trace_level", TC_DEFAULT_LEVEL);
+    if (level > m_dftlv) return false;
     
-    if (g_fp == NULL)
-        return false;
+    if (g_fp == NULL) return false;
 
     va_list ap;
-    char tm[LEN_TM];
-    mutil_getdatetime(tm, sizeof(tm), "%Y-%m-%d %H:%M:%S", time(NULL));
+    char tm[25] = {0};
+    time_t sec = time(NULL);
+    //mutil_getdatetime(tm, sizeof(tm), "%Y-%m-%d %H:%M:%S", time(NULL));
+    struct tm *stm = localtime(&sec);
+    strftime(tm, 25, "%Y-%m-%d %H:%M:%S", stm);
+    tm[24] = '\0';
 
     fprintf(g_fp, "[%s]", tm);
     fprintf(g_fp, "[%s]", g_trace_level[level]);
