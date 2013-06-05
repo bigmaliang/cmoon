@@ -24,10 +24,9 @@ send, sendto, sendmsg
 *RETURN*    the number of charactors sent, on error, -1    send(), sendto(), sendmsg() Locally detected errors are indicated by a return value of -1.
 
 *errno*
-EISCONN        sendto() used on a connection-mode socket, and dest_addr, addrlen parameter not null and 0.
+EISCONN     sendto() used on a connection-mode socket, and dest_addr, addrlen parameter not null and 0.
 ENOTCONN    sendto(), send() used on a connection-mode socket, and socket was not actualy connected.
 EMSGSIZE    msg is too long to pass through underlying protocol. and the msg not transmitted.
-EAGAIN
 EWOULDBLOCK    msg does not fit into the send buffer of the socket. sendxxx() normaly blocks, unless the socket has been placed in nonblocking I/O mode. select may be used to 
             determine when it is possible to send more data.
 
@@ -39,3 +38,10 @@ MSG_MORE(2.6)    the caller has more data to send. same effect as the TCP/UDP_CO
 MSG_NOSIGNAL    not to send SIGPIPE on errors on STREAM orinted sockets when the other end breaks the connection. the EPIPE error is still returned.
                 on the other hand, recvxxx() return 0 when the other end breaks the connection.
 MSG_OOB            send out-of-band (urgent) data
+
+
+
+recv
+----
+EAGAIN      The socket is marked non-blocking and the receive operation would block, or a receive timeout had been set and the  timeout  expired  before
+              data was received.

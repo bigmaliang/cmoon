@@ -8,6 +8,7 @@
 #include <arpa/inet.h>        /* htonls() and friends */
 #include <string.h>        /* memcpy() */
 #include <unistd.h>        /* close() */
+#include <errno.h>
 
 #include <netinet/tcp.h>    /* TCP stuff */
 #include <netdb.h>        /* gethostbyname() */
@@ -59,6 +60,9 @@ static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port,
     newsrv->info.in.srvsa.sin_family = AF_INET;
     newsrv->info.in.srvsa.sin_port = htons(port);
     newsrv->info.in.srvsa.sin_addr.s_addr = *inetaddr;
+    newsrv->nblock = strdup(nblock);
+    newsrv->tv.tv_sec = tv->tv_sec;
+    newsrv->tv.tv_usec = tv->tv_usec;
 
     rv = connect(fd, (struct sockaddr *) &(newsrv->info.in.srvsa),
              sizeof(newsrv->info.in.srvsa));
@@ -95,6 +99,44 @@ static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port,
     return 0;
 }
 
+static int tcp_server_reconnect(struct mevent_srv *srv)
+{
+    int rv, fd;
+
+    fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (fd < 0) return 0;
+
+    if (srv->nblock && !strcmp(srv->nblock, "yes")) {
+        int x = fcntl(fd, F_GETFL, 0);
+        fcntl(fd, F_SETFL, x | O_NONBLOCK);
+    } else {
+        if (srv->tv.tv_sec != 0 || srv->tv.tv_usec != 0) {
+            setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, (char*)&(srv->tv), sizeof(srv->tv));
+            setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (char*)&(srv->tv), sizeof(srv->tv));
+        }
+    }
+    
+    rv = connect(fd, (struct sockaddr *) &(srv->info.in.srvsa),
+                 sizeof(srv->info.in.srvsa));
+    if (rv < 0) goto error_exit;
+
+    /*
+     * Disable Nagle algorithm because we often send small packets.
+     * Huge gain in performance.
+     */
+    rv = 1;
+    if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &rv, sizeof(rv)) < 0 ) goto error_exit;
+
+    srv->fd = fd;
+
+    return 1;
+
+error_exit:
+    close(fd);
+
+    return 0;
+}
+
 /* Same as mevent_add_tipc_server() but for TCP connections. */
 int mevent_add_tcp_server(mevent_t *evt, const char *addr, int port,
                           const char *nblock, void *tv)
@@ -124,9 +166,23 @@ int tcp_srv_send(struct mevent_srv *srv, unsigned char *buf, size_t bsize)
     len = htonl(bsize);
     memcpy(buf, (const void *) &len, 4);
 
-    rv = ssend(srv->fd, buf, bsize, 0);
-    if (rv != bsize)
+    if (srv->fd <= 0) {
+        if (!tcp_server_reconnect(srv)) return 0;
+    }
+
+    rv = ssend(srv->fd, buf, bsize, MSG_NOSIGNAL);
+    if (rv != bsize) {
+        if (rv < 0 && errno == EPIPE) {
+            close(srv->fd);
+            srv->fd = -1;
+            /*
+            if (!tcp_server_reconnect(srv)) return 0;
+            rv = ssend(srv->fd, buf, bsize, MSG_NOSIGNAL);
+            if (rv == bsize) return 1;
+            */
+        }
         return 0;
+    }
     return 1;
 }
 
@@ -135,12 +191,12 @@ static ssize_t recv_msg(int fd, unsigned char *buf, size_t bsize)
     ssize_t rv, t;
     uint32_t msgsize;
 
-    rv = recv(fd, buf, bsize, 0);
+    rv = recv(fd, buf, bsize, MSG_NOSIGNAL);
     if (rv <= 0)
         return rv;
 
     if (rv < 4) {
-        t = srecv(fd, buf + rv, 4 - rv, 0);
+        t = srecv(fd, buf + rv, 4 - rv, MSG_NOSIGNAL);
         if (t <= 0) {
             return t;
         }
@@ -155,7 +211,7 @@ static ssize_t recv_msg(int fd, unsigned char *buf, size_t bsize)
         return -1;
 
     if (rv < msgsize) {
-        t = srecv(fd, buf + rv, msgsize - rv, 0);
+        t = srecv(fd, buf + rv, msgsize - rv, MSG_NOSIGNAL);
         if (t <= 0) {
             return t;
         }
@@ -177,8 +233,17 @@ uint32_t tcp_get_rep(struct mevent_srv *srv,
 
 rerecv:
     rv = recv_msg(srv->fd, buf, bsize);
-    if (rv <= 0)
+    if (rv <= 0) {
+        if (errno != EAGAIN) {
+            /*
+             * orderly shutdown or error
+             */
+            close(srv->fd);
+            srv->fd = -1;
+        }
+        
         return -1;
+    }
 
     id = * ((uint32_t *) buf + 1);
     id = ntohl(id);

@@ -31,6 +31,8 @@
 struct mevent_srv {
     int fd;
     int type;
+    char *nblock;
+    struct timeval tv;
     union {
 
 #if _ENABLE_TIPC
