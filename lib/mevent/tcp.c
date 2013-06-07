@@ -60,7 +60,7 @@ static int add_tcp_server_addr(mevent_t *evt, in_addr_t *inetaddr, int port,
     newsrv->info.in.srvsa.sin_family = AF_INET;
     newsrv->info.in.srvsa.sin_port = htons(port);
     newsrv->info.in.srvsa.sin_addr.s_addr = *inetaddr;
-    newsrv->nblock = strdup(nblock);
+    if (nblock) newsrv->nblock = strdup(nblock);
     newsrv->tv.tv_sec = tv->tv_sec;
     newsrv->tv.tv_usec = tv->tv_usec;
 
