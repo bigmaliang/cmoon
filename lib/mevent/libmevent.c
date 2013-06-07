@@ -494,7 +494,10 @@ int mevent_trigger(mevent_t *evt, char *key,
     if (flags & FLAGS_SYNC) {
         vsize = 0;
         rv = get_rep(srv, evt->rcvbuf, MAX_PACKET_LEN, &p, &vsize);
-        if (rv == -1) rv = REP_ERR;
+        if (rv == -1) {
+            hdf_set_value(evt->hdfrcv, "Output.errmsg", "mevent died");
+            rv = REP_ERR;
+        }
         evt->errcode = rv;
 
         if (vsize > 8) {
