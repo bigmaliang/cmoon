@@ -271,7 +271,7 @@ NEOERR* mtpl_InConfigRend_get(HDF *out, HDF *in, char *key, char *name, HASH *da
 
 void mtpl_InConfigRend_destroy(HASH *datah)
 {
-    char *key, *buf;
+    char *key = NULL, *buf;
 
     if (!datah) return;
     
