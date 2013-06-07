@@ -1,25 +1,6 @@
 #include "mevent_plugin.h"
 #include "mevent_skeleton.h"
-
-#define PLUGIN_NAME    "skeleton"
-#define CONFIG_PATH    PRE_PLUGIN"."PLUGIN_NAME
-
-struct skeleton_stats {
-    unsigned long msg_total;
-    unsigned long msg_unrec;
-    unsigned long msg_badparam;
-    unsigned long msg_stats;
-
-    unsigned long proc_suc;
-    unsigned long proc_fai;
-};
-
-struct skeleton_entry {
-    EventEntry base;
-    mdb_conn *db;
-    Cache *cd;
-    struct skeleton_stats st;
-};
+#include "skeleton_pri.h"
 
 static void skeleton_process_driver(EventEntry *entry, QueueEntry *q)
 {

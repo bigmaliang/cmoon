@@ -8,14 +8,14 @@ PREFIX=/usr/local
 
 CFLAGS += -shared -fPIC
 
-CFLAGS += -I$(BASEDIR)event/daemon/ $(INC_MOON)
+CFLAGS += -I$(BASEDIR)event/daemon/ $(INC_MOON) -Iprivate
 
 SOURCES = $(wildcard *.c)
 LIB_PLUGIN = $(patsubst %.c, %.so, $(SOURCES))
 
 all: $(LIB_PLUGIN)
 
-mevent_%.so: mevent_%.c
+mevent_%.so: private/%_internal.c private/%_timer.c mevent_%.c
 	@echo "$(CC) -o $@"
 ifeq ($(UNAME), Darwin)
 	@$(CC) $(CFLAGS) -c $<
