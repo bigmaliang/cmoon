@@ -2,7 +2,7 @@
 #define __SKELETON_PRI_H__
 
 #define PLUGIN_NAME    "skeleton"
-#define CONFIG_PATH    PRE_SERVER"."PLUGIN_NAME
+#define CONFIG_PATH    "Plugin."PLUGIN_NAME
 
 struct skeleton_stats {
     unsigned long msg_total;
