@@ -541,6 +541,43 @@ NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data)
     return STATUS_OK;
 }
 
+char* mcs_repstr_byhdf(char *src, char c, HDF *data)
+{
+    char *p, key[LEN_HDF_KEY], *val;
+    int x;
+    STRING str;
+    
+    string_init(&str);
+
+    if (!src) return NULL;
+    if (!data) return strdup(src);
+
+    p = src;
+    
+    while (p) {
+        if (*p != c) {
+            string_append_char(&str, *p);
+            p++;
+        } else if (*p == c) {
+            p = p + 1;
+            memset(key, sizeof(key), 0x0);
+            x = 0;
+            
+            while (*p && *p != '.' && x < LEN_HDF_KEY) {
+                key[x++] = *p;
+                p++;
+            }
+
+            if (x > 0) {
+                val = hdf_get_value(data, key, NULL);
+                if (val) string_append(&str, val);
+            }
+        }
+    }
+
+    return str.buf;
+}
+
 char* mcs_hdf_attr(HDF *hdf, char *name, char*key)
 {
     if (hdf == NULL || key == NULL)

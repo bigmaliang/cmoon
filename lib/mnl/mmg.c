@@ -191,7 +191,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                 }
                 return STATUS_OK;
             }
-            return nerr_raise(NERR_NOT_FOUND, "无此记录");
+            return nerr_raise(NERR_NOT_FOUND, "%s 无此记录", dsn);
         }
         GET_LAST_ERROR(db->con, dsn);
         return nerr_raise(NERR_DB, "query: %s %d %s",
@@ -215,19 +215,40 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
             memset(key, sizeof(key), 0x0);
             
             if (prefix) {
-                if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
-                    snprintf(key, sizeof(key), "%s.%d", prefix, count);
-                else snprintf(key, sizeof(key), "%s", prefix);
+                if (strchr(prefix, '$')) {
+                    HDF *tnode;
+                    hdf_init(&tnode);
+                    doc = mongo_sync_cursor_get_data(db->c);
+                    err = mbson_export_to_hdf(tnode, doc, NULL, MBSON_EXPORT_TYPE, true);
+                    if (err != STATUS_OK) return nerr_pass(err);
+
+                    char *tkey = mcs_repstr_byhdf(prefix, '$', tnode);
+                    
+                    if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
+                        snprintf(key, sizeof(key), "%s.%d", tkey, count);
+                    else snprintf(key, sizeof(key), "%s", tkey);
+
+                    hdf_copy(node, key, tnode);
+
+                    hdf_destroy(&tnode);
+                    SAFE_FREE(tkey);
+                } else {
+                    if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
+                        snprintf(key, sizeof(key), "%s.%d", prefix, count);
+                    else snprintf(key, sizeof(key), "%s", prefix);
+                }
             } else {
                 if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
                     sprintf(key, "%d", count);
                 else key[0] = '\0';
             }
-            
-            doc = mongo_sync_cursor_get_data(db->c);
-            err = mbson_export_to_hdf(node, doc, key, MBSON_EXPORT_TYPE, true);
-            if (err != STATUS_OK) return nerr_pass(err);
 
+            if (!prefix || !strchr(prefix, '$')) {
+                doc = mongo_sync_cursor_get_data(db->c);
+                err = mbson_export_to_hdf(node, doc, key, MBSON_EXPORT_TYPE, true);
+                if (err != STATUS_OK) return nerr_pass(err);
+            }
+            
             if (!cnode) cnode = hdf_get_obj(node, key);
             count++;
             thiscount++;
