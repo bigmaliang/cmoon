@@ -60,6 +60,9 @@ NEOERR* mcs_register_string_uslice(CSPARSE *cs);
 NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock);
 
 int  mcs_get_child_num(HDF *hdf, char *name);
+/*
+ * n = 0 for 1st child
+ */
 HDF* mcs_get_nth_child(HDF *hdf, char *name, int n);
 HDF* mcs_obj_nth_child(HDF *hdf, int n);
 HDF* mcs_get_objf(HDF *hdf, char *fmt, ...)
@@ -70,6 +73,11 @@ NEOERR* mcs_copyf(HDF *dst, HDF *src, char *fmt, ...)
                       ATTRIBUTE_PRINTF(3, 4);
 NEOERR* mcs_remove_treef(HDF *hdf, char *fmt, ...)
                          ATTRIBUTE_PRINTF(2, 3);
+int mcs_get_child_numf(HDF *hdf, char *fmt, ...)
+                       ATTRIBUTE_PRINTF(2, 3);
+HDF* mcs_get_nth_childf(HDF *hdf, int n, char *fmt, ...)
+                        ATTRIBUTE_PRINTF(3, 4);
+
 
 unsigned int mcs_get_uint_value(HDF *hdf, char *name, unsigned int defval);
 float mcs_get_float_value(HDF *hdf, char *name, float defval);

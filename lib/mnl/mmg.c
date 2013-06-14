@@ -248,8 +248,25 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                 err = mbson_export_to_hdf(node, doc, key, MBSON_EXPORT_TYPE, true);
                 if (err != STATUS_OK) return nerr_pass(err);
             }
-            
-            if (!cnode) cnode = hdf_get_obj(node, key);
+
+            if (!cnode) {
+                /*
+                 * cnode point to first child
+                 * e.g.
+                 *   levels.1.info
+                 *   levels.2.info
+                 *   levels.3.info
+                 *   we need cnode to levels.1
+                 */
+                char *p = key;
+                int dotcount = 0;
+                while (*p) {
+                    if (*p == '.') dotcount++;
+                    if (dotcount == 2) *p = '\0';
+                    p++;
+                }
+                cnode = hdf_get_obj(node, key);
+            }
             count++;
             thiscount++;
             /* callback won't overwrite caller's rescount */
@@ -271,9 +288,9 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
             db->incallback = true;
 
             count = 0;
-            while (cnode) {
+            while (cnode && count < thiscount) {
                 count++;
-                if (db->rescount == count) err = db->query_callback(db, cnode, true);
+                if (count == thiscount) err = db->query_callback(db, cnode, true);
                 else err = db->query_callback(db, cnode, false);
                 TRACE_NOK(err);
                 

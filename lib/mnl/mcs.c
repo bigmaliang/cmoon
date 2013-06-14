@@ -300,6 +300,29 @@ NEOERR* mcs_remove_treef(HDF *hdf, char *fmt, ...)
 
     return nerr_pass(hdf_remove_tree(hdf, key));
 }
+int mcs_get_child_numf(HDF *hdf, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return mcs_get_child_num(hdf, key);
+}
+
+HDF* mcs_get_nth_childf(HDF *hdf, int n, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return mcs_get_nth_child(hdf, key, n);
+}
 
 
 unsigned int mcs_get_uint_value(HDF *hdf, char *name, unsigned int defval)
@@ -554,13 +577,13 @@ char* mcs_repstr_byhdf(char *src, char c, HDF *data)
 
     p = src;
     
-    while (p) {
+    while (*p) {
         if (*p != c) {
             string_append_char(&str, *p);
             p++;
         } else if (*p == c) {
             p = p + 1;
-            memset(key, sizeof(key), 0x0);
+            memset(key, 0x0, sizeof(key));
             x = 0;
             
             while (*p && *p != '.' && x < LEN_HDF_KEY) {
