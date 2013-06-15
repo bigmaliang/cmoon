@@ -230,8 +230,35 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
 
                     hdf_copy(node, key, tnode);
 
+                    /*
+                     * cnode point to:
+                     *   1st $node on strchr(key, '$')
+                     * e.g.
+                     *   15111231681.name           ===> 15111231681
+                     *   levels.2.info              ===> levels.2
+                     *   prog.info.levels.2.class.7 ===> prog.info.levels.2
+                     */
+                    if (!cnode) {
+                        char lprefix = strdup(prefix);
+                        char *p = lprefix;
+                        if (*p == '$') cnode = node;
+                        else {
+                            while (*p) {
+                                if (*(p+1) == '$') {
+                                    *p = '\0';
+                                    break;
+                                }
+                                p++;
+                            }
+                            cnode = hdf_get_child(node, lprefix);
+                        }
+                        SAFE_FREE(lprefix)
+                    }
+
                     hdf_destroy(&tnode);
                     SAFE_FREE(tkey);
+                    
+                    goto nextcursor;
                 } else {
                     if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
                         snprintf(key, sizeof(key), "%s.%d", prefix, count);
@@ -242,31 +269,21 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                     sprintf(key, "%d", count);
                 else key[0] = '\0';
             }
+            
+            doc = mongo_sync_cursor_get_data(db->c);
+            err = mbson_export_to_hdf(node, doc, key, MBSON_EXPORT_TYPE, true);
+            if (err != STATUS_OK) return nerr_pass(err);
 
-            if (!prefix || !strchr(prefix, '$')) {
-                doc = mongo_sync_cursor_get_data(db->c);
-                err = mbson_export_to_hdf(node, doc, key, MBSON_EXPORT_TYPE, true);
-                if (err != STATUS_OK) return nerr_pass(err);
-            }
+            /*
+             * cnode point to:
+             *   key node on !strchr(key, '$')
+             * e.g.
+             *   user                       ===> user
+             *   user.7                     ===> user.7
+             */
+            if (!cnode) cnode = hdf_get_obj(node, key);
 
-            if (!cnode) {
-                /*
-                 * cnode point to first child
-                 * e.g.
-                 *   levels.1.info
-                 *   levels.2.info
-                 *   levels.3.info
-                 *   we need cnode to levels.1
-                 */
-                char *p = key;
-                int dotcount = 0;
-                while (*p) {
-                    if (*p == '.') dotcount++;
-                    if (dotcount == 2) *p = '\0';
-                    p++;
-                }
-                cnode = hdf_get_obj(node, key);
-            }
+        nextcursor:
             count++;
             thiscount++;
             /* callback won't overwrite caller's rescount */
