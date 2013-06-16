@@ -586,12 +586,14 @@ char* mcs_repstr_byhdf(char *src, char c, HDF *data)
             memset(key, 0x0, sizeof(key));
             x = 0;
             
-            while (*p && *p != '.' && x < LEN_HDF_KEY) {
+            while (*p && *p != c && x < LEN_HDF_KEY) {
                 key[x++] = *p;
                 p++;
             }
 
             if (x > 0) {
+                while (*p && *p == c) p++;
+                
                 val = hdf_get_value(data, key, NULL);
                 if (val) string_append(&str, val);
             }

@@ -134,7 +134,7 @@ NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data);
 /*
  * in:
  *
- * src = $level, $level.name,  name.$level.in$desc,  or name.$level
+ * src = $level$, $level$.name,  name.$level$.in$desc$,  or name.$level$
  * data {
  *     level = 100
  *     name = test data
