@@ -564,7 +564,7 @@ NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data)
     return STATUS_OK;
 }
 
-char* mcs_repstr_byhdf(char *src, char c, HDF *data)
+char* mcs_repvstr_byhdf(char *src, char c, HDF *data)
 {
     char *p, key[LEN_HDF_KEY], *val;
     int x;
@@ -582,9 +582,13 @@ char* mcs_repstr_byhdf(char *src, char c, HDF *data)
             string_append_char(&str, *p);
             p++;
         } else if (*p == c) {
-            p = p + 1;
             memset(key, 0x0, sizeof(key));
             x = 0;
+
+            /*
+             * skip series start $
+             */
+            while (*p && *p == c) p++;
             
             while (*p && *p != c && x < LEN_HDF_KEY) {
                 key[x++] = *p;
@@ -592,7 +596,10 @@ char* mcs_repstr_byhdf(char *src, char c, HDF *data)
             }
 
             if (x > 0) {
-                while (*p && *p == c) p++;
+                /*
+                 * skip single end $
+                 */
+                if (*p == c) p++;
                 
                 val = hdf_get_value(data, key, NULL);
                 if (val) string_append(&str, val);

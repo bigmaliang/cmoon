@@ -134,7 +134,7 @@ NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data);
 /*
  * in:
  *
- * src = $level$, $level$.name,  name.$level$.in$desc$,  or name.$level$
+ * src = $level$, $level$$name$,  name.$level$.in$desc$,  or name.$level$
  * data {
  *     level = 100
  *     name = test data
@@ -144,9 +144,9 @@ NEOERR* mcs_hdf_copy_rep(HDF *dst, char *name, HDF *src, HDF *data);
  *
  * out
  *
- * 100, 100.name, name.100.ina desc, or name.100
+ * 100, 100test data, name.100.ina desc, or name.100
  */
-char* mcs_repstr_byhdf(char *src, char c, HDF *data);
+char* mcs_repvstr_byhdf(char *src, char c, HDF *data);
 
 char* mcs_hdf_attr(HDF *hdf, char *name, char*key);
 char* mcs_obj_attr(HDF *hdf, char*key);

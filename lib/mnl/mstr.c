@@ -282,6 +282,43 @@ char* mstr_strip (char *s, char n)
   return s;
 }
 
+char* mstr_repvstr(char *src, char c, char *dst)
+{
+    char *p;
+    STRING str;
+    
+    string_init(&str);
+
+    if (!src) return NULL;
+    if (!dst) return strdup(src);
+
+    p = src;
+    
+    while (*p) {
+        if (*p != c) {
+            string_append_char(&str, *p);
+            p++;
+        } else if (*p == c) {
+            /*
+             * skip series start $
+             */
+            while (*p && *p == c) p++;
+
+            if (*p && (p = strchr(p, c) != NULL)) {
+                if (dst) string_append(&str, dst);
+                p++;
+            } else {
+                /*
+                 * $ in src not in pair, illgeal, return
+                 */
+                return str.buf;
+            }
+        }
+    }
+
+    return str.buf;
+}
+
 size_t mstr_ulen(const char *s)
 {
     size_t len = 0;

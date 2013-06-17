@@ -40,6 +40,18 @@ void mstr_repchr(char *s, char from, char to);
  * make sure offer suitable rep_count, or, random errors will occur.
  */
 char* mstr_repstr(int rep_count, char *s, ...);
+/*
+ * replace variable string, around by parameter c, by dst(can be NULL)
+ * in:
+ * src = $level$, $level$$name$,  name.$level$.in$desc$,  or name.$level$
+ * c = $
+ * dst foo
+ *
+ * out:
+ *
+ * foo, foofoo, name.foo.infoo, or name.foo
+ */
+char* mstr_repvstr(char *src, char c, char *dst);
 char* mstr_strip (char *s, char n);
 /* string's utf-8 length */
 size_t mstr_ulen(const char *s);
