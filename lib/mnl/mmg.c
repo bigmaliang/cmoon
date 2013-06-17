@@ -173,6 +173,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
     db->p = mongo_sync_cmd_query(db->con, dsn, db->flags & 0x3FF, db->skip, db->limit,
                                  db->docq, db->docs);
     if (!db->p) {
+        mtc_noise("queried %s 0 result", dsn);
         if (errno == ENOENT) {
             if (db->flags & MMG_FLAG_EMPTY) {
                 if (db->query_callback && !db->incallback) {
@@ -222,7 +223,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                     err = mbson_export_to_hdf(tnode, doc, NULL, MBSON_EXPORT_TYPE, true);
                     if (err != STATUS_OK) return nerr_pass(err);
 
-                    char *tkey = mcs_repstr_byhdf(prefix, '$', tnode);
+                    char *tkey = mcs_repvstr_byhdf(prefix, '$', tnode);
                     
                     if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
                         snprintf(key, sizeof(key), "%s.%d", tkey, count);
@@ -239,7 +240,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                      *   prog.info.levels.2.class.7 ===> prog.info.levels.2
                      */
                     if (!cnode) {
-                        char lprefix = strdup(prefix);
+                        char *lprefix = strdup(prefix);
                         char *p = lprefix;
                         if (*p == '$') cnode = node;
                         else {
@@ -252,7 +253,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                             }
                             cnode = hdf_get_child(node, lprefix);
                         }
-                        SAFE_FREE(lprefix)
+                        SAFE_FREE(lprefix);
                     }
 
                     hdf_destroy(&tnode);

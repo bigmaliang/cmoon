@@ -444,6 +444,28 @@ NEOERR* mcs_set_float_value_with_type(HDF *hdf, char *name, float value, CnodeTy
     return nerr_pass(mcs_set_int_attr(hdf, name, "type", type));
 }
 
+NEOERR* mcs_set_valuef_with_type(HDF *hdf, CnodeType type, char *fmt, ...)
+{
+    char *k, *v;
+    va_list ap;
+    NEOERR *err;
+
+    va_start(ap, fmt);
+    k = vsprintf_alloc(fmt, ap);
+    if (!k) return nerr_raise(NERR_NOMEM, "alloc format string");
+    va_end(ap);
+
+    v = strchr(k, '=');
+    if (!v) return nerr_raise(NERR_ASSERT, "No equials found: %s", k);
+    *v++ = '\0';                /* equal to *v = '\0'; v++; */
+
+    err = mcs_set_value_with_type(hdf, k, v, type);
+
+    SAFE_FREE(k);
+
+    return nerr_pass(err);
+}
+
 int mcs_add_int_value(HDF *node, char *key, int val)
 {
     if (!node || !key) return 0;

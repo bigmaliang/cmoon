@@ -304,15 +304,18 @@ char* mstr_repvstr(char *src, char c, char *dst)
              */
             while (*p && *p == c) p++;
 
-            if (*p && (p = strchr(p, c) != NULL)) {
-                if (dst) string_append(&str, dst);
-                p++;
-            } else {
-                /*
-                 * $ in src not in pair, illgeal, return
-                 */
-                return str.buf;
+            if (*p) {
+                p = strchr(p, c);
+                if (p) {
+                    if (dst) string_append(&str, dst);
+                    p++;
+                    continue;
+                }
             }
+            /*
+             * $ in src not in pair, illgeal, return
+             */
+            return str.buf;
         }
     }
 
