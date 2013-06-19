@@ -405,15 +405,14 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *se
 {
     bson *doca, *docb;
 
-    MCS_NOT_NULLC(db, dsn, up);
+    MCS_NOT_NULLB(db, dsn);
+    MCS_NOT_NULLB(up, sel);
 
     mtc_noise("update %s %s %s", dsn, up, sel);
     
-    if (sel) {
-        doca = mbson_new_from_string(sel, true);
-        if (!doca) return nerr_raise(NERR_ASSERT, "build doc sel: %s: %s",
-                                     sel, strerror(errno));
-    } else doca = NULL;
+    doca = mbson_new_from_string(sel, true);
+    if (!doca) return nerr_raise(NERR_ASSERT, "build doc sel: %s: %s",
+                                 sel, strerror(errno));
     
     docb = mbson_new_from_string(up, true);
     if (!docb) return nerr_raise(NERR_ASSERT, "build doc up: %s: %s",
@@ -433,21 +432,75 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *se
 
 NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, int flags, char *up, char *selfmt, ...)
 {
-    char *qa;
+    char *qa = NULL;
     va_list ap;
     NEOERR *err;
-    
-    va_start(ap, selfmt);
-    qa = vsprintf_alloc(selfmt, ap);
-    va_end(ap);
-    if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
 
+    if (selfmt) {
+        va_start(ap, selfmt);
+        qa = vsprintf_alloc(selfmt, ap);
+        va_end(ap);
+        if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
+    }
+    
     err = mmg_string_update(db, dsn, flags, up, qa);
+
+    SAFE_FREE(qa);
+
+    return nerr_pass(err);
+}
+
+NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel)
+{
+    bson *doca, *docb;
+    NEOERR *err;
+    
+    MCS_NOT_NULLB(db, dsn);
+    MCS_NOT_NULLB(node, sel);
+
+    char *ts;
+    err = hdf_write_string(node, &ts);
+    if (err != STATUS_OK) return nerr_pass(err);
+    mtc_noise("update %s %s %s", dsn, ts, sel);
+    SAFE_FREE(ts);
+
+    doca = mbson_new_from_string(sel, true);
+    if (!doca) return nerr_raise(NERR_ASSERT, "build doc sel: %s: %s",
+                                 sel, strerror(errno));
+    
+    err = mbson_import_from_hdf(node, &docb, true);
     if (err != STATUS_OK) return nerr_pass(err);
 
-    free(qa);
+    if (!mongo_sync_cmd_update(db->con, dsn, flags, doca, docb)) {
+        GET_LAST_ERROR(db->con, dsn);
+        return nerr_raise(NERR_DB, "sync_cmd_update: %s %d %s",
+                          m_errmsg, errno, strerror(errno));
+    }
+    
+    bson_free(doca);
+    bson_free(docb);
 
     return STATUS_OK;
+}
+
+NEOERR* mmg_hdf_updatef(mmg_conn *db, char *dsn, int flags, HDF *node, char *selfmt, ...)
+{
+    char *qa = NULL;
+    va_list ap;
+    NEOERR *err;
+
+    if (selfmt) {
+        va_start(ap, selfmt);
+        qa = vsprintf_alloc(selfmt, ap);
+        va_end(ap);
+        if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
+    }
+
+    err = mmg_hdf_update(db, dsn, flags, node, qa);
+
+    SAFE_FREE(qa);
+
+    return nerr_pass(err);
 }
 
 NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, int *ret, char *querys)
