@@ -229,7 +229,7 @@ HDF* mcs_get_nth_child(HDF *hdf, char *name, int n)
 {
     HDF *node;
     
-    if (!hdf || n < 0) return NULL;
+    if (!hdf || n <= 0) return NULL;
 
     node = hdf_get_child(hdf, name);
     while (node && --n > 0) {

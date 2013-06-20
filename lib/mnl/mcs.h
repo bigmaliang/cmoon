@@ -61,7 +61,7 @@ NEOERR* mcs_register_upload_parse_cb(CGI *cgi, void *rock);
 
 int  mcs_get_child_num(HDF *hdf, char *name);
 /*
- * n = 0 for 1st child
+ * n = 1 for 1st child
  */
 HDF* mcs_get_nth_child(HDF *hdf, char *name, int n);
 HDF* mcs_obj_nth_child(HDF *hdf, int n);
