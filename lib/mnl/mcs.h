@@ -97,6 +97,9 @@ NEOERR* mcs_set_valuef_with_type(HDF *hdf, CnodeType type, char *fmt, ...);
 int mcs_add_int_value(HDF *node, char *key, int val);
 int mcs_add_int_valuef(HDF *node, int val, char *fmt, ...)
                        ATTRIBUTE_PRINTF(3, 4);
+int64_t mcs_add_int64_value(HDF *node, char *key, int64_t val);
+int64_t mcs_add_int64_valuef(HDF *node, int64_t val, char *fmt, ...)
+                             ATTRIBUTE_PRINTF(3, 4);
 char* mcs_append_string_value(HDF *node, char *key, char *str);
 char* mcs_append_string_valuef(HDF *node, char *key, char *sfmt, ...)
                                ATTRIBUTE_PRINTF(3, 4);

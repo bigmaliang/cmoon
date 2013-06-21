@@ -488,6 +488,28 @@ int mcs_add_int_valuef(HDF *node, int val, char *fmt, ...)
     return mcs_add_int_value(node, key, val);
 }
 
+int64_t mcs_add_int64_value(HDF *node, char *key, int64_t val)
+{
+    if (!node || !key) return 0;
+    
+    int64_t ov = mcs_get_int64_value(node, key, 0);
+    mcs_set_int64_value(node, key, ov+val);
+
+    return ov+val;
+}
+
+int64_t mcs_add_int64_valuef(HDF *node, int64_t val, char *fmt, ...)
+{
+    char key[LEN_HDF_KEY];
+    va_list ap;
+
+    va_start(ap, fmt);
+    vsnprintf(key, sizeof(key), fmt, ap);
+    va_end(ap);
+
+    return mcs_add_int64_value(node, key, val);
+}
+
 char* mcs_append_string_value(HDF *node, char *key, char *str)
 {
     if (!node || !key) return NULL;
