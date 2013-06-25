@@ -270,16 +270,16 @@ char* mstr_repstr(int rep_count, char *s, ...)
     return str.buf;
 }
 
-char* mstr_strip (char *s, char n)
+char* mstr_strip(char *s, char n)
 {
-  int x;
+    int x;
 
-  x = strlen(s) - 1;
-  while (x>=0 && s[x]==n) s[x--] = '\0';
+    x = strlen(s) - 1;
+    while (x>=0 && s[x]==n) s[x--] = '\0';
 
-  while (*s && *s==n) s++;
+    while (*s && *s==n) s++;
   
-  return s;
+    return s;
 }
 
 char* mstr_repvstr(char *src, char c, char *dst)

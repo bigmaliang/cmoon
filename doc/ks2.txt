@@ -1,0 +1,57 @@
+
+
+10: 描述以下程序片段（从程序设计技巧、和规范两方面，将值得注意的地方，写在行末）：
+
+#define MDB_QUERY_RAW(err, conn, sfmt, ...)                     \
+    do {                                                        \
+        err = mdb_exec(conn, "SELECT ", sfmt, ##__VA_ARGS__);   \
+        if (err != STATUS_OK) return nerr_pass(err);            \
+    } while (0)
+
+typedef char* (*NameGetFunc)(MdbConn *conn);
+
+typedef struct _AicEntry {
+    EventEntry base;
+    MdbConn *db;
+    char *bar;
+    NameGetFunc get_name;
+} AicEntry;
+
+typedef enum {
+    OP_AJAX = 0,
+    OP_HTML
+} OpCode;
+
+static int m_err_inited = 0;
+
+static AicEntry* function_namef(AicEntry *entry, OpCode op,
+                                const char *fmt, ...)
+{
+    char (*getter)(MdbConn *conn);
+    char *querys;
+    int new_val;
+    va_list ap;
+
+    va_start(ap, fmt);
+    querys = vsprintf_alloc(qfmt, ap);
+    va_end(ap);
+
+    if (!querys) return nerr_raise(NERR_ASSERT, "param null");
+
+    if (!getter) {
+        return nerr_raise(NERR_NOTFOUND, "getter null %d %s", op, querys);
+    }
+
+    new_val = 100;
+    for (int i = 0; i < new_val; i++) {
+        switch(op) {
+        case OP_AJAX:
+            getter(conn);
+            break;
+        default:
+            break;
+        }
+    }
+
+    ...
+}

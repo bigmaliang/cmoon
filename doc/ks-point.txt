@@ -1,0 +1,7 @@
+socket tcp、udp协议及同步异步通信模式
+
+C99相对C89较为好用的语法、 以及GNUC对C99的扩展
+
+ELF程序地址空间，及C语言指针，二级指针的概念
+
+了解互联网开发常见程序，如nginx、mongodb、memcache、或其它
