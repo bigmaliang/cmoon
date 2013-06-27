@@ -385,7 +385,11 @@ NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
     
     MCS_NOT_NULLC(db, dsn, node);
 
-    mtc_noise("insert hdf %s", dsn);
+    char *ts;
+    err = hdf_write_string(node, &ts);
+    if (err != STATUS_OK) return nerr_pass(err);
+    mtc_noise("insert hdf %s %s", dsn, ts);
+    SAFE_FREE(ts);
     
     err = mbson_import_from_hdf(node, &doc, true);
     if (err != STATUS_OK) return nerr_pass(err);
@@ -399,6 +403,53 @@ NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
     bson_free(doc);
 
     return STATUS_OK;
+}
+
+NEOERR* mmg_hdf_insertl(mmg_conn *db, char *dsn, HDF *node, HDF *lnode)
+{
+    HDF *inode, *cnode;
+    NEOERR *err;
+
+    MCS_NOT_NULLB(db, dsn);
+    MCS_NOT_NULLB(node, lnode);
+
+    hdf_init(&inode);
+
+    cnode = hdf_obj_child(lnode);
+    while (cnode) {
+        char *name = hdf_obj_name(cnode);
+        char *key = hdf_obj_value(cnode);
+        char *val = hdf_get_value(node, key, NULL);
+        char *require = mcs_obj_attr(cnode, "require");
+        char *dft = mcs_obj_attr(cnode, "default");
+        int type = mcs_get_int_attr(cnode, NULL, "type", CNODE_TYPE_STRING);
+
+        mcs_set_int_attrr(inode, name, "type", type);
+
+        if (type == CNODE_TYPE_TIMESTAMP && !strcmp(key, "_NOW")) {
+            mcs_set_int64_value(inode, name, time(NULL));
+        } else if (val && *val) {
+            hdf_set_value(inode, name, val);
+        } else if (require && !strcmp(require, "true")) {
+            err = nerr_raise(NERR_ASSERT, "需要 %s %d 参数", name, type);
+            goto done;
+        } else {
+            /*
+             * set default value for inserted record
+             */
+            if (!dft) dft = "";
+            hdf_set_value(inode, name, dft);
+        }
+        
+        cnode = hdf_obj_next(cnode);
+    }
+    
+    err = mmg_hdf_insert(db, dsn, inode);
+
+done:
+    hdf_destroy(&inode);
+    
+    return nerr_pass(err);
 }
 
 NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *sel)
@@ -453,13 +504,20 @@ NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, int flags, char *up, char *s
 NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel)
 {
     bson *doca, *docb;
+    HDF *tnode;
     NEOERR *err;
     
     MCS_NOT_NULLB(db, dsn);
     MCS_NOT_NULLB(node, sel);
 
+    tnode = node;
+    if (flags && MMG_FLAG_UPSET) {
+        hdf_init(&tnode);
+        hdf_copy(tnode, "$set", node);
+    }
+    
     char *ts;
-    err = hdf_write_string(node, &ts);
+    err = hdf_write_string(tnode, &ts);
     if (err != STATUS_OK) return nerr_pass(err);
     mtc_noise("update %s %s %s", dsn, ts, sel);
     SAFE_FREE(ts);
@@ -468,7 +526,7 @@ NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel)
     if (!doca) return nerr_raise(NERR_ASSERT, "build doc sel: %s: %s",
                                  sel, strerror(errno));
     
-    err = mbson_import_from_hdf(node, &docb, true);
+    err = mbson_import_from_hdf(tnode, &docb, true);
     if (err != STATUS_OK) return nerr_pass(err);
 
     if (!mongo_sync_cmd_update(db->con, dsn, flags, doca, docb)) {
@@ -479,6 +537,8 @@ NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel)
     
     bson_free(doca);
     bson_free(docb);
+
+    if (flags && MMG_FLAG_UPSET) hdf_destroy(&tnode);
 
     return STATUS_OK;
 }
@@ -499,6 +559,57 @@ NEOERR* mmg_hdf_updatef(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel
     err = mmg_hdf_update(db, dsn, flags, node, qa);
 
     SAFE_FREE(qa);
+
+    return nerr_pass(err);
+}
+
+NEOERR* mmg_hdf_updatefl(mmg_conn *db, char *dsn, int flags, HDF *node, HDF *lnode,
+                         char *selfmt, ...)
+{
+    char *qa = NULL;
+    HDF *unode, *cnode;
+    va_list ap;
+    NEOERR *err;
+
+    MCS_NOT_NULLB(db, dsn);
+    MCS_NOT_NULLB(node, lnode);
+    
+    hdf_init(&unode);
+    
+    if (selfmt) {
+        va_start(ap, selfmt);
+        qa = vsprintf_alloc(selfmt, ap);
+        va_end(ap);
+        if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
+    }
+
+    cnode = hdf_obj_child(lnode);
+    while (cnode) {
+        char *name = hdf_obj_name(cnode);
+        char *key = hdf_obj_value(cnode);
+        char *val = hdf_get_value(node, key, NULL);
+        char *require = mcs_obj_attr(cnode, "require");
+        int type = mcs_get_int_attr(cnode, NULL, "type", CNODE_TYPE_STRING);
+
+        if (type == CNODE_TYPE_TIMESTAMP && !strcmp(key, "_NOW")) {
+            mcs_set_int64_value(unode, name, time(NULL));
+            mcs_set_int_attr(unode, name, "type", type);
+        } else if (val && *val) {
+            hdf_set_value(unode, name, val);
+            mcs_set_int_attr(unode, name, "type", type);
+        } else if (require && !strcmp(require, "true")) {
+            err = nerr_raise(NERR_ASSERT, "需要 %s %d 参数", name, type);
+            goto done;
+        }
+        
+        cnode = hdf_obj_next(cnode);
+    }
+
+    err = mmg_hdf_update(db, dsn, flags, unode, qa);
+
+done:
+    SAFE_FREE(qa);
+    hdf_destroy(&unode);
 
     return nerr_pass(err);
 }

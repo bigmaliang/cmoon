@@ -36,6 +36,8 @@ enum {
     MMG_FLAG_MIXROWS = 1 << 12,
     /* we need mongo's _id */
     MMG_FLAG_GETOID = 1 << 13,
+    /* wrap node by $set on hdf_update */
+    MMG_FLAG_UPSET = 1 << 14,
 };
 /*
  * flags: reused flags with mongo_wire_cmd_query().
@@ -67,6 +69,12 @@ NEOERR* mmg_string_insert(mmg_conn *db, char *dsn, char *str);
 NEOERR* mmg_string_insertf(mmg_conn *db, char *dsn, char *fmt, ...)
                            ATTRIBUTE_PRINTF(3, 4);
 NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node);
+/*
+ * limit insert node(securer)
+ * all key from lnode's key, value from node
+ * with a little config syntax, refer the code
+ */
+NEOERR* mmg_hdf_insertl(mmg_conn *db, char *dsn, HDF *node, HDF *lnode);
 
 NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *sel);
 NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, int flags, char *up, char *selfmt, ...)
@@ -74,6 +82,10 @@ NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, int flags, char *up, char *s
 NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel);
 NEOERR* mmg_hdf_updatef(mmg_conn *db, char *dsn, int flags, HDF *node, char *selfmt, ...)
                         ATTRIBUTE_PRINTF(5, 6);
+/* same as insertl */
+NEOERR* mmg_hdf_updatefl(mmg_conn *db, char *dsn, int flags, HDF *node, HDF *lnode,
+                         char *selfmt, ...)
+                         ATTRIBUTE_PRINTF(6, 7);
 
 NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, int *ret, char *querys);
 NEOERR* mmg_countf(mmg_conn *db, char *dbname, char *collname, int *ret, char *qfmt, ...)
@@ -101,6 +113,16 @@ char* mmg_get_valuef(mmg_conn *db, char *dsn, char *key, int skip, char *qfmt, .
 int mmg_get_int_valuef(mmg_conn *db, char *dsn, char *key, int skip, int limit,
                        char *qfmt, ...)
                        ATTRIBUTE_PRINTF(6, 7);
+
+
+#define MMG_SET_NTT(hdf, key, db, dbname, collname, selfmt, ...)        \
+    do {                                                                \
+        int zinta;                                                      \
+        err = mmg_countf(db, dbname, collname, &zinta, selfmt, ##__VA_ARGS__); \
+        if (err != STATUS_OK) return nerr_pass(err);                    \
+        hdf_set_int_value(hdf, key, zinta);                             \
+    } while (0)
+
 
 __END_DECLS
 #endif    /* __MMG_H__ */
