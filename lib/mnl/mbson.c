@@ -206,7 +206,9 @@ NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
         val = hdf_obj_value(node);
         type = mcs_get_int_attr(node, NULL, "type", CNODE_TYPE_STRING);
             
-        if (hdf_obj_child(node) != NULL) {
+        if (type == CNODE_TYPE_ARRAY ||
+            type == CNODE_TYPE_OBJECT ||
+            hdf_obj_child(node) != NULL) {
             mbson_import_from_hdf(node, &sub, true);
             if (type == CNODE_TYPE_ARRAY)
                 bson_append_array(doc, key, sub);

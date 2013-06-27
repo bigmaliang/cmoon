@@ -18,16 +18,19 @@ NEOERR* mjson_import_from_hdf(HDF *hdf, struct json_object **out)
     hdf = hdf_obj_child(hdf);
     
     while (hdf) {
+        MCS_GET_INT_ATTR(hdf, NULL, "type", CNODE_TYPE_STRING, ctype);
         jso = NULL;
-        
-        if (hdf_obj_child(hdf) != NULL) {
+
+        if (ctype == CNODE_TYPE_ARRAY ||
+            ctype == CNODE_TYPE_OBJECT ||
+            hdf_obj_child(hdf) != NULL) {
+
             mjson_import_from_hdf(hdf, &jso);
             
             if (ptype == CNODE_TYPE_ARRAY) json_object_array_add(jret, jso);
             else json_object_object_add(jret, hdf_obj_name(hdf), jso);
             
         } else if ((val = hdf_obj_value(hdf)) != NULL) {
-            MCS_GET_INT_ATTR(hdf, NULL, "type", CNODE_TYPE_STRING, ctype);
             if (ctype == CNODE_TYPE_INT) {
                 jso = json_object_new_int(atoi(val));
             } else if (ctype == CNODE_TYPE_DATETIME ||

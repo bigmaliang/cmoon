@@ -250,6 +250,15 @@ NEOERR* mcs_err_valid(NEOERR *err);
         nerr_ignore(&err);                      \
     }
 
+/*
+ * Output {
+ *     _npp = 15
+ *     _npg = 3
+ *     points [type=107]
+ * }
+ * won't care(trace) points node, which have no value.
+ * but hdf_write_string(), mjson_import_from_hdf(), mbson_import_from_hdf() will
+ */
 #define TRACE_HDF(node)                         \
     do {                                        \
         STRING zstra;    string_init(&zstra);   \
