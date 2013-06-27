@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
         printf("parse config file %s failure", conf);
         return 1;
     }
-    mtc_init(hdf_get_value(g_cfg, PRE_MEVENT".logfile_hb", "/tmp/meventhb"),
-             hdf_get_int_value(g_cfg, PRE_MEVENT".trace_level", TC_DEFAULT_LEVEL));
+    mtc_init(hdf_get_value(g_cfg, PRE_CONFIG".logfile_hb", "/tmp/meventhb"),
+             hdf_get_int_value(g_cfg, PRE_CONFIG".trace_level", TC_DEFAULT_LEVEL));
     nerr_init();
     merr_init((MeventLog)mtc_msg);
 

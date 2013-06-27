@@ -181,7 +181,7 @@ struct mevent* mevent_start(void)
     void *lib;
     char tbuf[1024], *tp;
     struct event_driver *driver;
-    HDF *res = hdf_get_obj(g_cfg, PRE_MEVENT".plugins.0");
+    HDF *res = hdf_get_obj(g_cfg, PRE_SERVER".plugins.0");
     while (res != NULL) {
         lib = NULL; driver = NULL; memset(tbuf, 0x0, sizeof(tbuf));
         

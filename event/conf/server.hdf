@@ -1,9 +1,9 @@
 Config {
+    logfile = /data/logs/mevent
     trace_level = 5
 }
 
-Mevent {
-    logfile = /data/logs/mevent
+Server {
     plugins {
         0 = skeleton
     }

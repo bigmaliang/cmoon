@@ -33,8 +33,6 @@
 #define CONFIG_FILENAME "./mevent.hdf"
 
 #define PRE_PLUGIN    "Plugin"
-#define PRE_MEVENT    "Mevent"
-//#define PLUGIN_PATH    "/usr/local/findjb/idc/event/plugin/"
 #define PLUGIN_PATH    "/usr/local/lib/"
 
 /* Protocol version, for checking in the network header. */
