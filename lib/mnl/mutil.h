@@ -45,6 +45,7 @@ int  mutil_compare_inta(const void *a, const void *b);
 void mutil_rand_numbers_byarray(int in[], int inlen, int out[], int outlen);
 /*
  * get 'outlen' random different(unrepeat) numbers, with maxnumber 'max'
+ * If you need zero, please -1 for every out[i]
  * don't pass a huge max, because it'll use many memory
  * make sure 'out' have 'outlen' length
  */

@@ -165,7 +165,7 @@ void mutil_rand_numbers(int max, int out[], int outlen)
 
     int in[max];
 
-    for (int i = 0; i < max; i++) in[i] = i;
+    for (int i = 0; i < max; i++) in[i] = i+1;
 
     return mutil_rand_numbers_byarray(in, max, out, outlen);
 }
