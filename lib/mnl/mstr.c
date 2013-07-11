@@ -353,9 +353,9 @@ size_t mstr_ulen(const char *s)
     return len;
 }
 
-long int mstr_upos2len(const char *s, long int pos)
+size_t mstr_upos2len(const char *s, long int pos)
 {
-    long int len = 0, cnt = 0;
+    size_t len = 0, cnt = 0;
     
     while (*s && cnt < pos) {
         unsigned char fbyte = s[0];

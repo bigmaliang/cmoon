@@ -4,6 +4,16 @@ HDF *g_cfg = NULL;
 
 int main(int argc, char **argv, char **envp)
 {
+    struct stx {
+        int state;
+        char s[100];
+        struct stx *x[3];
+    };
+
+
+    printf("%ld\n", sizeof(struct stx));
+
+    return 0;
 #if 0
 
     NEOERR *err;

@@ -56,7 +56,7 @@ char* mstr_strip (char *s, char n);
 /* string's utf-8 length */
 size_t mstr_ulen(const char *s);
 /* string's strlen(), to positon pos */
-long int mstr_upos2len(const char *s, long int pos);
+size_t mstr_upos2len(const char *s, long int pos);
 
 /* DJB Hash (left to right, ....abc)*/
 unsigned int hash_string(const char *str);
