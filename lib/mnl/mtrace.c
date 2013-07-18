@@ -65,13 +65,14 @@ bool mtc_msg(const char *func, const char *file, long line,
 
     va_list ap;
     char tm[25] = {0};
-    time_t sec = time(NULL);
+    double usec = ne_timef();
+    time_t sec = (time_t)usec;
     //mutil_getdatetime(tm, sizeof(tm), "%Y-%m-%d %H:%M:%S", time(NULL));
     struct tm *stm = localtime(&sec);
     strftime(tm, 25, "%Y-%m-%d %H:%M:%S", stm);
     tm[24] = '\0';
 
-    fprintf(g_fp, "[%s]", tm);
+    fprintf(g_fp, "[%s %f]", tm, usec);
     fprintf(g_fp, "[%s]", g_trace_level[level]);
     fprintf(g_fp, "[%s:%li %s] ", file, line, func);
 
