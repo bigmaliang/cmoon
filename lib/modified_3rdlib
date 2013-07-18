@@ -46,4 +46,37 @@ ClearSilver
     (gdb) p type
     $1 = 0x962d978 "application/x-www-form-urlencoded; charset=UTF-8"
     (gdb) p method
-    $2 = 0x962dbf0 "POST"    
+    $2 = 0x962dbf0 "POST"
+
+
+
+    utl/neo_hash.h
+    21 +typedef void (*NE_DESTROY_FUNC)(void *node);
+    41 +NE_DESTROY_FUNC destroy_func;
+    53 +void ne_hash_str_free(void *a);
+
+    NEOERR *ne_hash_init (NE_HASH **hash, NE_HASH_FUNC hash_func, NE_COMP_FUNC comp_func);
+    ===>
+    NEOERR *ne_hash_init (NE_HASH **hash, NE_HASH_FUNC hash_func,
+                          NE_COMP_FUNC comp_func, NE_DESTROY_FUNC destroy_func);
+                          
+
+    utl/neo_hash.c
+    37 +my_hash->destroy_func = destroy_func;
+    65 +if (my_hash->destroy_func) my_hash->destroy_func(node);
+        free(node)
+    123 +if (hash->destroy_func) hash->destroy_func(rem);
+         free(rem);
+
+    288 after ne_hash_str_hash
+    +void ne_hash_str_free(void *a)
+    +{
+    +  NE_HASHNODE *node = a;
+    +  if (node) {
+    +      free(node->key);
+    +  }
+    +}
+
+    ClearSilver.h
+    33 +#define hash_str_free ne_hash_str_free
+

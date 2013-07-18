@@ -176,7 +176,7 @@ NEOERR* mtpl_InConfigRend_init(char *dir, char *key, HASH **datah)
     MCS_NOT_NULLC(dir, key, datah);
 
     if (*datah == NULL) {
-        err = hash_init(datah, hash_str_hash, hash_str_comp);
+        err = hash_init(datah, hash_str_hash, hash_str_comp, NULL);
         if (err != STATUS_OK) return nerr_pass(err);
     }
 
@@ -196,7 +196,7 @@ NEOERR* mtpl_InConfigRend_init(char *dir, char *key, HASH **datah)
     err = hash_insertf(*datah, (void*)layout_node, "icr_%s_layout_node", key);
     if (err != STATUS_OK) return nerr_pass(err);
     
-    err = hash_init(&layout_hash, hash_str_hash, hash_str_comp);
+    err = hash_init(&layout_hash, hash_str_hash, hash_str_comp, NULL);
     if (err != STATUS_OK) return nerr_pass(err);
     err = hash_insertf(*datah, (void*)layout_hash, "icr_%s_layout_hash", key);
     if (err != STATUS_OK) return nerr_pass(err);
