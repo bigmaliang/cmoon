@@ -1,4 +1,28 @@
+Type    ID
+
+Double	1
+String	2
+Object	3
+Array	4
+Binary data	5
+Object id	7
+Boolean	8
+Date	9
+Null	10
+Regular expression	11
+JavaScript code	13
+Symbol	14
+JavaScript code with scope	15
+32-bit integer	16
+Timestamp	17
+64-bit integer	18
+
 db.pk_history.find({vote_history_id: {$type: 2}})
+db.test.find({"key":{$type:2}}).forEach(function(x) {
+ x.key= new NumberInt(x.key);
+ db.test.save(x);
+});
+
 
 // 获取自增id
 db.system.js.save({

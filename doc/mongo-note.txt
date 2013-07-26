@@ -9,6 +9,7 @@ db.vote.find({userid: 3921}, {userid: 1, name: 1, _id: 0})
 mongod --profile=1 --slowms=15
 db.setProfilingLevel(2); // 0 => none, 1 => slow, 2 => all
 db.system.profile.find()
+db.system.profile.find().sort({$natural:-1})
 db.system.profile.find( { millis : { $gt : 5 } } )
 
 mongod --fork --port 27017 --dbpath /Users/bigml/web/db/hntvapp/ --logpath /var/log/moon/mepi/mongodb.log
