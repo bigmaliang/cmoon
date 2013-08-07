@@ -37,7 +37,7 @@ static void trace_shift_file()
 
 void mtc_init(const char *fn, int level)
 {
-    if (level > 0) m_dftlv = level;
+    if (level >= 0) m_dftlv = level;
     
     strncpy(g_fn, fn, sizeof(g_fn)-4);
     strcat(g_fn, ".log");

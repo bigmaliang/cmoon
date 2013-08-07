@@ -22,6 +22,8 @@ MODE
 
 gerneal
 ----
+C-x RET r 设置当前文件的显示coding system
+C-x RET f 设置当前文件的保存coding system
 C-x C-f /sudo:/etc/fstab    edit file as root
 C-x C-f /METHOD:USER@HOST#PORT:FILENAME edit remote file
 

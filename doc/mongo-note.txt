@@ -6,6 +6,7 @@ db.vote.findOne()
 db.vote.find().explain()        查看查询系统详情
 db.vote.find({userid: 3921}, {userid: 1, name: 1, _id: 0})
 
+db.currentOP()
 mongod --profile=1 --slowms=15
 db.setProfilingLevel(2); // 0 => none, 1 => slow, 2 => all
 db.system.profile.find()

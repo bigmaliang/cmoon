@@ -326,6 +326,8 @@ size_t mstr_ulen(const char *s)
 {
     size_t len = 0;
 
+    if (!s) return 0;
+    
     while (*s) {
         unsigned char fbyte = s[0];
         /* If greater than 0x7F (127) then it's not normal ASCII */

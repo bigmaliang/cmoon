@@ -819,18 +819,18 @@ int mmg_get_int_valuef(mmg_conn *db, char *dsn, char *key, int skip, int limit,
     RETURN_V_NOK(err, 0);
 
     val = 0;
-    
-    if(hdf_get_valuef(tmpnode, "0.%s", key)) {
-        node = hdf_obj_child(tmpnode);
-        while (node) {
-            val += hdf_get_int_value(node, key, 0);
-            
-            node = hdf_obj_next(node);
-        }
-    } else {
+
+    node = hdf_obj_child(tmpnode);
+    if (!node) {
         val = hdf_get_int_value(tmpnode, key, 0);
     }
 
+    while (node) {
+        val += hdf_get_int_value(node, key, 0);
+            
+        node = hdf_obj_next(node);
+    }
+    
     hdf_destroy(&tmpnode);
     SAFE_FREE(querys);
 
