@@ -70,6 +70,7 @@
 (load-library "smtpmail")                           ;use smtp mail instead of sendmail to outgoing mail 2006-09-24
 (load-library "cs-mode")                            ;clearsilver use
 (autoload 'all "all" nil t)
+;(:eval (list (nyan-create)))
 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t) ;Espresso has been incorporated into GNU Emacs starting with version 23.2 and has been renamed js-mode. espresso-mode will no longer be maintained outside of Emacs proper. This page has been kept only for historical interest.
 ;(require 'un-define)                                ;2006-10-23 use mule-ucs
 ;(color-theme-subtle-hacker)
@@ -122,6 +123,11 @@
     (scroll-down))
   (line-move -1))
 
+(defun local-insert-time () 
+  "Insert the date in current position." 
+  (interactive) 
+  (insert (format-time-string "[%a %Y-%m-%d %H:%M:%S]"))) 
+
 
 ;;;========== KEY BINDING ==========
 (global-set-key [delete] 'delete-char)
@@ -142,6 +148,7 @@
 (define-key global-map "\C-xvp" 'svn-status)
 (define-key global-map "\C-ci" 'cs-insert-tag)
 (define-key global-map "\C-cm" 'c-comment-edit)
+(define-key global-map "\C-c." 'local-insert-time)
 (if (locate-library "calculator")
     (progn
       (autoload 'calculator "calculator"
