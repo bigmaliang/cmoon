@@ -39,6 +39,7 @@
             (cons '("\\.php$" . php-mode)
                   auto-mode-alist))
       (global-set-key (kbd "M-`") 'set-mark-command)
+      ;(global-set-key [M-[] 'backward-paragraph)
 
       ; change Command to Meta for mac keyboard
       ; use this with MAC's Capslock<==>control, so fun...
