@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<root>
+  <symbol_map type="KeyCode" name="MY_SWITCH" value="0xff" />
+  <item>
+    <name>BIND JIS_YEN to BACKQUOTE</name>
+    <identifier>private.bind_jisyen_to_backquote</identifier>
+    <autogen>__KeyToKey__ KeyCode::JIS_YEN, KeyCode::BACKQUOTE</autogen>
+  </item>  
+
+  <item>
+    <name>BIND SWITCH to SPACE</name>
+    <identifier>private.bind_switch_to_space</identifier>
+    <autogen>__KeyToKey__ KeyCode::MY_SWITCH, KeyCode::SPACE</autogen>
+  </item>  
+
+  <item>
+    <name>BIND BACKSLASH</name>
+    <identifier>private.bind_backslash</identifier>
+    <autogen>__KeyToKey__ KeyCode::JIS_UNDERSCORE, KeyCode::BACKSLASH</autogen>
+  </item> 
+
+  <!--
+  <item>
+    <name>BIND BACKSLASH</name>
+    <identifier>private.bind_backslash</identifier>
+    <autogen>__KeyToKey__ KeyCode::JIS_UNDERSCORE, KeyCode::BACKSLASH</autogen>
+  </item> 
+  -->
+
+</root>
