@@ -75,6 +75,8 @@ D DIY
     git show v1.2 查看v1.2标签的详细信息
     git push origin v1.2 分享标签, or, git push --tags 分享所有标签
 
+    git diff view the changes you made relative to the index
+    git diff --cached view the changes you staged for the next commit
     git commit 之前用 git diff --check 检查空格
     每次提交限定于完成一次逻辑功能或bug修复，并适当的分解为多次小更新。
     提交说明一行以内(module - description)，空开一行后，再详细说明。

@@ -27,7 +27,7 @@
       ;;
       ;; WARNING!  Depending on the default font,
       ;; if the size is not supported very well, the frame will be clipped
-      ;; so that the beginning of the buffer may not be visible correctly. 
+      ;; so that the beginning of the buffer may not be visible correctly.
       ;;(set-face-attribute 'default nil :height 165)
       ;; use specific font for Korean charset.
       ;; if you want to use different font size for specific charset,
@@ -124,10 +124,10 @@
     (scroll-down))
   (line-move -1))
 
-(defun local-insert-time () 
-  "Insert the date in current position." 
-  (interactive) 
-  (insert (format-time-string "[%a %Y-%m-%d %H:%M:%S]"))) 
+(defun local-insert-time ()
+  "Insert the date in current position."
+  (interactive)
+  (insert (format-time-string "[%a %Y-%m-%d %H:%M:%S]")))
 
 
 ;;;========== KEY BINDING ==========
@@ -202,13 +202,15 @@
         ("/Users/bigml/.*" "/Users/bigml/.backups" ok-create full-path prepend-name)
         ("/mnt/dev/.*" "/home/bigml/.backups" ok-create full-path prepend-name)
         ("/mnt/revive/.*" "/home/bigml/.backups" ok-create full-path prepend-name)))
+;(setq show-trailing-whitespace t)
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(fill-column 86)
- '(diff-switches "-u"))
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(diff-switches "-u")
+ '(fill-column 86))
+; '(show-trailing-whitespace t))
 ;(setq erc-fill-prefix " ")
 ;(setq default-directory "/home/bigml/workspace/") ;history before 2005-12-6
 ;(setq next-line-add-newlines t)    ;inserts newline to avoid 'end of buffer' error
@@ -245,6 +247,8 @@
 (add-hook 'ess-mode-hook        'hs-minor-mode)
 (add-hook 'perl-mode-hook       'hs-minor-mode)
 (add-hook 'sh-mode-hook         'hs-minor-mode)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;(add-hook ‘c-mode-hook (lambda () (add-to-list ‘write-file-functions ‘delete-trailing-whitespace)))
 ;(add-hook 'gdb-mode-hook '(lambda ()
 ;                            (define-key c-mode-base-map [(f5)] 'gud-go)
 ;                            (define-key c-mode-base-map [(f7)] 'gud-next)
@@ -302,10 +306,10 @@
 ;(setq gnus-startup-file "~/.site-lisp/config/newsrc")
 ;(setq gnus-init-file "~/.site-lisp/config/gnus-config")
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 

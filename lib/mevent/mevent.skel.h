@@ -5,6 +5,15 @@
 #define _MEVENT_H
 
 #include <time.h>
+
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#include <crt_externs.h>
+#define environ (*_NSGetEnviron())
+#define MSG_NOSIGNAL SO_NOSIGPIPE
+#endif
+
 #include "net-const.h"
 
 #include "ClearSilver.h"
@@ -65,7 +74,7 @@ typedef struct mevent_t {
     HDF *hdfsnd;
     unsigned char *payload;
     size_t psize;
-    
+
     unsigned char *rcvbuf;
     HDF *hdfrcv;
 } mevent_t;

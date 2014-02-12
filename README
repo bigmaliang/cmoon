@@ -23,26 +23,27 @@ moon/
 |-- Makefile    编译文件
 |-- maketool    编译辅助工具
 |-- mtools      常用管理脚本
+|-- lib         内部公共库文件目录
 |-- doc         文档目录(杂七杂八)
 |-- res         设计资源(杂七杂八)
-|-- lib         内部公共库文件目录
 |
 |-- event       支持插件的高并发处理缓冲层后台, 详情请参考该目录文档和代码
 |-- deliver     web push 解决方案 (参考 deliver/README)
 |-- eii         中文分词工具(暂无内容)
-|-- moc         在线互动系统(mini but extensiable online communication system)
 |-- grabber     获取邮件, msn, qq 好友方案
 |
 |-- regae       应用初始框架(skeleton)
-|-- bull        应用: www.hnycs.com
 |-- ksa         应用: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
-!-- pop         应用: www.bomdoo.com 播豆网
 |-- dida        应用: www.imdida.org 嘀嗒网
-|-- sora        应用: sora.com?
+|-- sora        应用: www.union.com 三联服务
 |
 `-- memorypark  已作废应用(墓地)
     |-- funk    www.regae.com 送菜网(建设中。。。(暂作废))
+    |-- moc     在线互动系统(mini but extensiable online communication system)
     |-- ksc     DEPRECATED
+    !-- pop     应用: www.bomdoo.com 播豆网
+    |-- bull    应用: www.hnycs.com
+    |-- sora    应用: sora.com?
     `-- rock    DEPRECATED
 
 
@@ -108,7 +109,7 @@ js第三方库，自己在moon/lib/js/下checkout
 ===========
 I 在moon内部新建
 -------------
-    1, cp regae NEWPROJ
+    1, cp regae NEWPROJ (请确保软链接也被正确复制 find . -type l -exec ls -l {} \;)
     2, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
     3, find -name '*voov*'; rename them
     4, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
@@ -119,7 +120,7 @@ II 在moon外部引用
     2, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
     3, find -name '*voov*'; rename them
     4, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
-    
+
     5, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录(绝对路径)
     6, cd NEWPROJ 修改以下文件和目录的连接路径，指向 moon 所在目录
         ./fly/js/pub
