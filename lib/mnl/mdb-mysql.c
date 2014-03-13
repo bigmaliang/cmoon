@@ -25,7 +25,7 @@ struct _mdb_conn_parameter_mysql
 static int mysql_get_token(const char *dsn, char *tok, char **s, char **e)
 {
     if (!dsn || !tok || !s || !e) return 1;
-    
+
     char *p = strstr(dsn, tok);
     char *start, *end;
     start = end = NULL;
@@ -45,7 +45,7 @@ static int mysql_get_token(const char *dsn, char *tok, char **s, char **e)
 static struct _mdb_conn_parameter_mysql* mysql_mdb_parse_dsn(const char *dsn)
 {
     if (!dsn) return NULL;
-    
+
     struct _mdb_conn_parameter_mysql *info = calloc(1, sizeof(struct _mdb_conn_parameter_mysql));
     if (!info)
         return NULL;
@@ -70,13 +70,13 @@ static struct _mdb_conn_parameter_mysql* mysql_mdb_parse_dsn(const char *dsn)
 
     ret = mysql_get_token(dsn, "password", &s, &e);
     if (ret == 0) info->pass = strndup(s, e-s);
-    
+
     return info;
 }
 static void mysql_mdb_free_conn_parameter(struct _mdb_conn_parameter_mysql *pa)
 {
     if (!pa) return;
-    
+
     if (pa->ip) free(pa->ip);
     if (pa->user) free(pa->user);
     if (pa->name) free(pa->name);
@@ -92,23 +92,24 @@ static NEOERR* mysql_mdb_connect(const char* dsn, mdb_conn **rconn)
     conn = calloc(1, sizeof(struct _mdb_conn_mysql));
     if (!conn) return nerr_raise(NERR_NOMEM, "calloc for ms connect failure");
     *rconn = (mdb_conn*)conn;
-    
+
     conn->mysql = mysql_init(NULL);
     if (!conn->mysql) return nerr_raise(NERR_NOMEM, "calloc for mysql failure");
 
     struct _mdb_conn_parameter_mysql *pa = mysql_mdb_parse_dsn(dsn);
     if (!pa) return nerr_raise(NERR_ASSERT, "parse dsn %s failure", dsn);
-        
+
     my_bool reconnect = 1;
     mysql_options(conn->mysql, MYSQL_OPT_RECONNECT, &reconnect);
     mysql_options(conn->mysql, MYSQL_SET_CHARSET_NAME, "utf8");
     mysql_options(conn->mysql, MYSQL_INIT_COMMAND, "SET NAMES 'utf8'");
-    conn->mysql = mysql_real_connect(conn->mysql, pa->ip, pa->user,
-                                     pa->pass, pa->name, 0, NULL, 0);
+    if (!mysql_real_connect(conn->mysql, pa->ip, pa->user,
+                            pa->pass, pa->name, 0, NULL, 0))
+        return nerr_raise(NERR_SYSTEM, "connect to %s failure %s",
+                          dsn, mysql_error(conn->mysql));
+
     mysql_mdb_free_conn_parameter(pa);
-    if (conn->mysql == NULL)
-        return nerr_raise(NERR_SYSTEM, "connect to %s failure", dsn);
-    
+
     return STATUS_OK;
 }
 
@@ -134,7 +135,7 @@ static NEOERR* mysql_mdb_commit(mdb_conn* conn)
 {
     if (mysql_commit(CONN(conn)->mysql) != 0)
         return nerr_raise(NERR_DB, mysql_error(CONN(conn)->mysql));
-    
+
     return STATUS_OK;
 }
 
@@ -142,7 +143,7 @@ static NEOERR* mysql_mdb_rollback(mdb_conn* conn)
 {
     if (mysql_rollback(CONN(conn)->mysql) != 0)
         return nerr_raise(NERR_DB, mysql_error(CONN(conn)->mysql));
-    
+
     return STATUS_OK;
 }
 
@@ -152,7 +153,7 @@ static NEOERR* mysql_mdb_query_fill(mdb_conn* conn, const char* sql_string)
         mysql_free_result(CONN(conn)->res);
     CONN(conn)->res = NULL;
     CONN(conn)->row_no = 0;
-    
+
     if (conn->sql) free(conn->sql);
     conn->sql = NULL;
     if (sql_string)    conn->sql = strdup(sql_string);
@@ -181,7 +182,7 @@ static NEOERR* mysql_mdb_query_getv(mdb_conn* conn, const char* fmt, va_list ap)
     if (!row) return nerr_raise(NERR_OUTOFRANGE, "last row has fetched");
     if (param_count > mysql_num_fields(res))
         return nerr_raise(NERR_ASSERT, "result col num not match");
-    
+
     for (i = 0; i < param_count; i++) {
         if (fmt[i] == 's') {
             char** str_ptr = (char**)va_arg(ap, char**);
@@ -240,7 +241,7 @@ static NEOERR* mysql_mdb_query_geta(mdb_conn* conn, const char* fmt, char* r[])
     if (!row) return nerr_raise(NERR_OUTOFRANGE, "last row has fetched");
     if (param_count > mysql_num_fields(res))
         return nerr_raise(NERR_ASSERT, "result col num not match");
-    
+
     for (i = 0; i < param_count; i++) {
         if (fmt[i] == 's') {
             if (row[col] == NULL)
@@ -255,7 +256,7 @@ static NEOERR* mysql_mdb_query_geta(mdb_conn* conn, const char* fmt, char* r[])
         }
         col++;
     }
-    
+
     CONN(conn)->row_no++;
     return STATUS_OK;
 }
@@ -265,7 +266,7 @@ static int mysql_add_sql_int(char **sql, int val)
     char tok[64];
     char *ostr = *sql;
     char *p, *q;
-    
+
     p = strchr(ostr, '$');
     if (p != NULL) {
         q = p+1;
@@ -274,7 +275,7 @@ static int mysql_add_sql_int(char **sql, int val)
         }
     }
     if (!p || !q) return 1;
-    
+
     sprintf(tok, "%d", val);
     *sql = calloc(1, strlen(ostr)+strlen(tok)+1);
     if (*sql == NULL) return 2;
@@ -291,7 +292,7 @@ static int mysql_add_sql_str(MYSQL *mysql, char **sql, char *val)
 {
     char *ostr = *sql;
     char *p, *q;
-    
+
     p = strchr(ostr, '$');
     if (p != NULL) {
         q = p+1;
@@ -300,7 +301,7 @@ static int mysql_add_sql_str(MYSQL *mysql, char **sql, char *val)
         }
     }
     if (!p || !q) return 1;
-    
+
     *sql = calloc(1, strlen(ostr)+strlen(val)*2+2);
     if (*sql == NULL) return 2;
     char *nstr = *sql;
@@ -320,10 +321,10 @@ static NEOERR* mysql_mdb_query_putv(mdb_conn* conn, const char* fmt, va_list ap)
     int i, col = 0;
     int is_null;
     NEOERR *err = STATUS_OK;
-    
+
     if (param_values == NULL || free_list == NULL)
         return nerr_raise(NERR_NOMEM, "calloc for query putv failure");
-    
+
     for (i = 0; i < param_count; i++) {
         is_null = 0;
 
@@ -331,7 +332,7 @@ static NEOERR* mysql_mdb_query_putv(mdb_conn* conn, const char* fmt, va_list ap)
             is_null = (int)va_arg(ap, int);
             i++;
         }
-        
+
         if (fmt[i] == 's') {
             char* value = (char*)va_arg(ap, char*);
             if (!is_null)
@@ -358,7 +359,7 @@ static NEOERR* mysql_mdb_query_putv(mdb_conn* conn, const char* fmt, va_list ap)
             goto done;
         }
     }
-    
+
     mtc_dbg("%s %d", conn->sql, param_count);
     if (mysql_real_query(CONN(conn)->mysql, conn->sql, strlen(conn->sql)) != 0)
         err = nerr_raise(NERR_DB, "%s %s",
@@ -367,14 +368,14 @@ static NEOERR* mysql_mdb_query_putv(mdb_conn* conn, const char* fmt, va_list ap)
     if (CONN(conn)->res != NULL)
         mysql_free_result(CONN(conn)->res);
     CONN(conn)->res = mysql_store_result(CONN(conn)->mysql);
-  
+
 done:
     for (i = 0; i < param_count; i++)
         if (free_list[i])
             free(param_values[i]);
     free(param_values);
     free(free_list);
-    
+
     return err;
 }
 

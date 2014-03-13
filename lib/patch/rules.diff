@@ -1,0 +1,29 @@
+--- rules.mk	2014-03-13 11:22:01.000000000 +0800
++++ rules.mk.ok	2014-03-13 11:21:52.000000000 +0800
+@@ -74,7 +74,7 @@
+ ## Programs
+ 
+ INSTALL    = /usr/bin/install -c
+-CC	   = @PTHREAD_CC@
++CC	   = gcc
+ MKDIR      = mkdir -p
+ RM         = rm -f
+ CP         = cp -p
+@@ -88,7 +88,7 @@
+ RUBY       = 
+ 
+ CPPFLAGS   = -I$(NEOTONIC_ROOT) 
+-CFLAGS     = -g -O2 @PTHREAD_CFLAGS@ -Wall $(CPPFLAGS) $(PICFLG)
++CFLAGS     = -g -O2 -D_THREAD_SAFE -Wall $(CPPFLAGS) $(PICFLG)
+ OUTPUT_OPTION = -o $@
+ LD         = $(CC) -o
+ LDFLAGS    = -L$(LIB_DIR) 
+@@ -98,7 +98,7 @@
+ RANLIB     = ranlib
+ DEP_LIBS   = $(DLIBS:-l%=$(LIB_DIR)lib%.a)
+ DBI_LIBS   = -ldbi -ldl -lz
+-LIBS       = @PTHREAD_LIBS@  -lz
++LIBS       = -lz
+ LS         = /bin/ls
+ XARGS      = xargs -i%
+ BUILD_WRAPPERS = 

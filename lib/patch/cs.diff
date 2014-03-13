@@ -1,0 +1,236 @@
+Index: ClearSilver.h
+===================================================================
+--- ClearSilver.h	(revision 922)
++++ ClearSilver.h	(working copy)
+@@ -30,6 +30,7 @@
+ #define hash_next ne_hash_next
+ #define hash_str_comp ne_hash_str_comp
+ #define hash_str_hash ne_hash_str_hash
++#define hash_str_free ne_hash_str_free
+ #endif /* CS_COMPAT */
+ 
+ #include <stdlib.h>
+Index: cgi/cgi.c
+===================================================================
+--- cgi/cgi.c	(revision 922)
++++ cgi/cgi.c	(working copy)
+@@ -791,7 +791,7 @@
+ 
+   if (!strcmp(method, "POST"))
+   {
+-    if (type && !strcmp(type, "application/x-www-form-urlencoded"))
++    if (type && !strncmp(type, "application/x-www-form-urlencoded", 33))
+     {
+       err = _parse_post_form(cgi);
+       if (err != STATUS_OK) return nerr_pass (err);
+Index: cgi/Makefile
+===================================================================
+--- cgi/Makefile	(revision 922)
++++ cgi/Makefile	(working copy)
+@@ -25,7 +25,7 @@
+ 
+ DLIBS += -lneo_cgi -lneo_cs -lneo_utl -lstreamhtmlparser # -lefence
+ 
+-TARGETS = $(CGI_LIB) $(STATIC_EXE) $(STATIC_CSO) $(CGICSTEST_EXE) \
++TARGETS = $(CGI_LIB) $(STATIC_EXE) $(CGICSTEST_EXE) \
+ 	$(CGITEST_EXE) test
+ 
+ CGI_CS_TESTS = test_cgi_funcs.cs test_cgi_escaping.cs
+Index: Makefile
+===================================================================
+--- Makefile	(revision 922)
++++ Makefile	(working copy)
+@@ -48,10 +48,8 @@
+ 	./mkinstalldirs $(DESTDIR)$(cs_includedir)
+ 	./mkinstalldirs $(DESTDIR)$(bindir)
+ 	./mkinstalldirs $(DESTDIR)$(libdir)
+-	./mkinstalldirs $(DESTDIR)$(mandir)/man3
+ 	$(INSTALL) -m 644 ClearSilver.h $(DESTDIR)$(cs_includedir)/
+ 	$(INSTALL) -m 644 cs_config.h $(DESTDIR)$(cs_includedir)/
+-	$(INSTALL) -m 644 man/man3/*.3 $(DESTDIR)$(mandir)/man3/
+ 	@for mdir in $(SUBDIRS); do \
+ 	  if test -d $$mdir; then \
+ 	    if test -f $$mdir/Makefile.PL -a ! -f $$mdir/Makefile; then \
+Index: cs_config.h.in
+===================================================================
+--- cs_config.h.in	(revision 922)
++++ cs_config.h.in	(working copy)
+@@ -61,10 +61,6 @@
+ #undef ENABLE_GETTEXT
+ 
+ 
+-/* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
+-   */
+-#undef HAVE_DECL_TZNAME
+-
+ /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
+    */
+ #undef HAVE_DIRENT_H
+@@ -237,13 +233,13 @@
+ /* Define to `int' if <sys/types.h> does not define. */
+ #undef mode_t
+ 
+-/* Define to `long int' if <sys/types.h> does not define. */
++/* Define to `long' if <sys/types.h> does not define. */
+ #undef off_t
+ 
+ /* Define to `int' if <sys/types.h> does not define. */
+ #undef pid_t
+ 
+-/* Define to `unsigned int' if <sys/types.h> does not define. */
++/* Define to `unsigned' if <sys/types.h> does not define. */
+ #undef size_t
+ 
+ #endif /* __CS_CONFIG_H_ */
+Index: util/neo_err.h
+===================================================================
+--- util/neo_err.h	(revision 922)
++++ util/neo_err.h	(working copy)
+@@ -48,7 +48,7 @@
+   int error;
+   int err_stack;
+   int flags;
+-  char desc[256];
++  char desc[1024];
+   const char *file;
+   const char *func;
+   int lineno;
+@@ -136,6 +136,8 @@
+                         NEOERR *nerr, const char *fmt, ...)
+                         ATTRIBUTE_PRINTF(5,6);
+ 
++char *_lookup_errname(NEOERR *err, char *buf, int buflen);
++
+ /* function: nerr_log_error - print the error chain to stderr
+  * description: prints out the error traceback to stderr
+  */
+Index: util/neo_hash.c
+===================================================================
+--- util/neo_hash.c	(revision 922)
++++ util/neo_hash.c	(working copy)
+@@ -21,7 +21,8 @@
+ static NEOERR *_hash_resize(NE_HASH *hash);
+ static NE_HASHNODE **_hash_lookup_node (NE_HASH *hash, void *key, UINT32 *hashv);
+ 
+-NEOERR *ne_hash_init (NE_HASH **hash, NE_HASH_FUNC hash_func, NE_COMP_FUNC comp_func)
++NEOERR *ne_hash_init (NE_HASH **hash, NE_HASH_FUNC hash_func,
++                      NE_COMP_FUNC comp_func, NE_DESTROY_FUNC destroy_func)
+ {
+   NE_HASH *my_hash = NULL;
+ 
+@@ -33,6 +34,7 @@
+   my_hash->num = 0;
+   my_hash->hash_func = hash_func;
+   my_hash->comp_func = comp_func;
++  my_hash->destroy_func = destroy_func;
+ 
+   my_hash->nodes = (NE_HASHNODE **) calloc (my_hash->size, sizeof(NE_HASHNODE *));
+   if (my_hash->nodes == NULL)
+@@ -63,6 +65,7 @@
+     while (node)
+     {
+       next = node->next;
++      if (my_hash->destroy_func) my_hash->destroy_func(node);
+       free(node);
+       node = next;
+     }
+@@ -120,6 +123,7 @@
+     rem = *node;
+     *node = rem->next;
+     value = rem->value;
++    if (hash->destroy_func) hash->destroy_func(rem);
+     free(rem);
+     hash->num--;
+   }
+@@ -281,6 +285,14 @@
+   return ne_crc((unsigned char *)a, strlen((const char *)a));
+ }
+ 
++void ne_hash_str_free(void *a)
++{
++  NE_HASHNODE *node = a;
++  if (node) {
++      free(node->key);
++  }
++}
++
+ int ne_hash_int_comp(const void *a, const void *b)
+ {
+   if (a == b) return 1;
+Index: util/neo_hash.h
+===================================================================
+--- util/neo_hash.h	(revision 922)
++++ util/neo_hash.h	(working copy)
+@@ -19,6 +19,7 @@
+ 
+ typedef UINT32 (*NE_HASH_FUNC)(const void *);
+ typedef int (*NE_COMP_FUNC)(const void *, const void *);
++typedef void (*NE_DESTROY_FUNC)(void *node);
+ 
+ typedef struct _NE_HASHNODE
+ {
+@@ -36,9 +37,11 @@
+   NE_HASHNODE **nodes;
+   NE_HASH_FUNC hash_func;
+   NE_COMP_FUNC comp_func;
++  NE_DESTROY_FUNC destroy_func;
+ } NE_HASH;
+ 
+-NEOERR *ne_hash_init (NE_HASH **hash, NE_HASH_FUNC hash_func, NE_COMP_FUNC comp_func);
++NEOERR *ne_hash_init (NE_HASH **hash, NE_HASH_FUNC hash_func,
++                      NE_COMP_FUNC comp_func, NE_DESTROY_FUNC destroy_func);
+ void ne_hash_destroy (NE_HASH **hash);
+ NEOERR *ne_hash_insert(NE_HASH *hash, void *key, void *value);
+ void *ne_hash_lookup(NE_HASH *hash, void *key);
+@@ -48,6 +51,7 @@
+ 
+ int ne_hash_str_comp(const void *a, const void *b);
+ UINT32 ne_hash_str_hash(const void *a);
++void ne_hash_str_free(void *a);
+ 
+ int ne_hash_int_comp(const void *a, const void *b);
+ UINT32 ne_hash_int_hash(const void *a);
+Index: util/neo_hdf.c
+===================================================================
+--- util/neo_hdf.c	(revision 922)
++++ util/neo_hdf.c	(working copy)
+@@ -559,7 +559,7 @@
+   NEOERR *err;
+   HDF *child;
+ 
+-  err = ne_hash_init(&(hdf->hash), hash_hdf_hash, hash_hdf_comp);
++  err = ne_hash_init(&(hdf->hash), hash_hdf_hash, hash_hdf_comp, NULL);
+   if (err) return nerr_pass(err);
+ 
+   child = hdf->child;
+@@ -1015,6 +1015,8 @@
+     lp->child = hp->next;
+     hp->next = NULL;
+   }
++  if (lp && lp->last_hp == hp) lp->last_hp = NULL;
++  if (lp && lp->last_hs == hp) lp->last_hs = NULL;
+   _dealloc_hdf (&hp);
+ 
+   return STATUS_OK;
+@@ -1620,7 +1622,7 @@
+     {
+       /* Valid hdf name is [0-9a-zA-Z_.]+ */
+       name = s;
+-      while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
++      while (*s && (isalnum(*s) || *s == '_' || *s == '.' || *(unsigned char*)s > 127)) s++;
+       SKIPWS(s);
+ 
+       if (s[0] == '[') /* attributes */
+Index: util/neo_err.c
+===================================================================
+--- util/neo_err.c	(revision 922)
++++ util/neo_err.c	(working copy)
+@@ -190,7 +190,7 @@
+   return nerr;
+ }
+ 
+-static char *_lookup_errname(NEOERR *err, char *buf, int buflen)
++char *_lookup_errname(NEOERR *err, char *buf, int buflen)
+ {
+   char *err_name;
+ 

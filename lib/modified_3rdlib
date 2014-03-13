@@ -1,3 +1,6 @@
+**DEPRACATED** please use: patch -p0 -i cs.diff
+
+
 ClearSilver
 ===========
 
@@ -6,41 +9,41 @@ ClearSilver
     1018
     +++if (lp && lp->last_hp == hp) lp->last_hp = NULL;
     +++if (lp && lp->last_hs == hp) lp->last_hs = NULL;
-    
+
     1623
           while (*s && (isalnum(*s) || *s == '_' || *s == '.')) s++;
-    ===>      
+    ===>
           while (*s && (isalnum(*s) || *s == '_' || *s == '.' || *(unsigned char*)s > 127)) s++;
     让 hdf 的 key 支持中文（在 read_string 的时候）
-    
-    
+
+
     util/neo_err.c
     --------------
     193
     static char *_lookup_errname(NEOERR *err, char *buf, int buflen)
     ===>
     char *_lookup_errname(NEOERR *err, char *buf, int buflen)
-    
+
     util/neo_err.h
     --------------
     51
       char desc[256];
     ===>
       char desc[1024];
-    
+
     139
     ++++
     char *_lookup_errname(NEOERR *err, char *buf, int buflen);
-    
-    
+
+
     cgi/cgi.c 794
     -------------
         if (type && !strcmp(type, "application/x-www-form-urlencoded"))
-    
+
         ===>
-    
+
         if (type && !strncmp(type, "application/x-www-form-urlencoded", 33))
-    
+
         有些插件搞得 contentype 成了(可能是jquery.form.js搞的)
     626      pcb = cgi->parse_callbacks;
     (gdb) p type
@@ -59,7 +62,7 @@ ClearSilver
     ===>
     NEOERR *ne_hash_init (NE_HASH **hash, NE_HASH_FUNC hash_func,
                           NE_COMP_FUNC comp_func, NE_DESTROY_FUNC destroy_func);
-                          
+
 
     utl/neo_hash.c
     37 +my_hash->destroy_func = destroy_func;
@@ -79,4 +82,3 @@ ClearSilver
 
     ClearSilver.h
     33 +#define hash_str_free ne_hash_str_free
-

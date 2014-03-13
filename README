@@ -76,14 +76,16 @@ $ git clone git://github.com/bigml/cmoon.git
 
 /usr/local/src/ 目录下手动安装
 ---------------------------
-    clearsilver     http://clearsilver.googlecode.com/svn/trunk/ clearsilver (clearsilver代码需稍作修改，参考lib/modified_3rdlib)
+    clearsilver     http://clearsilver.googlecode.com/svn/trunk/ clearsilver
                     depend on streamhtmlparser http://streamhtmlparser.googlecode.com/svn/trunk/ streamhtmlparser
                     ./autogen.sh --disable-wdb --disable-perl --disable-ruby --disable-java --disable-python
                     mkdir libs
+                    cd streamhtmlparser; make; cd ..
                     cp streamhtmlparser/.libs/libstreamhtmlparser.so libs/
                     cp streamhtmlparser/.libs/* /usr/local/lib/
                     mkdir -p man/man3/
                     touch man/man3/1.3
+                    (clearsilver代码需稍作修改，patch -p0 -i lib/cs.diff, 可能需要 path -i lib/rules.diff)
                     make
     eMail           git://github.com/bigml/eMail.git
                     depend on dlib git://github.com/deanproxy/dlib.git
