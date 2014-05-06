@@ -1,7 +1,18 @@
+介绍
+====
+在脚本语言众多的情况下，moon 是web开发的一种C语言解决方案。
+他主要是一些web开发常用的库和组件集合。
+应用初始骨架请参考 github.com/bigml/reage
+应用具体实例请参考 github.com/bigml/dida
+
+使用moon开发的网站应用，主要有：
+    106.187.96.70  imdida.org (需绑定host访问)
+    www.kosherall.com.cn
+
+
+
 系统性能
 ======
-s.m. is cloud all the time!
-
 测试对象       测试时间     响应数/秒      失败率
 php-fpm      180秒      19066.339   0.017191%
 moon         180秒      20281.45    0.022023%
@@ -9,9 +20,7 @@ moon         180秒      20281.45    0.022023%
 详细请参考 doc/webbench/dynamic-get-s.txt
 
 通过使用 webbench 进行跨机器、高速内网环境测试， 动态页面获取， 无业务逻辑情况下，
-moon(unix domain socket fastcgi) 与 php-fpm 的响应性能基本没有差别，
-所以，各位大爷(包括我)，不要争论使用哪种语言开发的动态页面响应速度更快了，
-在强大的 cpu 和内存面前， s.m. is cloud all the time!
+moon(unix domain socket fastcgi) 与 php-fpm 的响应性能基本没有差别。
 
 
 
@@ -23,28 +32,12 @@ moon/
 |-- Makefile    编译文件
 |-- maketool    编译辅助工具
 |-- mtools      常用管理脚本
+|
 |-- lib         内部公共库文件目录
-|-- doc         文档目录(杂七杂八)
-|-- res         设计资源(杂七杂八)
-|
 |-- event       支持插件的高并发处理缓冲层后台, 详情请参考该目录文档和代码
+|
 |-- deliver     web push 解决方案 (参考 deliver/README)
-|-- eii         中文分词工具(暂无内容)
-|-- grabber     获取邮件, msn, qq 好友方案
-|
-|-- regae       应用初始框架(skeleton)
-|-- ksa         应用: www.kosherall.com.cn 内容(moon 支持同时多个项目的开发:)
-|-- dida        应用: www.imdida.org 嘀嗒网
-|-- sora        应用: www.union.com 三联服务
-|
-`-- memorypark  已作废应用(墓地)
-    |-- funk    www.regae.com 送菜网(建设中。。。(暂作废))
-    |-- moc     在线互动系统(mini but extensiable online communication system)
-    |-- ksc     DEPRECATED
-    !-- pop     应用: www.bomdoo.com 播豆网
-    |-- bull    应用: www.hnycs.com
-    |-- sora    应用: sora.com?
-    `-- rock    DEPRECATED
+`-- eii         中文分词工具(暂无内容)
 
 
 

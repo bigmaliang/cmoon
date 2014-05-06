@@ -5,7 +5,7 @@ A 配置文件
     git config --list 可以查看目前的配置信息
 
 	参考 /home/bigml/.gitconfig, /home/bigml/.git-completion.bash
-	
+
 
 B 基本概念
     git 使用 SHA-1 算法计算数据的校验和
@@ -28,23 +28,23 @@ B 基本概念
         Ref 是引用的简写，是SHA-1值的一些可读性更强的名字引用
         Refspec 用户远端仓库的获取操作规范，其格式为 [+]<src>:<dst>，可选+告诉git不能快速演进的情况下，强制更新。
     	origin/master = remotes/origin/master = refs/remotes/origin/master
-        
+
         .git/config 中设置了各个remote的fetch方法（配置文件中可以指定多个Refspec）
 		[remote "origin"]
 			url = git@github.com:bigml/cmoon.git
 			fetch = +refs/heads/*:refs/remotes/origin/*
         拉取remotes/下的所有分支，将'*'改为'master'可以设置只拉取master分支。
         $git fetch origin master:refs/remotes/origin/mymaster 只做一次性拉取。
-		
+
 C 建立 git 项目
     git init, git add, git commit
     git clone ...
-    
+
 
 D DIY
     gitk
     git log OPTION dir,file,branch
-    
+
 	-p 按补丁格式显示每个更新之间的差异。
 	-3 只显示最近3次的提交。
 	--stat 显示每次更新的文件修改统计信息。
@@ -91,7 +91,8 @@ D DIY
 
     git rm --cache 取消跟踪，但不删除（untrack but not delete）当前工作目录中的文件，一般结合.gitignore用于取消对配置文件的跟踪。
     但在 git push 后会删掉其他 clone 的 index 及 工作目录文件。 故执行该操作前请做好文件备份。
-    
+
+    git submodule add git@github.com:bigml/cmoon.git moon 添加其他项目到当前某个子目录。
 
 
 E 协调
@@ -143,7 +144,7 @@ E 协调
                D---E---F---G master
     rebase 能产生一个更为简洁的提交历史（特别是非维护者，仅小修改时）。
     注：永远不要rebase那些已经推送到公共仓库的更新(参考http://github.danmarner.com/section/ch3-6/)。
-    
+
 
 F 远程
 	$git remote -v 查看所有远程仓库(respository), 同时支持 git remote add name url, rm, rename...
@@ -156,7 +157,7 @@ F 远程
     分布式协作的三种方式：
 	    git diff ... -p > x.patch, git log -p ...
 	    git apply x.patch，同时可以用 git apply --check x.path 现检查补丁是否能顺利打上。
-	
+
 	    git format-patch -M origin/master
 	    git am xxx.patch
 	    该方式能将贡献者的提交信息，作者等一起应用到你的分支中。
@@ -186,7 +187,7 @@ G 服务器
     client$ git commit ...
     client$ git push origin master
     另外，服务器端将 /etc/passwd 文件的 git:x:1000:1000::/home/git:/bin/sh 改为 git:x:1000:1000::/home/git:/usr/bin/git-shell 可以将 git 用户的活动范围限制在仅与git相关（无bash登录权限）
-    
+
     http 服务器以下配置：
 		$ cd /var/www/htdocs/
 		$ git clone --bare /path/to/git_project gitproject.git

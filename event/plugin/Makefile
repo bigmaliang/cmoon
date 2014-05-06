@@ -18,7 +18,7 @@ all: $(LIB_PLUGIN)
 mevent_%.so: private/%_internal.c private/%_timer.c mevent_%.c
 	@echo "$(CC) -o $@"
 ifeq ($(UNAME), Darwin)
-	@$(CC) $(CFLAGS) -c $<
+	@$(CC) $(CFLAGS) -c $< -o $(patsubst %.c, %.o, $<)
 	@$(CC) -dynamiclib -undefined suppress -flat_namespace $(patsubst %.c, %.o, $<) -o $@
 else
 	@$(CC) $(CFLAGS) -o $@ $<
