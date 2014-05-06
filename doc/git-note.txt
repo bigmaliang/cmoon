@@ -94,6 +94,8 @@ D DIY
 
     git submodule add git@github.com:bigml/cmoon.git moon 添加其他项目到当前某个子目录。
 
+    git reflog expire --expire=now --all; git gc --aggressive --prune=now 删掉没有被引用过的文件，清理空间
+
 
 E 协调
     git branch -a 查看所有分支（包括远程）, remotename/branchname 表示远程分支

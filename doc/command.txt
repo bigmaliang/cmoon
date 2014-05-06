@@ -101,3 +101,6 @@ scrot -u x.jpg
                             with the mouse
   -b, --border              When selecting a window, grab wm border too
   -u, --focused             use the currently focused window
+
+
+git rev-list --objects --all |     while read sha1 fname;     do         echo -e "$(git cat-file -s $sha1)\t$\t$fname";     done | sort -n > filesize.txt

@@ -12,6 +12,7 @@ CFLAGS += -I$(BASEDIR)event/daemon/ $(INC_MOON) -Iprivate
 
 SOURCES = $(wildcard *.c)
 LIB_PLUGIN = $(patsubst %.c, %.so, $(SOURCES))
+OBJ_PLUGIN = $(patsubst %.c, %.o, $(SOURCES))
 
 all: $(LIB_PLUGIN)
 
@@ -33,3 +34,4 @@ uninstall:
 
 clean:
 	rm -f $(LIB_PLUGIN)
+    rm -f $(OBJ_PLUGIN)
