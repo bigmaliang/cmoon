@@ -26,12 +26,12 @@ moon(unix domain socket fastcgi) 与 php-fpm 的响应性能基本没有差别�
 
 目录结构
 =======
-
 moon/
 |-- Make.env    编译相关宏定义
 |-- Makefile    编译文件
 |-- maketool    编译辅助工具
 |-- mtools      常用管理脚本
+|-- doc         各种文档
 |
 |-- lib         内部公共库文件目录
 |-- event       支持插件的高并发处理缓冲层后台, 详情请参考该目录文档和代码
@@ -43,14 +43,12 @@ moon/
 
 开发环境
 ======
-
-[# useradd -d /opt -g code -N forge]
 # mkdir -p /var/log/moon/ && chmod 777 /var/log/moon/
-$ git clone git://github.com/bigml/cmoon.git
+$ git clone --recursive git://github.com/bigml/cmoon.git
 
 
-系统安装
-------
+编译环境安装
+==========
     Debian                                      RedHat
     apt-get install locales
     dpkg-reconfigure locales
@@ -67,8 +65,8 @@ $ git clone git://github.com/bigml/cmoon.git
     libgd2-xpm-dev                              gd-devel.386
     pkg-config
 
-/usr/local/src/ 目录下手动安装
----------------------------
+    /usr/local/src/ 目录下手动安装
+    ---------------------------
     clearsilver     http://clearsilver.googlecode.com/svn/trunk/ clearsilver
                     depend on streamhtmlparser http://streamhtmlparser.googlecode.com/svn/trunk/ streamhtmlparser
                     ./autogen.sh --disable-wdb --disable-perl --disable-ruby --disable-java --disable-python
@@ -78,60 +76,31 @@ $ git clone git://github.com/bigml/cmoon.git
                     cp streamhtmlparser/.libs/* /usr/local/lib/
                     mkdir -p man/man3/
                     touch man/man3/1.3
-                    (clearsilver代码需稍作修改，patch -p0 -i lib/cs.diff, 可能需要 path -i lib/rules.diff)
+                    (clearsilver代码需稍作修改，patch -p0 -i lib/patches/cs.diff, 可能需要 path -i lib/patches/rules.diff)
                     make
     eMail           git://github.com/bigml/eMail.git
                     depend on dlib git://github.com/deanproxy/dlib.git
     discount        git://github.com/Orc/discount.git
-
-js第三方库，自己在moon/lib/js/下checkout
-------------------------------------
-    jquerytools     git://github.com/bigml/jquerytools.git
-    flot            git://github.com/flot/flot.git
-    cycle           git://github.com/malsup/cycle.git
-    noty            git://github.com/needim/noty.git
-    markitup        git://github.com/bigml/1.x.git markitup
-    jqueryuploader  git://github.com/bigml/jqueryUploader.git
+    libmongoclient  git@github.com:algernon/libmongo-client.git
+                    (代码需要稍作修改，patch -p0 -i lib/patches/libmongoclient.diff)
 
 
-依赖路径写在 Make.env 中, 如果装好上面软件后还出现编译错误, 请自行修改 Make.env 之 DEPEND LIBRARY 部分.
-
-能编译通过后，请参考应用 doc/system.txt 文档准备数据库和 web 服务器环境，便可以开始开发。
+    修改Make.env，各种库的依赖路径, 如果装好上面软件后还出现编译错误, 请自行修改 Make.env 之 DEPEND LIBRARY 部分.
+    能编译通过后，请参考应用 doc/system.txt 文档准备数据库和 web 服务器环境，便可以开始开发。
 
 
 
 新建项目(应用)
 ===========
-I 在moon内部新建
--------------
-    1, cp regae NEWPROJ (请确保软链接也被正确复制 find . -type l -exec ls -l {} \;)
-    2, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
+    1, git clone --recursive git://github.com/bigml/regae.git PROJNAME
+    2, cd PROJNAME; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
     3, find -name '*voov*'; rename them
-    4, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
-
-II 在moon外部引用
---------------
-    1, 拷贝 regae 目录至需要的 NEWPROJ
-    2, cd NEWPROJ; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
-    3, find -name '*voov*'; rename them
-    4, mkdir -p /var/log/moon/NEWPROJ/; chmod 777 /var/log/moon/NEWPROJ/
-
-    5, 修改 NEWPROJ//Make.env 之 BASEDIR 路径，指向 moon 所在目录(绝对路径)
-    6, cd NEWPROJ 修改以下文件和目录的连接路径，指向 moon 所在目录
-        ./fly/js/pub
-        ./fly/css/pub
-        ./fly/css/modules/noty -> lib/js/noty/css
-        ./xport/daemon
-        ./xport/plugin/mevent_plugin.h
-        ./xport/plugin/mevent_skeleton.c
-        ./xport/plugin/mevent_skeleton.h
-        ./xport/test/stats.c
+    4, mkdir -p /var/log/moon/PROJNAME/; chmod 777 /var/log/moon/PROJNAME/
 
 
 
 注:
 ==
-
 1. use 4 spaces as TAB, set (setq-default indent-tabs-mode nil) in ~/.emacs
 2. RESERVED key in request url
     /json/xxx: output json
