@@ -1,0 +1,18 @@
+[submodule "lib/js/jquerytools"]
+	path = lib/js/jquerytools
+	url = git@github.com:jquerytools/jquerytools.git
+[submodule "lib/js/flot"]
+	path = lib/js/flot
+	url = git://github.com/flot/flot.git
+[submodule "lib/js/cycle"]
+	path = lib/js/cycle
+	url = git://github.com/malsup/cycle.git
+[submodule "lib/js/markitup"]
+	path = lib/js/markitup
+	url = git@github.com:markitup/1.x.git
+[submodule "lib/js/jqueryUploader"]
+	path = lib/js/jqueryUploader
+	url = git@github.com:jdeniau/jquery-image-uploader.git
+[submodule "lib/js/noty"]
+	path = lib/js/noty
+	url = git://github.com/needim/noty.git

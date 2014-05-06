@@ -1,0 +1,104 @@
+Web后台开发人员笔试题
+
+姓名：             笔试时间：
+
+
+
+1: 请写出给 /home/wws/Dropbox/ 目录下所有文件为系统中所有用户加上执行权限的命令（5分）
+
+
+2: 有一个文件 /home/wws/.bashrc，现欲对其进行版本管理，将其放入/home/wws/svn/config/bashrc。修改任意一个两者都改。但删除任意一个另外一个还要存在。请给出解决方案（5分）。
+
+
+3: 请写出删除 /home/wws/doc/ 目录下所有 .JPG 结尾的文件（5分）。
+
+
+4: 现有rand(x) 函数返回 0~x 之间的随机整数，限调用一次rand()，请写出表达式返回 -x ~ x 之间的任意整数（5分）。
+
+
+
+5: 某幼儿园班主任需要详细了解 某个幼儿 的基本情况和一段时间内的请假信息，请尽可能周全考虑，为其设计一段数据用于页面展示，数据格式可以是xml, json, 或者其它你熟悉的（10分）。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+6: 请描述socket通信常用的两种协议及其区别，以及同步、异步socket通信的区别及应用场景（10分）。
+
+
+
+
+
+
+
+
+
+
+
+7: 现某表内有N(n > 1000000)条数据，请设计一种较优表结构，同时满足以下功能：（10分）
+    1.支持对这N条数据的排序
+    2.支持新增和删除指定位置
+    3.支持调整某行至指定位置
+    比如：最简单的方法，为每行新增个order字段，指明该行的排序顺序。
+
+
+
+
+
+
+
+8: 请用你熟悉的语言，自己实现一段对多个数字进行排序的程序（20分）。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9: 请用你熟悉的语言，自己实现一段去掉字符串开始和结尾特定字符的函数(可修改输入字符串, 如:输入 "aa newa word aaa", 'a'; 输出 " newa word ")（20分）。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10: 请翻译（10分）。
+  I have been trying for days to center a position:fixed element,
+  a lot of solutions all around the web have been found and yet,
+  either due to inefficiency or my own inexperience, none of them worked.
+
+  The scenario is as follows: I want to make an image album,
+  whenever you click a image a fixed div is made visible, holding said image,
+  this is actually done via JavaScript.
+  The problem occurs when I want to center the div, no matter which resolution you are using.

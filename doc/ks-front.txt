@@ -1,0 +1,65 @@
+1. 某幼儿园班主任需要详细了解某幼儿的基本情况和一段时间内的请假信息，请为其设计一段json数据用于页面展示。
+
+{
+    uid: 8,
+    name: '李克强',
+    male: 1,
+    birthday: '2011-01-03',
+    inday: '2014-02-12',
+    address: '长沙市开福区马兰山西12栋702',
+    email: 'mami@163.com',
+    phone: '13965657676',
+    offtime: [
+        {offid: 20, stime: '2014-02-15 08:00', etime: '2014-02-15 18:00', remark: '会见外宾'},
+        {offid: 25, stime: '2014-02-24 08:00', etime: '2014-02-28 08:00', remark: '外出访友'}
+    ]
+}
+
+
+2. 请简单描述css中 position: relative, absolute, fixed 的不同及常用场景
+
+fixed:    不占用空间，并且位于浏览器窗口的固定位置（不随页面滚动而移动）
+relative: 占用空间，相对于其正常位置进行定位；并常用于让子元素的 absolute 有参考
+absolute: 不占用空间，位于页面固定位置，如其父元素有position:relative属性，则以其位置为参考。
+
+
+3. 请翻译
+I have been trying for days to center a position:fixed element,
+a lot of solutions all around the web have been found and yet,
+either due to inefficiency or my own inexperience, none of them worked.
+
+The scenario is as follows: I want to make an image album,
+whenever you click a image a fixed div is made visible, holding said image,
+this is actually done via JavaScript.
+The problem occurs when I want to center the div, no matter which resolution you are using.
+
+这几天都在想法怎么让一个position:fixed的元素居中，
+网上查到了多种解决方案，
+但不知为何，没一个能凑效。
+
+设想如下情形：我要做一个相册，
+点击任意图片就显示某个div元素，同时上述图片保持不变，用js实现。
+问题是我想让这个div居中，不论用什么办法。
+
+
+
+你收集整理常用的js css模块
+
+css3
+
+
+开源、协同、自己的代码
+
+
+
+公司介绍
+个人介绍
+岗位介绍（技能要求、发展通道）
+
+自我介绍
+参与过项目介绍
+对软件行业看法（兴趣）
+离职原因、个人状况（居住、婚姻、长沙）
+对薪资要求
+
+代码
