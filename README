@@ -2,12 +2,17 @@
 ====
 在脚本语言众多的情况下，moon 是web开发的一种C语言解决方案。
 他主要是一些web开发常用的库和组件集合。
+
 应用初始骨架请参考 github.com/bigml/reage
 应用具体实例请参考 github.com/bigml/dida
 
 使用moon开发的网站应用，主要有：
     106.187.96.70  imdida.org (需绑定host访问)
     www.kosherall.com.cn
+
+$ git clone --recursive git://github.com/bigml/cmoon.git
+# mkdir -p /var/log/moon/ && chmod 777 /var/log/moon/
+
 
 
 
@@ -42,13 +47,7 @@ moon/
 
 
 开发环境
-======
-# mkdir -p /var/log/moon/ && chmod 777 /var/log/moon/
-$ git clone --recursive git://github.com/bigml/cmoon.git
-
-
-编译环境安装
-==========
+=======
     Debian                                      RedHat
     apt-get install locales
     dpkg-reconfigure locales
@@ -59,7 +58,8 @@ $ git clone --recursive git://github.com/bigml/cmoon.git
     postgresql                                  postgresql-server.i386
     libpq-dev                                   postgresql84-devel.i386
     libevent-dev                                libevent-devel.i386
-    libfcgi-dev                                 fcgi-devel.i386 (http://www.fastcgi.com/dist/fcgi.tar.gz)
+    libfcgi-dev                                 fcgi-devel.i386
+                                                (http://www.fastcgi.com/dist/fcgi.tar.gz)
     libmemcached-dev                            libmemcached-devel.i386
     libjson0-dev                                https://github.com/jehiah/json-c
     libgd2-xpm-dev                              gd-devel.386
@@ -68,15 +68,20 @@ $ git clone --recursive git://github.com/bigml/cmoon.git
     /usr/local/src/ 目录下手动安装
     ---------------------------
     clearsilver     http://clearsilver.googlecode.com/svn/trunk/ clearsilver
-                    depend on streamhtmlparser http://streamhtmlparser.googlecode.com/svn/trunk/ streamhtmlparser
-                    ./autogen.sh --disable-wdb --disable-perl --disable-ruby --disable-java --disable-python
+                    depend on streamhtmlparser
+                    http://streamhtmlparser.googlecode.com/svn/trunk/ streamhtmlparser
+
+                    ./autogen.sh --disable-wdb --disable-perl --disable-ruby
+                                 --disable-java --disable-python
                     mkdir libs
                     cd streamhtmlparser; make; cd ..
                     cp streamhtmlparser/.libs/libstreamhtmlparser.so libs/
                     cp streamhtmlparser/.libs/* /usr/local/lib/
                     mkdir -p man/man3/
                     touch man/man3/1.3
-                    (clearsilver代码需稍作修改，patch -p0 -i lib/patches/cs.diff, 可能需要 path -i lib/patches/rules.diff)
+                    (clearsilver代码需稍作修改，
+                     patch -p0 -i lib/patches/cs.diff,
+                     可能需要 path -i lib/patches/rules.diff)
                     make
     eMail           git://github.com/bigml/eMail.git
                     depend on dlib git://github.com/deanproxy/dlib.git
@@ -85,23 +90,17 @@ $ git clone --recursive git://github.com/bigml/cmoon.git
                     (代码需要稍作修改，patch -p0 -i lib/patches/libmongoclient.diff)
 
 
-    修改Make.env，各种库的依赖路径, 如果装好上面软件后还出现编译错误, 请自行修改 Make.env 之 DEPEND LIBRARY 部分.
+    修改Make.env，各种库的依赖路径, 如果装好上面软件后还出现编译错误,
+    请自行修改 Make.env 之 DEPEND LIBRARY 部分.
     能编译通过后，请参考应用 doc/system.txt 文档准备数据库和 web 服务器环境，便可以开始开发。
 
-
-
-新建项目(应用)
-===========
-    1, git clone --recursive git://github.com/bigml/regae.git PROJNAME
-    2, cd PROJNAME; sed -i 's/voov/PROJNAME/g' `grep -rl voov .`
-    3, find -name '*voov*'; rename them
-    4, mkdir -p /var/log/moon/PROJNAME/; chmod 777 /var/log/moon/PROJNAME/
 
 
 
 注:
 ==
-1. use 4 spaces as TAB, set (setq-default indent-tabs-mode nil) in ~/.emacs
+1. 代码规范请参考 doc/spec.c 用 4 个空格缩进，请不要使用空格。
+   (setq-default indent-tabs-mode nil) in ~/.emacs
 2. RESERVED key in request url
     /json/xxx: output json
     /image/xxx: output image
