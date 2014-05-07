@@ -93,6 +93,8 @@ D DIY
     但在 git push 后会删掉其他 clone 的 index 及 工作目录文件。 故执行该操作前请做好文件备份。
 
     git submodule add git@github.com:bigml/cmoon.git moon 添加其他项目到当前某个子目录。
+    git submodule update --recursive --init 子项目下的子项目初始化代码
+    git pull --recurse-submodules 同步所有代码
 
     git reflog expire --expire=now --all; git gc --aggressive --prune=now 删掉没有被引用过的文件，清理空间
 
