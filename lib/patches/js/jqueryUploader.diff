@@ -1,0 +1,175 @@
+diff --git a/src/jquery.uploader.js b/src/jquery.uploader.js
+index 3dd4706..3692d4a 100644
+--- a/src/jquery.uploader.js
++++ b/src/jquery.uploader.js
+@@ -14,7 +14,10 @@ if(typeof jQuery !== undefined){
+ 				dropZone: $(this),
+ 				fileField: null,
+ 				url: null,
++				dataName: 'upfile',
++				extraData: {},
+ 
++				allowedExtension: 'jpeg, bmp, png, gif',
+ 				showThumbnails : false,
+ 				thumbnails : {
+ 					div: null,
+@@ -106,8 +109,6 @@ if(typeof jQuery !== undefined){
+ 
+ 
+ 
+-			var xhr = new XMLHttpRequest();
+-
+ 			/**
+ 			 * onUploadProgress 
+ 			 * 
+@@ -149,6 +150,39 @@ if(typeof jQuery !== undefined){
+ 				return options.error('upload canceled');
+ 			}
+ 
++			function boundaryVar(name, value, boundary) {
++				var s = '--' + boundary + '\r\n';
++				s += 'Content-Disposition: form-data; name="'+ name + '"\r\n\r\n';
++				s += value;
++				s += '\r\n';
++				return s
++			}
++
++			function boundaryFile(name, file, boundary, body, xhr) {
++				var reader = new FileReader();
++
++				var s = body + '--' + boundary + '\r\n';
++				s += 'Content-Disposition: form-data; name="'+name+'"; filename="' + file.name + '"\r\n';
++				s += 'Content-Type: '+file.type+'\r\n\r\n';
++
++				reader.onload = function(evt) {
++					s += evt.target.result.split(',')[1] + '\r\n'
++					s += "--" + boundary + "--";
++					
++					xhr.send(s);
++				};
++
++				/*
++				 * don't use reader.readAsBinaryString(file) because reader returning large, bad data
++				 * http://stackoverflow.com/questions/6133800/html5-file-api-readasbinarystring-reads-files-as-much-larger-different-than-fil
++				 *
++				 * readAsDataURL() will return base64 encoded data
++				 * so, don't forget inform backend to decode it by
++				 * body += boundaryVar('_upfile_data_type', 'dataurl', boundary);
++				 */
++				reader.readAsDataURL(file);
++			}
++
+ 			/**
+ 			 * uploadFile upload the file
+ 			 * 
+@@ -156,27 +190,45 @@ if(typeof jQuery !== undefined){
+ 			 * @return void
+ 			 */
+ 			function uploadFile(file) {
++				var xhr = new XMLHttpRequest();
++
+ 				//on s'abonne à l'événement progress pour savoir où en est l'upload
+ 				if (xhr.upload && options.beforeUpload()) {
+-					xhr.open("POST", options.url, true);
++					/*
++					 * we don't use
++					 * xhr.open('PUT', xxx)
++					 * because it will send only filedata, can't carry extraData
++					 *
++					 * we don't use
++					 * xxx = new FormData(), xxx.append(file.name, file), xxx.send()
++					 * because it will send only filedata, can't carry extraData
++					 * and can't set boundary for backend parser use (rfc2338)
++					 */
++					var boundary = options.boundary || '----WaittingForBigml----',
++					body = '';
++					
++					xhr.open('POST', options.url, true);
+ 
+ 					// on s'abonne à tout changement de statut pour détecter
+ 					// une erreur, ou la fin de l'upload
+ 					//xhr.onreadystatechange = onStateChange; 
+ 
+ 					/* event listners */
+-					xhr.upload.addEventListener('progress',  onUploadProgress, false);
++					xhr.upload.addEventListener('progress',	 onUploadProgress, false);
+ 					xhr.addEventListener("load", uploadComplete, false);
+ 					xhr.addEventListener("error", uploadFailed, false);
+ 					xhr.addEventListener("abort", uploadCanceled, false);
+ 
+-					xhr.setRequestHeader("Content-Type", "multipart/form-data");
++					xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary="+boundary);
+ 					xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+-					xhr.setRequestHeader("X-File-Name", file.name);
+-					xhr.setRequestHeader("X-File-Size", file.size);
+-					xhr.setRequestHeader("X-File-Type", file.type);
+-				
+-					xhr.send(file);
++
++					$.each(options.extraData, function(k, v) {
++						body += boundaryVar(k, v, boundary);
++					});
++
++					body += boundaryVar('_upfile_data_type', 'dataurl', boundary);
++
++					boundaryFile(options.dataName, file, boundary, body, xhr);
+ 				}
+ 			}
+ 
+@@ -212,26 +264,39 @@ if(typeof jQuery !== undefined){
+ 					for (var i=0; i < files.length; i++) {
+ 						if (options.maxFileSize > 0 && file.size > options.maxFileSize) {
+ 							return options.error('file too big');
+-						} else {
+-							if (options.showThumbnails == true) {
+-								reader = new FileReader();
+-								reader.onloadend = function (evt) {
+-									var thumb = new Image();
+-									thumb.src = evt.target.result;
+-									if (options.thumbnails.width > 0) {
+-										thumb.width = options.thumbnails.width;
+-									}
+-									if (options.thumbnails.height > 0) {
+-										thumb.height = options.thumbnails.height;
+-									}
+-									options.thumbnails.div.append(thumb);
+-
+-								 };
+-								reader.readAsDataURL(files[i]);
++						}
++
++						if (options.allowedExtension) {
++							var types = options.allowedExtension.split(','),
++							support = false;
++							
++							for (var j = 0; j < types.length; j++) {
++								if (files[i].type.match($.trim(types[j]))) {
++									support = true;
++									break;
++								}
+ 							}
++							if (!support) return options.error('file '+ files[i].type+' not support');
++						}
+ 
+-							uploadFile(files[i]);
++						if (options.showThumbnails == true) {
++							reader = new FileReader();
++							reader.onloadend = function (evt) {
++								var thumb = new Image();
++								thumb.src = evt.target.result;
++								if (options.thumbnails.width > 0) {
++									thumb.width = options.thumbnails.width;
++								}
++								if (options.thumbnails.height > 0) {
++									thumb.height = options.thumbnails.height;
++								}
++								options.thumbnails.div.append(thumb);
++
++							};
++							reader.readAsDataURL(files[i]);
+ 						}
++
++						uploadFile(files[i]);
+ 					}
+ 			   } else {
+ 				   alert('files api not supported');

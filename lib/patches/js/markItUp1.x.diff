@@ -1,0 +1,51 @@
+diff --git a/markitup/jquery.markitup.js b/markitup/jquery.markitup.js
+index 9f48bdd..ff03449 100644
+--- a/markitup/jquery.markitup.js
++++ b/markitup/jquery.markitup.js
+@@ -39,6 +39,7 @@
+ 					previewParser:			false,
+ 					previewParserPath:		'',
+ 					previewParserVar:		'data',
++					previewScroll:			'bottom', // top, bottom
+ 					resizeHandle:			true,
+ 					beforeInsert:			'',
+ 					afterInsert:			'',
+@@ -185,6 +186,15 @@
+ 							levels.push(i);
+ 							$(li).addClass('markItUpDropMenu').append(dropMenus(button.dropMenu));
+ 						}
++
++						if (button.key == 'p') {
++							var inp = $('<input id="mkd-input-file" class="hide" type="file" multiple="" />').insertAfter(li);
++							li.unbind('click').click(function() {
++								inp.click();
++								return false;
++							});
++							li.unbind('mouseup');
++						}
+ 					}
+ 				}); 
+ 				levels.pop();
+@@ -510,14 +520,18 @@
+ 			
+ 			function writeInPreview(data) {
+ 				if (previewWindow.document) {			
++					previewWindow.document.open();
++					previewWindow.document.write(data);
++					previewWindow.document.close();
++
+ 					try {
+-						sp = previewWindow.document.documentElement.scrollTop
++						if (options.previewScroll == 'bottom')
++							sp = previewWindow.document.documentElement.scrollHeight;
++						else
++							sp = previewWindow.document.documentElement.scrollTop
+ 					} catch(e) {
+ 						sp = 0;
+ 					}	
+-					previewWindow.document.open();
+-					previewWindow.document.write(data);
+-					previewWindow.document.close();
+ 					previewWindow.document.documentElement.scrollTop = sp;
+ 				}
+ 			}
