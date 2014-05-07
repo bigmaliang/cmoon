@@ -1,3 +1,6 @@
+*.[oa]
+*~
+*.so
 tmp/
 .svn/
 *.dSYM/
