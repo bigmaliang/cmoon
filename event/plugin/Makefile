@@ -34,4 +34,4 @@ uninstall:
 
 clean:
 	rm -f $(LIB_PLUGIN)
-    rm -f $(OBJ_PLUGIN)
+	rm -f $(OBJ_PLUGIN)
