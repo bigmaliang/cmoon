@@ -10,3 +10,6 @@
     last = log -1 HEAD
     logl = log --pretty=oneline
     logf = log --pretty=format:'%h - %an, %ad : %s' --date=iso
+    pulls = pull --recurse-submodules
+    pushs = push --recurse-submodules=on-demand
+    pusha = push --all

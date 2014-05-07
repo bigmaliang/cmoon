@@ -1,0 +1,16 @@
+.page-nav {color: #666666; text-align: right;}
+.page-nav input {width: 20px; height: 14px; padding: 0 0 0 0.2em;}
+.page-nav .confirm, .page-nav .nav-prev, .page-nav .nav-next {
+    display: inline-block;
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+    background: url(/img/pub/pagediv/pagediv.png) 0 0 no-repeat;
+}
+.page-nav .nav-next {background-position: 0 -16px;}
+.page-nav .nav-prev {background-position: 0 -32px;}
+.page-nav a {color: #666666;}
+
+.page-nav .left {width: 100px;}
+.page-nav .center {width: 150px; margin-left: 30px;}
+.page-nav .right {width: 100px; margin-left: 30px;}

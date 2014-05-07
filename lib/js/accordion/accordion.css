@@ -1,0 +1,69 @@
+.accordion-container {
+    background: none repeat scroll 0 0 #EFEFEF;
+    border-radius: 3px 3px 3px 3px;
+    float: left;
+    padding: 3px;
+    width: 224px;
+}
+.accordion {
+    background: none repeat scroll 0 0 #FAFAFB;
+    border: 1px solid #D8D8D8;
+    border-radius: 1px 1px 1px 1px;
+    list-style: none outside none;
+}
+.accordion a:hover {
+    text-decoration: none;
+}
+.accordion .section {
+    border-top: 1px solid #D8D8D8;
+}
+.accordion .section:first-child {
+    border-top: medium none;
+}
+.accordion .section a.section-head {
+    background: -moz-linear-gradient(#FAFAFA, #E0E0E0) repeat scroll 0 0 transparent;
+    border-bottom: 1px solid #CCCCCC;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    color: #222222;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 10px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.698);
+}
+.accordion .section a.section-head img {
+    border-radius: 2px 2px 2px 2px;
+    float: left;
+    margin: 0 10px 0 0;
+}
+.accordion .section .section-nav {
+    display: none;
+    list-style: none outside none;
+}
+.accordion .section .section-nav.expanded {
+    display: block;
+}
+.accordion .section .section-nav a {
+    border-bottom: 1px solid #DDDDDD;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.898) inset;
+    display: block;
+    padding: 8px 10px;
+}
+.accordion .section .section-nav a:hover {
+    background: none repeat scroll 0 0 #FDFDFD;
+}
+.accordion .section .section-nav a.selected {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-left: 2px solid #D26911;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.1) inset;
+    color: #222222;
+    cursor: default;
+    font-weight: bold;
+}
+.accordion .section .section-nav a.selected:hover {
+    background: none repeat scroll 0 0 #FAFAFB;
+}
+.accordion .section .section-nav li:last-child a {
+    border-bottom: medium none;
+}

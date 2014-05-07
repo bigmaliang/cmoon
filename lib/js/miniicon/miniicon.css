@@ -1,0 +1,29 @@
+.mini-icon {
+    background-color: transparent;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 16px;
+    vertical-align: text-bottom;
+    width: 16px;
+    background-image: url("/img/pub/miniicon/icons.png");
+}
+.mini-icon.user-driver {
+    background-position: 0 0;
+}
+.mini-icon.user-passenger {
+    background-position: 0 -16px;
+}
+
+.mini-icon.search-input {
+    background-position: -154px 0;
+}
+.mini-icon.advanced-search {
+    background-position: -120px 0;
+}
+.mini-icon.notifications {
+    background-position: -32px 0;
+}
+.mini-icon.notifications:hover {
+    background-position: -32px -38px;
+}

@@ -1,0 +1,262 @@
+.minibutton {
+    -moz-user-select: none;
+    background: -moz-linear-gradient(#F4F4F4, #ECECEC) repeat scroll 0 0 transparent;
+    border: 1px solid #D4D4D4;
+    border-radius: 3px 3px 3px 3px;
+    color: #333333;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Helvetica,arial,freesans,clean,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+    height: 21px;
+    padding: 0 0 0 3px;
+    position: relative;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    white-space: nowrap;
+}
+.minibutton > span {
+    display: block;
+    height: 21px;
+    line-height: 21px;
+    padding: 0 9px 0 7px;
+}
+.minibutton > span i {
+    font-style: normal;
+    font-weight: 500;
+    opacity: 0.6;
+}
+.minibutton.danger {
+    color: #990000;
+}
+.minibutton.danger:hover, .button-group .danger.grouped-button:hover {
+    background: -moz-linear-gradient(#DC5F59, #B33630) repeat scroll 0 0 transparent;
+    border-color: #D4D4D4;
+    color: #FFFFFF;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+}
+.minibutton.danger.mousedown {
+    background: -moz-linear-gradient(#B33630, #DC5F59) repeat scroll 0 0 transparent;
+    border-color: #A0302A #A0302A #C65651;
+}
+.minibutton.lighter {
+    background: -moz-linear-gradient(#FAFAFA, #EAEAEA) repeat scroll 0 0 transparent;
+    border-bottom-color: #BCBCBC;
+    color: #333333;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+.minibutton.green {
+    background: -moz-linear-gradient(#36B825, #28881B) repeat scroll 0 0 transparent;
+    border-color: #4A993E;
+    color: #FFFFFF;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+}
+.minibutton.blue {
+    background: -moz-linear-gradient(#448DA6, #32687B) repeat scroll 0 0 transparent;
+    border-color: #275666;
+    color: #FFFFFF;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+}
+.minibutton.mousedown {
+    background: -moz-linear-gradient(#3072B3, #599BDC) repeat scroll 0 0 transparent;
+    border-color: #2A65A0 #2A65A0 #518CC6;
+    color: #FFFFFF;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+}
+.minibutton.selected, .context-menu-container.active .minibutton.switcher, .context-menu-container.active .context-button {
+    background: -moz-linear-gradient(#767676, #9E9E9E) repeat scroll 0 0 transparent;
+    border-color: #686868;
+    color: #FFFFFF;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+}
+.minibutton:hover, .button-group .grouped-button:hover {
+    background: -moz-linear-gradient(#599BDC, #3072B3) repeat scroll 0 0 transparent;
+    border-color: #518CC6 #518CC6 #2A65A0;
+    color: #FFFFFF;
+    text-decoration: none;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+}
+.minibutton:disabled, .minibutton.disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+.minibutton.bigger {
+    height: 23px;
+}
+.minibutton.bigger > span {
+    font-size: 13px;
+    height: 23px;
+    line-height: 23px;
+}
+button.minibutton::-moz-focus-inner {
+    margin: -1px -3px;
+}
+input[type="text"] + .minibutton {
+    margin-left: 5px;
+}
+.minibutton.btn-admin .icon, .minibutton.btn-watch .icon, .minibutton.btn-download .icon, .minibutton.btn-pull-request .icon, .minibutton.btn-fork .icon, .minibutton.btn-leave .icon, .minibutton.btn-compare .icon, .minibutton.btn-reply .icon, .minibutton.btn-back .icon, .minibutton.btn-forward .icon, .minibutton.btn-windows .icon {
+    background: url("/img/pub/minibtn/mini_button_icons.png") no-repeat scroll 0 0 transparent;
+    float: left;
+    height: 22px;
+    margin-left: -4px;
+    position: relative;
+    top: -1px;
+    width: 18px;
+}
+.minibutton.btn-forward .icon {
+    float: right;
+    margin-left: 0;
+    margin-right: -4px;
+}
+.minibutton.btn-admin .icon {
+    background-position: 0 0;
+    width: 16px;
+}
+.minibutton.btn-admin:hover .icon, .button-group .btn-admin.grouped-button:hover .icon {
+    background-position: 0 -25px;
+}
+.minibutton.btn-watch .icon {
+    background-position: -20px 0;
+}
+.minibutton.btn-watch:hover .icon, .button-group .btn-watch.grouped-button:hover .icon {
+    background-position: -20px -25px;
+}
+.minibutton.btn-download .icon {
+    background-position: -40px 0;
+}
+.minibutton.btn-download:hover .icon, .button-group .btn-download.grouped-button:hover .icon {
+    background-position: -40px -25px;
+}
+.minibutton.btn-pull-request .icon {
+    background-position: -60px 0;
+    width: 17px;
+}
+.minibutton.btn-pull-request:hover .icon, .button-group .btn-pull-request.grouped-button:hover .icon {
+    background-position: -60px -25px;
+}
+.minibutton.btn-fork .icon {
+    background-position: -80px 0;
+    width: 17px;
+}
+.minibutton.btn-fork:hover .icon, .button-group .btn-fork.grouped-button:hover .icon {
+    background-position: -80px -25px;
+}
+.minibutton.btn-leave .icon {
+    background-position: -120px 0;
+    width: 15px;
+}
+.minibutton.btn-leave:hover .icon, .button-group .btn-leave.grouped-button:hover .icon {
+    background-position: -120px -25px;
+}
+.minibutton.btn-compare .icon {
+    background-position: -100px 0;
+    width: 17px;
+}
+.minibutton.btn-compare:hover .icon, .button-group .btn-compare.grouped-button:hover .icon {
+    background-position: -100px -25px;
+}
+.minibutton.btn-reply .icon {
+    background-position: -140px 0;
+    width: 16px;
+}
+.minibutton.btn-reply:hover .icon, .button-group .btn-reply.grouped-button:hover .icon {
+    background-position: -140px -25px;
+}
+.minibutton.btn-back .icon {
+    background-position: -160px 0;
+    width: 16px;
+}
+.minibutton.btn-back:hover .icon, .button-group .btn-back.grouped-button:hover .icon {
+    background-position: -160px -25px;
+}
+.minibutton.btn-forward .icon {
+    background-position: -180px 0;
+    width: 16px;
+}
+.minibutton.btn-forward:hover .icon, .button-group .btn-forward.grouped-button:hover .icon {
+    background-position: -180px -25px;
+}
+.minibutton.btn-windows .icon {
+    background-position: -245px 0;
+}
+.minibutton.btn-windows:hover .icon, .button-group .btn-windows.grouped-button:hover .icon {
+    background-position: -245px -25px;
+}
+.minibutton.switcher > span {
+    padding-right: 26px;
+    position: relative;
+}
+.minibutton.switcher > span:before {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-color: #000000 transparent transparent;
+    border-style: solid;
+    border-width: 3px;
+    content: "";
+    display: block;
+    height: 0;
+    position: absolute;
+    right: 7px;
+    top: 9px;
+    width: 0;
+}
+.minibutton.switcher > span:after {
+    border-left: 1px solid #F9F9F9;
+    bottom: 0;
+    box-shadow: -1px 0 0 #E4E4E4;
+    content: "";
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 18px;
+}
+.minibutton.switcher:hover > span:after, .button-group .switcher.grouped-button:hover > span:after {
+    border-left: 1px solid #6A9FD3;
+    box-shadow: -1px 0 0 #3C74AB;
+}
+.minibutton.switcher.bigger > span:before {
+    top: 10px;
+}
+.minibutton.switcher.with-image {
+    height: 28px;
+}
+.minibutton.switcher.with-image > span {
+    height: 28px;
+    line-height: 28px;
+    padding-left: 1px;
+}
+.minibutton.switcher.with-image > span:before {
+    top: 12px;
+}
+.minibutton.switcher.with-image img {
+    border-radius: 2px 2px 2px 2px;
+    margin-right: 2px;
+    position: relative;
+    top: -1px;
+    vertical-align: middle;
+}
+.minibutton.switcher.bigger.with-image {
+    height: 30px;
+}
+.minibutton.switcher.bigger.with-image > span {
+    height: 30px;
+    line-height: 30px;
+    padding-left: 2px;
+}
+.minibutton.switcher.bigger.with-image > span:before {
+    top: 14px;
+}
+.minibutton.switcher.selected > span:before, .context-menu-container.active .switcher.minibutton > span:before, .context-menu-container.active .switcher.context-button > span:before, .context-menu-container.active .minibutton.switcher > span:before {
+    border-color: #FFFFFF transparent transparent;
+}
+.minibutton.switcher.selected > span:after, .context-menu-container.active .switcher.minibutton > span:after, .context-menu-container.active .switcher.context-button > span:after, .context-menu-container.active .minibutton.switcher > span:after {
+    border-left: 1px solid #A4A4A4;
+    box-shadow: -1px 0 0 #787878;
+}
+.minibutton.switcher:hover > span:before, .button-group .switcher.grouped-button:hover > span:before {
+    border-color: #FFFFFF transparent transparent;
+}
