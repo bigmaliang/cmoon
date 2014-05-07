@@ -140,8 +140,8 @@ int mevent_trigger(mevent_t *evt, char *key,
         if (PROCESS_NOK(mevent_trigger(evt, key, cmd, flags))) {        \
             char *msg = hdf_get_value(evt->hdfrcv, PRE_ERRMSG, NULL);   \
             char *trace = hdf_get_value(evt->hdfrcv, PRE_ERRTRACE, NULL); \
-            NEOERR *e = nerr_raise(evt->errcode, msg);                  \
-            return nerr_pass_ctx(e, trace);                             \
+            NEOERR *e = nerr_raise(evt->errcode, "%s", msg);            \
+            return nerr_pass_ctx(e, "%s", trace);                       \
         }                                                               \
     } while(0)
 #define MEVENT_TRIGGER_VOID(evt, key, cmd, flags)                       \
