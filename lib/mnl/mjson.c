@@ -7,7 +7,7 @@ NEOERR* mjson_import_from_hdf(HDF *hdf, struct json_object **out)
     struct json_object *jret, *jso;
     char *val;
     CnodeType ptype, ctype;
-    
+
     MCS_GET_INT_ATTR(hdf, NULL, "type", CNODE_TYPE_STRING, ptype);
     if (ptype == CNODE_TYPE_ARRAY) {
         jret = json_object_new_array();
@@ -16,7 +16,7 @@ NEOERR* mjson_import_from_hdf(HDF *hdf, struct json_object **out)
     }
 
     hdf = hdf_obj_child(hdf);
-    
+
     while (hdf) {
         MCS_GET_INT_ATTR(hdf, NULL, "type", CNODE_TYPE_STRING, ctype);
         jso = NULL;
@@ -26,13 +26,15 @@ NEOERR* mjson_import_from_hdf(HDF *hdf, struct json_object **out)
             hdf_obj_child(hdf) != NULL) {
 
             mjson_import_from_hdf(hdf, &jso);
-            
+
             if (ptype == CNODE_TYPE_ARRAY) json_object_array_add(jret, jso);
             else json_object_object_add(jret, hdf_obj_name(hdf), jso);
-            
+
         } else if ((val = hdf_obj_value(hdf)) != NULL) {
             if (ctype == CNODE_TYPE_INT) {
                 jso = json_object_new_int(atoi(val));
+            } else if (ctype == CNODE_TYPE_FLOAT) {
+                jso = json_object_new_double(atof(val));
             } else if (ctype == CNODE_TYPE_DATETIME ||
                        ctype == CNODE_TYPE_TIMESTAMP ||
                        ctype == CNODE_TYPE_INT64) {
@@ -40,17 +42,17 @@ NEOERR* mjson_import_from_hdf(HDF *hdf, struct json_object **out)
             } else {
                 jso = json_object_new_string(val);
             }
-        
+
             if (ptype == CNODE_TYPE_ARRAY) json_object_array_add(jret, jso);
             else json_object_object_add(jret, hdf_obj_name(hdf), jso);
 
         }
-        
+
         hdf = hdf_obj_next(hdf);
     }
-    
+
     *out = jret;
-    
+
     return STATUS_OK;
 }
 
@@ -59,7 +61,7 @@ void mjson_output_hdf(HDF *hdf, time_t second)
     if (second > 0) {
         mhttp_cache_headers(second);
     }
-    
+
     NEOERR *err = cgiwrap_writef("Content-Type: text/html; charset=UTF-8\r\n\r\n");
     TRACE_NOK(err);
 
@@ -81,7 +83,7 @@ void mjson_execute_hdf(HDF *hdf, char *cb, time_t second)
     if (second > 0) {
         mhttp_cache_headers(second);
     }
-    
+
     NEOERR *err = cgiwrap_writef("Content-Type: text/html; charset=UTF-8\r\n\r\n");
     TRACE_NOK(err);
 
@@ -106,7 +108,7 @@ static inline void json_append_to_hdf(HDF *node, char *key, struct json_object *
     enum json_type type;
     char tok[64];
     HDF *cnode;
-    
+
     type = json_object_get_type(obj);
 
     switch (type) {
@@ -164,7 +166,7 @@ NEOERR* mjson_export_to_hdf(HDF *node, struct json_object *obj, int flag, bool d
     json_object_object_foreach(obj, key, val) {
         json_append_to_hdf(node, key, val, flag);
     }
-    
+
     if (drop) json_object_put(obj);
 
     return STATUS_OK;
