@@ -47,6 +47,7 @@
       ;(setq mac-command-key-is-meta t)
       (setq mac-command-modifier `meta)
       ;(setq mac-option-modifier nil)
+      (setenv "PATH" "/Library/PostgreSQL/9.2/bin:/usr/local/git/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/usr/X11/bin:/usr/texbin")
 )
 
 (create-fontset-from-fontset-spec "-xos4-*-medium-r-normal-*-16-*-*-*-*-*-fontset-bigml,\n  chinese-gb2312:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n mule-unicode-0100-24ff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n  mule-unicode-2500-33ff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*,\n  mule-unicode-e000-ffff:-wenquanyi-*-*-*-*-*-12-*-*-*-*-*-*-*")
@@ -195,7 +196,7 @@
 (toggle-uniquify-buffer-names)
 (display-time)
 (setq diary-file "~/doc/diary")
-(setq tex-command "pdftex") ;use pdflatex instead of latex
+;(setq tex-command "pdftex") ;use pdflatex instead of latex
 (diary)
 (setq bkup-backup-directory-info
       '(("/home/bigml/.*" "/home/bigml/.backups/" ok-create full-path prepend-name)
@@ -208,6 +209,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(TeX-command-list (quote (("TeX" "%(PDF)%(tex) %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil (plain-tex-mode texinfo-mode ams-tex-mode) :help "Run plain TeX") ("LaTeX" "%`%l%(mode)%' %t" TeX-run-TeX nil (latex-mode doctex-mode) :help "Run LaTeX") ("Makeinfo" "makeinfo %t" TeX-run-compile nil (texinfo-mode) :help "Run Makeinfo with Info output") ("Makeinfo HTML" "makeinfo --html %t" TeX-run-compile nil (texinfo-mode) :help "Run Makeinfo with HTML output") ("AmSTeX" "%(PDF)amstex %`%S%(PDFout)%(mode)%' %t" TeX-run-TeX nil (ams-tex-mode) :help "Run AMSTeX") ("ConTeXt" "texexec --once --texutil %(execopts)%t" TeX-run-TeX nil (context-mode) :help "Run ConTeXt once") ("ConTeXt Full" "texexec %(execopts)%t" TeX-run-TeX nil (context-mode) :help "Run ConTeXt until completion") ("BibTeX" "bibtex %s" TeX-run-BibTeX nil t :help "Run BibTeX") ("Biber" "biber %s" TeX-run-Biber nil t :help "Run Biber") ("View" "open -a Preview %s.pdf" TeX-run-discard-or-function t t :help "Run Viewer") ("Print" "%p" TeX-run-command t t :help "Print the file") ("Queue" "%q" TeX-run-background nil t :help "View the printer queue" :visible TeX-queue-command) ("File" "%(o?)dvips %d -o %f " TeX-run-command t t :help "Generate PostScript file") ("Index" "makeindex %s" TeX-run-command nil t :help "Create index file") ("Check" "lacheck %s" TeX-run-compile nil (latex-mode) :help "Check LaTeX file for correctness") ("Spell" "(TeX-ispell-document \"\")" TeX-run-function nil t :help "Spell-check the document") ("Clean" "TeX-clean" TeX-run-function nil t :help "Delete generated intermediate files") ("Clean All" "(TeX-clean t)" TeX-run-function nil t :help "Delete generated intermediate and output files") ("Other" "" TeX-run-command t t :help "Run an arbitrary command"))))
  '(diff-switches "-u")
  '(fill-column 86))
 ; '(show-trailing-whitespace t))
@@ -221,10 +223,18 @@
 
 
 ;;;========== EDIT ==========
-(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
 (add-hook 'nxml-mode-hook 'turn-on-auto-fill)
-(add-hook 'LaTeX-mode-hook (lambda ()
-                             (TeX-fold-mode 1)))
+;(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+(add-hook 'LaTeX-mode-hook
+          (lambda ()
+            (setq TeX-auto-untabify t     ; remove all tabs before saving
+                  TeX-engine 'xetex       ; use xelatex default
+                  TeX-show-compilation t) ; display compilation windows
+            (TeX-global-PDF-mode t)       ; PDF mode enable, not plain
+            (setq TeX-save-query nil)
+            (imenu-add-menubar-index)
+            (TeX-fold-mode 1)
+            (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)))
 (add-hook 'c-mode-hook
           (lambda ()
             (font-lock-add-keywords
