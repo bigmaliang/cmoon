@@ -2,8 +2,7 @@
 
 #define GET_LAST_ERROR(con, dbname)                                 \
     do {                                                            \
-        SAFE_FREE(m_errmsg);                                        \
-        mongo_sync_cmd_get_last_error(con, dbname, &m_errmsg);      \
+        m_errmsg = (char*) mongo_sync_conn_get_last_error(con);     \
     } while (0)
 
 static char *m_errmsg = NULL;
@@ -15,7 +14,7 @@ NEOERR* mmg_init(char *host, int port, int ms, mmg_conn **db)
     mmg_conn *ldb;
 
     mtc_noise("connect to %s %d %d ...", host, port, ms);
-    
+
     *db = NULL;
     ldb = calloc(1, sizeof(mmg_conn));
     if (!ldb) return nerr_raise(NERR_NOMEM, "calloc for connection");
@@ -27,6 +26,7 @@ NEOERR* mmg_init(char *host, int port, int ms, mmg_conn **db)
                           m_errmsg, errno, strerror(errno));
     }
     mongo_sync_conn_set_auto_reconnect(ldb->con, true);
+    mongo_sync_conn_set_safe_mode(ldb->con, true);
     if (ms > 0) mongo_connection_set_timeout((mongo_connection*)ldb->con, ms);
 
     *db = ldb;
@@ -37,7 +37,7 @@ NEOERR* mmg_init(char *host, int port, int ms, mmg_conn **db)
 NEOERR* mmg_auth(mmg_conn *db, char *dsn, char *user, char *pass)
 {
     mtc_noise("authorize to %s use %s %s", dsn, user, pass);
-    
+
     if (!mongo_sync_cmd_authenticate(db->con, dsn, user, pass)) {
         GET_LAST_ERROR(db->con, dsn);
         return nerr_raise(NERR_DB, "auth: %s %d %s", m_errmsg, errno, strerror(errno));
@@ -55,7 +55,7 @@ NEOERR* mmg_seed_add(mmg_conn *db, char *host, int port)
         return nerr_raise(NERR_DB, "add seed: %s %d %s",
                           m_errmsg, errno, strerror(errno));
     }
-    
+
     return STATUS_OK;
 }
 
@@ -87,7 +87,7 @@ NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
     if (!db || !querys) return nerr_raise(NERR_ASSERT, "paramter null");
 
     mtc_noise("prepare %s %s", querys, sels);
-    
+
     /*
      * doc query
      */
@@ -129,7 +129,7 @@ NEOERR* mmg_prepare(mmg_conn *db, int flags, int skip, int limit,
     db->limit = limit;
     /* callback won't overwrite caller's rescount */
     if (!db->incallback) db->rescount = 0;
-    
+
     return STATUS_OK;
 }
 
@@ -167,7 +167,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
     HDF *node, *cnode;
     bson *doc;
     NEOERR *err;
-    
+
     MCS_NOT_NULLB(db, dsn);
 
     db->p = mongo_sync_cmd_query(db->con, dsn, db->flags & 0x3FF, db->skip, db->limit,
@@ -214,7 +214,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
         thiscount = 0;
         while (mongo_sync_cursor_next(db->c) && thiscount < db->limit) {
             memset(key, sizeof(key), 0x0);
-            
+
             if (prefix) {
                 if (strchr(prefix, '$')) {
                     HDF *tnode;
@@ -224,7 +224,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                     if (err != STATUS_OK) return nerr_pass(err);
 
                     char *tkey = mcs_repvstr_byhdf(prefix, '$', tnode);
-                    
+
                     if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
                         snprintf(key, sizeof(key), "%s.%d", tkey, count);
                     else snprintf(key, sizeof(key), "%s", tkey);
@@ -258,7 +258,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
 
                     hdf_destroy(&tnode);
                     SAFE_FREE(tkey);
-                    
+
                     goto nextcursor;
                 } else {
                     if (!(db->flags & MMG_FLAG_MIXROWS) && db->limit > 1)
@@ -270,7 +270,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                     sprintf(key, "%d", count);
                 else key[0] = '\0';
             }
-            
+
             doc = mongo_sync_cursor_get_data(db->c);
             err = mbson_export_to_hdf(node, doc, key, MBSON_EXPORT_TYPE, true);
             if (err != STATUS_OK) return nerr_pass(err);
@@ -294,7 +294,7 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
         mongo_sync_cursor_free(db->c);
         db->c = NULL;
         db->p = NULL;
-        
+
         mtc_noise("queried %s %d result", dsn, count);
 
         /*
@@ -311,10 +311,10 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
                 if (count == thiscount) err = db->query_callback(db, cnode, true);
                 else err = db->query_callback(db, cnode, false);
                 TRACE_NOK(err);
-                
+
                 cnode = hdf_obj_next(cnode);
             }
-            
+
             db->incallback = false;
 
             /*
@@ -339,11 +339,11 @@ NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode)
 NEOERR* mmg_string_insert(mmg_conn *db, char *dsn, char *str)
 {
     bson *doc;
-    
+
     MCS_NOT_NULLC(db, dsn, str);
 
     mtc_noise("insert string %s %s", dsn, str);
-    
+
     doc = mbson_new_from_string(str, true);
     if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
                                 str, strerror(errno));
@@ -364,7 +364,7 @@ NEOERR* mmg_string_insertf(mmg_conn *db, char *dsn, char *fmt, ...)
     char *qa;
     va_list ap;
     NEOERR *err;
-    
+
     va_start(ap, fmt);
     qa = vsprintf_alloc(fmt, ap);
     va_end(ap);
@@ -382,7 +382,7 @@ NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
 {
     bson *doc;
     NEOERR *err;
-    
+
     MCS_NOT_NULLC(db, dsn, node);
 
     char *ts;
@@ -390,7 +390,7 @@ NEOERR* mmg_hdf_insert(mmg_conn *db, char *dsn, HDF *node)
     if (err != STATUS_OK) return nerr_pass(err);
     mtc_noise("insert hdf %s %s", dsn, ts);
     SAFE_FREE(ts);
-    
+
     err = mbson_import_from_hdf(node, &doc, true);
     if (err != STATUS_OK) return nerr_pass(err);
 
@@ -440,15 +440,15 @@ NEOERR* mmg_hdf_insertl(mmg_conn *db, char *dsn, HDF *node, HDF *lnode)
             if (!dft) dft = "";
             hdf_set_value(inode, name, dft);
         }
-        
+
         cnode = hdf_obj_next(cnode);
     }
-    
+
     err = mmg_hdf_insert(db, dsn, inode);
 
 done:
     hdf_destroy(&inode);
-    
+
     return nerr_pass(err);
 }
 
@@ -460,11 +460,11 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *se
     MCS_NOT_NULLB(up, sel);
 
     mtc_noise("update %s %s %s", dsn, up, sel);
-    
+
     doca = mbson_new_from_string(sel, true);
     if (!doca) return nerr_raise(NERR_ASSERT, "build doc sel: %s: %s",
                                  sel, strerror(errno));
-    
+
     docb = mbson_new_from_string(up, true);
     if (!docb) return nerr_raise(NERR_ASSERT, "build doc up: %s: %s",
                                  up, strerror(errno));
@@ -474,10 +474,10 @@ NEOERR* mmg_string_update(mmg_conn *db, char *dsn, int flags, char *up, char *se
         return nerr_raise(NERR_DB, "sync_cmd_update: %s %d %s",
                           m_errmsg, errno, strerror(errno));
     }
-    
+
     bson_free(doca);
     bson_free(docb);
-    
+
     return STATUS_OK;
 }
 
@@ -493,7 +493,7 @@ NEOERR* mmg_string_updatef(mmg_conn *db, char *dsn, int flags, char *up, char *s
         va_end(ap);
         if (!qa) return nerr_raise(NERR_NOMEM, "Unable to allocate mem for string");
     }
-    
+
     err = mmg_string_update(db, dsn, flags, up, qa);
 
     SAFE_FREE(qa);
@@ -506,7 +506,7 @@ NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel)
     bson *doca, *docb;
     HDF *tnode;
     NEOERR *err;
-    
+
     MCS_NOT_NULLB(db, dsn);
     MCS_NOT_NULLB(node, sel);
 
@@ -515,7 +515,7 @@ NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel)
         hdf_init(&tnode);
         hdf_copy(tnode, "$set", node);
     }
-    
+
     char *ts;
     err = hdf_write_string(tnode, &ts);
     if (err != STATUS_OK) return nerr_pass(err);
@@ -525,7 +525,7 @@ NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel)
     doca = mbson_new_from_string(sel, true);
     if (!doca) return nerr_raise(NERR_ASSERT, "build doc sel: %s: %s",
                                  sel, strerror(errno));
-    
+
     err = mbson_import_from_hdf(tnode, &docb, true);
     if (err != STATUS_OK) return nerr_pass(err);
 
@@ -534,7 +534,7 @@ NEOERR* mmg_hdf_update(mmg_conn *db, char *dsn, int flags, HDF *node, char *sel)
         return nerr_raise(NERR_DB, "sync_cmd_update: %s %d %s",
                           m_errmsg, errno, strerror(errno));
     }
-    
+
     bson_free(doca);
     bson_free(docb);
 
@@ -573,9 +573,9 @@ NEOERR* mmg_hdf_updatefl(mmg_conn *db, char *dsn, int flags, HDF *node, HDF *lno
 
     MCS_NOT_NULLB(db, dsn);
     MCS_NOT_NULLB(node, lnode);
-    
+
     hdf_init(&unode);
-    
+
     if (selfmt) {
         va_start(ap, selfmt);
         qa = vsprintf_alloc(selfmt, ap);
@@ -601,7 +601,7 @@ NEOERR* mmg_hdf_updatefl(mmg_conn *db, char *dsn, int flags, HDF *node, HDF *lno
             err = nerr_raise(NERR_ASSERT, "需要 %s %d 参数", name, type);
             goto done;
         }
-        
+
         cnode = hdf_obj_next(cnode);
     }
 
@@ -622,7 +622,7 @@ NEOERR* mmg_count(mmg_conn *db, char *dbname, char *collname, int *ret, char *qu
     MCS_NOT_NULLB(querys, ret);
 
     mtc_noise("count %s.%s %s", dbname, collname, querys);
-    
+
     doc = mbson_new_from_string(querys, true);
     if (!doc) return nerr_raise(NERR_ASSERT, "build doc: %s: %s",
                                 querys, strerror(errno));
@@ -639,7 +639,7 @@ NEOERR* mmg_countf(mmg_conn *db, char *dbname, char *collname, int *ret, char *q
     char *qa;
     va_list ap;
     NEOERR *err;
-    
+
     va_start(ap, qfmt);
     qa = vsprintf_alloc(qfmt, ap);
     va_end(ap);
@@ -681,7 +681,7 @@ NEOERR* mmg_deletef(mmg_conn *db, char *dsn, int flags, char *selfmt, ...)
     char *qa;
     va_list ap;
     NEOERR *err;
-    
+
     va_start(ap, selfmt);
     qa = vsprintf_alloc(selfmt, ap);
     va_end(ap);
@@ -703,7 +703,7 @@ NEOERR* mmg_custom(mmg_conn *db, char *dbname,
     bson *doc;
 
     NEOERR *err;
-    
+
     MCS_NOT_NULLC(db, dbname, command);
 
     mtc_noise("custom %s %s", dbname, command);
@@ -729,12 +729,12 @@ NEOERR* mmg_custom(mmg_conn *db, char *dbname,
         if (mongo_sync_cursor_next(c)) {
             doc = mongo_sync_cursor_get_data(c);
             if (!doc) return nerr_raise(NERR_DB, "doc: %s", strerror(errno));
-            
+
             err = mbson_export_to_hdf(outnode, doc, prefix, MBSON_EXPORT_TYPE, true);
             if (err != STATUS_OK) return nerr_pass(err);
         } else return nerr_raise(NERR_DB, "cursor next: %s", strerror(errno));
     }
-    
+
     mongo_sync_cursor_free(c);
 
     return STATUS_OK;
@@ -746,7 +746,7 @@ NEOERR* mmg_customf(mmg_conn *db, char *dbname,
     char *qa;
     va_list ap;
     NEOERR *err;
-    
+
     va_start(ap, cmdfmt);
     qa = vsprintf_alloc(cmdfmt, ap);
     va_end(ap);
@@ -827,10 +827,10 @@ int mmg_get_int_valuef(mmg_conn *db, char *dsn, char *key, int skip, int limit,
 
     while (node) {
         val += hdf_get_int_value(node, key, 0);
-            
+
         node = hdf_obj_next(node);
     }
-    
+
     hdf_destroy(&tmpnode);
     SAFE_FREE(querys);
 

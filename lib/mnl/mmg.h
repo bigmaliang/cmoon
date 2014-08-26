@@ -63,6 +63,9 @@ NEOERR* mmg_preparef(mmg_conn *db, int flags, int skip, int limit,
                      ATTRIBUTE_PRINTF(7, 8);
 void mmg_set_callbackdata(mmg_conn *db, void *data);
 
+/*
+ * dsn is the namespace, the database and collection name
+ */
 NEOERR* mmg_query(mmg_conn *db, char *dsn, char *prefix, HDF *outnode);
 
 NEOERR* mmg_string_insert(mmg_conn *db, char *dsn, char *str);
