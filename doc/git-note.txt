@@ -96,6 +96,19 @@ D DIY
     git submodule update --recursive --init 子项目下的子项目初始化代码
     git pull --recurse-submodules 同步所有代码
 
+    submodule改变路径：
+      修改.gitmodule; git submodlue sync
+    submodule删除：
+      1. Delete the relevant section from the .gitmodules file.
+      2. Stage the .gitmodules changes git add .gitmodules
+      3. Delete the relevant section from .git/config.
+      4. Run git rm --cached path_to_submodule (no trailing slash).
+      5. Run rm -rf .git/modules/path_to_submodule
+      6. Commit git commit -m "Removed submodule <name>"
+      7. Delete the now untracked submodule files
+      8. rm -rf path_to_submodule
+
+
     git reflog expire --expire=now --all; git gc --aggressive --prune=now 删掉没有被引用过的文件，清理空间
 
 

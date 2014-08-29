@@ -76,6 +76,8 @@
 (load-library "smtpmail")                           ;use smtp mail instead of sendmail to outgoing mail 2006-09-24
 (load-library "cs-mode")                            ;clearsilver use
 (autoload 'all "all" nil t)
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)       ;markdown mode [Wed 2014-06-11 10:41:17]
 ;(:eval (list (nyan-create)))
 ;(autoload #'espresso-mode "espresso" "Start espresso-mode" t) ;Espresso has been incorporated into GNU Emacs starting with version 23.2 and has been renamed js-mode. espresso-mode will no longer be maintained outside of Emacs proper. This page has been kept only for historical interest.
 ;(require 'un-define)                                ;2006-10-23 use mule-ucs
@@ -214,7 +216,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(diff-switches "-u")
- '(fill-column 86))
+ '(fill-column 90))
 ; '(show-trailing-whitespace t))
 ;(setq erc-fill-prefix " ")
 ;(setq default-directory "/home/bigml/workspace/") ;history before 2005-12-6
@@ -227,7 +229,8 @@
 
 ;;;========== EDIT ==========
 (add-hook 'nxml-mode-hook 'turn-on-auto-fill)
-;(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+(add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+(add-hook 'markdown-mode-hook 'auto-fill-mode)
 (add-hook 'LaTeX-mode-hook
           (lambda ()
             (setq TeX-auto-untabify t     ; remove all tabs before saving
@@ -236,8 +239,8 @@
             (TeX-global-PDF-mode t)       ; PDF mode enable, not plain
             (setq TeX-save-query nil)
             (imenu-add-menubar-index)
-            (TeX-fold-mode 1)
-            (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)))
+            (TeX-fold-mode 1)))
+;            (define-key LaTeX-mode-map (kbd "TAB") 'TeX-complete-symbol)))
 (add-hook 'c-mode-hook
           (lambda ()
             (font-lock-add-keywords
@@ -272,6 +275,9 @@
 (setq auto-mode-alist
       (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\)\\'" . nxml-mode)
             auto-mode-alist))
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 ;'("\\<\\(\\sw+\\)[ \t\n)]*(" 1 font-lock-function-call-face)) t))
 ;(add-hook 'LaTeX-mode-hook 'flyspell-mode)
 ;(add-hook 'LaTeX-mode-hook 'preview-document)

@@ -2,7 +2,7 @@
 ======================
 
 mevent 基于 nmdb(http://blitiri.com.ar/p/nmdb/) 的架构设计，其功能主要就是为高速应用
-场合下提供缓存队列，后台执行。 可以有效缓解压力毛刺（设计容量请参考capacity.txt）。
+场合下提供缓存队列，后台执行。 可以有效缓解压力毛刺。
 事件中心以插件的方式支持多个应用，每个应用有处理有一单独的缓存队列和处理线程。
 单个后端应用处理缓慢不会影响整个事件中心的处理效率。
 
@@ -54,8 +54,8 @@ tar zcvf libdaemon.tar.gz libmnl.so libmevent.so libeii.so libstreamhtmlparser.s
 
 
 
-php 扩展安装                                                                                                                            
----------- 
+php 扩展安装
+----------
 tar zcvf libmevent.tar.gz /usr/local/include/mevent.h /usr/local/include/net-const.h /usr/local/lib/libmevent.so /usr/local/lib/libneo_utl.a /usr/local/include/ClearSilver/ /etc/mevent/ /usr/local/lib/libstreamhtmlparser.*
 
 /usr/local/src/php-5.xx/ext/ext_skel --extname=mevent
@@ -73,4 +73,3 @@ vim /usr/local/php/etc/php.ini
 + extension = "mevent.so"
 killall -9 php-cgi
 /usr/local/php/bin/spawn-fcgi -a 127.0.0.1 -p 10080 -C 64 -u www -f /usr/local/php/bin/php-cgi
-
