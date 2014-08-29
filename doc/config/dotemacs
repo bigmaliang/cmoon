@@ -5,8 +5,8 @@
 
 ;;;====================
 ;;; require: auctex, scim-bridge-el
-;;; $ln -s ~/web/moon/doc/dotemacs .emacs
-;;; $ln -s ~/web/moon/doc/dotsite-lisp .site-lisp
+;;; $ln -s ~/web/moon/doc/config/dotemacs .emacs
+;;; $ln -s ~/web/moon/doc/config/dotsite-lisp .site-lisp
 ;;;====================
 
 
