@@ -5,20 +5,12 @@
 
 #include "ClearSilver.h"
 #include "libmemcached/memcached.h"
-
-#ifdef USE_MEVENT
-#include "mevent.h"
-#include "cache.h"
-#endif
+#include "json.h"
 
 #ifdef USE_FASTCGI
 #include "fcgi_stdio.h"
 #endif
-
 #include "mkdio.h"
-#include "json.h"
-#include "mongo.h"
-
 #include "gd.h"
 #include "gdfontt.h"
 #include "gdfonts.h"
@@ -42,9 +34,13 @@
 #include "mtrace.h"
 #include "mmemc.h"
 #include "mjson.h"
-#include "mbson.h"
 #include "mhttp.h"
 #include "mdb.h"
+
+#ifndef DROP_MONGO
+#include "mongo.h"
 #include "mmg.h"
+#include "mbson.h"
+#endif
 
 #endif    /* __MHEADS_H__ */

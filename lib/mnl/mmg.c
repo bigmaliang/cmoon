@@ -1,4 +1,5 @@
 #include "mheads.h"
+#ifndef DROP_MONGO
 
 #define GET_LAST_ERROR(con, dbname)                                 \
     do {                                                            \
@@ -836,3 +837,5 @@ int mmg_get_int_valuef(mmg_conn *db, char *dsn, char *key, int skip, int limit,
 
     return val;
 }
+
+#endif  /* DROP_MONGO */

@@ -1,4 +1,5 @@
 #include "mheads.h"
+#ifndef DROP_MONGO
 
 static void json_append_to_bson(bson* b, char *key, struct json_object *val)
 {
@@ -32,7 +33,7 @@ static void json_append_to_bson(bson* b, char *key, struct json_object *val)
             sprintf(tok, "%d", pos);
             json_append_to_bson(sub, tok, (struct json_object*)list->array[pos]);
         }
-        
+
         bson_finish(sub);
         bson_append_array(b, key, sub);
         bson_free(sub);
@@ -45,27 +46,27 @@ static void json_append_to_bson(bson* b, char *key, struct json_object *val)
     default:
         break;
     }
-    
-    
+
+
 }
 
 bson* mbson_new_from_jsonobj(struct json_object *obj, bool finish, bool drop)
 {
     bson *bson;
-    
+
     if (!obj) return NULL;
 
     if (json_object_get_type(obj) != json_type_object) {
         json_object_put(obj);
         return NULL;
     }
-    
+
     bson = bson_new();
 
     json_object_object_foreach(obj, key, val) {
         json_append_to_bson(bson, key, val);
     }
-    
+
     if (finish) bson_finish(bson);
 
     if (drop) json_object_put(obj);
@@ -101,7 +102,7 @@ struct json_object* mbson_export_to_jsonobj(bson *doc, bool array)
     uint8_t *vu8;
     char oid[LEN_BSON_OID];
     bool vbl;
-    
+
 
     c = bson_cursor_new(doc);
 
@@ -109,12 +110,12 @@ struct json_object* mbson_export_to_jsonobj(bson *doc, bool array)
         jret = json_object_new_array();
     else
         jret = json_object_new_object();
-    
+
     while (bson_cursor_next(c)) {
         key = (char*)bson_cursor_key(c);
         type = bson_cursor_type(c);
         jso = NULL;
-        
+
         switch (type) {
         case BSON_TYPE_DOUBLE:
             bson_cursor_get_double(c, &vd);
@@ -178,7 +179,7 @@ char* mbson_string(bson *doc)
 {
     struct json_object *obj;
     char *s;
-    
+
     obj = mbson_export_to_jsonobj(doc, false);
     if (!obj) return NULL;
 
@@ -205,7 +206,7 @@ NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
         key = hdf_obj_name(node);
         val = hdf_obj_value(node);
         type = mcs_get_int_attr(node, NULL, "type", CNODE_TYPE_STRING);
-            
+
         if (type == CNODE_TYPE_ARRAY ||
             type == CNODE_TYPE_OBJECT ||
             hdf_obj_child(node) != NULL) {
@@ -249,14 +250,14 @@ NEOERR* mbson_import_from_hdf(HDF *node, bson **out, bool finish)
                 break;
             }
         }
-        
+
         node = hdf_obj_next(node);
     }
 
     if (finish) bson_finish(doc);
 
     *out = doc;
-    
+
     return STATUS_OK;
 }
 
@@ -284,7 +285,7 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *setkey, int flag, bool d
         else
             MCS_SET_INT_ATTRR(node, NULL, "type", CNODE_TYPE_OBJECT);
     }
-    
+
     c = bson_cursor_new(doc);
 
     while (bson_cursor_next(c)) {
@@ -377,9 +378,9 @@ NEOERR* mbson_export_to_hdf(HDF *node, bson *doc, char *setkey, int flag, bool d
     }
 
     bson_cursor_free(c);
-    
+
     if (drop) bson_free(doc);
-    
+
     return STATUS_OK;
 }
 
@@ -391,3 +392,5 @@ NEOERR* mbson_export_to_int_hdf(HDF *node, bson *doc, int setkey, int flag, bool
 
     return mbson_export_to_hdf(node, doc, tok, flag, drop);
 }
+
+#endif  /* DROP_MONGO */

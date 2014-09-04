@@ -71,8 +71,7 @@ moon/
                     depend on streamhtmlparser
                     http://streamhtmlparser.googlecode.com/svn/trunk/ streamhtmlparser
 
-                    ./autogen.sh --disable-wdb --disable-perl --disable-ruby
-                                 --disable-java --disable-python
+                    ./autogen.sh --disable-wdb --disable-perl --disable-ruby --disable-java --disable-python
                     mkdir libs
                     cd streamhtmlparser; make; cd ..
                     cp streamhtmlparser/.libs/libstreamhtmlparser.so libs/

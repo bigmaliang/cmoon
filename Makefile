@@ -1,7 +1,7 @@
 BASEDIR = ./
 include $(BASEDIR)Make.env
 
-SUBDIR = lib event
+SUBDIR = lib
 
 all: $(SUBDIR)
 	@$(MULTIMAKE) $(SUBDIR)

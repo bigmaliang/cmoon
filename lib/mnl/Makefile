@@ -21,8 +21,9 @@ libmnl.a:$(OBJS) $(DEPEND)
 	$(AR) rcs $@ $(OBJS)
 
 # libmnl.so used static library's fucntions(lib_cs here)
-# and, on darwin os, need to add $(LIB_CS)
-# because darwin's linker won't link lib_cs to viki, mevent...
+# and, on darwin os, need to add $(LIB_STATIC)
+# because darwin's linker won't link these to viki, mevent...
+LIB_STATIC = -lneo_cgi -lneo_cs -lneo_utl -lstreamhtmlparser -lz -lmarkdown
 libmnl.so:$(OBJS) $(DEPEND)
 ifeq ($(UNAME), Darwin)
 	$(CC) $(CFLAGS) -dynamiclib -undefined suppress -flat_namespace -o $@ $(OBJS) $(LIB_STATIC)
